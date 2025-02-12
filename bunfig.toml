@@ -1,0 +1,4 @@
+[test]
+preload = ["./src/test/setup.ts"]
+environment = { "NODE_ENV" = "test" }
+dom = true 
