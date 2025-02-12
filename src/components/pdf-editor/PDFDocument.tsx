@@ -5,21 +5,12 @@ import { Document, Image, Page, pdf, StyleSheet } from '@react-pdf/renderer';
 
 // A4 dimensions in points (72 DPI)
 const A4_WIDTH_PT = 595.28;
-const A4_HEIGHT_PT = 841.89;
 
 // Our canvas dimensions (96 DPI)
 const CANVAS_WIDTH = 794;
-const CANVAS_HEIGHT = 1123;
 
 // Scale factor from canvas pixels to PDF points
 const SCALE_FACTOR = A4_WIDTH_PT / CANVAS_WIDTH;
-
-// Compression quality settings
-const COMPRESSION_SETTINGS = {
-  high: 0.3, // Smaller file
-  medium: 0.6, // Balanced
-  low: 0.9, // Better quality
-};
 
 const styles = StyleSheet.create({
   page: {
@@ -42,7 +33,7 @@ interface GeneratePDFOptions {
 }
 
 export async function generatePDF(sections: ImageSection[], options: GeneratePDFOptions = {}): Promise<Blob> {
-  const { compressionLevel = 'medium', backgroundPDF = null } = options;
+  const { backgroundPDF = null } = options;
 
   const MyDocument = () => (
     <Document>
@@ -59,8 +50,6 @@ export async function generatePDF(sections: ImageSection[], options: GeneratePDF
               width: section.width * SCALE_FACTOR,
               height: section.height * SCALE_FACTOR,
             }}
-            // Apply compression based on selected level
-            quality={COMPRESSION_SETTINGS[compressionLevel]}
           />
         ))}
       </Page>

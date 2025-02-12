@@ -36,7 +36,6 @@ export function PDFCanvas({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const [draggedSection, setDraggedSection] = useState<{ id: string; startX: number; startY: number } | null>(null);
   const [resizing, setResizing] = useState<{
     id: string;
     handle: ResizeHandle;
@@ -122,39 +121,8 @@ export function PDFCanvas({
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    setDraggedSection(null);
     setResizing(null);
     setStartCoords(null);
-  };
-
-  const startResizing = (e: React.MouseEvent, section: ImageSection, handle: ResizeHandle) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setResizing({
-      id: section.id,
-      handle,
-      startWidth: section.width,
-      startHeight: section.height,
-      startX: section.x,
-      startY: section.y,
-    });
-    setStartCoords({ x: e.clientX, y: e.clientY });
-  };
-
-  const handleDuplicate = (section: ImageSection) => {
-    // Calculate new Y position, ensuring it stays within bounds
-    const newY = Math.min(section.y + 20, A4_HEIGHT - section.height);
-
-    // Create new section with same properties but new ID and position
-    const newSection: ImageSection = {
-      ...section,
-      id: crypto.randomUUID(),
-      y: newY,
-      page: currentPage, // Ensure duplicated section is on current page
-    };
-
-    // Call the onDuplicate prop with the new section
-    onDuplicate(newSection);
   };
 
   return (

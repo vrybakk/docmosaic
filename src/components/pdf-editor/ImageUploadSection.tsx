@@ -1,6 +1,7 @@
 'use client';
 
 import { ImageSection } from '@/lib/types';
+import Image from 'next/image';
 import { useState } from 'react';
 
 interface ImageUploadSectionProps {
@@ -65,7 +66,15 @@ export default function ImageUploadSection({ section, onImageUpload }: ImageUplo
     >
       {section.imageUrl ? (
         <div className='w-full h-full group'>
-          <img src={section.imageUrl} alt='Uploaded' className='w-full h-full object-contain' />
+          <div className='relative w-full h-full'>
+            <Image
+              src={section.imageUrl}
+              alt='Uploaded'
+              fill
+              className='object-contain'
+              unoptimized
+            />
+          </div>
           <div className='absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center'>
             <label className='px-4 py-2 bg-white text-black rounded-lg cursor-pointer opacity-0 group-hover:opacity-100 hover:bg-gray-100 transition-all'>
               Replace Image

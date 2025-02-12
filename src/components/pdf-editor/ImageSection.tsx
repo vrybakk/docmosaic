@@ -1,6 +1,7 @@
 'use client';
 
 import { ImageSection } from '@/lib/types';
+import Image from 'next/image';
 import { useRef } from 'react';
 
 interface ImageSectionProps {
@@ -122,7 +123,15 @@ export function ImageSectionComponent({
         >
           {section.imageUrl ? (
             <div className='relative w-full h-full group'>
-              <img src={section.imageUrl} alt='Uploaded content' className='w-full h-full object-contain' />
+              <div className='relative w-full h-full'>
+                <Image
+                  src={section.imageUrl}
+                  alt='Uploaded content'
+                  fill
+                  className='object-contain'
+                  unoptimized
+                />
+              </div>
               {/* Overlay for re-upload */}
               <div className='absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center'>
                 <button
