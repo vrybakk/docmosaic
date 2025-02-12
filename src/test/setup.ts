@@ -10,10 +10,13 @@ const window = new Window({
 });
 
 // Configure testing environment
+// @ts-ignore
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 // Basic DOM setup
+// @ts-ignore
 globalThis.window = window;
+// @ts-ignore
 globalThis.document = window.document;
 
 // Basic canvas mock
