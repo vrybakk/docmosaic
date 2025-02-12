@@ -175,7 +175,7 @@ export default function PDFEditorPage() {
                 pages: document.pages,
             });
             const url = URL.createObjectURL(blob);
-            const link = window.document.createElement('a');
+            const link = window.document.createElement('a') as HTMLAnchorElement;
             link.href = url;
             link.download = getDownloadFileName(document.name);
             window.document.body.appendChild(link);

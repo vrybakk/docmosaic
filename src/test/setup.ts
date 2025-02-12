@@ -10,13 +10,13 @@ const window = new Window({
 });
 
 // Configure testing environment
-// @ts-ignore
+// @ts-expect-error - Required for React Testing Library setup in test environment
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 // Basic DOM setup
-// @ts-ignore
+// @ts-expect-error - Happy-DOM window instance assignment for test environment
 globalThis.window = window;
-// @ts-ignore
+// @ts-expect-error - Happy-DOM document instance assignment for test environment
 globalThis.document = window.document;
 
 // Basic canvas mock

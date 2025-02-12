@@ -11,16 +11,26 @@ const window = new Window({
 
 // Set up global variables
 declare global {
-    var window: Window;
-    var document: Document;
-    var navigator: Navigator;
-    var HTMLCanvasElement: typeof Window.prototype.HTMLCanvasElement;
-    var ResizeObserver: typeof Window.prototype.ResizeObserver;
+    interface Window {
+        __TEST_ENV__?: boolean;
+    }
+    interface Document {
+        __TEST_ENV__?: boolean;
+    }
+    interface Navigator {
+        __TEST_ENV__?: boolean;
+    }
+    interface HTMLCanvasElement {
+        __TEST_ENV__?: boolean;
+    }
+    interface ResizeObserver {
+        __TEST_ENV__?: boolean;
+    }
 }
 
-globalThis.window = window;
-globalThis.document = window.document;
-globalThis.navigator = window.navigator;
+(globalThis.window as any) = window;
+(globalThis.document as any) = window.document;
+(globalThis.navigator as any) = window.navigator;
 
 // Mock canvas context
 const mockCanvasContext = {
@@ -83,7 +93,7 @@ function render(ui: ReactElement) {
     window.document.body.appendChild(container);
 
     const result = rtlRender(ui, {
-        container,
+        container: container as unknown as HTMLElement,
     });
 
     return {
