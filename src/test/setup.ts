@@ -9,16 +9,14 @@ const window = new Window({
     url: 'http://localhost',
 });
 
-// Set up global variables
-(global as any).window = window;
-(global as any).document = window.document;
-(global as any).navigator = window.navigator;
-(global as any).HTMLCanvasElement = window.HTMLCanvasElement;
-
 // Configure testing environment
-(global as any).IS_REACT_ACT_ENVIRONMENT = true;
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-// Mock canvas context
+// Basic DOM setup
+globalThis.window = window;
+globalThis.document = window.document;
+
+// Basic canvas mock
 const mockCanvasContext = {
     drawImage: () => {},
     fillRect: () => {},
@@ -31,27 +29,33 @@ const mockCanvasContext = {
     restore: () => {},
 };
 
-// Mock HTMLCanvasElement
-(global as any).HTMLCanvasElement.prototype.getContext = function () {
-    return mockCanvasContext;
-};
+class MockCanvas extends window.HTMLElement {
+    getContext() {
+        return mockCanvasContext;
+    }
+}
 
-// Mock ResizeObserver
-(global as any).ResizeObserver = class ResizeObserver {
+// Register custom elements
+window.customElements.define('canvas', MockCanvas);
+
+// Basic ResizeObserver mock
+class MockResizeObserver {
     observe() {}
     unobserve() {}
     disconnect() {}
-};
+}
 
-// Add missing DOM APIs
-(global as any).window.getComputedStyle = () => ({
-    getPropertyValue: () => '',
+// Add required window methods
+Object.defineProperty(window, 'ResizeObserver', { value: MockResizeObserver });
+Object.defineProperty(window, 'getComputedStyle', {
+    value: () => ({ getPropertyValue: () => '' }),
 });
-
-(global as any).window.matchMedia = () => ({
-    matches: false,
-    addListener: () => {},
-    removeListener: () => {},
+Object.defineProperty(window, 'matchMedia', {
+    value: () => ({
+        matches: false,
+        addListener: () => {},
+        removeListener: () => {},
+    }),
 });
 
 // Create root element for React Testing Library

@@ -10,20 +10,17 @@ const window = new Window({
 });
 
 // Set up global variables
-Object.defineProperty(globalThis, 'window', {
-    value: window,
-    writable: true,
-});
+declare global {
+    var window: Window;
+    var document: Document;
+    var navigator: Navigator;
+    var HTMLCanvasElement: typeof Window.prototype.HTMLCanvasElement;
+    var ResizeObserver: typeof Window.prototype.ResizeObserver;
+}
 
-Object.defineProperty(globalThis, 'document', {
-    value: window.document,
-    writable: true,
-});
-
-Object.defineProperty(globalThis, 'navigator', {
-    value: window.navigator,
-    writable: true,
-});
+globalThis.window = window;
+globalThis.document = window.document;
+globalThis.navigator = window.navigator;
 
 // Mock canvas context
 const mockCanvasContext = {
@@ -56,7 +53,7 @@ class MockCanvas extends window.HTMLElement {
     }
 }
 window.customElements.define('mock-canvas', MockCanvas);
-(window as any).HTMLCanvasElement = MockCanvas;
+globalThis.HTMLCanvasElement = MockCanvas as unknown as typeof HTMLCanvasElement;
 
 // Mock ResizeObserver
 class MockResizeObserver {
@@ -64,7 +61,7 @@ class MockResizeObserver {
     unobserve() {}
     disconnect() {}
 }
-(window as any).ResizeObserver = MockResizeObserver;
+globalThis.ResizeObserver = MockResizeObserver as unknown as typeof ResizeObserver;
 
 // Mock window methods
 Object.defineProperty(window, 'getComputedStyle', {

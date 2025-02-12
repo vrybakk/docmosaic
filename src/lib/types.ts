@@ -63,4 +63,14 @@ export interface DragPosition {
 export interface ResizeInfo {
   id: string;
   handle: 'right' | 'bottom' | 'bottomRight';
+    startWidth: number;
+    startHeight: number;
+    startX: number;
+    startY: number;
+}
+
+export interface PDFGenerationOptions {
+    pageSize: PageSize;
+    orientation: PageOrientation;
+    pages: Page[];
 }

@@ -1,17 +1,19 @@
 import { jsPDF } from 'jspdf';
-import { ImageSection, Page, PageOrientation, PageSize } from './types';
-
-export interface PDFGenerationOptions {
-    pageSize: PageSize;
-    orientation: PageOrientation;
-    pages: Page[];
-}
+import { ImageSection, PDFGenerationOptions, PageSize } from './types';
 
 // Define page sizes in points (72 DPI)
-const CUSTOM_PAGE_SIZES = {
-    EXECUTIVE: [522, 756], // 7.25" × 10.5"
-    STATEMENT: [396, 612], // 5.5" × 8.5"
-    FOLIO: [612, 936], // 8.5" × 13"
+const CUSTOM_PAGE_SIZES: Record<PageSize, [number, number]> = {
+    A3: [841.89, 1190.55],
+    A4: [595.28, 841.89],
+    A5: [419.53, 595.28],
+    B4: [708.66, 1000.63],
+    B5: [498.9, 708.66],
+    LETTER: [612, 792],
+    LEGAL: [612, 1008],
+    TABLOID: [792, 1224],
+    EXECUTIVE: [522, 756],
+    STATEMENT: [396, 612],
+    FOLIO: [612, 936],
 };
 
 export async function generatePDF(
@@ -23,7 +25,7 @@ export async function generatePDF(
     // Create PDF with points as unit
     const doc = new jsPDF({
         unit: 'pt',
-        format: CUSTOM_PAGE_SIZES[pageSize] || pageSize,
+        format: CUSTOM_PAGE_SIZES[pageSize],
         orientation: orientation,
     });
 
@@ -31,7 +33,7 @@ export async function generatePDF(
         // Process each page
         for (let i = 0; i < pages.length; i++) {
             if (i > 0) {
-                doc.addPage(CUSTOM_PAGE_SIZES[pageSize] || pageSize, orientation);
+                doc.addPage(CUSTOM_PAGE_SIZES[pageSize], orientation);
             }
 
             // Filter sections for current page

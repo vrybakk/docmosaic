@@ -1,4 +1,4 @@
-import { ImageSection } from '@/lib/types';
+import { ImageSection, MeasurementUnit } from '@/lib/types';
 import { render } from '@testing-library/react';
 import { describe, expect, it, jest } from 'bun:test';
 import { PDFCanvas } from '../PDFCanvas';
@@ -24,7 +24,7 @@ describe('PDFCanvas', () => {
         pageSize: {
             width: 794,
             height: 1123,
-            unit: 'px',
+            unit: 'px' as MeasurementUnit,
         },
     };
 

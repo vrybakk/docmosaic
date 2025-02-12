@@ -1,1 +1,13 @@
-bun test
+echo "Running pre-commit checks..."
+
+# Run TypeScript type checking
+echo "Running type check..."
+bun typecheck || exit 1
+
+# Run tests
+echo "Running tests..."
+bun test || exit 1
+
+# Run linting
+echo "Running lint..."
+bun lint || exit 1
