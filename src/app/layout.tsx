@@ -1,64 +1,89 @@
-import Header from '@/components/Header';
-import { Inter, Poppins } from 'next/font/google';
-import type React from 'react'; // Import React
+import Header from '@/components/header';
+import { Analytics } from '@vercel/analytics/next';
+import { Viewport } from 'next';
+import { Montserrat } from 'next/font/google';
+import type React from 'react';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const poppins = Poppins({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-poppins',
+const montserrat = Montserrat({
+    subsets: ['latin', 'cyrillic'],
+    variable: '--font-montserrat',
 });
 
 export const metadata = {
-  title: 'DocMosaic - Free Open Source Tool for Visual PDF Creation',
-  description:
-    'Create beautiful PDF documents by arranging images like a mosaic. Free, open-source tool for visual document creation, perfect for ID cards, photos, and receipts. No registration needed.',
-  keywords: [
-    'pdf creator',
-    'document mosaic',
-    'free pdf tool',
-    'open source pdf',
-    'visual document creator',
-    'image arrangement',
-    'id document scanner',
-  ],
-  openGraph: {
-    title: 'DocMosaic - Visual PDF Creation Tool',
-    description: 'Create beautiful PDFs by arranging images like a mosaic. Free and open source.',
-    type: 'website',
-    url: 'https://docmosaic.com',
-    images: [
-      {
-        url: 'https://docmosaic.com/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'DocMosaic Preview',
-      },
+    title: {
+        default: 'DocMosaic - Free Open Source Tool for Visual PDF Creation',
+        template: '%s | DocMosaic',
+    },
+    description:
+        'Free and open source tool for creating structured PDF documents with arranged images.',
+    keywords: [
+        'pdf creator',
+        'document mosaic',
+        'free pdf tool',
+        'open source pdf',
+        'visual document creator',
+        'image arrangement',
+        'id document scanner',
+        'creador de pdf',
+        'herramienta pdf gratuita',
+        'створення pdf',
+        'безкоштовний інструмент pdf',
     ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'DocMosaic - Visual PDF Creation Tool',
-    description: 'Create beautiful PDFs by arranging images like a mosaic. Free and open source.',
-    images: [
-      {
-        url: 'https://docmosaic.com/twitter-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'DocMosaic Preview',
-      },
-    ],
-  },
+    alternates: {
+        languages: {
+            'en-US': '/',
+            'es-ES': '/es',
+            'uk-UA': '/uk',
+        },
+    },
+    openGraph: {
+        title: 'DocMosaic - Visual PDF Creation Tool',
+        description:
+            'Create beautiful PDFs by arranging images like a mosaic. Free and open source.',
+        type: 'website',
+        url: 'https://docmosaic.vercel.app',
+        images: [
+            {
+                url: 'https://docmosaic.vercel.app/og-image.png',
+                width: 1200,
+                height: 630,
+                alt: 'DocMosaic Preview',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'DocMosaic - Visual PDF Creation Tool',
+        description:
+            'Create beautiful PDFs by arranging images like a mosaic. Free and open source.',
+        images: [
+            {
+                url: 'https://docmosaic.vercel.app/twitter-image.png',
+                width: 1200,
+                height: 630,
+                alt: 'DocMosaic Preview',
+            },
+        ],
+    },
+};
+
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: '#381D2A',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang='en'>
-      <body className={`${inter.variable} ${poppins.variable} font-sans`}>
-        <Header />
-        {children}
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body className={`${montserrat.variable} font-sans`}>
+                <Header />
+                {children}
+                <Analytics />
+            </body>
+        </html>
+    );
 }
