@@ -77,7 +77,7 @@ export default function Header() {
                                 Back to Home
                             </Link>
                         )}
-                        <div className="relative">
+                        {/* <div className="relative">
                             <button
                                 onClick={toggleLanguageMenu}
                                 className="flex items-center space-x-1 text-docmosaic-purple hover:underline"
@@ -107,7 +107,7 @@ export default function Header() {
                                     </button>
                                 </div>
                             )}
-                        </div>
+                        </div> */}
                     </div>
                     <button
                         className="md:hidden text-docmosaic-purple"

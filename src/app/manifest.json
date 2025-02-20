@@ -1,0 +1,40 @@
+{
+    "name": "DocMosaic",
+    "short_name": "DocMosaic",
+    "description": "Free and open source tool for creating structured PDF documents with arranged images",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#381D2A",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/screenshot-1.png",
+            "sizes": "1080x1920",
+            "type": "image/png",
+            "label": "DocMosaic PDF Editor"
+        }
+    ],
+    "categories": ["productivity", "utilities"],
+    "shortcuts": [
+        {
+            "name": "New Document",
+            "url": "/pdf-editor",
+            "description": "Create a new PDF document"
+        }
+    ]
+}

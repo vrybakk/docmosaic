@@ -6,7 +6,7 @@ import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensi
 import { Minus, Plus, RotateCcw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
-import { ImageSectionComponent } from '../ImageSection';
+import { ImageSectionComponent } from '../image-section';
 
 interface CanvasProps {
     /** The current page data */
@@ -76,7 +76,8 @@ export function Canvas({
             // Calculate scale to fit the page within the container
             const scaleX = containerWidth / pageDimensions.width;
             const scaleY = containerHeight / pageDimensions.height;
-            const newScale = Math.min(scaleX, scaleY, 1); // Cap at 1 to prevent enlargement
+            // Remove the cap at 1 to allow proper scaling
+            const newScale = Math.min(scaleX, scaleY);
 
             setScale(newScale);
             // Reset pan when scale changes
