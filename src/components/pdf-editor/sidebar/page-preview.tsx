@@ -1,8 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { getPageDimensionsWithOrientation } from '@/lib/page-sizes';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
+import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
 import { cn } from '@/lib/utils';
 import { Trash2 } from 'lucide-react';
 import Image from 'next/image';
