@@ -3,15 +3,14 @@
 import { Button } from '@/components/ui/button';
 import { ImageSection } from '@/lib/pdf-editor/types';
 import { cn } from '@/lib/utils';
+import { useDrag } from '@use-gesture/react';
 import { Copy, ImageIcon, Maximize2, RefreshCw, Trash2 } from 'lucide-react';
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { DragSourceMonitor, useDrag } from 'react-dnd';
+import { useCallback, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 // Constants for size constraints
 const MIN_SECTION_SIZE = 100; // Minimum size in pixels
-const MIN_IMAGE_SIZE = 50; // Minimum image size to maintain quality
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -119,9 +118,8 @@ export function ImageSectionComponent({
     onDelete,
     onClick,
 }: ImageSectionProps) {
-    const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
-    const dragStart = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
     const resizeStart = useRef<{
         x: number;
         y: number;
@@ -137,233 +135,179 @@ export function ImageSectionComponent({
     const [isDroppingFile, setIsDroppingFile] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<UploadProgressInfo | null>(null);
 
-    // React DnD hook
-    const [{ isDraggingDnd }, dragRef] = useDrag(
-        () => ({
-            type: 'IMAGE_SECTION',
-            item: { id: section.id, type: 'IMAGE_SECTION' },
-            collect: (monitor: DragSourceMonitor) => ({
-                isDraggingDnd: monitor.isDragging(),
-            }),
-        }),
-        [section.id],
-    );
+    // Handle resize start
+    const handleResizeStart = (e: React.MouseEvent, handle: ResizeHandle) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('🔍 Resize Start:', { handle });
 
-    const combinedRef = (node: HTMLDivElement | null) => {
-        if (node) {
-            dragRef(node);
-        }
-    };
+        // Set resize state
+        setIsResizing(true);
+        setResizeHandle(handle);
+        setIsDragging(false);
 
-    // Handle image upload
-    const handleImageUpload = useCallback(
-        async (e: React.ChangeEvent<HTMLInputElement>) => {
+        // Store initial dimensions
+        const startData = {
+            x: e.clientX,
+            y: e.clientY,
+            width: section.width,
+            height: section.height,
+            left: section.x,
+            top: section.y,
+            aspectRatio: section.imageUrl ? section.width / section.height : undefined,
+        };
+        resizeStart.current = startData;
+
+        // Add event listeners
+        const handleMouseMove = (e: MouseEvent) => {
+            e.preventDefault();
             e.stopPropagation();
-            const file = e.target.files?.[0];
-            if (!file) return;
 
-            try {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const imageUrl = event.target?.result as string;
-                    if (imageUrl) {
-                        const img = document.createElement('img');
-                        img.onload = () => {
-                            const aspectRatio = img.width / img.height;
-                            const newHeight = section.width / aspectRatio;
-                            onUpdate({
-                                ...section,
-                                imageUrl,
-                                height: newHeight,
-                            });
-                        };
-                        img.src = imageUrl;
-                        onImageUpload(section.id, imageUrl);
+            if (!resizeStart.current || !handle) return;
+
+            console.log('🔄 Resize Moving:', { isResizing: true, handle });
+            const dx = e.clientX - startData.x;
+            const dy = e.clientY - startData.y;
+
+            let newWidth = startData.width;
+            let newHeight = startData.height;
+            let newX = startData.left;
+            let newY = startData.top;
+
+            const isCorner = handle.length > 5;
+            const aspectRatio = isCorner && startData.aspectRatio;
+
+            // Resize logic with aspect ratio maintenance for corners
+            switch (handle) {
+                case 'right':
+                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width + dx);
+                    break;
+                case 'left':
+                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width - dx);
+                    newX = startData.left + (startData.width - newWidth);
+                    break;
+                case 'bottom':
+                    newHeight = Math.max(MIN_SECTION_SIZE, startData.height + dy);
+                    break;
+                case 'top':
+                    newHeight = Math.max(MIN_SECTION_SIZE, startData.height - dy);
+                    newY = startData.top + (startData.height - newHeight);
+                    break;
+                case 'bottomRight':
+                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width + dx);
+                    if (aspectRatio) {
+                        newHeight = newWidth / aspectRatio;
+                    } else {
+                        newHeight = Math.max(MIN_SECTION_SIZE, startData.height + dy);
                     }
-                };
-                reader.readAsDataURL(file);
-            } catch (error) {
-                console.error('Failed to upload image:', error);
-            } finally {
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = '';
-                }
-            }
-        },
-        [section, onImageUpload, onUpdate],
-    );
-
-    // Handle resize to proportion
-    const handleResizeToProportion = useCallback(() => {
-        if (!section.imageUrl || !imageRef.current) return;
-
-        const img = imageRef.current;
-        const aspectRatio = img.naturalWidth / img.naturalHeight;
-
-        // If image is too small, enforce minimum size while maintaining aspect ratio
-        if (img.naturalWidth < MIN_IMAGE_SIZE || img.naturalHeight < MIN_IMAGE_SIZE) {
-            // Calculate new dimensions that maintain aspect ratio and meet minimum size
-            let newWidth = Math.max(MIN_SECTION_SIZE, img.naturalWidth);
-            let newHeight = newWidth / aspectRatio;
-
-            // If height is still too small, base it on height instead
-            if (newHeight < MIN_SECTION_SIZE) {
-                newHeight = MIN_SECTION_SIZE;
-                newWidth = newHeight * aspectRatio;
+                    break;
+                case 'bottomLeft':
+                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width - dx);
+                    newX = startData.left + (startData.width - newWidth);
+                    if (aspectRatio) {
+                        newHeight = newWidth / aspectRatio;
+                    } else {
+                        newHeight = Math.max(MIN_SECTION_SIZE, startData.height + dy);
+                    }
+                    break;
+                case 'topRight':
+                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width + dx);
+                    if (aspectRatio) {
+                        newHeight = newWidth / aspectRatio;
+                        newY = startData.top + (startData.height - newHeight);
+                    } else {
+                        newHeight = Math.max(MIN_SECTION_SIZE, startData.height - dy);
+                        newY = startData.top + (startData.height - newHeight);
+                    }
+                    break;
+                case 'topLeft':
+                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width - dx);
+                    newX = startData.left + (startData.width - newWidth);
+                    if (aspectRatio) {
+                        newHeight = newWidth / aspectRatio;
+                        newY = startData.top + (startData.height - newHeight);
+                    } else {
+                        newHeight = Math.max(MIN_SECTION_SIZE, startData.height - dy);
+                        newY = startData.top + (startData.height - newHeight);
+                    }
+                    break;
             }
 
             onUpdate({
                 ...section,
                 width: Math.round(newWidth),
                 height: Math.round(newHeight),
+                x: Math.round(newX),
+                y: Math.round(newY),
             });
-        }
-        // If image is smaller than current width but larger than minimum, resize to actual size
-        else if (img.naturalWidth < section.width) {
-            onUpdate({
-                ...section,
-                width: Math.max(MIN_SECTION_SIZE, img.naturalWidth),
-                height: Math.max(MIN_SECTION_SIZE, img.naturalHeight),
-            });
-        } else {
-            // Otherwise just adjust height to maintain proportion
-            const newHeight = section.width / aspectRatio;
-            onUpdate({
-                ...section,
-                height: Math.max(MIN_SECTION_SIZE, newHeight),
-            });
-        }
-    }, [section, onUpdate]);
+        };
 
-    // Handle resize start
-    const handleResizeMouseDown = useCallback(
-        (e: React.MouseEvent, handle: ResizeHandle) => {
-            e.stopPropagation();
+        const handleMouseUp = (e: MouseEvent) => {
             e.preventDefault();
-            setIsResizing(true);
-            setResizeHandle(handle);
+            e.stopPropagation();
+            console.log('🔍 Resize End');
 
-            const aspectRatio =
-                section.imageUrl && imageRef.current
-                    ? imageRef.current.naturalWidth / imageRef.current.naturalHeight
-                    : null;
+            // Clear resize state
+            setIsResizing(false);
+            setResizeHandle(null);
+            resizeStart.current = null;
 
-            resizeStart.current = {
-                x: e.clientX,
-                y: e.clientY,
-                width: section.width,
-                height: section.height,
-                left: section.x,
-                top: section.y,
-                aspectRatio: aspectRatio || undefined,
-            };
-        },
-        [section],
-    );
+            // Remove event listeners
+            window.removeEventListener('mousemove', handleMouseMove, { capture: true });
+            window.removeEventListener('mouseup', handleMouseUp, { capture: true });
+        };
 
-    // Handle mouse move for both drag and resize
-    const handleMouseMove = useCallback(
-        (e: MouseEvent) => {
-            if (isDragging && dragStart.current) {
-                e.preventDefault();
-                const dx = e.clientX - dragStart.current.x;
-                const dy = e.clientY - dragStart.current.y;
+        // Add event listeners with capture phase
+        window.addEventListener('mousemove', handleMouseMove, { capture: true });
+        window.addEventListener('mouseup', handleMouseUp, { capture: true });
+    };
 
-                onUpdate({
-                    ...section,
-                    x: Math.round(dragStart.current.left + dx),
-                    y: Math.round(dragStart.current.top + dy),
-                });
-            } else if (isResizing && resizeStart.current && resizeHandle) {
-                e.preventDefault();
-                const dx = e.clientX - resizeStart.current.x;
-                const dy = e.clientY - resizeStart.current.y;
+    // Use gesture hook for drag
+    const bindDrag = useDrag(
+        ({ movement: [mx, my], first, active, memo }) => {
+            console.log('🔍 Drag Event:', { isResizing, first, active });
 
-                let newWidth = resizeStart.current.width;
-                let newHeight = resizeStart.current.height;
-                let newX = resizeStart.current.left;
-                let newY = resizeStart.current.top;
+            if (isResizing) {
+                console.log('❌ Drag blocked - resize in progress');
+                return false;
+            }
 
-                const isCorner = resizeHandle.length > 5;
-                const aspectRatio = isCorner && resizeStart.current.aspectRatio;
+            if (first) {
+                console.log('🎯 Drag Start');
+                setIsDragging(true);
+                return [section.x, section.y];
+            }
 
-                // Resize logic with aspect ratio maintenance for corners
-                switch (resizeHandle) {
-                    case 'right':
-                        newWidth = Math.max(100, resizeStart.current.width + dx);
-                        break;
-                    case 'left':
-                        newWidth = Math.max(100, resizeStart.current.width - dx);
-                        newX = resizeStart.current.left + resizeStart.current.width - newWidth;
-                        break;
-                    case 'bottom':
-                        newHeight = Math.max(100, resizeStart.current.height + dy);
-                        break;
-                    case 'top':
-                        newHeight = Math.max(100, resizeStart.current.height - dy);
-                        newY = resizeStart.current.top + resizeStart.current.height - newHeight;
-                        break;
-                    case 'bottomRight':
-                        newWidth = Math.max(100, resizeStart.current.width + dx);
-                        newHeight = aspectRatio
-                            ? newWidth / aspectRatio
-                            : Math.max(100, resizeStart.current.height + dy);
-                        break;
-                    case 'bottomLeft':
-                        newWidth = Math.max(100, resizeStart.current.width - dx);
-                        newX = resizeStart.current.left + resizeStart.current.width - newWidth;
-                        newHeight = aspectRatio
-                            ? newWidth / aspectRatio
-                            : Math.max(100, resizeStart.current.height + dy);
-                        break;
-                    case 'topRight':
-                        newWidth = Math.max(100, resizeStart.current.width + dx);
-                        newHeight = aspectRatio
-                            ? newWidth / aspectRatio
-                            : Math.max(100, resizeStart.current.height - dy);
-                        newY = resizeStart.current.top + resizeStart.current.height - newHeight;
-                        break;
-                    case 'topLeft':
-                        newWidth = Math.max(100, resizeStart.current.width - dx);
-                        newX = resizeStart.current.left + resizeStart.current.width - newWidth;
-                        newHeight = aspectRatio
-                            ? newWidth / aspectRatio
-                            : Math.max(100, resizeStart.current.height - dy);
-                        newY = resizeStart.current.top + resizeStart.current.height - newHeight;
-                        break;
+            if (!active) {
+                console.log('🎯 Drag End');
+                setIsDragging(false);
+                return memo;
+            }
+
+            if (active) {
+                // Don't update if we're resizing
+                if (isResizing) {
+                    console.log('❌ Drag update blocked - resize in progress');
+                    return memo;
                 }
+                console.log('🎯 Drag Moving');
+                const [startX, startY] = memo || [section.x, section.y];
+                const newX = Math.max(0, startX + mx);
+                const newY = Math.max(0, startY + my);
 
                 onUpdate({
                     ...section,
-                    width: Math.round(newWidth),
-                    height: Math.round(newHeight),
                     x: Math.round(newX),
                     y: Math.round(newY),
                 });
             }
+
+            return memo;
         },
-        [isDragging, isResizing, onUpdate, section, resizeHandle],
+        {
+            enabled: !isResizing,
+        },
     );
-
-    // Handle mouse up
-    const handleMouseUp = useCallback(() => {
-        setIsDragging(false);
-        setIsResizing(false);
-        dragStart.current = null;
-        resizeStart.current = null;
-    }, []);
-
-    // Add/remove event listeners
-    useEffect(() => {
-        if (isDragging || isResizing) {
-            window.addEventListener('mousemove', handleMouseMove);
-            window.addEventListener('mouseup', handleMouseUp);
-            return () => {
-                window.removeEventListener('mousemove', handleMouseMove);
-                window.removeEventListener('mouseup', handleMouseUp);
-            };
-        }
-    }, [isDragging, isResizing, handleMouseMove, handleMouseUp]);
 
     // Handle click to select
     const handleClick = (e: React.MouseEvent) => {
@@ -491,17 +435,97 @@ export function ImageSectionComponent({
         setIsDroppingFile(false);
     };
 
+    // Handle image upload
+    const handleImageUpload = useCallback(
+        async (e: React.ChangeEvent<HTMLInputElement>) => {
+            e.stopPropagation();
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            try {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imageUrl = event.target?.result as string;
+                    if (imageUrl) {
+                        const img = document.createElement('img');
+                        img.onload = () => {
+                            const aspectRatio = img.width / img.height;
+                            const newHeight = section.width / aspectRatio;
+                            onUpdate({
+                                ...section,
+                                imageUrl,
+                                height: newHeight,
+                            });
+                        };
+                        img.src = imageUrl;
+                        onImageUpload(section.id, imageUrl);
+                    }
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Failed to upload image:', error);
+            } finally {
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
+            }
+        },
+        [section, onImageUpload, onUpdate],
+    );
+
+    // Handle resize to proportion
+    const handleResizeToProportion = useCallback(() => {
+        if (!section.imageUrl || !imageRef.current) return;
+
+        const img = imageRef.current;
+        const aspectRatio = img.naturalWidth / img.naturalHeight;
+
+        // If image is too small, enforce minimum size while maintaining aspect ratio
+        if (img.naturalWidth < MIN_SECTION_SIZE || img.naturalHeight < MIN_SECTION_SIZE) {
+            // Calculate new dimensions that maintain aspect ratio and meet minimum size
+            let newWidth = Math.max(MIN_SECTION_SIZE, img.naturalWidth);
+            let newHeight = newWidth / aspectRatio;
+
+            // If height is still too small, base it on height instead
+            if (newHeight < MIN_SECTION_SIZE) {
+                newHeight = MIN_SECTION_SIZE;
+                newWidth = newHeight * aspectRatio;
+            }
+
+            onUpdate({
+                ...section,
+                width: Math.round(newWidth),
+                height: Math.round(newHeight),
+            });
+        }
+        // If image is smaller than current width but larger than minimum, resize to actual size
+        else if (img.naturalWidth < section.width) {
+            onUpdate({
+                ...section,
+                width: Math.max(MIN_SECTION_SIZE, img.naturalWidth),
+                height: Math.max(MIN_SECTION_SIZE, img.naturalHeight),
+            });
+        } else {
+            // Otherwise just adjust height to maintain proportion
+            const newHeight = section.width / aspectRatio;
+            onUpdate({
+                ...section,
+                height: Math.max(MIN_SECTION_SIZE, newHeight),
+            });
+        }
+    }, [section, onUpdate]);
+
     return (
         <div
-            ref={combinedRef}
+            {...bindDrag()}
             className={cn(
                 'absolute transition-all duration-150 p-1',
                 'border-2 border-dashed border-gray-300 hover:border-docmosaic-purple/50',
-                'rounded-lg overflow-visible group',
+                'rounded-lg overflow-visible group touch-none',
                 isSelected && 'border-solid border-docmosaic-purple shadow-lg',
                 isDroppingFile && 'border-docmosaic-purple border-solid bg-docmosaic-purple/5',
-                (isDragging || isDraggingDnd) && 'opacity-50',
-                (isDragging || isResizing) && 'pointer-events-none',
+                isDragging && 'opacity-50 cursor-grabbing',
+                isResizing && 'pointer-events-none',
             )}
             style={{
                 left: section.x,
@@ -509,7 +533,6 @@ export function ImageSectionComponent({
                 width: section.width,
                 height: section.height,
                 cursor: isDragging ? 'grabbing' : 'grab',
-                touchAction: 'none',
             }}
             onClick={handleClick}
             onDragOver={handleDragOver}
@@ -517,7 +540,7 @@ export function ImageSectionComponent({
             onDrop={handleFileDrop}
         >
             {/* Resize handles - always show on hover */}
-            <ResizeHandles onResizeStart={handleResizeMouseDown} />
+            <ResizeHandles onResizeStart={handleResizeStart} />
 
             {/* Top menu - show on hover or when selected */}
             <div

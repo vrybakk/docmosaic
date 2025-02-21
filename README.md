@@ -24,7 +24,7 @@ A web-based tool for creating PDF documents with images. Perfect for arranging I
 
 ```bash
 git clone <repository-url>
-cd doc-mosaic
+cd docmosaic
 ```
 
 2. Install dependencies:
