@@ -54,7 +54,7 @@ export function useDocumentState() {
     };
 
     const addSection = () => {
-        const newSection = createNewImageSection(50, 50, document.currentPage);
+        const newSection = createNewImageSection(5, 5, document.currentPage);
         const newDocument = {
             ...document,
             sections: [...document.sections, newSection],

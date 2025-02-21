@@ -129,7 +129,6 @@ export function ImageSectionComponent({
         top: number;
         aspectRatio?: number;
     } | null>(null);
-    const [resizeHandle, setResizeHandle] = useState<ResizeHandle | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
     const [isDroppingFile, setIsDroppingFile] = useState(false);
@@ -143,7 +142,6 @@ export function ImageSectionComponent({
 
         // Set resize state
         setIsResizing(true);
-        setResizeHandle(handle);
         setIsDragging(false);
 
         // Store initial dimensions
@@ -249,7 +247,6 @@ export function ImageSectionComponent({
 
             // Clear resize state
             setIsResizing(false);
-            setResizeHandle(null);
             resizeStart.current = null;
 
             // Remove event listeners
@@ -265,47 +262,46 @@ export function ImageSectionComponent({
     // Use gesture hook for drag
     const bindDrag = useDrag(
         ({ movement: [mx, my], first, active, memo }) => {
-            console.log('🔍 Drag Event:', { isResizing, first, active });
-
             if (isResizing) {
-                console.log('❌ Drag blocked - resize in progress');
                 return false;
             }
 
             if (first) {
-                console.log('🎯 Drag Start');
                 setIsDragging(true);
-                return [section.x, section.y];
+                return { startX: section.x, startY: section.y };
             }
 
             if (!active) {
-                console.log('🎯 Drag End');
                 setIsDragging(false);
                 return memo;
             }
 
-            if (active) {
-                // Don't update if we're resizing
-                if (isResizing) {
-                    console.log('❌ Drag update blocked - resize in progress');
-                    return memo;
-                }
-                console.log('🎯 Drag Moving');
-                const [startX, startY] = memo || [section.x, section.y];
-                const newX = Math.max(0, startX + mx);
-                const newY = Math.max(0, startY + my);
+            // Get page dimensions from the parent element
+            const pageElement = document.querySelector('.bg-white.shadow-lg') as HTMLElement;
+            if (!pageElement) return memo;
 
-                onUpdate({
-                    ...section,
-                    x: Math.round(newX),
-                    y: Math.round(newY),
-                });
-            }
+            const { startX, startY } = memo || { startX: section.x, startY: section.y };
+
+            // Calculate new position with bounds
+            const maxX = Math.max(0, pageElement.clientWidth - section.width);
+            const maxY = Math.max(0, pageElement.clientHeight - section.height);
+
+            const newX = Math.max(0, Math.min(maxX, startX + mx));
+            const newY = Math.max(0, Math.min(maxY, startY + my));
+
+            onUpdate({
+                ...section,
+                x: Math.round(newX),
+                y: Math.round(newY),
+            });
 
             return memo;
         },
         {
             enabled: !isResizing,
+            bounds: { left: 0, top: 0 },
+            filterTaps: true,
+            rubberband: true,
         },
     );
 
@@ -519,7 +515,7 @@ export function ImageSectionComponent({
         <div
             {...bindDrag()}
             className={cn(
-                'absolute transition-all duration-150 p-1',
+                'absolute p-1',
                 'border-2 border-dashed border-gray-300 hover:border-docmosaic-purple/50',
                 'rounded-lg overflow-visible group touch-none',
                 isSelected && 'border-solid border-docmosaic-purple shadow-lg',
