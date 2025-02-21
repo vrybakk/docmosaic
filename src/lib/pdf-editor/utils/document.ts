@@ -56,12 +56,15 @@ export function createNewImageSection(
     y: number = 50,
     page: number = 1,
 ): ImageSection {
+    // Initial size in pixels, accounting for the fact that it will be converted to points (72/96)
+    // and that we want it to be roughly 1/6 of the page width
+    const initialSize = 75; // Initial size in pixels (will be ~56 points after 72/96 DPI conversion)
     return {
         id: uuidv4(),
         x,
         y,
-        width: 200,
-        height: 200,
+        width: initialSize,
+        height: initialSize,
         page,
     };
 }

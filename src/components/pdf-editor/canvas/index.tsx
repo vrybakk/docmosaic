@@ -260,16 +260,32 @@ export function Canvas({
                     <div
                         className="absolute inset-0"
                         style={{
-                            transform: `scale(${finalScale})`,
-                            transformOrigin: 'top left',
+                            width: pageDimensions.width * finalScale,
+                            height: pageDimensions.height * finalScale,
                         }}
                     >
                         {pageSections.map((section) => (
                             <ImageSectionComponent
                                 key={section.id}
-                                section={section}
+                                section={{
+                                    ...section,
+                                    // Convert from pixels to points and then apply scale
+                                    x: section.x * (72 / 96) * finalScale,
+                                    y: section.y * (72 / 96) * finalScale,
+                                    width: section.width * (72 / 96) * finalScale,
+                                    height: section.height * (72 / 96) * finalScale,
+                                }}
                                 isSelected={section.id === selectedSectionId}
-                                onUpdate={onSectionUpdate}
+                                onUpdate={(updatedSection) => {
+                                    // Convert back from points to pixels and remove scale
+                                    onSectionUpdate({
+                                        ...updatedSection,
+                                        x: (updatedSection.x / finalScale) * (96 / 72),
+                                        y: (updatedSection.y / finalScale) * (96 / 72),
+                                        width: (updatedSection.width / finalScale) * (96 / 72),
+                                        height: (updatedSection.height / finalScale) * (96 / 72),
+                                    });
+                                }}
                                 onImageUpload={onImageUpload}
                                 onDuplicate={onSectionDuplicate}
                                 onDelete={onSectionDelete}

@@ -596,8 +596,12 @@ export function ImageSectionComponent({
                                     fileInputRef.current?.click();
                                 }}
                             >
-                                <RefreshCw className="h-4 w-4 mr-2" />
-                                {isDroppingFile ? 'Drop to Replace' : 'Replace'}
+                                <RefreshCw className="h-4 w-4" />
+                                {section.width >= 150 && (
+                                    <span className="ml-2">
+                                        {isDroppingFile ? 'Drop to Replace' : 'Replace'}
+                                    </span>
+                                )}
                             </Button>
                         </div>
                     </>
@@ -618,8 +622,12 @@ export function ImageSectionComponent({
                                 fileInputRef.current?.click();
                             }}
                         >
-                            <ImageIcon className="h-4 w-4 mr-2" />
-                            {isDroppingFile ? 'Drop Image Here' : 'Upload Image'}
+                            <ImageIcon className="h-4 w-4" />
+                            {section.width >= 150 && (
+                                <span className="ml-2">
+                                    {isDroppingFile ? 'Drop Image Here' : 'Upload Image'}
+                                </span>
+                            )}
                         </Button>
                     </div>
                 )}
