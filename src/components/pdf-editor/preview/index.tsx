@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { trackEvent } from '@/lib/analytics';
 import { generatePDF } from '@/lib/pdf';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { Download, Loader2, Printer, X } from 'lucide-react';
@@ -39,6 +40,7 @@ export function Preview({
     // Generate preview when dialog opens
     useEffect(() => {
         if (!isOpen) return;
+        trackEvent.preview();
 
         const generatePreviews = async () => {
             setIsLoading(true);
@@ -67,6 +69,26 @@ export function Preview({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, sections, pageSize, orientation, pages]);
 
+    const handlePrint = async () => {
+        if (!previewUrls[0]) return;
+        trackEvent.print(true); // true indicates print from preview
+        const response = await fetch(previewUrls[0]);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const printWindow = window.open(url);
+        if (printWindow) {
+            printWindow.onload = () => {
+                printWindow.print();
+                URL.revokeObjectURL(url);
+            };
+        }
+    };
+
+    const handleDownload = () => {
+        trackEvent.download(true); // true indicates download from preview
+        onDownload();
+    };
+
     // Preview content with controls
     const PreviewContent = () => (
         <div className="flex flex-col h-full">
@@ -77,19 +99,7 @@ export function Preview({
                         <>
                             <Button
                                 variant="outline"
-                                onClick={async () => {
-                                    if (!previewUrls[0]) return;
-                                    const response = await fetch(previewUrls[0]);
-                                    const blob = await response.blob();
-                                    const url = URL.createObjectURL(blob);
-                                    const printWindow = window.open(url);
-                                    if (printWindow) {
-                                        printWindow.onload = () => {
-                                            printWindow.print();
-                                            URL.revokeObjectURL(url);
-                                        };
-                                    }
-                                }}
+                                onClick={handlePrint}
                                 className="bg-white hover:bg-gray-50"
                                 disabled={isLoading || !previewUrls.length}
                             >
@@ -98,7 +108,7 @@ export function Preview({
                             </Button>
                             <Button
                                 variant="default"
-                                onClick={onDownload}
+                                onClick={handleDownload}
                                 className="bg-docmosaic-purple hover:bg-docmosaic-purple/90 text-white"
                             >
                                 <Download className="h-4 w-4 mr-2" />
@@ -182,7 +192,14 @@ export function Preview({
             <DialogHeader className="hidden">
                 <DialogTitle>Preview</DialogTitle>
             </DialogHeader>
-            <DialogContent className="max-w-[95vw] w-[900px] h-[90vh] p-0" hideCloseButton>
+            <DialogContent
+                className="max-w-[95vw] w-[900px] h-[90vh] p-0"
+                hideCloseButton
+                aria-describedby="preview-dialog-description"
+            >
+                <div id="preview-dialog-description" className="sr-only">
+                    Preview your PDF document with options to print or download
+                </div>
                 <PreviewContent />
             </DialogContent>
         </Dialog>

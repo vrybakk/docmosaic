@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { trackEvent } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
 import { Download, Eye, Loader2, Printer, Redo, Undo, X } from 'lucide-react';
 
@@ -60,6 +61,21 @@ export function Toolbar({
         if (bytes < 1024) return `${bytes} B`;
         if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
         return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    };
+
+    const handlePreview = () => {
+        trackEvent.preview();
+        onPreview();
+    };
+
+    const handlePrint = () => {
+        trackEvent.print(false); // false indicates print from toolbar
+        onPrint();
+    };
+
+    const handleDownload = () => {
+        trackEvent.download(false); // false indicates download from toolbar
+        onDownload();
     };
 
     return (
@@ -146,7 +162,7 @@ export function Toolbar({
                             <div className="w-full flex items-center gap-2">
                                 <Button
                                     variant="outline"
-                                    onClick={onPreview}
+                                    onClick={handlePreview}
                                     disabled={!hasContent}
                                     className={cn(
                                         'bg-white hover:bg-gray-50',
@@ -159,7 +175,7 @@ export function Toolbar({
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    onClick={onPrint}
+                                    onClick={handlePrint}
                                     disabled={!hasContent}
                                     className={cn(
                                         'bg-white hover:bg-gray-50',
@@ -173,7 +189,7 @@ export function Toolbar({
                             </div>
                             <Button
                                 variant="default"
-                                onClick={onDownload}
+                                onClick={handleDownload}
                                 disabled={!hasContent}
                                 className={cn(
                                     'bg-docmosaic-purple hover:bg-docmosaic-purple/90',

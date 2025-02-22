@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import Loader from '@/components/ui/loader';
+import { trackEvent } from '@/lib/analytics';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
 import { Minus, Plus, RotateCcw } from 'lucide-react';
@@ -90,20 +91,33 @@ export function Canvas({
         return () => window.removeEventListener('resize', updateScale);
     }, [pageDimensions.width, pageDimensions.height]);
 
-    // Zoom controls
-    const handleZoomIn = () => setZoom((prev) => Math.min(prev + ZOOM_STEP, MAX_ZOOM));
-    const handleZoomOut = () => setZoom((prev) => Math.max(prev - ZOOM_STEP, MIN_ZOOM));
+    // Zoom controls with analytics
+    const handleZoomIn = () => {
+        const newZoom = Math.min(zoom + ZOOM_STEP, MAX_ZOOM);
+        setZoom(newZoom);
+        trackEvent.zoom(newZoom);
+    };
+
+    const handleZoomOut = () => {
+        const newZoom = Math.max(zoom - ZOOM_STEP, MIN_ZOOM);
+        setZoom(newZoom);
+        trackEvent.zoom(newZoom);
+    };
+
     const handleZoomReset = () => {
         setZoom(1);
         setPan({ x: 0, y: 0 });
+        trackEvent.zoom(1);
     };
 
-    // Mouse wheel zoom
+    // Mouse wheel zoom with analytics
     const handleWheel = (e: React.WheelEvent) => {
         if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
             const delta = e.deltaY * -0.01;
-            setZoom((prev) => Math.min(Math.max(prev + delta, MIN_ZOOM), MAX_ZOOM));
+            const newZoom = Math.min(Math.max(zoom + delta, MIN_ZOOM), MAX_ZOOM);
+            setZoom(newZoom);
+            trackEvent.zoom(newZoom);
         }
     };
 
@@ -182,7 +196,7 @@ export function Canvas({
     const pageSections = sections.filter((section) => section.page === currentPage);
     const finalScale = scale * zoom;
 
-    // Handle section drag and drop
+    // Handle section drag and drop with analytics
     const [, dropRef] = useDrop(
         () => ({
             accept: 'IMAGE_SECTION',
@@ -192,6 +206,7 @@ export function Canvas({
 
                 const section = sections.find((s) => s.id === item.id);
                 if (section) {
+                    trackEvent.dragSection();
                     onSectionUpdate({
                         ...section,
                         x: Math.round(section.x + delta.x / finalScale),

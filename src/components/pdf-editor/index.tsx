@@ -1,8 +1,10 @@
 'use client';
 
+import { trackEvent } from '@/lib/analytics';
 import { estimatePDFSize, generatePDF } from '@/lib/pdf';
 import { useDocumentState } from '@/lib/pdf-editor/hooks/useDocumentState';
 import { getDownloadFileName } from '@/lib/pdf-editor/utils/document';
+import { PageOrientation, PageSize } from '@/lib/types';
 import { Menu } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
@@ -65,6 +67,10 @@ export function PDFEditor() {
     // AbortController for cancellation
     const abortControllerRef = useRef<AbortController | null>(null);
 
+    useEffect(() => {
+        trackEvent.editorInit();
+    }, []);
+
     // Update estimated size when document changes
     useEffect(() => {
         const backgrounds = document.pages.map((page) => page.backgroundPDF);
@@ -82,6 +88,7 @@ export function PDFEditor() {
 
     // Handle adding a new section
     const handleAddSection = () => {
+        trackEvent.addSection();
         // Add section in the center of the viewport
         const section = addSection();
         // Select the new section
@@ -216,6 +223,22 @@ export function PDFEditor() {
         }));
     };
 
+    const handlePageSizeChange = (value: PageSize) => {
+        trackEvent.pageSize(value);
+        updatePageSize(value);
+    };
+
+    const handleOrientationChange = (value: PageOrientation) => {
+        trackEvent.orientation(value);
+        updateOrientation(value);
+    };
+
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newName = e.target.value;
+        trackEvent.rename(document.name, newName);
+        updateName(newName);
+    };
+
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="flex flex-col h-screen bg-gray-50">
@@ -224,9 +247,9 @@ export function PDFEditor() {
                     name={document.name}
                     pageSize={document.pageSize}
                     orientation={document.orientation}
-                    onNameChange={(e) => updateName(e.target.value)}
-                    onPageSizeChange={updatePageSize}
-                    onOrientationChange={updateOrientation}
+                    onNameChange={handleNameChange}
+                    onPageSizeChange={handlePageSizeChange}
+                    onOrientationChange={handleOrientationChange}
                 />
 
                 {/* Toolbar */}
@@ -234,8 +257,14 @@ export function PDFEditor() {
                     canUndo={canUndo}
                     canRedo={canRedo}
                     hasContent={document.sections.length > 0}
-                    onUndo={undo}
-                    onRedo={redo}
+                    onUndo={() => {
+                        trackEvent.undo();
+                        undo();
+                    }}
+                    onRedo={() => {
+                        trackEvent.redo();
+                        redo();
+                    }}
                     onPreview={() => setIsPreviewOpen(true)}
                     onPrint={handlePrint}
                     onDownload={handleDownload}
