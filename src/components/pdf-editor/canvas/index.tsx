@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import Loader from '@/components/ui/loader';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
 import { Minus, Plus, RotateCcw } from 'lucide-react';
@@ -61,11 +62,13 @@ export function Canvas({
     const [scale, setScale] = useState(1);
     const [zoom, setZoom] = useState(1);
     const [pan, setPan] = useState({ x: 0, y: 0 });
+    const [isLoading, setIsLoading] = useState(true);
     const touchStartRef = useRef<{ x: number; y: number; distance?: number } | null>(null);
     const pageDimensions = getPageDimensionsWithOrientation(pageSize, orientation);
 
     // Calculate base scale based on container size
     useEffect(() => {
+        setIsLoading(true);
         const updateScale = () => {
             if (!containerRef.current) return;
 
@@ -82,6 +85,8 @@ export function Canvas({
             setScale(newScale);
             // Reset pan when scale changes
             setPan({ x: 0, y: 0 });
+            // Remove loading state after a short delay to ensure smooth transition
+            setTimeout(() => setIsLoading(false), 100);
         };
 
         updateScale();
@@ -237,104 +242,110 @@ export function Canvas({
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
         >
-            <div className="flex items-center justify-center min-h-full">
-                {/* Page container */}
-                <div
-                    ref={combinedRef}
-                    className="bg-white shadow-lg relative transition-transform duration-200 ease-out"
-                    style={{
-                        width: pageDimensions.width * finalScale,
-                        height: pageDimensions.height * finalScale,
-                        transform: `translate(${pan.x}px, ${pan.y}px)`,
-                    }}
-                >
-                    {/* Background PDF if available */}
-                    {page.backgroundPDF && (
-                        <div
-                            className="absolute inset-0 bg-contain bg-center bg-no-repeat"
-                            style={{ backgroundImage: `url(${page.backgroundPDF})` }}
-                        />
-                    )}
-
-                    {/* Sections container with scaling */}
+            {isLoading ? (
+                <Loader />
+            ) : (
+                <div className="flex items-center justify-center min-h-full">
+                    {/* Page container */}
                     <div
-                        className="absolute inset-0"
+                        ref={combinedRef}
+                        className="bg-white shadow-lg relative transition-transform duration-200 ease-out"
                         style={{
                             width: pageDimensions.width * finalScale,
                             height: pageDimensions.height * finalScale,
+                            transform: `translate(${pan.x}px, ${pan.y}px)`,
                         }}
                     >
-                        {pageSections.map((section) => (
-                            <ImageSectionComponent
-                                key={section.id}
-                                section={{
-                                    ...section,
-                                    // Apply final scale only for display
-                                    x: section.x * finalScale,
-                                    y: section.y * finalScale,
-                                    width: section.width * finalScale,
-                                    height: section.height * finalScale,
-                                }}
-                                isSelected={section.id === selectedSectionId}
-                                onUpdate={(updatedSection) => {
-                                    // Scale back all dimensions exactly
-                                    const updatedCoords = {
-                                        ...updatedSection,
-                                        x: updatedSection.x / finalScale,
-                                        y: updatedSection.y / finalScale,
-                                        width: updatedSection.width / finalScale,
-                                        height: updatedSection.height / finalScale,
-                                    };
-
-                                    onSectionUpdate(updatedCoords);
-                                }}
-                                onImageUpload={onImageUpload}
-                                onDuplicate={onSectionDuplicate}
-                                onDelete={onSectionDelete}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onSectionSelect(section.id);
-                                }}
+                        {/* Background PDF if available */}
+                        {page.backgroundPDF && (
+                            <div
+                                className="absolute inset-0 bg-contain bg-center bg-no-repeat"
+                                style={{ backgroundImage: `url(${page.backgroundPDF})` }}
                             />
-                        ))}
+                        )}
+
+                        {/* Sections container with scaling */}
+                        <div
+                            className="absolute inset-0"
+                            style={{
+                                width: pageDimensions.width * finalScale,
+                                height: pageDimensions.height * finalScale,
+                            }}
+                        >
+                            {pageSections.map((section) => (
+                                <ImageSectionComponent
+                                    key={section.id}
+                                    section={{
+                                        ...section,
+                                        // Apply final scale only for display
+                                        x: section.x * finalScale,
+                                        y: section.y * finalScale,
+                                        width: section.width * finalScale,
+                                        height: section.height * finalScale,
+                                    }}
+                                    isSelected={section.id === selectedSectionId}
+                                    onUpdate={(updatedSection) => {
+                                        // Scale back all dimensions exactly
+                                        const updatedCoords = {
+                                            ...updatedSection,
+                                            x: updatedSection.x / finalScale,
+                                            y: updatedSection.y / finalScale,
+                                            width: updatedSection.width / finalScale,
+                                            height: updatedSection.height / finalScale,
+                                        };
+
+                                        onSectionUpdate(updatedCoords);
+                                    }}
+                                    onImageUpload={onImageUpload}
+                                    onDuplicate={onSectionDuplicate}
+                                    onDelete={onSectionDelete}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onSectionSelect(section.id);
+                                    }}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
-            {/* Zoom controls */}
-            <div className="absolute top-4 right-4 flex items-center gap-2 bg-white rounded-lg shadow-sm p-1 z-10">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleZoomOut}
-                    disabled={zoom <= MIN_ZOOM}
-                    className="h-8 w-8"
-                >
-                    <Minus className="h-4 w-4" />
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleZoomReset}
-                    disabled={zoom === 1}
-                    className="h-8 w-8"
-                    title="Reset zoom"
-                >
-                    <RotateCcw className="h-4 w-4" />
-                </Button>
-                <span className="text-sm font-medium w-12 text-center">
-                    {Math.round(zoom * 100)}%
-                </span>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleZoomIn}
-                    disabled={zoom >= MAX_ZOOM}
-                    className="h-8 w-8"
-                >
-                    <Plus className="h-4 w-4" />
-                </Button>
-            </div>
+            {/* Zoom controls - only show when not loading */}
+            {!isLoading && (
+                <div className="absolute top-4 right-4 flex items-center gap-2 bg-white rounded-lg shadow-sm p-1 z-10">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleZoomOut}
+                        disabled={zoom <= MIN_ZOOM}
+                        className="h-8 w-8"
+                    >
+                        <Minus className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleZoomReset}
+                        disabled={zoom === 1}
+                        className="h-8 w-8"
+                        title="Reset zoom"
+                    >
+                        <RotateCcw className="h-4 w-4" />
+                    </Button>
+                    <span className="text-sm font-medium w-12 text-center">
+                        {Math.round(zoom * 100)}%
+                    </span>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleZoomIn}
+                        disabled={zoom >= MAX_ZOOM}
+                        className="h-8 w-8"
+                    >
+                        <Plus className="h-4 w-4" />
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }
