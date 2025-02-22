@@ -2,21 +2,16 @@ import { jsPDF } from 'jspdf';
 import { processImagesForPDF } from './pdf-editor/utils/image';
 import { PDFGenerationOptions, PageSize, Section } from './types';
 
-// Define page sizes in points (72 DPI)
+// Standard page sizes in points (72 DPI)
 const CUSTOM_PAGE_SIZES: Record<PageSize, [number, number]> = {
-    // ISO A series
     A0: [2383.94, 3370.39],
     A1: [1683.78, 2383.94],
     A2: [1190.55, 1683.78],
     A3: [841.89, 1190.55],
     A4: [595.28, 841.89],
     A5: [419.53, 595.28],
-
-    // ISO B series
     B4: [708.66, 1000.63],
     B5: [498.9, 708.66],
-
-    // North American sizes
     LETTER: [612.0, 792.0],
     LEGAL: [612.0, 1008.0],
     TABLOID: [792.0, 1224.0],
@@ -35,24 +30,20 @@ interface GenerationOptions extends PDFGenerationOptions {
 }
 
 /**
- * Estimates the final PDF size based on sections and backgrounds
+ * Estimates final PDF size based on sections and backgrounds
+ * Uses base64 length and compression estimates for calculation
  */
 export function estimatePDFSize(sections: Section[], backgrounds: (string | null)[]): number {
-    // Base PDF size
-    let estimatedSize = 5 * 1024; // 5KB base
+    let estimatedSize = 5 * 1024; // 5KB base size
 
-    // Add size for each image section
     sections.forEach((section) => {
         if (section.imageUrl) {
-            // Extract base64 data
             const base64Length = section.imageUrl.split(',')[1]?.length || 0;
-            // Convert base64 to approximate byte size and add compression estimate
             const imageSize = Math.ceil(((base64Length * 3) / 4) * 0.7); // 0.7 for JPEG compression
             estimatedSize += imageSize;
         }
     });
 
-    // Add size for backgrounds
     backgrounds.forEach((bg) => {
         if (bg) {
             const base64Length = bg.split(',')[1]?.length || 0;
@@ -65,8 +56,8 @@ export function estimatePDFSize(sections: Section[], backgrounds: (string | null
 }
 
 /**
- * Generates a PDF from the given sections and options
- * Handles image optimization and quality control
+ * Generates PDF from sections and backgrounds
+ * Handles image optimization, quality control, and progress tracking
  */
 export async function generatePDF(
     sections: Section[],
@@ -76,10 +67,9 @@ export async function generatePDF(
     const { pageSize, orientation, pages, signal } = options;
 
     try {
-        // Process and optimize all images before PDF generation
         onProgress?.({ stage: 'optimizing', progress: 0 });
 
-        // First optimize background PDFs
+        // Optimize background PDFs first (30% of optimization phase)
         const optimizedBackgrounds = await Promise.all(
             pages.map(async (page, index) => {
                 if (!page.backgroundPDF) return null;
@@ -99,7 +89,6 @@ export async function generatePDF(
                             },
                         ],
                         (progress) => {
-                            // Weight background progress as 30% of optimization phase
                             onProgress?.({
                                 stage: 'optimizing',
                                 progress: Math.round(progress * 0.3),
@@ -116,9 +105,8 @@ export async function generatePDF(
 
         if (signal?.aborted) throw new Error('PDF generation cancelled');
 
-        // Then optimize section images
+        // Optimize section images (70% of optimization phase)
         const optimizedSections = await processImagesForPDF(sections, (progress) => {
-            // Weight section progress as 70% of optimization phase
             onProgress?.({
                 stage: 'optimizing',
                 progress: 30 + Math.round(progress * 0.7),
@@ -127,7 +115,7 @@ export async function generatePDF(
 
         if (signal?.aborted) throw new Error('PDF generation cancelled');
 
-        // Create PDF with points as unit and compression
+        // Create PDF with points as unit and compression enabled
         onProgress?.({ stage: 'generating', progress: 0 });
         const doc = new jsPDF({
             unit: 'pt',
@@ -136,7 +124,7 @@ export async function generatePDF(
             compress: true,
         });
 
-        // Process each page
+        // Process each page and its contents
         for (let i = 0; i < pages.length; i++) {
             if (signal?.aborted) throw new Error('PDF generation cancelled');
 
@@ -164,10 +152,8 @@ export async function generatePDF(
                 }
             }
 
-            // Filter and add sections for current page
+            // Add sections for current page
             const pageSections = optimizedSections.filter((section) => section.page === i + 1);
-
-            // Add each image to the page
             for (const section of pageSections) {
                 if (signal?.aborted) throw new Error('PDF generation cancelled');
 
@@ -190,14 +176,14 @@ export async function generatePDF(
                 }
             }
 
-            // Report progress
-            const progress = Math.round(((i + 1) / pages.length) * 100);
-            onProgress?.({ stage: 'generating', progress });
+            onProgress?.({
+                stage: 'generating',
+                progress: Math.round(((i + 1) / pages.length) * 100),
+            });
         }
 
         if (signal?.aborted) throw new Error('PDF generation cancelled');
 
-        // Generate PDF blob with optimal settings
         const output = doc.output('arraybuffer');
         const blob = new Blob([output], { type: 'application/pdf' });
 

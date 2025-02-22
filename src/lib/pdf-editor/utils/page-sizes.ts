@@ -1,6 +1,18 @@
+/**
+ * Standard page size definitions for PDF generation
+ * All dimensions are in points (72 DPI) for direct PDF compatibility
+ */
+
 import { PageOrientation, PageSize } from '../types';
 
-// Define page sizes in points (72 DPI)
+/**
+ * Standard page dimensions in points (72 DPI)
+ * Format: [width, height] for portrait orientation
+ * Values are derived from standard paper sizes:
+ * - ISO A series (A0-A5)
+ * - ISO B series (B4-B5)
+ * - North American sizes (Letter, Legal, etc.)
+ */
 export const CUSTOM_PAGE_SIZES: Record<PageSize, [number, number]> = {
     // ISO A series
     A0: [2383.94, 3370.39],
@@ -24,7 +36,9 @@ export const CUSTOM_PAGE_SIZES: Record<PageSize, [number, number]> = {
 };
 
 /**
- * Gets page dimensions in points based on size and orientation
+ * Calculates page dimensions based on size and orientation
+ * Swaps width and height for landscape orientation
+ * Returns dimensions in points (72 DPI)
  */
 export function getPageDimensionsWithOrientation(
     pageSize: PageSize,

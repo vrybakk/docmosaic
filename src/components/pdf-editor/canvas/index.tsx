@@ -42,8 +42,8 @@ const MAX_ZOOM = 2;
 const PINCH_THRESHOLD = 10;
 
 /**
- * Canvas component for the PDF editor
- * Displays the current page with its image sections
+ * Canvas component for PDF editor
+ * Handles page display, zoom, pan, and image section interactions
  */
 export function Canvas({
     page,
@@ -66,26 +66,22 @@ export function Canvas({
     const touchStartRef = useRef<{ x: number; y: number; distance?: number } | null>(null);
     const pageDimensions = getPageDimensionsWithOrientation(pageSize, orientation);
 
-    // Calculate base scale based on container size
+    // Auto-scale page to fit container
     useEffect(() => {
         setIsLoading(true);
         const updateScale = () => {
             if (!containerRef.current) return;
 
             const container = containerRef.current;
-            const containerWidth = container.clientWidth - 48; // Account for padding
+            const containerWidth = container.clientWidth - 48;
             const containerHeight = container.clientHeight - 48;
 
-            // Calculate scale to fit the page within the container
             const scaleX = containerWidth / pageDimensions.width;
             const scaleY = containerHeight / pageDimensions.height;
-            // Remove the cap at 1 to allow proper scaling
             const newScale = Math.min(scaleX, scaleY);
 
             setScale(newScale);
-            // Reset pan when scale changes
             setPan({ x: 0, y: 0 });
-            // Remove loading state after a short delay to ensure smooth transition
             setTimeout(() => setIsLoading(false), 100);
         };
 
@@ -94,23 +90,15 @@ export function Canvas({
         return () => window.removeEventListener('resize', updateScale);
     }, [pageDimensions.width, pageDimensions.height]);
 
-    // Handle zoom in
-    const handleZoomIn = () => {
-        setZoom((prev) => Math.min(prev + ZOOM_STEP, MAX_ZOOM));
-    };
-
-    // Handle zoom out
-    const handleZoomOut = () => {
-        setZoom((prev) => Math.max(prev - ZOOM_STEP, MIN_ZOOM));
-    };
-
-    // Handle zoom reset
+    // Zoom controls
+    const handleZoomIn = () => setZoom((prev) => Math.min(prev + ZOOM_STEP, MAX_ZOOM));
+    const handleZoomOut = () => setZoom((prev) => Math.max(prev - ZOOM_STEP, MIN_ZOOM));
     const handleZoomReset = () => {
         setZoom(1);
         setPan({ x: 0, y: 0 });
     };
 
-    // Handle wheel zoom
+    // Mouse wheel zoom
     const handleWheel = (e: React.WheelEvent) => {
         if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
@@ -119,14 +107,11 @@ export function Canvas({
         }
     };
 
-    // Trigger haptic feedback
+    // Touch interactions
     const triggerHaptic = () => {
-        if ('vibrate' in navigator) {
-            navigator.vibrate(50);
-        }
+        if ('vibrate' in navigator) navigator.vibrate(50);
     };
 
-    // Calculate distance between two touch points
     const getTouchDistance = (touches: React.TouchList): number => {
         if (touches.length < 2) return 0;
         const dx = touches[0].clientX - touches[1].clientX;
@@ -134,7 +119,6 @@ export function Canvas({
         return Math.sqrt(dx * dx + dy * dy);
     };
 
-    // Get center point between two touches
     const getTouchCenter = (touches: React.TouchList): { x: number; y: number } => {
         if (touches.length < 2) return { x: touches[0].clientX, y: touches[0].clientY };
         return {
@@ -143,10 +127,8 @@ export function Canvas({
         };
     };
 
-    // Handle touch events for pan and pinch zoom
     const handleTouchStart = (e: React.TouchEvent) => {
         if (e.touches.length === 2) {
-            // Pinch gesture start
             e.preventDefault();
             touchStartRef.current = {
                 x: getTouchCenter(e.touches).x,
@@ -155,7 +137,6 @@ export function Canvas({
             };
             triggerHaptic();
         } else if (e.touches.length === 1) {
-            // Single touch for pan
             touchStartRef.current = {
                 x: e.touches[0].clientX,
                 y: e.touches[0].clientY,
@@ -167,8 +148,7 @@ export function Canvas({
         if (!touchStartRef.current) return;
 
         if (e.touches.length === 2 && touchStartRef.current.distance !== undefined) {
-            // Handle pinch zoom
-            e.preventDefault(); // Prevent default zoom behavior
+            e.preventDefault();
             const newDistance = getTouchDistance(e.touches);
             const distanceDelta = newDistance - touchStartRef.current.distance;
 
@@ -179,7 +159,6 @@ export function Canvas({
                 triggerHaptic();
             }
         } else if (e.touches.length === 1) {
-            // Handle pan
             const deltaX = e.touches[0].clientX - touchStartRef.current.x;
             const deltaY = e.touches[0].clientY - touchStartRef.current.y;
 
@@ -201,11 +180,9 @@ export function Canvas({
 
     // Filter sections for current page
     const pageSections = sections.filter((section) => section.page === currentPage);
-
-    // Calculate final scale including zoom
     const finalScale = scale * zoom;
 
-    // Handle section drop
+    // Handle section drag and drop
     const [, dropRef] = useDrop(
         () => ({
             accept: 'IMAGE_SECTION',
@@ -227,9 +204,7 @@ export function Canvas({
     );
 
     const combinedRef = (node: HTMLDivElement | null) => {
-        if (node) {
-            dropRef(node);
-        }
+        if (node) dropRef(node);
     };
 
     return (
@@ -256,7 +231,7 @@ export function Canvas({
                             transform: `translate(${pan.x}px, ${pan.y}px)`,
                         }}
                     >
-                        {/* Background PDF if available */}
+                        {/* Background PDF */}
                         {page.backgroundPDF && (
                             <div
                                 className="absolute inset-0 bg-contain bg-center bg-no-repeat"
@@ -264,7 +239,7 @@ export function Canvas({
                             />
                         )}
 
-                        {/* Sections container with scaling */}
+                        {/* Image sections */}
                         <div
                             className="absolute inset-0"
                             style={{
@@ -277,7 +252,6 @@ export function Canvas({
                                     key={section.id}
                                     section={{
                                         ...section,
-                                        // Apply final scale only for display
                                         x: section.x * finalScale,
                                         y: section.y * finalScale,
                                         width: section.width * finalScale,
@@ -285,16 +259,13 @@ export function Canvas({
                                     }}
                                     isSelected={section.id === selectedSectionId}
                                     onUpdate={(updatedSection) => {
-                                        // Scale back all dimensions exactly
-                                        const updatedCoords = {
+                                        onSectionUpdate({
                                             ...updatedSection,
                                             x: updatedSection.x / finalScale,
                                             y: updatedSection.y / finalScale,
                                             width: updatedSection.width / finalScale,
                                             height: updatedSection.height / finalScale,
-                                        };
-
-                                        onSectionUpdate(updatedCoords);
+                                        });
                                     }}
                                     onImageUpload={onImageUpload}
                                     onDuplicate={onSectionDuplicate}
@@ -310,7 +281,7 @@ export function Canvas({
                 </div>
             )}
 
-            {/* Zoom controls - only show when not loading */}
+            {/* Zoom controls */}
             {!isLoading && (
                 <div className="absolute top-4 right-4 flex items-center gap-2 bg-white rounded-lg shadow-sm p-1 z-10">
                     <Button

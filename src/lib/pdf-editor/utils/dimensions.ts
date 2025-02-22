@@ -1,7 +1,15 @@
+/**
+ * Page dimension utilities and unit conversions
+ * Supports ISO (A/B series) and North American paper sizes
+ */
+
 import { MeasurementUnit, PageDimensions, PageOrientation, PageSize } from '../../types';
 import { CUSTOM_PAGE_SIZES } from './page-sizes';
 
-// Base dimensions in millimeters
+/**
+ * Standard page dimensions in millimeters
+ * Includes both ISO and North American sizes
+ */
 const PAGE_SIZES_MM: Record<PageSize, PageDimensions> = {
     // ISO A Series
     A0: { width: 841, height: 1189, unit: 'mm' },
@@ -22,7 +30,10 @@ const PAGE_SIZES_MM: Record<PageSize, PageDimensions> = {
     FOLIO: { width: 216, height: 330, unit: 'mm' },
 };
 
-// Labels for UI display
+/**
+ * Human-readable labels for page sizes
+ * Includes dimensions in millimeters for UI display
+ */
 export const PAGE_SIZE_LABELS: Record<PageSize, string> = {
     // ISO A Series
     A0: 'A0 (841×1189mm)',
@@ -43,18 +54,22 @@ export const PAGE_SIZE_LABELS: Record<PageSize, string> = {
     FOLIO: 'Folio (216×330mm)',
 };
 
-// Conversion factors
+/**
+ * Unit conversion factors for common measurements
+ * Based on standard DPI (96) and metric conversions
+ */
 const CONVERSION = {
-    'mm-in': 1 / 25.4,
-    'mm-px': 96 / 25.4, // 96 DPI
-    'in-mm': 25.4,
-    'in-px': 96,
-    'px-mm': 25.4 / 96,
-    'px-in': 1 / 96,
+    'mm-in': 1 / 25.4, // Millimeters to inches
+    'mm-px': 96 / 25.4, // Millimeters to pixels (96 DPI)
+    'in-mm': 25.4, // Inches to millimeters
+    'in-px': 96, // Inches to pixels (96 DPI)
+    'px-mm': 25.4 / 96, // Pixels to millimeters
+    'px-in': 1 / 96, // Pixels to inches
 };
 
 /**
- * Convert dimensions between different units
+ * Converts page dimensions between measurement units
+ * Supports mm, inches, and pixels with correct scaling
  */
 export function convertDimensions(
     dimensions: PageDimensions,
@@ -75,7 +90,8 @@ export function convertDimensions(
 }
 
 /**
- * Get page dimensions in the desired unit
+ * Retrieves page dimensions for a given size and unit
+ * Defaults to millimeters if no unit specified
  */
 export function getPageDimensions(
     pageSize: PageSize,
@@ -86,7 +102,8 @@ export function getPageDimensions(
 }
 
 /**
- * Format dimensions for display
+ * Formats dimensions for display with units
+ * Example: "210×297mm" or "8.5×11in"
  */
 export function formatDimensions(dimensions: PageDimensions): string {
     const w = Math.round(dimensions.width * 100) / 100;
@@ -95,7 +112,8 @@ export function formatDimensions(dimensions: PageDimensions): string {
 }
 
 /**
- * Gets page dimensions in points based on size and orientation
+ * Gets page dimensions in points (72 DPI) with orientation
+ * Swaps width/height for landscape orientation
  */
 export function getPageDimensionsWithOrientation(
     pageSize: PageSize,
@@ -106,15 +124,14 @@ export function getPageDimensionsWithOrientation(
 }
 
 /**
- * Converts millimeters to points (72 DPI)
+ * Unit conversion utilities for PDF generation
+ * Based on standard 72 DPI for PDF points
  */
+
 export function mmToPt(mm: number): number {
-    return mm * 2.83465; // 1 mm = 2.83465 pt
+    return mm * 2.83465; // 1 mm = 2.83465 pt (72 DPI)
 }
 
-/**
- * Converts points to millimeters
- */
 export function ptToMm(pt: number): number {
-    return pt / 2.83465; // 1 pt = 0.3528 mm
+    return pt / 2.83465; // 1 pt = 0.3528 mm (72 DPI)
 }

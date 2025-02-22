@@ -1,16 +1,19 @@
 import { ImageSection } from '../types';
 
 /**
- * Optimizes an image URL for PDF generation
- * Handles quality and size optimization while maintaining aspect ratio
+ * Optimizes a single image for PDF inclusion
+ * - Resizes large images to prevent excessive PDF size
+ * - Maintains aspect ratio during resizing
+ * - Converts to JPEG format with configurable quality
+ * - Uses canvas for smooth scaling
  */
 export async function optimizeImageForPDF(
     imageUrl: string,
     options: {
-        maxWidth?: number;
-        maxHeight?: number;
-        quality?: number;
-        targetDPI?: number;
+        maxWidth?: number; // Maximum width in pixels
+        maxHeight?: number; // Maximum height in pixels
+        quality?: number; // JPEG quality (0-1)
+        targetDPI?: number; // Target resolution for PDF
     } = {},
 ): Promise<string> {
     const {
@@ -57,7 +60,11 @@ export async function optimizeImageForPDF(
 }
 
 /**
- * Processes all sections and optimizes their images for PDF generation
+ * Batch processes all image sections for PDF generation
+ * - Optimizes each image in parallel
+ * - Reports progress through callback
+ * - Preserves original sections if optimization fails
+ * - Doubles dimensions for retina display support
  */
 export async function processImagesForPDF(
     sections: ImageSection[],

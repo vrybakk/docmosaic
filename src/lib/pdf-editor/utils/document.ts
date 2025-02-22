@@ -1,6 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ImageSection, Page, PDFDocument } from '../types';
 
+/**
+ * Creates a new empty document with default settings
+ * Initializes with A4 portrait format and single empty page
+ */
 export function createInitialDocument(): PDFDocument {
     const INITIAL_DATE = new Date();
     return {
@@ -19,6 +23,10 @@ export function createInitialDocument(): PDFDocument {
     };
 }
 
+/**
+ * Estimates the size of the final PDF in bytes
+ * Accounts for base document size and image data
+ */
 export function calculateEstimatedSize(sections: ImageSection[]): number {
     // Base PDF size (empty document)
     let estimatedSize = 5 * 1024; // 5KB base
@@ -37,12 +45,19 @@ export function calculateEstimatedSize(sections: ImageSection[]): number {
     return estimatedSize;
 }
 
+/**
+ * Generates a timestamped filename for document download
+ * Format: "{document name} YYYY-MM-DD HH-mm.pdf"
+ */
 export function getDownloadFileName(name: string): string {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
     const sanitizedName = name.trim() || 'Untitled Document';
     return `${sanitizedName} ${timestamp}.pdf`;
 }
 
+/**
+ * Creates a new empty page with unique ID
+ */
 export function createNewPage(): Page {
     return {
         id: uuidv4(),
@@ -51,6 +66,10 @@ export function createNewPage(): Page {
     };
 }
 
+/**
+ * Creates a new image section with default position and size
+ * Uses points (72 DPI) as the unit for PDF compatibility
+ */
 export function createNewImageSection(
     x: number = 50,
     y: number = 50,

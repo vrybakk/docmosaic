@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { generatePDF } from '@/lib/pdf';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
-import { cn } from '@/lib/utils';
 import { Download, Loader2, Printer, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -19,6 +18,10 @@ interface PreviewProps {
     orientation: PageOrientation;
 }
 
+/**
+ * Preview component for PDF editor
+ * Shows live preview of the PDF with print and download options
+ */
 export function Preview({
     isOpen,
     onClose,
@@ -33,6 +36,7 @@ export function Preview({
     const [currentPage, setCurrentPage] = useState(0);
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
+    // Generate preview when dialog opens
     useEffect(() => {
         if (!isOpen) return;
 
@@ -63,6 +67,7 @@ export function Preview({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, sections, pageSize, orientation, pages]);
 
+    // Preview content with controls
     const PreviewContent = () => (
         <div className="flex flex-col h-full">
             <div className="flex items-center justify-between p-4 border-b">
@@ -116,19 +121,12 @@ export function Preview({
                     </div>
                 ) : (
                     <div className="h-full overflow-auto p-4">
-                        <div
-                            className={cn(
-                                'flex flex-col items-center gap-4 w-full',
-                                'touch-pan-y touch-pinch-zoom',
-                            )}
-                        >
+                        <div className="flex flex-col items-center gap-4 w-full touch-pan-y touch-pinch-zoom">
                             {previewUrls.map((url, index) => (
                                 <div
                                     key={index}
                                     className="bg-white shadow-lg w-full relative"
-                                    style={{
-                                        height: 'calc(90vh - 150px)',
-                                    }}
+                                    style={{ height: 'calc(90vh - 150px)' }}
                                 >
                                     <embed
                                         src={url}
@@ -168,6 +166,7 @@ export function Preview({
         </div>
     );
 
+    // Render mobile sheet or desktop dialog
     if (isMobile) {
         return (
             <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
