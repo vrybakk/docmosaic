@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import { trackEvent } from './analytics';
 import { processImagesForPDF } from './pdf-editor/utils/image';
 import { PDFGenerationOptions, PageSize, Section } from './types';
 
@@ -65,6 +66,25 @@ export async function generatePDF(
     onProgress?: (progress: GenerationProgress) => void,
 ): Promise<Blob> {
     const { pageSize, orientation, pages, signal } = options;
+
+    // Calculate estimated size before generation
+    const estimatedSize = estimatePDFSize(
+        sections,
+        pages.map((page) => page.backgroundPDF),
+    );
+
+    // Collect document statistics
+    const documentStats = {
+        totalPages: pages.length,
+        totalImages: sections.filter((section) => section.imageUrl).length,
+        averageImagesPerPage: Math.round(
+            sections.filter((section) => section.imageUrl).length / pages.length,
+        ),
+        format: pageSize,
+        orientation: orientation,
+        fileSize: 0, // Will be updated after generation
+        estimatedSize: Math.round(estimatedSize / 1024), // Estimated size in KB
+    };
 
     try {
         onProgress?.({ stage: 'optimizing', progress: 0 });
@@ -186,6 +206,10 @@ export async function generatePDF(
 
         const output = doc.output('arraybuffer');
         const blob = new Blob([output], { type: 'application/pdf' });
+
+        // Update file size and track stats
+        documentStats.fileSize = Math.round(blob.size / 1024); // Size in KB
+        trackEvent.documentGenerated(documentStats);
 
         onProgress?.({ stage: 'complete', progress: 100 });
         return blob;
