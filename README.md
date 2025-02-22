@@ -1,70 +1,61 @@
-# Doc Mosaic - Simple PDF Document Creator
+# DocMosaic - Visual PDF Creation Tool
 
-A web-based tool for creating PDF documents with images. Perfect for arranging ID documents, receipts, photo collages, and more.
+DocMosaic is a powerful, open-source PDF creation tool that allows users to visually arrange images and create structured documents directly in the browser. Built with Next.js 14, React, TypeScript, and modern web technologies.
 
-## Features
+## 🌟 Features
 
-- Drag and drop interface for image placement
-- Resizable image sections
-- Real-time preview
-- A4 page format support
-- One-click PDF generation
-- Responsive design
+-   **Visual Document Building**: Drag-and-drop interface for arranging images
+-   **Multiple Page Support**: Create multi-page documents with ease
+-   **Flexible Page Settings**: Support for various paper sizes and orientations
+-   **Real-time Preview**: Instant visual feedback as you build your document
+-   **Privacy-First**: All processing happens in your browser - no server uploads
+-   **Responsive Design**: Works seamlessly on desktop and mobile devices
+-   **Accessibility**: Built with ARIA support and keyboard navigation
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ or Bun 1.0+
-- npm or bun package manager
-
-### Installation
-
-1. Clone the repository:
+## 🚀 Getting Started
 
 ```bash
-git clone <repository-url>
-cd docmosaic
-```
+# Clone the repository
+git clone https://github.com/vrybakk/doc-mosaic.git
 
-2. Install dependencies:
-
-```bash
+# Install dependencies
 bun install
-# or
+# or use npm if you prefer
 npm install
-```
 
-3. Start the development server:
-
-```bash
+# Start development server
 bun dev
 # or
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+Visit `http://localhost:3000` to start using DocMosaic.
 
-## Usage
+## 🛠️ Tech Stack
 
-1. Click "Create PDF" on the landing page
-2. Add sections to your document using the "Add Section" button
-3. Upload images to sections by dragging and dropping or clicking to browse
-4. Adjust section positions and sizes as needed
-5. Click "Download PDF" to generate and download your document
+-   **Framework**: Next.js 14 with App Router
+-   **Runtime**: Bun
+-   **Language**: TypeScript
+-   **Styling**: Tailwind CSS
+-   **Components**: Shadcn UI & Radix UI
+-   **PDF Generation**: Client-side processing
+-   **Analytics**: Vercel Analytics
 
-## Tech Stack
+## 📊 Privacy
 
-- Next.js 15
-- TypeScript
-- Tailwind CSS
-- React PDF
-- React Draggable
+DocMosaic respects your privacy. All document processing happens in your browser - your files never leave your device. We collect minimal anonymous usage data to improve the application (like page count and feature usage), but never any personal information or document content.
 
-## License
+## 🤝 Contributing
 
-MIT License - feel free to use this project for any purpose.
+We welcome contributions! Check out our [Contributing Guide](CONTRIBUTING.md) to get started. Whether it's bug fixes, new features, or documentation improvements - every contribution matters!
 
-## Contributing
+## 📝 License
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+MIT License - see [LICENSE](LICENSE) for details.
+
+## 🔗 Links
+
+-   [Documentation](docs/README.md)
+-   [Live Demo](https://docmosaic.vercel.app)
+-   [Report Bug](https://github.com/vrybakk/doc-mosaic/issues)
+-   [Request Feature](https://github.com/vrybakk/doc-mosaic/issues)
