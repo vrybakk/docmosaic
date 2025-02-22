@@ -12,6 +12,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { ORIENTATION_OPTIONS, PAGE_SIZE_OPTIONS } from '@/lib/pdf-editor/constants/theme';
 import { PageOrientation, PageSize } from '@/lib/pdf-editor/types';
+import { PAGE_SIZE_LABELS } from '@/lib/pdf-editor/utils/dimensions';
 import { cn } from '@/lib/utils';
 import { Pen, Settings2 } from 'lucide-react';
 import { useState } from 'react';
@@ -71,7 +72,7 @@ export function Header({
                     <Select value={pageSize} onValueChange={onPageSizeChange}>
                         <SelectTrigger
                             className={cn(
-                                'w-[120px] border-docmosaic-cream/20',
+                                'min-w-[120px] w-fit border-docmosaic-cream/20',
                                 'text-docmosaic-cream bg-transparent',
                                 'focus:ring-docmosaic-cream/20',
                             )}
@@ -79,11 +80,23 @@ export function Header({
                             <SelectValue placeholder="Page Size" />
                         </SelectTrigger>
                         <SelectContent>
-                            {PAGE_SIZE_OPTIONS.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </SelectItem>
-                            ))}
+                            {PAGE_SIZE_OPTIONS.map((item, index) =>
+                                item.type === 'title' ? (
+                                    <div
+                                        key={index}
+                                        className={cn(
+                                            'px-2 py-1.5 text-sm font-bold uppercase text-muted-foreground',
+                                            index !== 0 && 'border-t',
+                                        )}
+                                    >
+                                        {item.label}
+                                    </div>
+                                ) : (
+                                    <SelectItem key={item.value} value={item.value}>
+                                        {PAGE_SIZE_LABELS[item.value]}
+                                    </SelectItem>
+                                ),
+                            )}
                         </SelectContent>
                     </Select>
                     <Select value={orientation} onValueChange={onOrientationChange}>
@@ -130,11 +143,20 @@ export function Header({
                                             <SelectValue placeholder="Select page size" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {PAGE_SIZE_OPTIONS.map((option) => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
+                                            {PAGE_SIZE_OPTIONS.map((item, index) =>
+                                                item.type === 'title' ? (
+                                                    <div
+                                                        key={index}
+                                                        className="px-2 py-1.5 text-sm font-semibold text-muted-foreground"
+                                                    >
+                                                        {item.label}
+                                                    </div>
+                                                ) : (
+                                                    <SelectItem key={item.value} value={item.value}>
+                                                        {PAGE_SIZE_LABELS[item.value]}
+                                                    </SelectItem>
+                                                ),
+                                            )}
                                         </SelectContent>
                                     </Select>
                                 </div>

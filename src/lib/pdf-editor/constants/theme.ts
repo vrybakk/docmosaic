@@ -1,15 +1,23 @@
-import { CUSTOM_PAGE_SIZES } from '../utils/page-sizes';
+import { PageSize } from '../types';
 
-// Calculate dimensions in mm for display
-const PAGE_DIMENSIONS = Object.entries(CUSTOM_PAGE_SIZES).reduce(
-    (acc, [key, [width, height]]) => {
-        // Convert points to mm (1 pt = 0.3528 mm)
-        const widthMm = Math.round(width * 0.3528);
-        const heightMm = Math.round(height * 0.3528);
-        acc[key] = `${widthMm} × ${heightMm} mm`;
-        return acc;
-    },
-    {} as Record<string, string>,
+type PageSizeOption = { type: 'title'; label: string } | { type: 'option'; value: PageSize };
+
+// Group page sizes by series for organized presentation
+const PAGE_SIZE_GROUPS = {
+    'ISO A Series': ['A0', 'A1', 'A2', 'A3', 'A4', 'A5'],
+    'ISO B Series': ['B4', 'B5'],
+    'North American': ['LETTER', 'LEGAL', 'TABLOID', 'EXECUTIVE', 'STATEMENT', 'FOLIO'],
+} as const;
+
+// Generate page size options with section titles and dynamic dimensions
+export const PAGE_SIZE_OPTIONS: PageSizeOption[] = Object.entries(PAGE_SIZE_GROUPS).flatMap(
+    ([groupTitle, sizes]) => [
+        { type: 'title' as const, label: groupTitle },
+        ...sizes.map((size) => ({
+            type: 'option' as const,
+            value: size as PageSize,
+        })),
+    ],
 );
 
 export const DOCMOSAIC_COLORS = {
@@ -18,15 +26,6 @@ export const DOCMOSAIC_COLORS = {
     sage: '#C4D6B0',
     white: '#FFFFFF',
 } as const;
-
-// Sort page sizes by total area (width * height)
-export const PAGE_SIZE_OPTIONS = Object.entries(CUSTOM_PAGE_SIZES)
-    .sort(([, [w1, h1]], [, [w2, h2]]) => w2 * h2 - w1 * h1)
-    .map(([value]) => ({
-        value,
-        label: value,
-        dimensions: PAGE_DIMENSIONS[value],
-    }));
 
 export const ORIENTATION_OPTIONS = [
     { value: 'portrait', label: 'Portrait' },
