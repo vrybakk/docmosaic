@@ -138,7 +138,6 @@ export function ImageSectionComponent({
     const handleResizeStart = (e: React.MouseEvent, handle: ResizeHandle) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log('🔍 Resize Start:', { handle });
 
         // Set resize state
         setIsResizing(true);
@@ -242,7 +241,6 @@ export function ImageSectionComponent({
         const handleMouseUp = (e: MouseEvent) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log('🔍 Resize End');
 
             // Clear resize state
             setIsResizing(false);

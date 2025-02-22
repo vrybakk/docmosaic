@@ -10,7 +10,7 @@ export default function NotFound() {
                     <FileQuestion className="h-24 w-24 text-docmosaic-purple opacity-50" />
                 </div>
                 <h1 className="text-4xl font-bold text-docmosaic-purple">Page Not Found</h1>
-                <p className="text-xl text-docmosaic-purple/70 max-w-md">
+                <p className="mx-auto text-xl text-docmosaic-purple/70 max-w-md">
                     Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have
                     been moved or deleted.
                 </p>
