@@ -1,4 +1,5 @@
 import { MeasurementUnit, PageDimensions, PageOrientation, PageSize } from '../../types';
+import { CUSTOM_PAGE_SIZES } from './page-sizes';
 
 // Base dimensions in millimeters
 const PAGE_SIZES_MM: Record<PageSize, PageDimensions> = {
@@ -99,11 +100,9 @@ export function formatDimensions(dimensions: PageDimensions): string {
 export function getPageDimensionsWithOrientation(
     pageSize: PageSize,
     orientation: PageOrientation,
-): PageDimensions {
-    const dimensions = PAGE_SIZES_MM[pageSize];
-    return orientation === 'landscape'
-        ? { width: dimensions.height, height: dimensions.width, unit: dimensions.unit }
-        : dimensions;
+): { width: number; height: number } {
+    const [width, height] = CUSTOM_PAGE_SIZES[pageSize]; // This already returns points
+    return orientation === 'landscape' ? { width: height, height: width } : { width, height };
 }
 
 /**

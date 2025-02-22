@@ -56,15 +56,14 @@ export function createNewImageSection(
     y: number = 50,
     page: number = 1,
 ): ImageSection {
-    // Initial size in pixels, accounting for the fact that it will be converted to points (72/96)
-    // and that we want it to be roughly 1/6 of the page width
-    const initialSize = 75; // Initial size in pixels (will be ~56 points after 72/96 DPI conversion)
+    // Convert input pixels to points (72 DPI)
+    const pxToPoints = (px: number) => px * (72 / 96);
     return {
         id: uuidv4(),
-        x,
-        y,
-        width: initialSize,
-        height: initialSize,
+        x: pxToPoints(x),
+        y: pxToPoints(y),
+        width: 200, // Larger initial size (about 1/3 of A4 width)
+        height: 200, // Square aspect ratio initially
         page,
     };
 }

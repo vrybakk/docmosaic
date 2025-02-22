@@ -269,22 +269,24 @@ export function Canvas({
                                 key={section.id}
                                 section={{
                                     ...section,
-                                    // Convert from pixels to points and then apply scale
-                                    x: section.x * (72 / 96) * finalScale,
-                                    y: section.y * (72 / 96) * finalScale,
-                                    width: section.width * (72 / 96) * finalScale,
-                                    height: section.height * (72 / 96) * finalScale,
+                                    // Apply final scale only for display
+                                    x: section.x * finalScale,
+                                    y: section.y * finalScale,
+                                    width: section.width * finalScale,
+                                    height: section.height * finalScale,
                                 }}
                                 isSelected={section.id === selectedSectionId}
                                 onUpdate={(updatedSection) => {
-                                    // Convert back from points to pixels and remove scale
-                                    onSectionUpdate({
+                                    // Scale back all dimensions exactly
+                                    const updatedCoords = {
                                         ...updatedSection,
-                                        x: (updatedSection.x / finalScale) * (96 / 72),
-                                        y: (updatedSection.y / finalScale) * (96 / 72),
-                                        width: (updatedSection.width / finalScale) * (96 / 72),
-                                        height: (updatedSection.height / finalScale) * (96 / 72),
-                                    });
+                                        x: updatedSection.x / finalScale,
+                                        y: updatedSection.y / finalScale,
+                                        width: updatedSection.width / finalScale,
+                                        height: updatedSection.height / finalScale,
+                                    };
+
+                                    onSectionUpdate(updatedCoords);
                                 }}
                                 onImageUpload={onImageUpload}
                                 onDuplicate={onSectionDuplicate}

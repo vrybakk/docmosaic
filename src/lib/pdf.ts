@@ -176,12 +176,12 @@ export async function generatePDF(
                         doc.addImage(
                             section.imageUrl,
                             'JPEG',
-                            section.x * (72 / 96), // Convert pixels to points (96 DPI to 72 DPI)
-                            section.y * (72 / 96),
-                            section.width * (72 / 96),
-                            section.height * (72 / 96),
+                            section.x,
+                            section.y,
+                            section.width,
+                            section.height,
                             `img-${section.id}`,
-                            'MEDIUM',
+                            'SLOW',
                         );
                     } catch (error) {
                         console.error('Error adding image:', error);

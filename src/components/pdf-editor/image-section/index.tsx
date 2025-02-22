@@ -163,7 +163,6 @@ export function ImageSectionComponent({
 
             if (!resizeStart.current || !handle) return;
 
-            console.log('🔄 Resize Moving:', { isResizing: true, handle });
             const dx = e.clientX - startData.x;
             const dy = e.clientY - startData.y;
 

@@ -107,10 +107,10 @@ export function PagePreview({
                                     key={section.id}
                                     className="absolute"
                                     style={{
-                                        left: section.x * (72 / 96),
-                                        top: section.y * (72 / 96),
-                                        width: section.width * (72 / 96),
-                                        height: section.height * (72 / 96),
+                                        left: section.x,
+                                        top: section.y ,
+                                        width: section.width,
+                                        height: section.height,
                                     }}
                                 >
                                     {section.imageUrl && (
