@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { Section } from '../../types';
 import { ImageSection, Page, PDFDocument } from '../types';
 
 /**
@@ -84,5 +85,56 @@ export function createNewImageSection(
         width: 200, // Larger initial size (about 1/3 of A4 width)
         height: 200, // Square aspect ratio initially
         page,
+    };
+}
+
+/**
+ * Creates a new text section with default properties
+ * Positions the section at the center of the page
+ */
+export function createTextSection(
+    page: number,
+    x: number = 100,
+    y: number = 100,
+    width: number = 200,
+    height: number = 60,
+): Section {
+    return {
+        id: uuidv4(),
+        x,
+        y,
+        width,
+        height,
+        page,
+        type: 'text',
+        text: 'Click to edit text',
+        fontSize: 14,
+        fontFamily: 'helvetica',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
+        textAlign: 'left',
+        textColor: '#000000',
+    };
+}
+
+/**
+ * Creates a new image section with default properties
+ * Positions the section at the center of the page
+ */
+export function createImageSection(
+    page: number,
+    x: number = 100,
+    y: number = 100,
+    width: number = 200,
+    height: number = 200,
+): Section {
+    return {
+        id: uuidv4(),
+        x,
+        y,
+        width,
+        height,
+        page,
+        type: 'image',
     };
 }

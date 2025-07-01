@@ -1,8 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/core/button';
-import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
+import { Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
+import { Section } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Trash2 } from 'lucide-react';
 import Image from 'next/image';
@@ -15,7 +16,7 @@ interface PagePreviewProps {
     /** Whether this page is currently selected */
     isSelected: boolean;
     /** The sections (images) on this page */
-    sections: ImageSection[];
+    sections: Section[];
     /** The page size (A4, etc.) */
     pageSize: PageSize;
     /** The page orientation */
@@ -113,13 +114,33 @@ export function PagePreview({
                                         height: section.height,
                                     }}
                                 >
-                                    {section.imageUrl && (
+                                    {section.type === 'image' && section.imageUrl && (
                                         <Image
                                             src={section.imageUrl}
                                             alt=""
                                             fill
                                             className="object-contain"
                                         />
+                                    )}
+                                    {section.type === 'text' && section.text && (
+                                        <div
+                                            className="w-full h-full flex items-center justify-center text-xs"
+                                            style={{
+                                                fontSize: Math.max(
+                                                    8,
+                                                    (section.fontSize || 14) * scale,
+                                                ),
+                                                color: section.textColor || '#000000',
+                                                backgroundColor:
+                                                    section.backgroundColor || 'transparent',
+                                                textAlign: section.textAlign || 'left',
+                                                fontFamily: section.fontFamily || 'helvetica',
+                                                fontWeight: section.fontWeight || 'normal',
+                                                fontStyle: section.fontStyle || 'normal',
+                                            }}
+                                        >
+                                            {section.text}
+                                        </div>
                                     )}
                                 </div>
                             ))}

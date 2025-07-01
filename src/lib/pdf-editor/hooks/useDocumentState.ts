@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
-import { ImageSection, PageOrientation, PageSize, PDFDocument } from '../types';
-import { createInitialDocument, createNewImageSection, createNewPage } from '../utils/document';
+import { Section } from '../../types';
+import { PageOrientation, PageSize, PDFDocument } from '../types';
+import {
+    createImageSection,
+    createInitialDocument,
+    createNewPage,
+    createTextSection,
+} from '../utils/document';
 
 export function useDocumentState() {
     const [document, setDocument] = useState<PDFDocument>(createInitialDocument());
@@ -53,8 +59,12 @@ export function useDocumentState() {
         addToHistory(newDocument);
     };
 
-    const addSection = () => {
-        const newSection = createNewImageSection(5, 5, document.currentPage);
+    const addSection = (type: 'image' | 'text' = 'image') => {
+        const newSection =
+            type === 'text'
+                ? createTextSection(document.currentPage, 50, 50)
+                : createImageSection(document.currentPage, 50, 50);
+
         const newDocument = {
             ...document,
             sections: [...document.sections, newSection],
@@ -65,7 +75,7 @@ export function useDocumentState() {
         return newSection;
     };
 
-    const updateSection = (updatedSection: ImageSection) => {
+    const updateSection = (updatedSection: Section) => {
         updateDocument({
             sections: document.sections.map((section) =>
                 section.id === updatedSection.id ? updatedSection : section,
@@ -79,7 +89,7 @@ export function useDocumentState() {
         });
     };
 
-    const duplicateSection = (section: ImageSection) => {
+    const duplicateSection = (section: Section) => {
         const newSection = {
             ...section,
             id: crypto.randomUUID(),

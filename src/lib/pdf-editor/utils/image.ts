@@ -1,4 +1,4 @@
-import { ImageSection } from '../types';
+import { Section } from '@/lib/types';
 
 /**
  * Optimizes a single image for PDF inclusion
@@ -67,9 +67,9 @@ export async function optimizeImageForPDF(
  * - Doubles dimensions for retina display support
  */
 export async function processImagesForPDF(
-    sections: ImageSection[],
+    sections: Section[],
     onProgress?: (progress: number) => void,
-): Promise<ImageSection[]> {
+): Promise<Section[]> {
     const sectionsWithImages = sections.filter((section) => section.imageUrl);
     const totalImages = sectionsWithImages.length;
     let processedImages = 0;

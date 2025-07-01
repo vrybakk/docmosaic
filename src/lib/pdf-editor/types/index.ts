@@ -15,6 +15,8 @@ export type PageSize =
     | 'FOLIO';
 export type PageOrientation = 'portrait' | 'landscape';
 
+import { Section } from '../../types';
+
 export interface ImageSection {
     id: string;
     x: number;
@@ -27,14 +29,14 @@ export interface ImageSection {
 
 export interface Page {
     id: string;
-    sections: ImageSection[];
+    sections: Section[];
     backgroundPDF: string | null;
 }
 
 export interface PDFDocument {
     id: string;
     name: string;
-    sections: ImageSection[];
+    sections: Section[];
     createdAt: Date;
     updatedAt: Date;
     backgroundPDF: string | null;

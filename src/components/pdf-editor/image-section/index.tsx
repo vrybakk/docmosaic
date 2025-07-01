@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/core/button';
-import { ImageSection } from '@/lib/pdf-editor/types';
+import { Section } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useDrag } from '@use-gesture/react';
 import { Copy, ImageIcon, Maximize2, RefreshCw, Trash2 } from 'lucide-react';
@@ -16,15 +16,15 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 interface ImageSectionProps {
     /** The section data */
-    section: ImageSection;
+    section: Section;
     /** Whether the section is currently selected */
     isSelected: boolean;
     /** Callback when the section is updated */
-    onUpdate: (section: ImageSection) => void;
+    onUpdate: (section: Section) => void;
     /** Callback when an image is uploaded */
     onImageUpload: (sectionId: string, imageUrl: string) => void;
     /** Callback when the section is duplicated */
-    onDuplicate: (section: ImageSection) => void;
+    onDuplicate: (section: Section) => void;
     /** Callback when the section is deleted */
     onDelete: (sectionId: string) => void;
     /** Click handler */
@@ -131,8 +131,19 @@ export function ImageSectionComponent({
     } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
+    const textRef = useRef<HTMLDivElement>(null);
     const [isDroppingFile, setIsDroppingFile] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<UploadProgressInfo | null>(null);
+
+    const handleTextChange = () => {
+        if (textRef.current) {
+            const content = textRef.current.innerHTML;
+            onUpdate({
+                ...section,
+                text: content,
+            });
+        }
+    };
 
     // Handle resize start
     const handleResizeStart = (e: React.MouseEvent, handle: ResizeHandle) => {
@@ -516,7 +527,9 @@ export function ImageSectionComponent({
                 'border-2 border-dashed border-gray-300 hover:border-docmosaic-purple/50',
                 'rounded-lg overflow-visible group touch-none',
                 isSelected && 'border-solid border-docmosaic-purple shadow-lg',
-                isDroppingFile && 'border-docmosaic-purple border-solid bg-docmosaic-purple/5',
+                section.type === 'image' &&
+                    isDroppingFile &&
+                    'border-docmosaic-purple border-solid bg-docmosaic-purple/5',
                 isDragging && 'opacity-50 cursor-grabbing',
                 isResizing && 'pointer-events-none',
             )}
@@ -528,9 +541,9 @@ export function ImageSectionComponent({
                 cursor: isDragging ? 'grabbing' : 'grab',
             }}
             onClick={handleClick}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleFileDrop}
+            onDragOver={section.type === 'image' ? handleDragOver : undefined}
+            onDragLeave={section.type === 'image' ? handleDragLeave : undefined}
+            onDrop={section.type === 'image' ? handleFileDrop : undefined}
         >
             {/* Resize handles - always show on hover */}
             <ResizeHandles onResizeStart={handleResizeStart} />
@@ -543,7 +556,7 @@ export function ImageSectionComponent({
                     isSelected && 'opacity-100', // Always show when selected
                 )}
             >
-                {section.imageUrl && (
+                {section.type === 'image' && section.imageUrl && (
                     <Button
                         size="icon"
                         variant="ghost"
@@ -578,9 +591,36 @@ export function ImageSectionComponent({
                 </Button>
             </div>
 
-            {/* Image container */}
+            {/* Content container - either image or text */}
             <div className="relative w-full h-full group">
-                {section.imageUrl ? (
+                {section.type === 'text' ? (
+                    <>
+                        <div className="w-full h-full flex items-center justify-center p-2">
+                            <div
+                                ref={textRef}
+                                contentEditable={isSelected}
+                                className={cn(
+                                    'w-full h-full resize-none border-none outline-none bg-transparent',
+                                    'text-center flex items-center justify-center',
+                                )}
+                                style={{
+                                    fontSize: `${Math.max(12, section.fontSize || 14)}px`,
+                                    fontFamily: section.fontFamily || 'helvetica',
+                                    fontWeight: section.fontWeight || 'normal',
+                                    fontStyle: section.fontStyle || 'normal',
+                                    textAlign: section.textAlign || 'left',
+                                    color: section.textColor || '#000000',
+                                    backgroundColor: section.backgroundColor || 'transparent',
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                                onInput={handleTextChange}
+                                dangerouslySetInnerHTML={{
+                                    __html: section.text || 'Type your text here...',
+                                }}
+                            />
+                        </div>
+                    </>
+                ) : section.imageUrl ? (
                     <>
                         <Image
                             ref={(el) => {
@@ -595,7 +635,6 @@ export function ImageSectionComponent({
                             unoptimized
                             draggable={false}
                         />
-                        {/* Hover overlay with replace button */}
                         <div
                             className={cn(
                                 'absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center',
@@ -649,16 +688,16 @@ export function ImageSectionComponent({
                 )}
             </div>
 
-            {/* Hidden file input */}
-            <input
-                ref={fileInputRef}
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageUpload}
-            />
+            {section.type === 'image' && (
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                />
+            )}
 
-            {/* Upload progress overlay */}
             {uploadProgress && (
                 <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center z-50">
                     <div className="w-full max-w-xs px-4">

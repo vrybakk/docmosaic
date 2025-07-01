@@ -2,9 +2,10 @@
 
 import { Button } from '@/components/ui/core/button';
 import { ScrollArea } from '@/components/ui/navigation/scroll-area';
-import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
+import { Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
+import { Section } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { ImageIcon, Plus } from 'lucide-react';
+import { ImageIcon, Plus, Type } from 'lucide-react';
 import { useState } from 'react';
 import { PagePreview } from './page-preview';
 
@@ -12,7 +13,7 @@ interface SidebarProps {
     /** All pages in the document */
     pages: Page[];
     /** All sections in the document */
-    sections: ImageSection[];
+    sections: Section[];
     /** Currently selected page number */
     currentPage: number;
     /** The page size (A4, etc.) */
@@ -23,6 +24,8 @@ interface SidebarProps {
     lastModified: string;
     /** Callback to add a new image section */
     onAddSection: () => void;
+    /** Callback to add a new text section */
+    onAddTextSection?: () => void;
     /** Callback to add a new page */
     onAddPage: () => void;
     /** Callback when a page is selected */
@@ -45,6 +48,7 @@ export function Sidebar({
     orientation,
     lastModified,
     onAddSection,
+    onAddTextSection,
     onAddPage,
     onPageChange,
     onDeletePage,
@@ -131,6 +135,19 @@ export function Sidebar({
                         <ImageIcon className="h-4 w-4 mr-2" />
                         Add Image
                     </Button>
+                    {onAddTextSection && (
+                        <Button
+                            onClick={onAddTextSection}
+                            className={cn(
+                                'w-full justify-start',
+                                'bg-docmosaic-sage text-docmosaic-purple',
+                                'hover:bg-docmosaic-sage/80',
+                            )}
+                        >
+                            <Type className="h-4 w-4 mr-2" />
+                            Add Text
+                        </Button>
+                    )}
                     <Button
                         variant="outline"
                         onClick={onAddPage}

@@ -1,11 +1,22 @@
+export type SectionType = 'image' | 'text';
+
 export interface Section {
     id: string;
     x: number;
     y: number;
     width: number;
     height: number;
-    imageUrl?: string;
     page: number;
+    type: SectionType;
+    imageUrl?: string;
+    text?: string;
+    fontSize?: number;
+    fontFamily?: string;
+    fontWeight?: 'normal' | 'bold';
+    fontStyle?: 'normal' | 'italic';
+    textAlign?: 'left' | 'center' | 'right';
+    textColor?: string;
+    backgroundColor?: string;
 }
 
 export interface Page {

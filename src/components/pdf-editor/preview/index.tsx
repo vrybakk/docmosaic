@@ -10,7 +10,8 @@ import {
 import { Sheet, SheetContent } from '@/components/ui/navigation/sheet';
 import { trackEvent } from '@/lib/analytics';
 import { generatePDF } from '@/lib/pdf';
-import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
+import { Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
+import { Section } from '@/lib/types';
 import { Download, Loader2, Printer, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -19,7 +20,7 @@ interface PreviewProps {
     onClose: () => void;
     onDownload: () => void;
     pages: Page[];
-    sections: ImageSection[];
+    sections: Section[];
     pageSize: PageSize;
     orientation: PageOrientation;
 }

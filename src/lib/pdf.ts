@@ -38,10 +38,13 @@ export function estimatePDFSize(sections: Section[], backgrounds: (string | null
     let estimatedSize = 5 * 1024; // 5KB base size
 
     sections.forEach((section) => {
-        if (section.imageUrl) {
+        if (section.type === 'image' && section.imageUrl) {
             const base64Length = section.imageUrl.split(',')[1]?.length || 0;
             const imageSize = Math.ceil(((base64Length * 3) / 4) * 0.7); // 0.7 for JPEG compression
             estimatedSize += imageSize;
+        } else if (section.type === 'text' && section.text) {
+            // Text sections are much smaller - roughly 1 byte per character
+            estimatedSize += section.text.length + 100; // 100 bytes for formatting overhead
         }
     });
 
@@ -76,9 +79,12 @@ export async function generatePDF(
     // Collect document statistics
     const documentStats = {
         totalPages: pages.length,
-        totalImages: sections.filter((section) => section.imageUrl).length,
+        totalImages: sections.filter((section) => section.type === 'image' && section.imageUrl)
+            .length,
+        totalTexts: sections.filter((section) => section.type === 'text').length,
         averageImagesPerPage: Math.round(
-            sections.filter((section) => section.imageUrl).length / pages.length,
+            sections.filter((section) => section.type === 'image' && section.imageUrl).length /
+                pages.length,
         ),
         format: pageSize,
         orientation: orientation,
@@ -100,6 +106,7 @@ export async function generatePDF(
                         [
                             {
                                 id: `bg-${index}`,
+                                type: 'image' as const,
                                 imageUrl: page.backgroundPDF,
                                 x: 0,
                                 y: 0,
@@ -125,13 +132,24 @@ export async function generatePDF(
 
         if (signal?.aborted) throw new Error('PDF generation cancelled');
 
+        const imageSections = sections.filter(
+            (section) => section.type === 'image' && section.imageUrl,
+        );
+        const textSections = sections.filter((section) => section.type === 'text');
+
         // Optimize section images (70% of optimization phase)
-        const optimizedSections = await processImagesForPDF(sections, (progress) => {
-            onProgress?.({
-                stage: 'optimizing',
-                progress: 30 + Math.round(progress * 0.7),
-            });
-        });
+        const optimizedImageSections =
+            imageSections.length > 0
+                ? await processImagesForPDF(imageSections, (progress) => {
+                      onProgress?.({
+                          stage: 'optimizing',
+                          progress: 30 + Math.round(progress * 0.7),
+                      });
+                  })
+                : [];
+
+        // Combine optimized images with text sections
+        const optimizedSections = [...optimizedImageSections, ...textSections];
 
         if (signal?.aborted) throw new Error('PDF generation cancelled');
 
@@ -177,7 +195,7 @@ export async function generatePDF(
             for (const section of pageSections) {
                 if (signal?.aborted) throw new Error('PDF generation cancelled');
 
-                if (section.imageUrl) {
+                if (section.type === 'image' && section.imageUrl) {
                     try {
                         doc.addImage(
                             section.imageUrl,
@@ -191,6 +209,70 @@ export async function generatePDF(
                         );
                     } catch (error) {
                         console.error('Error adding image:', error);
+                        continue;
+                    }
+                } else if (section.type === 'text' && section.text) {
+                    try {
+                        // Set font properties
+                        const fontSize = section.fontSize || 12;
+                        const fontFamily = section.fontFamily || 'helvetica';
+                        const fontWeight = section.fontWeight || 'normal';
+                        const fontStyle = section.fontStyle || 'normal';
+                        const textAlign = section.textAlign || 'left';
+                        const textColor = section.textColor || '#000000';
+
+                        // Convert hex color to RGB for jsPDF
+                        const hexToRgb = (hex: string) => {
+                            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                            return result
+                                ? {
+                                      r: parseInt(result[1], 16),
+                                      g: parseInt(result[2], 16),
+                                      b: parseInt(result[3], 16),
+                                  }
+                                : { r: 0, g: 0, b: 0 };
+                        };
+
+                        // Set font
+                        doc.setFont(fontFamily, fontStyle === 'italic' ? 'italic' : fontWeight);
+                        doc.setFontSize(fontSize);
+
+                        // Set text color
+                        const rgb = hexToRgb(textColor);
+                        doc.setTextColor(rgb.r, rgb.g, rgb.b);
+
+                        // Add background if specified
+                        if (section.backgroundColor) {
+                            const bgRgb = hexToRgb(section.backgroundColor);
+                            doc.setFillColor(bgRgb.r, bgRgb.g, bgRgb.b);
+                            doc.rect(section.x, section.y, section.width, section.height, 'F');
+                        }
+
+                        // Calculate text position based on alignment
+                        let textX = section.x;
+                        if (textAlign === 'center') {
+                            textX = section.x + section.width / 2;
+                        } else if (textAlign === 'right') {
+                            textX = section.x + section.width;
+                        }
+
+                        // Split text into lines that fit within the section width
+                        const lines = doc.splitTextToSize(section.text, section.width - 8); // 8pt padding
+                        const lineHeight = fontSize + 2;
+
+                        // Calculate starting Y position (center vertically)
+                        const totalTextHeight = lines.length * lineHeight;
+                        const textY = section.y + (section.height - totalTextHeight) / 2 + fontSize;
+
+                        // Add each line of text
+                        lines.forEach((line: string, index: number) => {
+                            doc.text(line, textX, textY + index * lineHeight, {
+                                align: textAlign as 'left' | 'center' | 'right',
+                                maxWidth: section.width - 8,
+                            });
+                        });
+                    } catch (error) {
+                        console.error('Error adding text:', error);
                         continue;
                     }
                 }

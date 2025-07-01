@@ -52,52 +52,46 @@ export function PDFEditor() {
         },
     } = useDocumentState();
 
-    // Track selected section
     const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
-    // Track preview dialog state
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-    // Track PDF generation state
     const [generationState, setGenerationState] = useState<GenerationState>({
         isGenerating: false,
     });
-    // Track estimated file size
     const [estimatedSize, setEstimatedSize] = useState<number>(0);
-    // Track mobile sidebar state
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-    // AbortController for cancellation
     const abortControllerRef = useRef<AbortController | null>(null);
 
     useEffect(() => {
         trackEvent.editorInit();
     }, []);
 
-    // Update estimated size when document changes
     useEffect(() => {
         const backgrounds = document.pages.map((page) => page.backgroundPDF);
         const size = estimatePDFSize(document.sections, backgrounds);
         setEstimatedSize(size);
     }, [document.sections, document.pages]);
 
-    // Handle image upload
     const handleImageUpload = (sectionId: string, imageUrl: string) => {
         const section = document.sections.find((s) => s.id === sectionId);
         if (section) {
-            updateSection({ ...section, imageUrl });
+            updateSection({ ...section, imageUrl, type: section.type || 'image' });
         }
     };
 
-    // Handle adding a new section
     const handleAddSection = () => {
         trackEvent.addSection();
-        // Add section in the center of the viewport
-        const section = addSection();
-        // Select the new section
+        const section = addSection('image');
         setSelectedSectionId(section.id);
-        // Close mobile sidebar if open
         setIsMobileSidebarOpen(false);
     };
 
-    // Handle PDF generation cancellation
+    const handleAddTextSection = () => {
+        trackEvent.addSection();
+        const section = addSection('text');
+        setSelectedSectionId(section.id);
+        setIsMobileSidebarOpen(false);
+    };
+
     const handleCancel = () => {
         abortControllerRef.current?.abort();
         setGenerationState({
@@ -106,10 +100,8 @@ export function PDFEditor() {
         });
     };
 
-    // Handle PDF download
     const handleDownload = async () => {
         try {
-            // Create new AbortController
             abortControllerRef.current = new AbortController();
 
             setGenerationState({
@@ -118,7 +110,6 @@ export function PDFEditor() {
                 progress: 0,
             });
 
-            // Generate the PDF
             const blob = await generatePDF(
                 document.sections,
                 {
@@ -135,24 +126,19 @@ export function PDFEditor() {
                 },
             );
 
-            // Create download URL
             const url = URL.createObjectURL(blob);
 
-            // Create and trigger download link
             const link = globalThis.document.createElement('a');
             link.href = url;
             link.download = getDownloadFileName(document.name);
             globalThis.document.body.appendChild(link);
             link.click();
 
-            // Cleanup
             globalThis.document.body.removeChild(link);
             URL.revokeObjectURL(url);
 
-            // Update document with new estimated size
             updateEstimatedSize(blob.size);
 
-            // Reset generation state
             setGenerationState({
                 isGenerating: false,
             });
@@ -215,7 +201,6 @@ export function PDFEditor() {
         }
     };
 
-    // Handle error dismissal
     const handleErrorDismiss = () => {
         setGenerationState((prev) => ({
             ...prev,
@@ -242,7 +227,6 @@ export function PDFEditor() {
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="flex flex-col h-screen bg-gray-50">
-                {/* Header */}
                 <Header
                     name={document.name}
                     pageSize={document.pageSize}
@@ -252,7 +236,6 @@ export function PDFEditor() {
                     onOrientationChange={handleOrientationChange}
                 />
 
-                {/* Toolbar */}
                 <Toolbar
                     canUndo={canUndo}
                     canRedo={canRedo}
@@ -276,9 +259,7 @@ export function PDFEditor() {
                     onErrorDismiss={handleErrorDismiss}
                 />
 
-                {/* Main content area */}
                 <div className="flex-1 flex min-h-0">
-                    {/* Mobile quick actions */}
                     <div className="lg:hidden fixed bottom-4 left-4 z-50 flex flex-col gap-2">
                         <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
                             <SheetTrigger asChild>
@@ -299,6 +280,7 @@ export function PDFEditor() {
                                     orientation={document.orientation}
                                     lastModified={formattedDate}
                                     onAddSection={handleAddSection}
+                                    onAddTextSection={handleAddTextSection}
                                     onAddPage={addPage}
                                     onPageChange={changePage}
                                     onDeletePage={deletePage}
@@ -308,7 +290,6 @@ export function PDFEditor() {
                         </Sheet>
                     </div>
 
-                    {/* Desktop sidebar */}
                     <div className="hidden lg:block">
                         <Sidebar
                             pages={document.pages}
@@ -318,6 +299,7 @@ export function PDFEditor() {
                             orientation={document.orientation}
                             lastModified={formattedDate}
                             onAddSection={handleAddSection}
+                            onAddTextSection={handleAddTextSection}
                             onAddPage={addPage}
                             onPageChange={changePage}
                             onDeletePage={deletePage}
@@ -325,7 +307,6 @@ export function PDFEditor() {
                         />
                     </div>
 
-                    {/* Canvas */}
                     <Canvas
                         page={document.pages[document.currentPage - 1]}
                         pageSize={document.pageSize}
@@ -339,17 +320,17 @@ export function PDFEditor() {
                         onSectionDelete={deleteSection}
                         onImageUpload={handleImageUpload}
                         onSectionCreate={(section) => {
-                            const newSection = addSection();
+                            const newSection = addSection('image');
                             updateSection({
                                 ...section,
                                 id: newSection.id,
+                                type: 'image',
                             });
                             setSelectedSectionId(newSection.id);
                         }}
                     />
                 </div>
 
-                {/* Preview Dialog */}
                 <Preview
                     isOpen={isPreviewOpen}
                     onClose={() => setIsPreviewOpen(false)}
