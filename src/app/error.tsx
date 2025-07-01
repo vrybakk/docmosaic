@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/core/button';
 import { AlertTriangle } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -26,7 +26,7 @@ export default function Error({
                     Oops! Something went wrong
                 </h1>
                 <p className="mx-auto text-xl text-docmosaic-purple/70 max-w-md">
-                An unexpected error occurred. Try refreshing the page or starting over.
+                    An unexpected error occurred. Try refreshing the page or starting over.
                 </p>
                 <div className="flex justify-center gap-4">
                     <Button

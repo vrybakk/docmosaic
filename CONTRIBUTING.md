@@ -1,40 +1,89 @@
 # Contributing to DocMosaic
 
-Hi! I'm excited that you're interested in contributing to DocMosaic. This is my personal project that I'm happy to share with the community.
+We love your input! We want to make contributing to DocMosaic as easy and transparent as possible, whether it's:
 
-## Quick Start
+-   Reporting a bug
+-   Discussing the current state of the code
+-   Submitting a fix
+-   Proposing new features
+-   Becoming a maintainer
 
-1. Fork and clone the repository
-2. Install dependencies: `bun install`
-3. Start the dev server: `bun dev`
-4. Make your changes
-5. Test your changes: `bun test`
-6. Submit a pull request
+## Development Process
 
-## Ways to Contribute
+We use GitHub to host code, to track issues and feature requests, as well as accept pull requests.
 
--   **Report Bugs**: Found something that's not working? Open an issue!
--   **Suggest Features**: Have an idea? I'd love to hear it.
--   **Code**: Want to fix a bug or add a feature? PRs are welcome.
--   **Documentation**: Help improve the docs or add examples.
--   **Share**: Star the repo or share with friends.
+1. Fork the repo and create your branch from `main`
+2. If you've added code that should be tested, add tests
+3. If you've changed APIs, update the documentation
+4. Ensure the test suite passes
+5. Make sure your code lints
+6. Issue that pull request!
 
-## Code Guidelines
+## Local Development Setup
 
-Keep it simple:
+1. Clone the repository
 
--   Write clean, readable code
+```bash
+git clone https://github.com/yourusername/doc-mosaic.git
+cd doc-mosaic
+```
+
+2. Install dependencies
+
+```bash
+npm install
+# or
+yarn
+```
+
+3. Start the development server
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+## Project Structure
+
+```
+doc-mosaic/
+├── src/
+│   ├── app/              # Next.js app router pages
+│   ├── components/       # React components
+│   │   ├── pdf-editor/   # PDF editor components
+│   │   └── ui/          # Shared UI components
+│   └── lib/             # Utilities and helpers
+├── public/              # Static files
+└── tests/              # Test files
+```
+
+## Coding Style
+
 -   Use TypeScript for type safety
 -   Follow the existing code style
--   Add comments for complex logic
--   Write tests for new features
+-   Use functional components with hooks
+-   Write meaningful commit messages following conventional commits
+-   Document complex logic with comments
+-   Use meaningful variable and function names
 
-## Need Help?
+## Testing
 
--   Check the [documentation](docs/README.md)
--   Ask questions in [Issues](https://github.com/vrybakk/doc-mosaic/issues)
--   Start a discussion
+-   Write unit tests for utilities and components
+-   Add integration tests for complex features
+-   Test edge cases and error scenarios
+-   Ensure accessibility compliance
 
-## Community Guidelines
+## Pull Request Process
 
-Be kind, be respectful, and help others. See our simple [Community Guidelines](CODE_OF_CONDUCT.md).
+1. Update the README.md with details of changes if needed
+2. Update the documentation with details of any new features
+3. The PR will be merged once you have the sign-off of maintainers
+
+## Any Questions?
+
+Feel free to file an issue with your question or reach out to the maintainers directly.
+
+## License
+
+By contributing, you agree that your contributions will be licensed under its MIT License.

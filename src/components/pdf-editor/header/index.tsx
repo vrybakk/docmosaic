@@ -1,15 +1,21 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/core/button';
+import { Input } from '@/components/ui/form/input';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+} from '@/components/ui/form/select';
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/navigation/sheet';
 import { ORIENTATION_OPTIONS, PAGE_SIZE_OPTIONS } from '@/lib/pdf-editor/constants/theme';
 import { PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { PAGE_SIZE_LABELS } from '@/lib/pdf-editor/utils/dimensions';

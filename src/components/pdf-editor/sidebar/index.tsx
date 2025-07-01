@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/core/button';
+import { ScrollArea } from '@/components/ui/navigation/scroll-area';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { cn } from '@/lib/utils';
 import { ImageIcon, Plus } from 'lucide-react';

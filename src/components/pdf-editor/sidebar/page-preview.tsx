@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/core/button';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
 import { cn } from '@/lib/utils';
@@ -108,7 +108,7 @@ export function PagePreview({
                                     className="absolute"
                                     style={{
                                         left: section.x,
-                                        top: section.y ,
+                                        top: section.y,
                                         width: section.width,
                                         height: section.height,
                                     }}

@@ -2,10 +2,14 @@ import type { Config } from 'tailwindcss';
 import { DOCMOSAIC_COLORS } from './src/lib/pdf-editor/constants/theme';
 
 const config: Config = {
+    darkMode: ['class'],
     content: [
         './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
         './src/components/**/*.{js,ts,jsx,tsx,mdx}',
         './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+        '*.{js,ts,jsx,tsx,mdx}',
+        'app/**/*.{ts,tsx}',
+        'components/**/*.{ts,tsx}',
     ],
     theme: {
         extend: {
@@ -53,12 +57,6 @@ const config: Config = {
             fontFamily: {
                 sans: ['var(--font-montserrat)', 'sans-serif'],
             },
-            fontWeight: {
-                normal: 'var(--font-weight-normal)',
-                medium: 'var(--font-weight-medium)',
-                semibold: 'var(--font-weight-semibold)',
-                bold: 'var(--font-weight-bold)',
-            },
             borderRadius: {
                 lg: 'var(--radius)',
                 md: 'calc(var(--radius) - 2px)',
@@ -66,7 +64,8 @@ const config: Config = {
             },
         },
     },
-    plugins: [],
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    plugins: [require('tailwindcss-animate')],
 };
 
 export default config;

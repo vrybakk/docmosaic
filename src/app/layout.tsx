@@ -1,4 +1,4 @@
-import Header from '@/components/Header';
+import Header from '@/components/layout/header';
 import { Analytics } from '@vercel/analytics/next';
 import { Viewport } from 'next';
 import { Montserrat } from 'next/font/google';

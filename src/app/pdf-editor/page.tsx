@@ -1,5 +1,5 @@
 import { PDFEditor } from '@/components/pdf-editor';
-import Loader from '@/components/ui/loader';
+import Loader from '@/components/ui/data-display/loader';
 import { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
 

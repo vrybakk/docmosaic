@@ -1,8 +1,13 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/core/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/data-display/dialog';
+import { Sheet, SheetContent } from '@/components/ui/navigation/sheet';
 import { trackEvent } from '@/lib/analytics';
 import { generatePDF } from '@/lib/pdf';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/core/button';
 import { ImageSection } from '@/lib/pdf-editor/types';
 import { cn } from '@/lib/utils';
 import { useDrag } from '@use-gesture/react';

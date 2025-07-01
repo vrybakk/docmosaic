@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/core/button';
 import { trackEvent } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
 import { Download, Eye, Loader2, Printer, Redo, Undo, X } from 'lucide-react';

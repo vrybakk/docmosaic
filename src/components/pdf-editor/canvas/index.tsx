@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import Loader from '@/components/ui/loader';
+import { Button } from '@/components/ui/core/button';
+import Loader from '@/components/ui/data-display/loader';
 import { trackEvent } from '@/lib/analytics';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
