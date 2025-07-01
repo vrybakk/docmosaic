@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata = {
-    metadataBase: new URL('https://docmosaic.vercel.app'),
+    metadataBase: new URL('https://docmosaic.com'),
     title: {
         default: 'DocMosaic - Free Open Source Tool for Visual PDF Creation',
         template: '%s | DocMosaic',
@@ -63,7 +63,7 @@ export const metadata = {
         title: 'DocMosaic - Visual PDF Creation Tool',
         description:
             'Create beautiful PDFs by arranging images like a mosaic. Free and open source.',
-        url: 'https://docmosaic.vercel.app',
+        url: 'https://docmosaic.com',
         siteName: 'DocMosaic',
         locale: 'en_US',
         type: 'website',
@@ -143,7 +143,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             },
                             screenshot: {
                                 '@type': 'ImageObject',
-                                url: 'https://docmosaic.vercel.app/screenshot-1.png',
+                                url: 'https://docmosaic.com/screenshot-1.png',
                                 caption: 'DocMosaic PDF Editor Interface',
                             },
                             featureList: [

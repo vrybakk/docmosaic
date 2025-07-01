@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: ['/api/', '/private/'],
         },
-        sitemap: 'https://docmosaic.vercel.app/sitemap.xml',
+        sitemap: 'https://docmosaic.com/sitemap.xml',
     };
 }

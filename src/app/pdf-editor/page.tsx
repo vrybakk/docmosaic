@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'PDF Editor - DocMosaic',
         description: 'Create and edit PDFs with our visual editor',
-        url: 'https://docmosaic.vercel.app/pdf-editor',
+        url: 'https://docmosaic.com/pdf-editor',
         siteName: 'DocMosaic',
         images: [
             {
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
         creator: '@nerdstudio',
     },
     alternates: {
-        canonical: 'https://docmosaic.vercel.app/pdf-editor',
+        canonical: 'https://docmosaic.com/pdf-editor',
     },
 };
 
@@ -77,9 +77,9 @@ export default function PDFEditorPage() {
         applicationCategory: 'DocumentEditor',
         operatingSystem: 'Any',
         browserRequirements: 'Requires JavaScript. Requires HTML5.',
-        url: 'https://docmosaic.vercel.app/pdf-editor',
-        image: 'https://docmosaic.vercel.app/pdf-editor-preview.png',
-        screenshot: 'https://docmosaic.vercel.app/pdf-editor-preview.png',
+        url: 'https://docmosaic.com/pdf-editor',
+        image: 'https://docmosaic.com/pdf-editor-preview.png',
+        screenshot: 'https://docmosaic.com/pdf-editor-preview.png',
         offers: {
             '@type': 'Offer',
             price: '0',
@@ -107,7 +107,7 @@ export default function PDFEditorPage() {
         publisher: {
             '@type': 'Organization',
             name: 'DocMosaic',
-            url: 'https://docmosaic.vercel.app',
+            url: 'https://docmosaic.com',
         },
         keywords: [
             'pdf editor',
@@ -121,7 +121,7 @@ export default function PDFEditorPage() {
         license: 'https://opensource.org/licenses/MIT',
         mainEntityOfPage: {
             '@type': 'WebPage',
-            '@id': 'https://docmosaic.vercel.app/pdf-editor',
+            '@id': 'https://docmosaic.com/pdf-editor',
         },
         accessibilityFeature: [
             'highContrastDisplay',
