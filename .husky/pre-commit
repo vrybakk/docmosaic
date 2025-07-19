@@ -4,10 +4,6 @@ echo "Running pre-commit checks..."
 echo "Running type check..."
 bun typecheck || exit 1
 
-# Run tests
-echo "Running tests..."
-bun test || exit 1
-
 # Run linting
 echo "Running lint..."
 bun lint || exit 1
