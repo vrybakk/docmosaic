@@ -70,14 +70,8 @@ export const metadata = {
         images: [
             {
                 url: '/og-image.png',
-                width: 1200,
-                height: 630,
-                alt: 'DocMosaic - Visual PDF Creation Tool',
-            },
-            {
-                url: '/og-image-square.png',
-                width: 600,
-                height: 600,
+                width: 1080,
+                height: 700,
                 alt: 'DocMosaic - Visual PDF Creation Tool',
             },
         ],
@@ -109,6 +103,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="en" suppressHydrationWarning>
             <head>
                 <link rel="icon" href="/favicon.ico" sizes="any" />
+                <link rel="icon" href="/favicon-16x16.ico" sizes="16x16" type="image/x-icon" />
+                <link rel="icon" href="/favicon-48x48.ico" sizes="48x48" type="image/x-icon" />
                 <link rel="icon" href="/icon.svg" type="image/svg+xml" />
                 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
                 <link rel="manifest" href="/manifest.json" />
