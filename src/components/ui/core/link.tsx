@@ -1,10 +1,10 @@
 import Typography from '@/components/common/typography';
 import { cn } from '@/lib/utils';
-import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
+import Link from 'next/link';
 import { forwardRef } from 'react';
 
-const buttonVariants = cva(
+const linkVariants = cva(
     'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
     {
         variants: {
@@ -13,11 +13,10 @@ const buttonVariants = cva(
                 cream: 'bg-docmosaic-cream text-docmosaic-black shadow hover:bg-docmosaic-cream/90',
                 sage: 'bg-docmosaic-sage text-docmosaic-black shadow hover:bg-docmosaic-sage/90',
                 orange: 'bg-docmosaic-orange text-docmosaic-black shadow hover:bg-docmosaic-orange/90',
-                caramel:
-                    'bg-docmosaic-caramel text-docmosaic-black shadow hover:bg-docmosaic-caramel/90',
-                white: 'bg-white text-docmosaic-black shadow hover:bg-docmosaic-black/10',
+                caramel: 'bg-docmosaic-caramel text-docmosaic-black shadow hover:bg-docmosaic-caramel/90',
                 gradient:
                     'bg-gradient-to-r from-docmosaic-sage/90 via-docmosaic-cream/80 via-docmosaic-orange/80 to-docmosaic-caramel/90 text-docmosaic-black shadow hover:opacity-90',
+                white: 'bg-white text-docmosaic-black shadow hover:bg-docmosaic-black/10',
                 destructive:
                     'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
                 outline:
@@ -40,33 +39,43 @@ const buttonVariants = cva(
     },
 );
 
-export interface ButtonProps
-    extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-        VariantProps<typeof buttonVariants> {
-    asChild?: boolean;
+export interface CustomLinkProps
+    extends React.AnchorHTMLAttributes<HTMLAnchorElement>,
+        VariantProps<typeof linkVariants> {
+    href: string;
+    external?: boolean;
     icon?: React.ReactNode;
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant, size, asChild = false, children, icon, ...props }, ref) => {
-        const Comp = asChild ? Slot : 'button';
+const CustomLink = forwardRef<HTMLAnchorElement, CustomLinkProps>(
+    ({ className, variant, size, href, external = false, children, icon, ...props }, ref) => {
+        const linkProps = external
+            ? {
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+              }
+            : {};
+
         return (
-            <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
+            <Link
+                href={href}
+                className={cn(linkVariants({ variant, size, className }))}
+                ref={ref}
+                {...linkProps}
+                {...props}
+            >
                 {typeof children === 'string' ? (
-                    <Typography
-                        variant={size === 'sm' ? 'h6' : 'h5'}
-                        className="!text-inherit uppercase"
-                    >
+                    <Typography variant={size === 'sm' ? 'h6' : 'h5'} className="!text-inherit uppercase">
                         {children}
                     </Typography>
                 ) : (
                     children
                 )}
                 {icon && <span className="ml-2">{icon}</span>}
-            </Comp>
+            </Link>
         );
     },
 );
-Button.displayName = 'Button';
+CustomLink.displayName = 'CustomLink';
 
-export { Button, buttonVariants };
+export { CustomLink, linkVariants };

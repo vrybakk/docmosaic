@@ -2,7 +2,8 @@
 
 import type React from 'react';
 
-import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react';
+import { CustomLink } from '@/components/ui/core/link';
+import { ArrowBigRight, ChevronDown, Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -132,13 +133,15 @@ export default function Header() {
                             )}
                         </div>
 
-                        <Link
+                        <CustomLink
                             href="/pdf-editor"
-                            className="inline-flex items-center px-4 py-2 bg-docmosaic-purple text-white rounded-lg hover:bg-docmosaic-purple/90 transition-all duration-300 group"
+                            className="group"
+                            icon={
+                                <ArrowBigRight className="group-hover:translate-x-1 transition-transform" />
+                            }
                         >
                             Try It Now
-                            <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                        </Link>
+                        </CustomLink>
                     </div>
 
                     <button
@@ -222,14 +225,15 @@ export default function Header() {
                             </div>
 
                             <div className="pt-4">
-                                <Link
+                                <CustomLink
                                     href="/pdf-editor"
-                                    className="inline-flex items-center px-4 py-2 bg-docmosaic-purple text-white rounded-lg hover:bg-docmosaic-purple/90 transition-all duration-300 w-full justify-center"
+                                    variant="default"
+                                    className="w-full justify-center"
                                     onClick={() => setIsMenuOpen(false)}
+                                    icon={<ArrowBigRight />}
                                 >
                                     Try It Now
-                                    <ArrowRight className="ml-2" />
-                                </Link>
+                                </CustomLink>
                             </div>
                         </nav>
                     </div>
