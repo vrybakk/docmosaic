@@ -52,6 +52,11 @@ const config: Config = {
                     purple: DOCMOSAIC_COLORS.purple,
                     sage: DOCMOSAIC_COLORS.sage,
                     white: DOCMOSAIC_COLORS.white,
+                    black: DOCMOSAIC_COLORS.black,
+                    orange: DOCMOSAIC_COLORS.orange,
+                    caramel: DOCMOSAIC_COLORS.caramel,
+                    gradient:
+                        'linear-gradient(90deg, rgba(196,214,176,0.9) 0%, rgba(252,222,156,0.8) 35%, rgba(255,165,82,0.8) 65%, rgba(186,86,36,0.9) 100%)',
                 },
             },
             fontFamily: {
