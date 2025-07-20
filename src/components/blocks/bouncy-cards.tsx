@@ -97,13 +97,13 @@ export const BouncyCardsFeatures = () => {
                                 />
                             </>
                         ) : (
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
                                 {feature.title.map((title, index) => (
                                     <div
                                         key={index}
                                         className={cn(
                                             index === 0 &&
-                                                'pr-6 mr-3 border-r border-docmosaic-black/15',
+                                                'md:pr-6 md:mr-3 md:border-r border-docmosaic-black/15',
                                         )}
                                     >
                                         <CardTitle>{title}</CardTitle>

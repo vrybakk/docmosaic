@@ -1,3 +1,6 @@
+'use client';
+
+import { motion } from 'framer-motion';
 import { ArrowBigRight, FileKey2, HandCoins, HardDrive, Lock, Shield } from 'lucide-react';
 import Image from 'next/image';
 import Typography from '../common/typography';
@@ -5,8 +8,18 @@ import { CustomLink } from '../ui/core/link';
 
 const Hero = () => {
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
+        <motion.div
+            className="min-h-[70vh] grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
+            <motion.div
+                className="space-y-6"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+            >
                 <div className="space-y-4">
                     <Typography variant="h2" tag="h1">
                         <span className="text-docmosaic-caramel">PDF</span> Editing
@@ -57,9 +70,14 @@ const Hero = () => {
                         </Typography>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
-            <div className="p-4 pb-5 rounded-[20px] bg-white overflow-hidden shadow-[0px_0px_8px_0px_#00000026]">
+            <motion.div
+                className="p-4 pb-5 rounded-[20px] bg-white overflow-hidden shadow-[0px_0px_8px_0px_#00000026]"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
+            >
                 <Image
                     src="/showcases/hero.png"
                     alt="DocMosaic Demo"
@@ -81,8 +99,8 @@ const Hero = () => {
                     </div>
                     <Typography variant="h6">Drag. Arrange. Export. Done.</Typography>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 };
 
