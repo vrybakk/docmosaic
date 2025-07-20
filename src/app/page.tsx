@@ -1,9 +1,10 @@
-'use client';
-
+import Hero from '@/components/blocks/hero';
+import { SpringCards } from '@/components/blocks/spring-cards';
+import VerticalSlideFeatures from '@/components/blocks/vertical-slide-features';
+import Typography from '@/components/common/typography';
 import DonateButton from '@/components/donate-button';
 import FeedbackModal from '@/components/feedback/feedback-modal';
 import Footer from '@/components/layout/footer';
-import Loader from '@/components/ui/data-display/loader';
 import {
     ArrowRight,
     Code,
@@ -21,148 +22,34 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
 
 export default function Home() {
-    const [isLoading, setIsLoading] = useState(true);
-
-    const { ref: demoRef, inView: demoInView } = useInView({
-        triggerOnce: true,
-        threshold: 0.1,
-    });
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 2000);
-
-        return () => clearTimeout(timer);
-    }, []);
-
-    if (isLoading) {
-        return <Loader />;
-    }
-
     return (
         <div className="min-h-screen flex flex-col">
             <main className="flex-grow pt-16">
                 {/* Hero Section */}
-                <section className="container mx-auto px-4 py-20">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                            <div className="space-y-8">
-                                <div className="space-y-6">
-                                    <h1 className="text-3xl md:text-5xl lg:text-6xl leading-tight text-docmosaic-purple">
-                                        PDF Editing Shouldn&apos;t Be This Hard – So We Fixed It
-                                    </h1>
-                                    <p className="text-xl text-docmosaic-purple/80 max-w-xl">
-                                        Whether you&apos;re preparing visa documents, printing IDs,
-                                        or creating professional layouts - existing tools made it
-                                        complicated. So I built this -{' '}
-                                        <span className="font-medium text-docmosaic-purple">
-                                            fast, simple, DONE in seconds!
-                                        </span>
-                                    </p>
-                                    <div className="flex flex-wrap gap-4 pt-2">
-                                        {keyFeatures.map((feature, index) => (
-                                            <div
-                                                key={index}
-                                                className="inline-flex items-center px-3 py-1 rounded-full bg-docmosaic-sage/20 text-sm text-docmosaic-purple"
-                                            >
-                                                <feature.icon className="w-4 h-4 mr-2" />
-                                                {feature.text}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                <section className="container mx-auto px-4 py-10">
+                    <Hero />
+                </section>
 
-                                <div className="space-y-6">
-                                    <div className="flex flex-col sm:flex-row gap-4">
-                                        <Link
-                                            href="/pdf-editor"
-                                            className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium bg-docmosaic-purple text-white rounded-lg hover:bg-docmosaic-purple/90 transition-all duration-300 group"
-                                        >
-                                            Try It Instantly – No Sign-Up
-                                            <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                                        </Link>
-                                        <Link
-                                            href="https://github.com/vrybakk/docmosaic"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium border-2 border-docmosaic-purple text-docmosaic-purple rounded-lg hover:bg-docmosaic-purple/5 transition-all duration-300 group"
-                                        >
-                                            <Github className="w-5 h-5 mr-2" />
-                                            View on GitHub
-                                        </Link>
-                                    </div>
-                                    <div className="flex items-center text-docmosaic-purple/70 text-sm">
-                                        <Lock className="w-4 h-4 mr-2" />
-                                        <p>Privacy-First: Your files never leave your device.</p>
-                                    </div>
-                                </div>
-                            </div>
+                <section className="container mx-auto px-4 py-10">
+                    <Typography variant="h2" tag="h2" className="text-center">
+                        Everything You <span className="text-docmosaic-orange">Need</span> — Nothing
+                        You Don’t
+                    </Typography>
 
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-docmosaic-sage/20 to-docmosaic-cream/30 rounded-3xl transform rotate-3"></div>
-                                <div className="relative bg-white rounded-2xl shadow-xl overflow-hidden">
-                                    <div className="aspect-[4/3]">
-                                        <Image
-                                            src="/placeholder.svg?height=600&width=800"
-                                            alt="DocMosaic Demo"
-                                            width={800}
-                                            height={600}
-                                            className="object-cover"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
-                                    </div>
-                                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white/90 to-transparent">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center space-x-2">
-                                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                                <span className="text-sm font-medium text-docmosaic-purple">
-                                                    Live Demo
-                                                </span>
-                                            </div>
-                                            <p className="text-sm text-docmosaic-purple/70">
-                                                Drag. Arrange. Export. Done.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <SpringCards />
+                </section>
 
-                        <div className="mt-20 grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                            {whyFeatures.map((feature, index) => (
-                                <div
-                                    key={index}
-                                    className="p-6 bg-white/50 backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
-                                >
-                                    <feature.icon className="w-8 h-8 text-docmosaic-purple mb-4" />
-                                    <h3 className="font-medium text-lg text-docmosaic-purple mb-2">
-                                        {feature.title}
-                                    </h3>
-                                    <p className="text-docmosaic-purple/70">
-                                        {feature.description}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                <section className="container mx-auto px-4 py-10">
+                    <VerticalSlideFeatures />
                 </section>
 
                 {/* Demo Section */}
-                <section ref={demoRef} className="py-20">
+                <section className="py-20">
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto">
-                            <div
-                                className={`relative rounded-xl overflow-hidden shadow-2xl transition-all duration-1000 transform ${
-                                    demoInView
-                                        ? 'opacity-100 translate-y-0'
-                                        : 'opacity-0 translate-y-10'
-                                }`}
-                            >
+                            <div className="relative rounded-xl overflow-hidden shadow-2xl transition-all duration-1000 transform">
                                 <video
                                     autoPlay
                                     loop
@@ -463,31 +350,6 @@ export default function Home() {
         </div>
     );
 }
-
-const keyFeatures = [
-    { icon: Zap, text: 'No Sign-Up' },
-    { icon: Shield, text: 'Privacy-First' },
-    { icon: Lock, text: 'No File Uploads' },
-    { icon: Users, text: 'Always Free' },
-];
-
-const whyFeatures = [
-    {
-        icon: Zap,
-        title: 'Skip the Hassle',
-        description: 'No more complicated software. Just open and start editing instantly.',
-    },
-    {
-        icon: Shield,
-        title: 'Privacy First',
-        description: 'Everything stays on your device. No uploads, no personal data collection.',
-    },
-    {
-        icon: Lock,
-        title: 'No Limits',
-        description: 'Free forever, no premium features, no hidden fees. Just open & use.',
-    },
-];
 
 const features = [
     {

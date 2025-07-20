@@ -59,6 +59,10 @@ const config: Config = {
                         'linear-gradient(90deg, rgba(196,214,176,0.9) 0%, rgba(252,222,156,0.8) 35%, rgba(255,165,82,0.8) 65%, rgba(186,86,36,0.9) 100%)',
                 },
             },
+            backgroundImage: {
+                gradient:
+                    'linear-gradient(90deg, rgba(196,214,176,0.9) 0%, rgba(252,222,156,0.8) 35%, rgba(255,165,82,0.8) 65%, rgba(186,86,36,0.9) 100%)',
+            },
             fontFamily: {
                 sans: ['var(--font-montserrat)', 'sans-serif'],
             },

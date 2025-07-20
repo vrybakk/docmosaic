@@ -16,8 +16,7 @@ const buttonVariants = cva(
                 caramel:
                     'bg-docmosaic-caramel text-docmosaic-black shadow hover:bg-docmosaic-caramel/90',
                 white: 'bg-white text-docmosaic-black shadow hover:bg-docmosaic-black/10',
-                gradient:
-                    'bg-gradient-to-r from-docmosaic-sage/90 via-docmosaic-cream/80 via-docmosaic-orange/80 to-docmosaic-caramel/90 text-docmosaic-black shadow hover:opacity-90',
+                gradient: 'bg-gradient text-docmosaic-black shadow hover:opacity-90',
                 destructive:
                     'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
                 outline:

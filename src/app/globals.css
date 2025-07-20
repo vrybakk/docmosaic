@@ -21,7 +21,7 @@ body {
 
 @layer base {
   body {
-    @apply bg-gradient-to-br from-white via-docmosaic-sage/10 to-docmosaic-cream text-docmosaic-purple font-sans;
+    @apply text-docmosaic-purple font-sans;
     background-attachment: fixed;
   }
 }
@@ -154,4 +154,36 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.skeuParent {
+  --x: 0px;
+  --y: 0px;
+  --shineColor: rgba(255, 255, 255, 0);
+  --size: 0px;
+}
+
+.skeu::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: calc(var(--x) - var(--size) / 2);
+  top: calc(var(--y) - var(--size) / 2);
+  width: var(--size);
+  height: var(--size);
+  transition: width 0.35s ease, height 0.35s;
+  background: radial-gradient(
+      circle closest-side,
+      var(--shineColor),
+      transparent
+  );
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

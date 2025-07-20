@@ -13,9 +13,9 @@ const linkVariants = cva(
                 cream: 'bg-docmosaic-cream text-docmosaic-black shadow hover:bg-docmosaic-cream/90',
                 sage: 'bg-docmosaic-sage text-docmosaic-black shadow hover:bg-docmosaic-sage/90',
                 orange: 'bg-docmosaic-orange text-docmosaic-black shadow hover:bg-docmosaic-orange/90',
-                caramel: 'bg-docmosaic-caramel text-docmosaic-black shadow hover:bg-docmosaic-caramel/90',
-                gradient:
-                    'bg-gradient-to-r from-docmosaic-sage/90 via-docmosaic-cream/80 via-docmosaic-orange/80 to-docmosaic-caramel/90 text-docmosaic-black shadow hover:opacity-90',
+                caramel:
+                    'bg-docmosaic-caramel text-docmosaic-black shadow hover:bg-docmosaic-caramel/90',
+                gradient: 'bg-gradient text-docmosaic-black shadow hover:opacity-90',
                 white: 'bg-white text-docmosaic-black shadow hover:bg-docmosaic-black/10',
                 destructive:
                     'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
@@ -65,7 +65,10 @@ const CustomLink = forwardRef<HTMLAnchorElement, CustomLinkProps>(
                 {...props}
             >
                 {typeof children === 'string' ? (
-                    <Typography variant={size === 'sm' ? 'h6' : 'h5'} className="!text-inherit uppercase">
+                    <Typography
+                        variant={size === 'sm' ? 'h6' : 'h5'}
+                        className="!text-inherit uppercase"
+                    >
                         {children}
                     </Typography>
                 ) : (

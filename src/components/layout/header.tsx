@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Typography from '../common/typography';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -56,13 +57,11 @@ export default function Header() {
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
-            <div className="container mx-auto px-4">
-                <div className="flex items-center justify-between h-16">
+            <div className="container mx-auto px-4 py-5">
+                <div className="flex items-center justify-between">
                     <Link href="/" className="flex items-center space-x-2">
                         <Image src="/logo.svg" alt="DocMosaic Logo" width={32} height={32} />
-                        <span className="text-xl font-semibold text-docmosaic-purple">
-                            DocMosaic
-                        </span>
+                        <Typography variant="h3">DocMosaic</Typography>
                     </Link>
 
                     <nav className="hidden md:flex items-center space-x-8">
@@ -97,6 +96,17 @@ export default function Header() {
                     </nav>
 
                     <div className="hidden md:flex items-center space-x-4">
+                        <CustomLink
+                            href="/pdf-editor"
+                            className="group"
+                            variant={'gradient'}
+                            icon={
+                                <ArrowBigRight className="group-hover:translate-x-1 transition-transform" />
+                            }
+                        >
+                            Try It Now
+                        </CustomLink>
+
                         <div className="relative">
                             <button
                                 onClick={toggleLanguageMenu}
@@ -132,16 +142,6 @@ export default function Header() {
                                 </div>
                             )}
                         </div>
-
-                        <CustomLink
-                            href="/pdf-editor"
-                            className="group"
-                            icon={
-                                <ArrowBigRight className="group-hover:translate-x-1 transition-transform" />
-                            }
-                        >
-                            Try It Now
-                        </CustomLink>
                     </div>
 
                     <button
