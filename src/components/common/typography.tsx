@@ -37,10 +37,10 @@ const typographyStyles = {
     h3: `font-sans font-medium text-[1.25rem] leading-[100%]`, // 20px
     h4: `font-sans font-semibold text-[1rem]`, // 16px
     h5: `font-sans font-medium text-[0.875rem] leading-[100%]`, // 14px
-    h6: `font-sans font-semibold text-[0.75rem] leading-[100%]`, // 12px
+    h6: `font-sans font-medium text-[0.75rem] leading-[100%]`, // 12px
     paragraph: `font-sans text-[0.875rem]`, // 14px
     small: `font-sans font-normal text-[0.75rem]`, // 12px
-    extraSmall: `font-sans font-normal text-[0.625rem]`, // 10px
+    extraSmall: `font-sans font-normal text-[0.625rem] leading-[140%]`, // 10px
 };
 
 const Typography = ({

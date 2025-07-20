@@ -1,3 +1,4 @@
+import { BouncyCardsFeatures } from '@/components/blocks/bouncy-cards';
 import Hero from '@/components/blocks/hero';
 import { SpringCards } from '@/components/blocks/spring-cards';
 import StackedCards from '@/components/blocks/stacked-cards';
@@ -33,6 +34,10 @@ export default function Home() {
 
                 <section className="py-20">
                     <StackedCards />
+                </section>
+
+                <section className="py-20">
+                    <BouncyCardsFeatures />
                 </section>
 
                 {/* Use Cases */}
