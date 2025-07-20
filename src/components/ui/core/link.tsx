@@ -16,7 +16,7 @@ const linkVariants = cva(
                 caramel:
                     'bg-docmosaic-caramel text-docmosaic-black shadow hover:bg-docmosaic-caramel/90',
                 gradient: 'bg-gradient text-docmosaic-black shadow hover:opacity-90',
-                white: 'bg-white text-docmosaic-black shadow hover:bg-docmosaic-black/10',
+                white: 'bg-white text-docmosaic-black shadow hover:bg-docmosaic-black/10 hover:!text-white',
                 destructive:
                     'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
                 outline:

@@ -32,15 +32,15 @@ const defaultTags: Record<string, keyof JSX.IntrinsicElements> = {
 };
 
 const typographyStyles = {
-    h1: `font-sans font-medium text-[4.5rem] text-docmosaic-black leading-[100%]`, // 72px
-    h2: `font-sans font-medium text-[2.25rem] text-docmosaic-black leading-[120%]`, // 36px
-    h3: `font-sans font-medium text-[1.25rem] text-docmosaic-black leading-[100%]`, // 20px
-    h4: `font-sans font-semibold text-[1rem] text-docmosaic-black`, // 16px
-    h5: `font-sans font-medium text-[0.875rem] text-docmosaic-black leading-[100%]`, // 14px
-    h6: `font-sans font-semibold text-[0.75rem] text-docmosaic-black leading-[100%]`, // 12px
-    paragraph: `font-sans text-[0.875rem] text-docmosaic-black`, // 14px
-    small: `font-sans font-normal text-[0.75rem] text-docmosaic-black`, // 12px
-    extraSmall: `font-sans font-normal text-[0.625rem] text-docmosaic-black`, // 10px
+    h1: `font-sans font-medium text-[4.5rem] leading-[100%]`, // 72px
+    h2: `font-sans font-medium text-[2.25rem] leading-[120%]`, // 36px
+    h3: `font-sans font-medium text-[1.25rem] leading-[100%]`, // 20px
+    h4: `font-sans font-semibold text-[1rem]`, // 16px
+    h5: `font-sans font-medium text-[0.875rem] leading-[100%]`, // 14px
+    h6: `font-sans font-semibold text-[0.75rem] leading-[100%]`, // 12px
+    paragraph: `font-sans text-[0.875rem]`, // 14px
+    small: `font-sans font-normal text-[0.75rem]`, // 12px
+    extraSmall: `font-sans font-normal text-[0.625rem]`, // 10px
 };
 
 const Typography = ({
@@ -52,7 +52,9 @@ const Typography = ({
 }: TypographyProps) => {
     const Component = tag || defaultTags[variant];
 
-    const combinedClassNames = `${typographyStyles[variant]} ${className || ''}`;
+    const textColor = className?.includes('text-') ? '' : 'text-docmosaic-black';
+
+    const combinedClassNames = `${typographyStyles[variant]} ${textColor} ${className || ''}`;
 
     return (
         <Component className={combinedClassNames} itemProp={itemProp}>

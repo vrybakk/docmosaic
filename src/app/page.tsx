@@ -1,26 +1,12 @@
 import Hero from '@/components/blocks/hero';
 import { SpringCards } from '@/components/blocks/spring-cards';
+import StackedCards from '@/components/blocks/stacked-cards';
 import VerticalSlideFeatures from '@/components/blocks/vertical-slide-features';
 import Typography from '@/components/common/typography';
 import DonateButton from '@/components/donate-button';
 import FeedbackModal from '@/components/feedback/feedback-modal';
 import Footer from '@/components/layout/footer';
-import {
-    ArrowRight,
-    Code,
-    Coffee,
-    Download,
-    Github,
-    Lock,
-    MessageSquare,
-    Monitor,
-    Shield,
-    Smartphone,
-    TabletSmartphone,
-    Users,
-    Zap,
-} from 'lucide-react';
-import Image from 'next/image';
+import { ArrowRight, Code, Coffee, Github, Lock, MessageSquare, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Home() {
@@ -45,143 +31,8 @@ export default function Home() {
                     <VerticalSlideFeatures />
                 </section>
 
-                {/* Demo Section */}
                 <section className="py-20">
-                    <div className="container mx-auto px-4">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="relative rounded-xl overflow-hidden shadow-2xl transition-all duration-1000 transform">
-                                <video
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    className="w-full"
-                                    poster="/placeholder.svg?height=600&width=800"
-                                >
-                                    <source src="/demo.mp4" type="video/mp4" />
-                                </video>
-                            </div>
-                            <div className="text-center mt-8">
-                                <p className="text-2xl font-medium text-docmosaic-purple mb-6">
-                                    Drag. Arrange. Export. That&apos;s it.
-                                </p>
-                                <Link
-                                    href="/pdf-editor"
-                                    className="inline-flex items-center px-6 py-3 bg-docmosaic-sage text-docmosaic-purple rounded-lg hover:bg-docmosaic-sage/80 transition-all duration-300 group"
-                                >
-                                    Start Editing Now
-                                    <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Features Comparison */}
-                <section className="py-20">
-                    <div className="container mx-auto px-4">
-                        <div className="max-w-4xl mx-auto">
-                            <h2 className="text-4xl font-medium text-center text-docmosaic-purple mb-12">
-                                Why Use This Instead of Canva or Adobe?
-                            </h2>
-                            <div className="grid md:grid-cols-2 gap-8">
-                                {features.map((feature, index) => (
-                                    <div
-                                        key={index}
-                                        className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-                                    >
-                                        <feature.icon className="w-8 h-8 text-docmosaic-purple mb-4" />
-                                        <h3 className="text-xl font-medium text-docmosaic-purple mb-2">
-                                            {feature.title}
-                                        </h3>
-                                        <p className="text-docmosaic-purple/80">
-                                            {feature.description}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Mobile-Friendly Section */}
-                <section className="py-20">
-                    <div className="container mx-auto px-4">
-                        <div className="max-w-6xl mx-auto">
-                            <div className="grid md:grid-cols-2 gap-12 items-center">
-                                <div className="space-y-6">
-                                    <h2 className="text-4xl font-medium text-docmosaic-purple">
-                                        Works on Desktop & Mobile – Edit PDFs Anywhere!
-                                    </h2>
-                                    <p className="text-xl text-docmosaic-purple/80">
-                                        No need for a computer. Edit PDFs right from your phone -
-                                        drag, arrange, and export in seconds.
-                                    </p>
-                                    <ul className="space-y-4">
-                                        {deviceFeatures.map((feature, index) => (
-                                            <li key={index} className="flex items-start">
-                                                <div className="flex-shrink-0 w-5 h-5 mt-1">
-                                                    <feature.icon className="w-5 h-5 text-docmosaic-purple" />
-                                                </div>
-                                                <div className="ml-4">
-                                                    <h3 className="font-medium text-docmosaic-purple">
-                                                        {feature.title}
-                                                    </h3>
-                                                    <p className="text-docmosaic-purple/70">
-                                                        {feature.description}
-                                                    </p>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <div className="pt-4">
-                                        <Link
-                                            href="/pdf-editor"
-                                            className="inline-flex items-center px-6 py-3 bg-docmosaic-purple text-white rounded-lg hover:bg-docmosaic-purple/90 transition-all duration-300 group"
-                                        >
-                                            Try It Now on Any Device
-                                            <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                                        </Link>
-                                    </div>
-                                </div>
-                                <div className="relative">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-docmosaic-sage/20 to-docmosaic-cream/30 rounded-3xl transform -rotate-3"></div>
-                                    <div className="relative">
-                                        {/* Desktop */}
-                                        <div className="relative z-30 bg-white rounded-lg shadow-xl p-2 max-w-[80%] mx-auto">
-                                            <Image
-                                                src="/placeholder.svg?height=400&width=600"
-                                                alt="Desktop version"
-                                                width={600}
-                                                height={400}
-                                                className="rounded-md"
-                                            />
-                                        </div>
-                                        {/* Tablet */}
-                                        <div className="absolute bottom-0 left-0 z-20 bg-white rounded-lg shadow-xl p-2 w-[40%] transform -translate-x-8 translate-y-12">
-                                            <Image
-                                                src="/placeholder.svg?height=300&width=200"
-                                                alt="Tablet version"
-                                                width={200}
-                                                height={300}
-                                                className="rounded-md"
-                                            />
-                                        </div>
-                                        {/* Mobile */}
-                                        <div className="absolute bottom-0 right-0 z-10 bg-white rounded-lg shadow-xl p-2 w-[30%] transform translate-x-8 translate-y-24">
-                                            <Image
-                                                src="/placeholder.svg?height=400&width=200"
-                                                alt="Mobile version"
-                                                width={200}
-                                                height={400}
-                                                className="rounded-md"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <StackedCards />
                 </section>
 
                 {/* Use Cases */}
@@ -351,29 +202,6 @@ export default function Home() {
     );
 }
 
-const features = [
-    {
-        icon: Zap,
-        title: 'No Sign-Up Needed',
-        description: 'Just open & start. No accounts, no waiting, no hassle.',
-    },
-    {
-        icon: Shield,
-        title: '100% Private',
-        description: 'Everything stays on your device. No uploads, no personal data collection.',
-    },
-    {
-        icon: Lock,
-        title: 'Faster than Online Editors',
-        description: 'No waiting for uploads or processing. Edit instantly.',
-    },
-    {
-        icon: Users,
-        title: 'Completely Free',
-        description: 'No hidden fees, no premium features, no limits. Everything included.',
-    },
-];
-
 const useCases = [
     {
         icon: '🛂',
@@ -465,28 +293,5 @@ const transparencyFeatures = [
         icon: Code,
         title: 'Self-Hostable',
         description: 'Use our hosted version or run it yourself.',
-    },
-];
-
-const deviceFeatures = [
-    {
-        icon: Smartphone,
-        title: 'Touch-Optimized Interface',
-        description: 'Drag, resize, and arrange with natural touch gestures on any device.',
-    },
-    {
-        icon: Monitor,
-        title: 'Seamless Desktop Experience',
-        description: 'Full functionality on larger screens with keyboard shortcuts.',
-    },
-    {
-        icon: TabletSmartphone,
-        title: 'Works on All Devices',
-        description: 'No app needed. Just open in your browser and start editing.',
-    },
-    {
-        icon: Download,
-        title: 'Instant Export Anywhere',
-        description: "Download your PDFs instantly, whether you're on phone or desktop.",
     },
 ];
