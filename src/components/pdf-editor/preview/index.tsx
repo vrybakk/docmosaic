@@ -105,7 +105,7 @@ export function Preview({
                             <Button
                                 variant="outline"
                                 onClick={handlePrint}
-                                className="bg-white hover:bg-gray-50"
+                                className="bg-white hover:bg-gray-50 print-button-click-trigger"
                                 disabled={isLoading || !previewUrls.length}
                             >
                                 <Printer className="h-4 w-4 mr-2" />
@@ -114,7 +114,7 @@ export function Preview({
                             <Button
                                 variant="default"
                                 onClick={handleDownload}
-                                className="bg-docmosaic-purple hover:bg-docmosaic-purple/90 text-white"
+                                className="bg-docmosaic-purple hover:bg-docmosaic-purple/90 text-white download-button-click-trigger"
                             >
                                 <Download className="h-4 w-4 mr-2" />
                                 Download

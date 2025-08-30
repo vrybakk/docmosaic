@@ -1,7 +1,10 @@
+'use client';
+
 import Typography from '@/components/common/typography';
 import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { motion } from 'framer-motion';
 import { forwardRef } from 'react';
 
 const buttonVariants = cva(
@@ -49,6 +52,47 @@ export interface ButtonProps
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ({ className, variant, size, asChild = false, children, icon, ...props }, ref) => {
         const Comp = asChild ? Slot : 'button';
+
+        // Render animated button for gradient variant
+        if (variant === 'gradient') {
+            return (
+                <Comp
+                    className={cn(
+                        buttonVariants({ variant, size, className }),
+                        'overflow-hidden relative transition-transform hover:scale-105 active:scale-95',
+                    )}
+                    ref={ref}
+                    {...props}
+                >
+                    <span className="relative z-10 inline-flex items-center justify-center whitespace-nowrap">
+                        {typeof children === 'string' ? (
+                            <Typography
+                                variant={size === 'sm' ? 'h6' : 'h5'}
+                                className="!text-inherit uppercase"
+                            >
+                                {children}
+                            </Typography>
+                        ) : (
+                            children
+                        )}
+                        {icon && <span className="ml-2">{icon}</span>}
+                    </span>
+                    <motion.div
+                        initial={{ left: 0 }}
+                        animate={{ left: '-300%' }}
+                        transition={{
+                            repeat: Infinity,
+                            repeatType: 'mirror',
+                            duration: 4,
+                            ease: 'linear',
+                        }}
+                        className="absolute z-0 inset-0 w-[400%] bg-gradient-to-r from-docmosaic-sage/90 via-docmosaic-cream/80 to-docmosaic-orange/80"
+                    />
+                </Comp>
+            );
+        }
+
+        // Default button rendering for other variants
         return (
             <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
                 {typeof children === 'string' ? (

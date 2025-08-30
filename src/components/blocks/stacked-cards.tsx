@@ -13,6 +13,7 @@ interface Card {
     description: string;
     buttonText: string;
     buttonLink: string;
+    buttonClass: string;
 }
 
 const cards = [
@@ -22,6 +23,7 @@ const cards = [
         description: 'Drag, resize, and arrange with natural touch gestures on any device.',
         buttonText: 'TRY MOBILE APP',
         buttonLink: '/',
+        buttonClass: 'mobile-app-access-trigger',
     },
     {
         Icon: Monitor,
@@ -29,6 +31,7 @@ const cards = [
         description: 'Full functionality on larger screens with keyboard shortcuts.',
         buttonText: 'TRY Docmosaic',
         buttonLink: '/',
+        buttonClass: 'web-app-access-trigger',
     },
     {
         Icon: TabletSmartphone,
@@ -36,6 +39,7 @@ const cards = [
         description: 'No app needed. Just open in your browser and start editing.',
         buttonText: 'TRY WEB APP',
         buttonLink: '/',
+        buttonClass: 'web-app-access-trigger',
     },
     {
         Icon: FileDown,
@@ -43,6 +47,7 @@ const cards = [
         description: "Download your PDFs instantly, whether you're on phone or desktop.",
         buttonText: 'TRY Docmosaic',
         buttonLink: '/',
+        buttonClass: 'web-app-access-trigger',
     },
 ];
 
@@ -203,7 +208,7 @@ const Card = ({
             <div
                 className={cn(
                     'my-6 h-[1px] w-full',
-                    position % 2 ? 'bg-docmosaic-black' : 'bg-gradient',
+                    position % 2 ? 'bg-docmosaic-black/15' : 'bg-gradient',
                 )}
             />
             <Typography
@@ -217,7 +222,7 @@ const Card = ({
                 <CustomLink
                     href={buttonLink}
                     variant={position % 2 ? 'sage' : 'white'}
-                    className="w-full"
+                    className={cn('w-full', cards[position].buttonClass)}
                 >
                     {buttonText}
                 </CustomLink>

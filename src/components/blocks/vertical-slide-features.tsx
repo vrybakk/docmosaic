@@ -71,7 +71,7 @@ const VerticalSlideFeatures = () => {
                                 alt={tab.title}
                                 width={500}
                                 height={400}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-contain"
                                 priority={index === 0}
                             />
                         </motion.div>

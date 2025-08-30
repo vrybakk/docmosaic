@@ -90,7 +90,10 @@ const Card = ({
                         )}
                     >
                         <div className="flex items-center">
-                            <ArrowBigRight className="-ml-8 mr-2 opacity-0 transition-all duration-300 ease-in-out group-hover:ml-0 group-hover:opacity-100" />
+                            <ArrowBigRight
+                                className="-ml-8 mr-2 opacity-0 transition-all duration-300 ease-in-out group-hover:ml-0 group-hover:opacity-100"
+                                size={18}
+                            />
                             <Typography variant="h3" tag="h3">
                                 {title.split(/[\s-]+/).map((word, idx) => (
                                     <span key={idx}>

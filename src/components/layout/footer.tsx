@@ -33,7 +33,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     href="/pdf-editor"
-                                    className="text-docmosaic-purple/70 hover:text-docmosaic-purple"
+                                    className="text-docmosaic-purple/70 hover:text-docmosaic-purple web-app-access-trigger"
                                 >
                                     PDF Editor
                                 </Link>
@@ -41,7 +41,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     href="#features"
-                                    className="text-docmosaic-purple/70 hover:text-docmosaic-purple"
+                                    className="text-docmosaic-purple/70 hover:text-docmosaic-purple features-button-click-trigger"
                                 >
                                     Features
                                 </Link>
@@ -58,7 +58,7 @@ export default function Footer() {
                                     href="https://github.com/vrybakk/docmosaic"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center text-docmosaic-purple/70 hover:text-docmosaic-purple"
+                                    className="inline-flex items-center text-docmosaic-purple/70 hover:text-docmosaic-purple view-source-button-click-trigger"
                                 >
                                     <Github className="w-4 h-4 mr-2" />
                                     View Source
@@ -69,7 +69,7 @@ export default function Footer() {
                                     href="https://github.com/vrybakk/docmosaic/issues"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center text-docmosaic-purple/70 hover:text-docmosaic-purple"
+                                    className="inline-flex items-center text-docmosaic-purple/70 hover:text-docmosaic-purple report-issues-click-trigger"
                                 >
                                     <AlertCircle className="w-4 h-4 mr-2" />
                                     Report Issues
@@ -80,7 +80,7 @@ export default function Footer() {
                                     href="https://github.com/vrybakk/docmosaic/blob/main/CONTRIBUTING.md"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center text-docmosaic-purple/70 hover:text-docmosaic-purple"
+                                    className="inline-flex items-center text-docmosaic-purple/70 hover:text-docmosaic-purple contribute-button-click-trigger"
                                 >
                                     <Code className="w-4 h-4 mr-2" />
                                     Contribute

@@ -52,6 +52,7 @@ const Hero = () => {
                         <CustomLink
                             href="/pdf-editor"
                             variant={'gradient'}
+                            className="web-app-access-trigger"
                             icon={
                                 <ArrowBigRight
                                     className="group-hover:translate-x-1 transition-transform"

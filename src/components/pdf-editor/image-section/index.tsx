@@ -1,6 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/core/button';
+import { isMobile } from '@/lib/mobile/detection';
+import { hapticFeedback } from '@/lib/mobile/haptics';
 import { ImageSection } from '@/lib/pdf-editor/types';
 import { cn } from '@/lib/utils';
 import { useDrag } from '@use-gesture/react';
@@ -8,6 +10,7 @@ import { Copy, ImageIcon, Maximize2, RefreshCw, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { MobileResizeHandles } from './mobile-resize-handles';
 
 // Constants for size constraints
 const MIN_SECTION_SIZE = 100; // Minimum size in pixels
@@ -41,69 +44,11 @@ type ResizeHandle =
     | 'bottomLeft'
     | 'bottomRight';
 
-interface ResizeHandlesProps {
-    onResizeStart: (e: React.MouseEvent, handle: ResizeHandle) => void;
-}
-
 interface UploadProgressInfo {
     status: 'reading' | 'processing' | 'resizing' | 'complete' | 'error';
     progress: number;
     message: string;
 }
-
-const ResizeHandles: React.FC<ResizeHandlesProps> = ({ onResizeStart }) => (
-    <>
-        {/* Corner handles - always visible on hover */}
-        <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity">
-            {/* Top-left */}
-            <div
-                className="absolute -top-2 -left-2 w-4 h-4 bg-white border-2 border-docmosaic-purple rounded-full cursor-nw-resize hover:scale-125 transition-transform"
-                onMouseDown={(e) => onResizeStart(e, 'topLeft')}
-            />
-            {/* Top-right */}
-            <div
-                className="absolute -top-2 -right-2 w-4 h-4 bg-white border-2 border-docmosaic-purple rounded-full cursor-ne-resize hover:scale-125 transition-transform"
-                onMouseDown={(e) => onResizeStart(e, 'topRight')}
-            />
-            {/* Bottom-left */}
-            <div
-                className="absolute -bottom-2 -left-2 w-4 h-4 bg-white border-2 border-docmosaic-purple rounded-full cursor-sw-resize hover:scale-125 transition-transform"
-                onMouseDown={(e) => onResizeStart(e, 'bottomLeft')}
-            />
-            {/* Bottom-right */}
-            <div
-                className="absolute -bottom-2 -right-2 w-4 h-4 bg-white border-2 border-docmosaic-purple rounded-full cursor-se-resize hover:scale-125 transition-transform"
-                onMouseDown={(e) => onResizeStart(e, 'bottomRight')}
-            />
-
-            {/* Edge handles */}
-            <div
-                className="absolute top-0 left-4 right-4 h-2 bg-transparent hover:bg-docmosaic-purple/20 cursor-n-resize group"
-                onMouseDown={(e) => onResizeStart(e, 'top')}
-            >
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-docmosaic-purple rounded-full opacity-0 group-hover:opacity-100" />
-            </div>
-            <div
-                className="absolute bottom-0 left-4 right-4 h-2 bg-transparent hover:bg-docmosaic-purple/20 cursor-s-resize group"
-                onMouseDown={(e) => onResizeStart(e, 'bottom')}
-            >
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 bg-white border-2 border-docmosaic-purple rounded-full opacity-0 group-hover:opacity-100" />
-            </div>
-            <div
-                className="absolute left-0 top-4 bottom-4 w-2 bg-transparent hover:bg-docmosaic-purple/20 cursor-w-resize group"
-                onMouseDown={(e) => onResizeStart(e, 'left')}
-            >
-                <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-docmosaic-purple rounded-full opacity-0 group-hover:opacity-100" />
-            </div>
-            <div
-                className="absolute right-0 top-4 bottom-4 w-2 bg-transparent hover:bg-docmosaic-purple/20 cursor-e-resize group"
-                onMouseDown={(e) => onResizeStart(e, 'right')}
-            >
-                <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-docmosaic-purple rounded-full opacity-0 group-hover:opacity-100" />
-            </div>
-        </div>
-    </>
-);
 
 /**
  * ImageSection component
@@ -305,6 +250,12 @@ export function ImageSectionComponent({
     // Handle click to select
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
+
+        // Haptic feedback on mobile for selection
+        if (typeof window !== 'undefined' && isMobile()) {
+            hapticFeedback.selection();
+        }
+
         onClick(e);
     };
 
@@ -511,10 +462,11 @@ export function ImageSectionComponent({
     return (
         <div
             {...bindDrag()}
+            data-section="true"
             className={cn(
                 'absolute p-1',
                 'border-2 border-dashed border-gray-300 hover:border-docmosaic-purple/50',
-                'rounded-lg overflow-visible group touch-none',
+                'rounded-lg overflow-visible group touch-none pointer-events-auto',
                 isSelected && 'border-solid border-docmosaic-purple shadow-lg',
                 isDroppingFile && 'border-docmosaic-purple border-solid bg-docmosaic-purple/5',
                 isDragging && 'opacity-50 cursor-grabbing',
@@ -532,13 +484,22 @@ export function ImageSectionComponent({
             onDragLeave={handleDragLeave}
             onDrop={handleFileDrop}
         >
-            {/* Resize handles - always show on hover */}
-            <ResizeHandles onResizeStart={handleResizeStart} />
+            {/* Mobile-optimized resize handles */}
+            <MobileResizeHandles
+                onResizeStart={(e, handle) => handleResizeStart(e as React.MouseEvent, handle)}
+                isResizing={isResizing}
+                show={isSelected}
+            />
+
+            {/* Selection indicator */}
+            {isSelected && (
+                <div className="absolute inset-0 border-2 border-docmosaic-purple border-dashed pointer-events-none z-5" />
+            )}
 
             {/* Top menu - show on hover or when selected */}
             <div
                 className={cn(
-                    'absolute -top-12 right-0 flex gap-1 bg-white rounded-lg shadow-md p-1 z-50',
+                    'absolute -top-12 right-0 flex gap-1 bg-white rounded-lg shadow-md p-1 z-50 pointer-events-auto',
                     'opacity-0 group-hover:opacity-100 transition-opacity',
                     isSelected && 'opacity-100', // Always show when selected
                 )}
@@ -559,6 +520,12 @@ export function ImageSectionComponent({
                     variant="ghost"
                     onClick={(e) => {
                         e.stopPropagation();
+
+                        // Haptic feedback on mobile for duplication
+                        if (typeof window !== 'undefined' && isMobile()) {
+                            hapticFeedback.success();
+                        }
+
                         onDuplicate(section);
                     }}
                     className="h-8 w-8 hover:bg-gray-100"
@@ -570,6 +537,12 @@ export function ImageSectionComponent({
                     variant="ghost"
                     onClick={(e) => {
                         e.stopPropagation();
+
+                        // Haptic feedback on mobile for deletion
+                        if (typeof window !== 'undefined' && isMobile()) {
+                            hapticFeedback.deletion();
+                        }
+
                         onDelete(section.id);
                     }}
                     className="h-8 w-8 hover:bg-red-50 text-red-600"
@@ -598,7 +571,7 @@ export function ImageSectionComponent({
                         {/* Hover overlay with replace button */}
                         <div
                             className={cn(
-                                'absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center',
+                                'absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center pointer-events-auto z-20',
                                 'opacity-0 group-hover:opacity-100 transition-opacity',
                                 isDroppingFile && 'opacity-100 bg-docmosaic-purple/40',
                             )}
@@ -609,7 +582,10 @@ export function ImageSectionComponent({
                                 className="bg-white/10 hover:bg-white/20 text-white"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    fileInputRef.current?.click();
+                                    e.preventDefault();
+                                    if (fileInputRef.current) {
+                                        fileInputRef.current.click();
+                                    }
                                 }}
                             >
                                 <RefreshCw className="h-4 w-4" />
@@ -624,27 +600,23 @@ export function ImageSectionComponent({
                 ) : (
                     <div
                         className={cn(
-                            'w-full h-full flex items-center justify-center',
-                            'bg-gray-50/50',
+                            'w-full h-full flex items-center justify-center pointer-events-auto cursor-pointer',
+                            'bg-gray-50/50 hover:bg-gray-100/50 transition-colors',
                             isDroppingFile && 'bg-docmosaic-purple/5',
                         )}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (fileInputRef.current) {
+                                fileInputRef.current.click();
+                            }
+                        }}
                     >
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="bg-white hover:bg-gray-100"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                fileInputRef.current?.click();
-                            }}
-                        >
-                            <ImageIcon className="h-4 w-4" />
-                            {section.width >= 150 && (
-                                <span className="ml-2">
-                                    {isDroppingFile ? 'Drop Image Here' : 'Upload Image'}
-                                </span>
-                            )}
-                        </Button>
+                        <div className="flex flex-col items-center gap-2 p-4">
+                            <ImageIcon className="h-8 w-8 text-gray-400" />
+                            <span className="text-sm text-gray-500 text-center">
+                                {isDroppingFile ? 'Drop Image Here' : 'Click to upload image'}
+                            </span>
+                        </div>
                     </div>
                 )}
             </div>
@@ -656,6 +628,7 @@ export function ImageSectionComponent({
                 className="hidden"
                 accept="image/*"
                 onChange={handleImageUpload}
+                data-section-input="true"
             />
 
             {/* Upload progress overlay */}

@@ -13,7 +13,7 @@ const features = [
         title: '⚖️ For Expats & Officials',
         subtitle: 'Simplify Document Processing',
         description:
-            'Perfect for <b>visa applications, ID & passport scans,</b> and <b>administrative</b> paperwork. Arrange multiple scanned documents into professional PDFs that meet official requirements.',
+            'Perfect for <b>visa applications, ID & passport scans,</b> and <b>administrative paperwork</b>. Arrange multiple scanned documents into professional PDFs that meet official requirements.',
         backgroundColor: 'bg-gradient-to-br from-[#C4D6B0] to-[#67705C]',
         image: '/showcases/officials.png',
     },
@@ -52,25 +52,24 @@ const features = [
 
 export const BouncyCardsFeatures = () => {
     return (
-        <section className="mx-auto max-w-7xl px-4 py-12 text-slate-800">
+        <section className="mx-auto max-w-7xl px-4 py-4 md:py-12 text-slate-800">
             <div className="w-full mb-8 flex flex-col items-start justify-between gap-4 md:px-8">
                 <Typography variant="h2" tag="h2">
                     Built-In <span className="text-docmosaic-cream">Solutions</span> for Everyday
                     Tasks
                 </Typography>
-                <div className="w-full flex items-center justify-between gap-2">
+                <div className="w-full flex flex-col md:flex-row md:items-center justify-between gap-2">
                     <Typography variant="small">
                         <b>Who Is This For?</b>
                         <br />
                         From designers to teachers, DocMosaic helps anyone who needs
-                        <br /> to quickly
-                        <b>create professional PDF documents.</b>
+                        <br /> to quickly <b>create professional PDF documents.</b>
                     </Typography>
                     <CustomLink
                         href="/"
                         variant="gradient"
-                        className="whitespace-nowrap"
-                        icon={<ArrowBigRight />}
+                        className="whitespace-nowrap web-app-access-trigger"
+                        icon={<ArrowBigRight size={18} />}
                     >
                         TRY DOCMOSAIC
                     </CustomLink>
@@ -82,7 +81,7 @@ export const BouncyCardsFeatures = () => {
                         key={index}
                         className={cn(
                             'col-span-12 md:col-span-4',
-                            Array.isArray(feature.title) && 'md:col-span-8',
+                            Array.isArray(feature.title) && 'md:col-span-8 max-md:min-h-[390px]',
                             feature.backgroundColor,
                         )}
                     >
@@ -97,7 +96,7 @@ export const BouncyCardsFeatures = () => {
                                 />
                             </>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[300px] md:h-full">
                                 {feature.title.map((title, index) => (
                                     <div
                                         key={index}
@@ -129,7 +128,11 @@ export const BouncyCardsFeatures = () => {
                                 alt={
                                     Array.isArray(feature.title) ? feature.title[0] : feature.title
                                 }
-                                className="object-contain"
+                                className={cn(
+                                    'object-contain',
+                                    Array.isArray(feature.title) &&
+                                        'max-md:!h-auto max-md:!top-auto max-md:!bottom-7',
+                                )}
                                 fill
                             />
                         </div>

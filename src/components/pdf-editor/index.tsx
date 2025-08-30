@@ -1,6 +1,8 @@
 'use client';
 
 import { trackEvent } from '@/lib/analytics';
+import { isMobile } from '@/lib/mobile/detection';
+import { hapticFeedback } from '@/lib/mobile/haptics';
 import { estimatePDFSize, generatePDF } from '@/lib/pdf';
 import { useDocumentState } from '@/lib/pdf-editor/hooks/useDocumentState';
 import { getDownloadFileName } from '@/lib/pdf-editor/utils/document';
@@ -89,6 +91,12 @@ export function PDFEditor() {
     // Handle adding a new section
     const handleAddSection = () => {
         trackEvent.addSection();
+
+        // Haptic feedback on mobile for adding section
+        if (typeof window !== 'undefined' && isMobile()) {
+            hapticFeedback.success();
+        }
+
         // Add section in the center of the viewport
         const section = addSection();
         // Select the new section
@@ -259,10 +267,22 @@ export function PDFEditor() {
                     hasContent={document.sections.length > 0}
                     onUndo={() => {
                         trackEvent.undo();
+
+                        // Haptic feedback on mobile for undo
+                        if (typeof window !== 'undefined' && isMobile()) {
+                            hapticFeedback.undoRedo();
+                        }
+
                         undo();
                     }}
                     onRedo={() => {
                         trackEvent.redo();
+
+                        // Haptic feedback on mobile for redo
+                        if (typeof window !== 'undefined' && isMobile()) {
+                            hapticFeedback.undoRedo();
+                        }
+
                         redo();
                     }}
                     onPreview={() => setIsPreviewOpen(true)}
@@ -333,6 +353,7 @@ export function PDFEditor() {
                         sections={document.sections}
                         selectedSectionId={selectedSectionId}
                         currentPage={document.currentPage}
+                        totalPages={document.pages.length}
                         onSectionSelect={setSelectedSectionId}
                         onSectionUpdate={updateSection}
                         onSectionDuplicate={duplicateSection}

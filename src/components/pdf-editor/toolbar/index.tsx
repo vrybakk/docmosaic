@@ -195,7 +195,7 @@ export function Toolbar({
                                     'bg-docmosaic-purple hover:bg-docmosaic-purple/90',
                                     'text-docmosaic-cream min-w-[160px]',
                                     'disabled:opacity-50',
-                                    'w-full sm:w-auto',
+                                    'w-full sm:w-auto download-button-click-trigger',
                                 )}
                             >
                                 <Download className="h-4 w-4 mr-2" />

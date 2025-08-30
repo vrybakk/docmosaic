@@ -16,7 +16,6 @@ import { useState } from 'react';
 
 type FeedbackType = 'bug' | 'feature' | 'general';
 
-
 interface FeedbackModalProps {
     customButton?: React.ReactNode;
 }
@@ -58,8 +57,10 @@ export default function FeedbackModal({ customButton }: FeedbackModalProps) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                {customButton ? customButton : (
-                    <Button variant="outline" size="sm">
+                {customButton ? (
+                    customButton
+                ) : (
+                    <Button variant="outline" size="sm" className="your-input-click-trigger">
                         <MessageSquare className="mr-2 h-4 w-4" />
                         Feedback
                     </Button>
@@ -82,7 +83,7 @@ export default function FeedbackModal({ customButton }: FeedbackModalProps) {
                                 <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    strokeWidth={2}
+                                    strokeWidth={1.5}
                                     d="M5 13l4 4L19 7"
                                 />
                             </svg>
@@ -93,7 +94,11 @@ export default function FeedbackModal({ customButton }: FeedbackModalProps) {
                         </p>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form
+                        onSubmit={handleSubmit}
+                        className="space-y-4"
+                        id="your-input-form-submit-trigger"
+                    >
                         <div className="space-y-2">
                             <Label htmlFor="feedback-type">Feedback Type</Label>
                             <RadioGroup

@@ -98,10 +98,13 @@ export default function Header() {
                     <div className="hidden md:flex items-center space-x-4">
                         <CustomLink
                             href="/pdf-editor"
-                            className="group"
+                            className="group web-app-access-trigger"
                             variant={'gradient'}
                             icon={
-                                <ArrowBigRight className="group-hover:translate-x-1 transition-transform" />
+                                <ArrowBigRight
+                                    className="group-hover:translate-x-1 transition-transform"
+                                    size={18}
+                                />
                             }
                         >
                             Try It Now
@@ -168,7 +171,7 @@ export default function Header() {
                             <a
                                 href="#features"
                                 onClick={(e) => scrollToSection(e, 'features')}
-                                className="text-docmosaic-purple/80 hover:text-docmosaic-purple transition-colors py-2"
+                                className="text-docmosaic-purple/80 hover:text-docmosaic-purple transition-colors py-2 features-button-click-trigger"
                             >
                                 Features
                             </a>
@@ -230,7 +233,7 @@ export default function Header() {
                                     variant="default"
                                     className="w-full justify-center"
                                     onClick={() => setIsMenuOpen(false)}
-                                    icon={<ArrowBigRight />}
+                                    icon={<ArrowBigRight size={18} />}
                                 >
                                     Try It Now
                                 </CustomLink>

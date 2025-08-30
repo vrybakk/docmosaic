@@ -1,6 +1,9 @@
+'use client';
+
 import Typography from '@/components/common/typography';
 import { cn } from '@/lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { forwardRef } from 'react';
 
@@ -56,6 +59,48 @@ const CustomLink = forwardRef<HTMLAnchorElement, CustomLinkProps>(
               }
             : {};
 
+        // Render animated link for gradient variant
+        if (variant === 'gradient') {
+            return (
+                <Link
+                    href={href}
+                    className={cn(
+                        linkVariants({ variant, size, className }),
+                        'overflow-hidden relative transition-transform hover:scale-105 active:scale-95',
+                    )}
+                    ref={ref}
+                    {...linkProps}
+                    {...props}
+                >
+                    <span className="relative z-10 inline-flex items-center justify-center whitespace-nowrap">
+                        {typeof children === 'string' ? (
+                            <Typography
+                                variant={size === 'sm' ? 'h6' : 'h5'}
+                                className="!text-inherit uppercase"
+                            >
+                                {children}
+                            </Typography>
+                        ) : (
+                            children
+                        )}
+                        {icon && <span className="ml-2">{icon}</span>}
+                    </span>
+                    <motion.div
+                        initial={{ left: 0 }}
+                        animate={{ left: '-300%' }}
+                        transition={{
+                            repeat: Infinity,
+                            repeatType: 'mirror',
+                            duration: 4,
+                            ease: 'linear',
+                        }}
+                        className="absolute z-0 inset-0 w-[400%] bg-gradient-to-r from-docmosaic-sage/90 via-docmosaic-cream/80 to-docmosaic-orange/80"
+                    />
+                </Link>
+            );
+        }
+
+        // Default link rendering for other variants
         return (
             <Link
                 href={href}

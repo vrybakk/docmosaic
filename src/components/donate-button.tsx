@@ -16,7 +16,7 @@ export default function DonateButton({ variant = 'coffee', size = 'default' }: D
             size={size}
             onClick={() => window.open('https://buymeacoffee.com/vrybakk', '_blank')}
             icon={<Coffee className={`w-4 h-4`} />}
-            className="w-fit"
+            className="w-fit buy-me-a-coffee-click-trigger"
         >
             Buy Me a Coffee
         </Button>

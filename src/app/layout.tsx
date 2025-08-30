@@ -1,4 +1,5 @@
 import Header from '@/components/layout/header';
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Viewport } from 'next';
 import { Montserrat } from 'next/font/google';
@@ -69,10 +70,34 @@ export const metadata = {
         type: 'website',
         images: [
             {
-                url: '/og-image.png',
+                url: '/seo/og-image.png',
                 width: 1080,
                 height: 700,
                 alt: 'DocMosaic - Visual PDF Creation Tool',
+            },
+            {
+                url: '/seo/preview-1280x720.png',
+                width: 1280,
+                height: 720,
+                alt: 'DocMosaic - Visual PDF Creation Tool (1280x720)',
+            },
+            {
+                url: '/seo/preview-640x480.png',
+                width: 640,
+                height: 480,
+                alt: 'DocMosaic - Visual PDF Creation Tool (640x480)',
+            },
+            {
+                url: '/seo/linkedIn.png',
+                width: 1200,
+                height: 627,
+                alt: 'DocMosaic - Visual PDF Creation Tool (LinkedIn)',
+            },
+            {
+                url: '/seo/instagram.png',
+                width: 1080,
+                height: 1080,
+                alt: 'DocMosaic - Visual PDF Creation Tool (Instagram)',
             },
         ],
     },
@@ -82,7 +107,7 @@ export const metadata = {
         description:
             'Create beautiful PDFs by arranging images like a mosaic. Free and open source.',
         creator: '@nerdstudio',
-        images: ['/twitter-image.png'],
+        images: ['/seo/twitter-card.png', '/seo/preview-1280x720.png', '/seo/preview-640x480.png'],
     },
     robots: {
         index: true,
@@ -102,12 +127,98 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                <link rel="icon" href="/favicon.ico" sizes="any" />
                 <link rel="icon" href="/favicon-16x16.ico" sizes="16x16" type="image/x-icon" />
                 <link rel="icon" href="/favicon-48x48.ico" sizes="48x48" type="image/x-icon" />
                 <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-                <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+                <link rel="apple-touch-icon" href="/seo/apple-touch.png" />
                 <link rel="manifest" href="/manifest.json" />
+
+                {/* Additional social media meta tags */}
+                {/* Additional social media meta tags */}
+                <meta property="og:image:width" content="1080" />
+                <meta property="og:image:height" content="700" />
+                <meta property="og:image:type" content="image/png" />
+                <meta property="og:image:alt" content="DocMosaic - Visual PDF Creation Tool" />
+
+                {/* Additional preview images for different screen sizes */}
+                <meta property="og:image" content="/seo/preview-1280x720.png" />
+                <meta property="og:image" content="/seo/preview-640x480.png" />
+
+                {/* LinkedIn specific meta tags */}
+                <meta property="og:image" content="/seo/linkedIn.png" />
+
+                {/* Instagram specific meta tags */}
+                <meta property="og:image" content="/seo/instagram.png" />
+
+                {/* Additional mobile and device specific meta tags */}
+                <meta name="theme-color" content="#381D2A" />
+                <meta name="msapplication-TileColor" content="#381D2A" />
+                <meta name="msapplication-TileImage" content="/seo/manifest-192x192.png" />
+                <meta name="msapplication-config" content="/browserconfig.xml" />
+
+                {/* Additional social media meta tags for better sharing */}
+                <meta property="og:site_name" content="DocMosaic" />
+                <meta property="og:locale" content="en_US" />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://docmosaic.com" />
+
+                {/* Twitter additional meta tags */}
+                <meta name="twitter:site" content="@nerdstudio" />
+                <meta name="twitter:creator" content="@nerdstudio" />
+                <meta name="twitter:title" content="DocMosaic - Visual PDF Creation Tool" />
+                <meta
+                    name="twitter:description"
+                    content="Create beautiful PDFs by arranging images like a mosaic. Free and open source."
+                />
+
+                {/* Additional mobile and device specific meta tags */}
+                <meta name="format-detection" content="telephone=no" />
+                <meta name="format-detection" content="date=no" />
+                <meta name="format-detection" content="address=no" />
+                <meta name="format-detection" content="email=no" />
+
+                {/* Additional social media meta tags for better sharing */}
+                <meta
+                    property="og:image:secure_url"
+                    content="https://docmosaic.com/seo/og-image.png"
+                />
+                <meta
+                    property="og:image:secure_url"
+                    content="https://docmosaic.com/seo/preview-1280x720.png"
+                />
+                <meta
+                    property="og:image:secure_url"
+                    content="https://docmosaic.com/seo/preview-640x480.png"
+                />
+                <meta
+                    property="og:image:secure_url"
+                    content="https://docmosaic.com/seo/linkedIn.png"
+                />
+                <meta
+                    property="og:image:secure_url"
+                    content="https://docmosaic.com/seo/instagram.png"
+                />
+
+                {/* Additional social media meta tags for better sharing */}
+                <meta property="og:image:alt" content="DocMosaic - Visual PDF Creation Tool" />
+                <meta
+                    property="og:image:alt"
+                    content="DocMosaic - Visual PDF Creation Tool (1280x720)"
+                />
+                <meta
+                    property="og:image:alt"
+                    content="DocMosaic - Visual PDF Creation Tool (640x480)"
+                />
+                <meta
+                    property="og:image:alt"
+                    content="DocMosaic - Visual PDF Creation Tool (LinkedIn)"
+                />
+                <meta
+                    property="og:image:alt"
+                    content="DocMosaic - Visual PDF Creation Tool (Instagram)"
+                />
+
+                <meta property="og:image:type" content="image/png" />
                 <Script
                     id="schema-org"
                     type="application/ld+json"
@@ -139,7 +250,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             },
                             screenshot: {
                                 '@type': 'ImageObject',
-                                url: 'https://docmosaic.com/screenshot-1.png',
+                                url: 'https://docmosaic.com/seo/schema.png',
                                 caption: 'DocMosaic PDF Editor Interface',
                             },
                             featureList: [
@@ -153,6 +264,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 />
             </head>
             <body className={`${montserrat.variable} font-sans`}>
+                <GoogleTagManager gtmId={'GTM-WFRMPQ7Q'} />
+                <GoogleAnalytics gaId={'G-9GLFL0DT7W'} />
+
                 <Header />
                 {children}
                 <Analytics />

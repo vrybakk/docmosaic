@@ -126,6 +126,7 @@ export function Sidebar({
                             'w-full justify-start',
                             'bg-docmosaic-purple text-docmosaic-cream',
                             'hover:bg-docmosaic-purple/90',
+                            'add-image-button-click-trigger',
                         )}
                     >
                         <ImageIcon className="h-4 w-4 mr-2" />
@@ -138,6 +139,7 @@ export function Sidebar({
                             'w-full justify-start',
                             'border-docmosaic-purple/20 text-docmosaic-purple',
                             'hover:bg-docmosaic-sage/10',
+                            'add-page-button-click-trigger',
                         )}
                     >
                         <Plus className="h-4 w-4 mr-2" />

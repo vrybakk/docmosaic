@@ -59,7 +59,7 @@ export default function Home() {
                         ))}
                     </div>
                     <hr className="my-8 border-docmosaic-black/15" />
-                    <div className="flex justify-between items-center gap-10">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-10">
                         <div className="flex flex-col gap-3">
                             <Typography variant="h3" tag="h6">
                                 Support This Project
@@ -71,7 +71,7 @@ export default function Home() {
                             </Typography>
                             <DonateButton size="lg" />
                         </div>
-                        <div className="flex flex-col gap-3 items-end text-right">
+                        <div className="flex flex-col gap-3 md:items-end md:text-right">
                             <Typography variant="h3" tag="h6">
                                 Help Us Improve
                             </Typography>
@@ -79,12 +79,13 @@ export default function Home() {
                                 This tool is open-source & free to use. If you have ideas, feedback,
                                 or found a bug, let us know!
                             </Typography>
-                            <div className="flex gap-4">
+                            <div className="flex flex-col md:flex-row gap-4">
                                 <CustomLink
                                     variant="sage"
                                     href="https://forms.clickup.com/2179724/f/22gmc-41632/XPTXPPQYXACUBJLSRP"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    className="your-input-click-trigger"
                                     icon={<MessageSquareText className="w-4 h-4" />}
                                 >
                                     YOUR INPUT
@@ -94,6 +95,7 @@ export default function Home() {
                                     href="https://github.com/vrybakk/docmosaic"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    className="report-issues-click-trigger"
                                     icon={<Github className="w-4 h-4" />}
                                 >
                                     Report on GitHub
@@ -113,7 +115,7 @@ export default function Home() {
                         <Typography variant="h6" tag="span">
                             Download our Mobile App
                         </Typography>
-                        <ArrowBigRight className="text-docmosaic-black" />
+                        <ArrowBigRight className="text-docmosaic-black" size={18} />
                     </div>
                     <Typography variant="h2" tag="h4">
                         Tame Your <span className="text-docmosaic-caramel">PDFs</span> with Ease
@@ -125,7 +127,8 @@ export default function Home() {
                     <CustomLink
                         variant={'gradient'}
                         href="/pdf-editor"
-                        icon={<ArrowBigRight className="w-4 h-4" />}
+                        className="max-md:w-full web-app-access-trigger"
+                        icon={<ArrowBigRight size={18} />}
                     >
                         START EDITING NOW
                     </CustomLink>

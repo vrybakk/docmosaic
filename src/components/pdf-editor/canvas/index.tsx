@@ -3,10 +3,19 @@
 import { Button } from '@/components/ui/core/button';
 import Loader from '@/components/ui/data-display/loader';
 import { trackEvent } from '@/lib/analytics';
+import { getDeviceInfo } from '@/lib/mobile/detection';
+import {
+    createTouchGestureManager,
+    TouchGestureManager,
+    type LongPressEvent,
+    type SwipeEvent,
+} from '@/lib/mobile/gestures';
+import { hapticFeedback } from '@/lib/mobile/haptics';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
+import { cn } from '@/lib/utils';
 import { Minus, Plus, RotateCcw } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { ImageSectionComponent } from '../image-section';
 
@@ -23,6 +32,8 @@ interface CanvasProps {
     selectedSectionId: string | null;
     /** Current page number */
     currentPage: number;
+    /** Total number of pages in the document */
+    totalPages: number;
     /** Callback when a section is selected */
     onSectionSelect: (sectionId: string | null) => void;
     /** Callback when a section is updated */
@@ -53,6 +64,7 @@ export function Canvas({
     sections,
     selectedSectionId,
     currentPage,
+    totalPages,
     onSectionSelect,
     onSectionUpdate,
     onSectionDuplicate,
@@ -67,8 +79,35 @@ export function Canvas({
     const touchStartRef = useRef<{ x: number; y: number; distance?: number } | null>(null);
     const pageDimensions = getPageDimensionsWithOrientation(pageSize, orientation);
 
+    // Mobile gesture manager
+    const gestureManagerRef = useRef<TouchGestureManager | null>(null);
+
+    // Initialize gesture manager on mount (client-side only)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            gestureManagerRef.current = createTouchGestureManager({
+                longPressTimeout: 500,
+                doubleTapTimeout: 300,
+                swipeThreshold: 50,
+                preventDefault: true,
+            });
+        }
+    }, []);
+
+    // Device info for mobile optimizations
+    const [deviceInfo, setDeviceInfo] = useState(() => ({ isMobile: false }));
+
+    // Initialize device info on mount (client-side only)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setDeviceInfo(getDeviceInfo());
+        }
+    }, []);
+
     // Auto-scale page to fit container
     useEffect(() => {
+        if (!pageDimensions || !pageDimensions.width || !pageDimensions.height) return;
+
         setIsLoading(true);
         const updateScale = () => {
             if (!containerRef.current) return;
@@ -89,28 +128,43 @@ export function Canvas({
         updateScale();
         window.addEventListener('resize', updateScale);
         return () => window.removeEventListener('resize', updateScale);
-    }, [pageDimensions.width, pageDimensions.height]);
+    }, [pageDimensions]);
 
-    // Zoom controls with analytics
+    // Zoom controls with analytics and haptics
     const handleZoomIn = () => {
         const newZoom = Math.min(zoom + ZOOM_STEP, MAX_ZOOM);
         setZoom(newZoom);
         trackEvent.zoom(newZoom);
+
+        // Haptic feedback on mobile
+        if (deviceInfo?.isMobile && hapticFeedback) {
+            hapticFeedback.zoom();
+        }
     };
 
     const handleZoomOut = () => {
         const newZoom = Math.max(zoom - ZOOM_STEP, MIN_ZOOM);
         setZoom(newZoom);
         trackEvent.zoom(newZoom);
+
+        // Haptic feedback on mobile
+        if (deviceInfo?.isMobile && hapticFeedback) {
+            hapticFeedback.zoom();
+        }
     };
 
-    const handleZoomReset = () => {
+    const handleZoomReset = useCallback(() => {
         setZoom(1);
         setPan({ x: 0, y: 0 });
         trackEvent.zoom(1);
-    };
 
-    // Mouse wheel zoom with analytics
+        // Haptic feedback on mobile
+        if (deviceInfo?.isMobile && hapticFeedback) {
+            hapticFeedback.medium();
+        }
+    }, [deviceInfo?.isMobile]);
+
+    // Mouse wheel zoom with analytics and haptics
     const handleWheel = (e: React.WheelEvent) => {
         if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
@@ -118,12 +172,19 @@ export function Canvas({
             const newZoom = Math.min(Math.max(zoom + delta, MIN_ZOOM), MAX_ZOOM);
             setZoom(newZoom);
             trackEvent.zoom(newZoom);
+
+            // Haptic feedback on mobile for trackpad zoom
+            if (deviceInfo?.isMobile && hapticFeedback) {
+                hapticFeedback.light();
+            }
         }
     };
 
-    // Touch interactions
+    // Touch interactions with enhanced haptics
     const triggerHaptic = () => {
-        if ('vibrate' in navigator) navigator.vibrate(50);
+        if (hapticFeedback) {
+            hapticFeedback.zoom();
+        }
     };
 
     const getTouchDistance = (touches: React.TouchList): number => {
@@ -142,6 +203,18 @@ export function Canvas({
     };
 
     const handleTouchStart = (e: React.TouchEvent) => {
+        // Check if the touch target is a section or resize handle (should not handle canvas touch)
+        const target = e.target as HTMLElement;
+        const isSection = target.closest('[data-section]');
+        const isResizeHandle = target.closest('[data-resize-handle]');
+        const isButton = target.closest('button');
+        const isInput = target.closest('input');
+        const isFileInput = target.closest('[data-section-input]');
+
+        if (isSection || isResizeHandle || isButton || isInput || isFileInput) {
+            return; // Don't handle canvas touch for interactive elements
+        }
+
         if (e.touches.length === 2) {
             e.preventDefault();
             touchStartRef.current = {
@@ -155,11 +228,28 @@ export function Canvas({
                 x: e.touches[0].clientX,
                 y: e.touches[0].clientY,
             };
+
+            // Handle single touch gestures
+            if (gestureManagerRef.current) {
+                gestureManagerRef.current.handleTouchStart(e.nativeEvent);
+            }
         }
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
         if (!touchStartRef.current) return;
+
+        // Check if the touch target is a section or resize handle (should not handle canvas touch)
+        const target = e.target as HTMLElement;
+        const isSection = target.closest('[data-section]');
+        const isResizeHandle = target.closest('[data-resize-handle]');
+        const isButton = target.closest('button');
+        const isInput = target.closest('input');
+        const isFileInput = target.closest('[data-section-input]');
+
+        if (isSection || isResizeHandle || isButton || isInput || isFileInput) {
+            return; // Don't handle canvas touch for interactive elements
+        }
 
         if (e.touches.length === 2 && touchStartRef.current.distance !== undefined) {
             e.preventDefault();
@@ -185,16 +275,82 @@ export function Canvas({
                 x: e.touches[0].clientX,
                 y: e.touches[0].clientY,
             };
+
+            // Handle single touch gesture move
+            if (gestureManagerRef.current) {
+                gestureManagerRef.current.handleTouchMove(e.nativeEvent);
+            }
         }
     };
 
-    const handleTouchEnd = () => {
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        // Check if the touch target is a section or resize handle (should not handle canvas touch)
+        const target = e.target as HTMLElement;
+        const isSection = target.closest('[data-section]');
+        const isResizeHandle = target.closest('[data-resize-handle]');
+        const isButton = target.closest('button');
+        const isInput = target.closest('input');
+        const isFileInput = target.closest('[data-section-input]');
+
+        if (isSection || isResizeHandle || isButton || isInput || isFileInput) {
+            return; // Don't handle canvas touch for interactive elements
+        }
+
         touchStartRef.current = null;
+
+        // Handle single touch gesture end
+        if (e.changedTouches.length === 1 && gestureManagerRef.current) {
+            gestureManagerRef.current.handleTouchEnd(e.nativeEvent);
+        }
     };
 
     // Filter sections for current page
-    const pageSections = sections.filter((section) => section.page === currentPage);
-    const finalScale = scale * zoom;
+    const pageSections = (sections || []).filter((section) => section.page === currentPage);
+    const finalScale = (scale || 1) * (zoom || 1);
+
+    // Setup gesture callbacks
+    useEffect(() => {
+        const gestureManager = gestureManagerRef.current;
+        if (!gestureManager) return;
+
+        // Long-press for context menu (future feature)
+        gestureManager.onLongPress((event: LongPressEvent) => {
+            if (hapticFeedback) {
+                hapticFeedback.medium();
+            }
+            // TODO: Show context menu at coordinates
+            console.log('Long press detected:', event.coordinates);
+        });
+
+        // Swipe gestures for page navigation
+        gestureManager.onSwipe(['left', 'right'], (event: SwipeEvent) => {
+            if (hapticFeedback) {
+                hapticFeedback.pageChange();
+            }
+            // Safely check if we can navigate
+            if (event.direction === 'left' && currentPage < totalPages) {
+                // TODO: Navigate to next page
+                console.log('Swipe left - next page');
+            } else if (event.direction === 'right' && currentPage > 1) {
+                // TODO: Navigate to previous page
+                console.log('Swipe right - previous page');
+            }
+        });
+
+        // Double-tap to reset zoom
+        gestureManager.onDoubleTap(() => {
+            if (hapticFeedback) {
+                hapticFeedback.medium();
+            }
+            handleZoomReset();
+        });
+
+        return () => {
+            if (gestureManager) {
+                gestureManager.destroy();
+            }
+        };
+    }, [currentPage, totalPages, handleZoomReset]);
 
     // Handle section drag and drop with analytics
     const [, dropRef] = useDrop(
@@ -222,6 +378,15 @@ export function Canvas({
         if (node) dropRef(node);
     };
 
+    // Safety check for required props
+    if (!page || !pageDimensions || !pageDimensions.width || !pageDimensions.height) {
+        return (
+            <div className="flex-1 min-h-0 overflow-auto bg-gray-100 p-6 flex items-center justify-center">
+                <div className="text-gray-500">Loading page...</div>
+            </div>
+        );
+    }
+
     return (
         <div
             ref={containerRef}
@@ -241,13 +406,13 @@ export function Canvas({
                         ref={combinedRef}
                         className="bg-white shadow-lg relative transition-transform duration-200 ease-out"
                         style={{
-                            width: pageDimensions.width * finalScale,
-                            height: pageDimensions.height * finalScale,
-                            transform: `translate(${pan.x}px, ${pan.y}px)`,
+                            width: (pageDimensions?.width || 0) * finalScale,
+                            height: (pageDimensions?.height || 0) * finalScale,
+                            transform: `translate(${pan?.x || 0}px, ${pan?.y || 0}px)`,
                         }}
                     >
                         {/* Background PDF */}
-                        {page.backgroundPDF && (
+                        {page?.backgroundPDF && (
                             <div
                                 className="absolute inset-0 bg-contain bg-center bg-no-repeat"
                                 style={{ backgroundImage: `url(${page.backgroundPDF})` }}
@@ -258,8 +423,8 @@ export function Canvas({
                         <div
                             className="absolute inset-0"
                             style={{
-                                width: pageDimensions.width * finalScale,
-                                height: pageDimensions.height * finalScale,
+                                width: (pageDimensions?.width || 0) * finalScale,
+                                height: (pageDimensions?.height || 0) * finalScale,
                             }}
                         >
                             {pageSections.map((section) => (
@@ -296,39 +461,74 @@ export function Canvas({
                 </div>
             )}
 
-            {/* Zoom controls */}
+            {/* Zoom controls - mobile optimized */}
             {!isLoading && (
-                <div className="absolute top-4 right-4 flex items-center gap-2 bg-white rounded-lg shadow-sm p-1 z-10">
+                <div
+                    className={cn(
+                        'absolute top-4 right-4 flex items-center gap-2 bg-white rounded-lg shadow-sm p-1 z-10',
+                        'transition-all duration-200',
+                        deviceInfo?.isMobile && 'gap-3 p-2', // More spacing on mobile
+                    )}
+                >
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={handleZoomOut}
-                        disabled={zoom <= MIN_ZOOM}
-                        className="h-8 w-8"
+                        disabled={(zoom || 1) <= MIN_ZOOM}
+                        className={cn(
+                            'h-8 w-8',
+                            deviceInfo?.isMobile && 'h-10 w-10', // Larger on mobile
+                        )}
                     >
-                        <Minus className="h-4 w-4" />
+                        <Minus
+                            className={cn(
+                                'h-4 w-4',
+                                deviceInfo?.isMobile && 'h-5 w-5', // Larger icon on mobile
+                            )}
+                        />
                     </Button>
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={handleZoomReset}
-                        disabled={zoom === 1}
-                        className="h-8 w-8"
+                        disabled={(zoom || 1) === 1}
+                        className={cn(
+                            'h-8 w-8',
+                            deviceInfo?.isMobile && 'h-10 w-10', // Larger on mobile
+                        )}
                         title="Reset zoom"
                     >
-                        <RotateCcw className="h-4 w-4" />
+                        <RotateCcw
+                            className={cn(
+                                'h-4 w-4',
+                                deviceInfo?.isMobile && 'h-5 w-5', // Larger icon on mobile
+                            )}
+                        />
                     </Button>
-                    <span className="text-sm font-medium w-12 text-center">
-                        {Math.round(zoom * 100)}%
+                    <span
+                        className={cn(
+                            'text-sm font-medium w-12 text-center',
+                            deviceInfo?.isMobile && 'text-base w-14', // Larger text on mobile
+                        )}
+                    >
+                        {Math.round((zoom || 1) * 100)}%
                     </span>
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={handleZoomIn}
-                        disabled={zoom >= MAX_ZOOM}
-                        className="h-8 w-8"
+                        disabled={(zoom || 1) >= MAX_ZOOM}
+                        className={cn(
+                            'h-8 w-8',
+                            deviceInfo?.isMobile && 'h-10 w-10', // Larger on mobile
+                        )}
                     >
-                        <Plus className="h-4 w-4" />
+                        <Plus
+                            className={cn(
+                                'h-4 w-4',
+                                deviceInfo?.isMobile && 'h-5 w-5', // Larger icon on mobile
+                            )}
+                        />
                     </Button>
                 </div>
             )}
