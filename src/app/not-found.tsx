@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/core/button';
 import { FileQuestion } from 'lucide-react';
 import Link from 'next/link';
@@ -15,19 +17,19 @@ export default function NotFound() {
                     been moved or deleted.
                 </p>
                 <div className="flex justify-center gap-4">
-                    <Button
-                        asChild
-                        className="bg-docmosaic-purple hover:bg-docmosaic-purple/90 text-docmosaic-cream"
-                    >
-                        <Link href="/">Return Home</Link>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        asChild
-                        className="border-docmosaic-purple/20 text-docmosaic-purple hover:bg-docmosaic-sage/10"
-                    >
-                        <Link href="/pdf-editor">Try PDF Editor</Link>
-                    </Button>
+                    <Link href="/">
+                        <Button className="bg-docmosaic-purple hover:bg-docmosaic-purple/90 text-docmosaic-cream">
+                            Return Home
+                        </Button>
+                    </Link>
+                    <Link href="/pdf-editor">
+                        <Button
+                            variant="outline"
+                            className="border-docmosaic-purple/20 text-docmosaic-purple hover:bg-docmosaic-sage/10"
+                        >
+                            Try PDF Editor
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </div>

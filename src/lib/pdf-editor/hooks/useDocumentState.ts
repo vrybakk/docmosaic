@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { ImageSection, PageOrientation, PageSize, PDFDocument } from '../types';
 import { createInitialDocument, createNewImageSection, createNewPage } from '../utils/document';
 
@@ -82,7 +83,7 @@ export function useDocumentState() {
     const duplicateSection = (section: ImageSection) => {
         const newSection = {
             ...section,
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             x: section.x + 20,
             y: section.y + 20,
         };
