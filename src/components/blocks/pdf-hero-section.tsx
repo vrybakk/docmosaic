@@ -10,7 +10,7 @@ export default function PdfHeroSection() {
     return (
         <section className="overflow-hidden bg-white">
             <div className="relative flex flex-col items-center justify-center px-4 md:px-12 pb-20 pt-12 md:pt-24">
-                <div className="mb-1.5 rounded-full bg-zinc-600">
+                {/* <div className="mb-1.5 rounded-full bg-zinc-600">
                     <div className="flex origin-top-left items-center rounded-full  bg-white p-0.5 text-sm transition-transform hover:-rotate-2 shadow-[0px_0px_4px_0px_#00000066]">
                         <span className="rounded-full bg-docmosaic-sage px-2 py-0.5 font-medium text-white">
                             HEY!
@@ -18,7 +18,7 @@ export default function PdfHeroSection() {
                         <span className="ml-1.5 mr-1 inline-block">Download our Mobile App</span>
                         <ArrowBigRight className="mr-2 inline-block" size={18} />
                     </div>
-                </div>
+                </div> */}
                 <Typography
                     variant="h2"
                     tag="h1"

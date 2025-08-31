@@ -124,7 +124,7 @@ export const BouncyCardsFeatures = () => {
                         )}
                         <div
                             className={cn(
-                                'absolute bottom-0 left-4 right-4 top-36 translate-y-8 rounded-t-[20px] p-4 transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg]',
+                                'absolute bottom-0 left-4 right-4 top-36 translate-y-8 rounded-t-[20px] transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg] overflow-hidden',
                                 Array.isArray(feature.title) && 'max-md:!top-auto max-md:!bottom-4',
                             )}
                         >

@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { FileDown, Monitor, SquareMousePointer, TabletSmartphone } from 'lucide-react';
+import { FileDown, Monitor, TabletSmartphone } from 'lucide-react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import Typography from '../common/typography';
 import { CustomLink } from '../ui/core/link';
@@ -17,14 +17,14 @@ interface Card {
 }
 
 const cards = [
-    {
-        Icon: SquareMousePointer,
-        title: 'Touch-Optimized Interface',
-        description: 'Drag, resize, and arrange with natural touch gestures on any device.',
-        buttonText: 'TRY MOBILE APP',
-        buttonLink: '/',
-        buttonClass: 'mobile-app-access-trigger',
-    },
+    // {
+    //     Icon: SquareMousePointer,
+    //     title: 'Touch-Optimized Interface',
+    //     description: 'Drag, resize, and arrange with natural touch gestures on any device.',
+    //     buttonText: 'TRY MOBILE APP',
+    //     buttonLink: '/',
+    //     buttonClass: 'mobile-app-access-trigger',
+    // },
     {
         Icon: Monitor,
         title: 'Seamless Desktop Experience',

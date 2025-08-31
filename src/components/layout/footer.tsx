@@ -3,7 +3,15 @@
 import Typography from '@/components/common/typography';
 import DonateButton from '@/components/donate-button';
 import { CustomLink } from '@/components/ui/core/link';
-import { Bug, Code, Github, LayoutList, MessageSquareText, Smartphone, SquareDashedMousePointer } from 'lucide-react';
+import {
+    Bug,
+    Code,
+    Github,
+    LayoutList,
+    MessageSquareText,
+    // Smartphone,
+    SquareDashedMousePointer,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -12,7 +20,7 @@ export default function Footer() {
         <footer className="py-12">
             <div className="container mx-auto px-4">
                 <div className="grid md:grid-cols-4 gap-8">
-                    <div className="col-span-2">
+                    <div className="col-span-1 md:col-span-2">
                         <Link href="/" className="flex items-center space-x-2 mb-4">
                             <Image src="/logo.svg" alt="DocMosaic Logo" width={32} height={32} />
                             <Typography variant="h3" className="text-docmosaic-black">
@@ -47,13 +55,16 @@ export default function Footer() {
                                     href="/pdf-editor"
                                     className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black web-app-access-trigger"
                                 >
-                                    <SquareDashedMousePointer className="w-4 h-4 mr-2" strokeWidth={1} />
+                                    <SquareDashedMousePointer
+                                        className="w-4 h-4 mr-2"
+                                        strokeWidth={1}
+                                    />
                                     <Typography variant="small" className="text-inherit">
                                         PDF Web Editor
                                     </Typography>
                                 </Link>
                             </li>
-                            <li>
+                            {/* <li>
                                 <Link
                                     href="#mobile-app"
                                     className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black mobile-app-access-trigger"
@@ -63,7 +74,7 @@ export default function Footer() {
                                         Mobile App
                                     </Typography>
                                 </Link>
-                            </li>
+                            </li> */}
                             <li>
                                 <Link
                                     href="#features"
@@ -125,7 +136,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="border-t border-gray-200 mt-8 pt-8">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-center gap-2 md:gap-4">
                         <Typography variant="small" className="text-docmosaic-black/60">
                             © {new Date().getFullYear()} DocMosaic. All rights reserved. |{' '}
                             <Link
