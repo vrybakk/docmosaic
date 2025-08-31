@@ -47,6 +47,8 @@ export default function PdfHeroSection() {
                             width={493}
                             height={298}
                             className="rounded-lg shadow-lg"
+                            priority
+                            style={{ width: 'auto', height: 'auto' }}
                         />
                     </div>
                     <div className="relative max-md:hidden">
@@ -56,6 +58,8 @@ export default function PdfHeroSection() {
                             width={210}
                             height={349}
                             className="rounded-lg shadow-lg"
+                            priority
+                            style={{ width: 'auto', height: 'auto' }}
                         />
                     </div>
                 </div>

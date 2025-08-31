@@ -19,8 +19,8 @@ export function middleware(request: NextRequest) {
     response.headers.set(
         'Content-Security-Policy',
         process.env.NODE_ENV === 'production'
-            ? "default-src 'self' blob:; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app *.com va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' *.vercel.app *.com vitals.vercel-insights.com; object-src blob:;"
-            : "default-src 'self' blob:; script-src 'self' 'unsafe-eval' 'unsafe-inline' va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' vitals.vercel-insights.com; object-src blob:;",
+            ? "default-src 'self' blob:; script-src 'self' 'unsafe-eval' 'unsafe-inline' vercel.live *.vercel.app *.com va.vercel-scripts.com *.googletagmanager.com *.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' *.vercel.app *.com vitals.vercel-insights.com *.googletagmanager.com *.google-analytics.com *.google.com; frame-src 'self' *.googletagmanager.com; object-src blob:;"
+            : "default-src 'self' blob:; script-src 'self' 'unsafe-eval' 'unsafe-inline' va.vercel-scripts.com *.googletagmanager.com *.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https:; font-src 'self' data:; connect-src 'self' vitals.vercel-insights.com *.googletagmanager.com *.google-analytics.com *.google.com; frame-src 'self' *.googletagmanager.com; object-src blob:;",
     );
     response.headers.set('X-DNS-Prefetch-Control', 'on');
 

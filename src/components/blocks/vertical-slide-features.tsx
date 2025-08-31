@@ -66,14 +66,16 @@ const VerticalSlideFeatures = () => {
                             transition={{ duration: 0.3 }}
                             className="absolute inset-0"
                         >
-                            <Image
-                                src={tab.image}
-                                alt={tab.title}
-                                width={800}
-                                height={800}
-                                className="w-full h-full object-contain"
-                                priority={index === 0}
-                            />
+                            {selected === index && (
+                                <Image
+                                    src={tab.image}
+                                    alt={tab.title}
+                                    width={800}
+                                    height={800}
+                                    className="w-full h-full object-contain"
+                                    priority={index === 0}
+                                />
+                            )}
                         </motion.div>
                     ))}
                 </div>

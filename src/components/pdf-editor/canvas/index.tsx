@@ -15,7 +15,7 @@ import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/
 import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
 import { cn } from '@/lib/utils';
 import { Minus, Plus, RotateCcw } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { ImageSectionComponent } from '../image-section';
 
@@ -77,7 +77,10 @@ export function Canvas({
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [isLoading, setIsLoading] = useState(true);
     const touchStartRef = useRef<{ x: number; y: number; distance?: number } | null>(null);
-    const pageDimensions = getPageDimensionsWithOrientation(pageSize, orientation);
+
+    const pageDimensions = useMemo(() => {
+        return getPageDimensionsWithOrientation(pageSize, orientation);
+    }, [pageSize, orientation]);
 
     // Mobile gesture manager
     const gestureManagerRef = useRef<TouchGestureManager | null>(null);
