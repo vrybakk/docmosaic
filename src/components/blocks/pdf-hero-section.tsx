@@ -67,7 +67,7 @@ export default function PdfHeroSection() {
                 </div>
             </div>
 
-            <div className="relative -mt-24 -rotate-1 scale-[1.01] bg-white pb-6">
+            <div className="relative -mt-16 md:-mt-24 -rotate-1 scale-[1.01] bg-white pb-6">
                 <div
                     className="relative z-0 flex overflow-hidden"
                     style={{ boxShadow: '0px 0px 4px 0px #00000040' }}
