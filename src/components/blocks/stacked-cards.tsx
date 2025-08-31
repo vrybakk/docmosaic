@@ -55,8 +55,8 @@ const StackedCards = () => {
     const [selected, setSelected] = useState(0);
 
     return (
-        <section className="bg-white py-24 px-4 lg:px-8 grid items-center grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 overflow-hidden">
-            <div className="p-4">
+        <section className="bg-white py-12 md:py-24 lg:px-8 grid items-center grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 overflow-hidden">
+            <div className="md:p-4">
                 <Typography variant="h2" tag="h2">
                     Works on Desktop & Mobile – Edit{' '}
                     <span className="text-docmosaic-sage">PDFs</span> Anywhere!

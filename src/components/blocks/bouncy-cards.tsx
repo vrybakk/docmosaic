@@ -28,7 +28,7 @@ const features = [
             'Assemble <b>portfolio samples, image-heavy proposals,</b> and <b>invoice layouts</b> visually. Perfect for client deliverables.',
         ],
         backgroundColor: 'bg-gradient-to-br from-[#FCDE9C] to-[#96845D]',
-        image: '/showcases/business.png',
+        image: ['/showcases/business.png', '/showcases/business-sm.png'],
     },
     {
         title: ['🎯 For Marketers', '🎨 For Designers'],
@@ -38,7 +38,7 @@ const features = [
             'Place, resize, and align images easily to create <b>print-ready layouts.</b> Perfect for <b>visual portfolios</b> and <b>client presentations.</b>',
         ],
         backgroundColor: 'bg-gradient-to-br from-[#FFA552] to-[#996331]',
-        image: '/showcases/designers.png',
+        image: ['/showcases/designers.png', '/showcases/designers-sm.png'],
     },
     {
         title: '🎓 For Teachers & Students',
@@ -52,7 +52,7 @@ const features = [
 
 export const BouncyCardsFeatures = () => {
     return (
-        <section className="mx-auto max-w-7xl px-4 py-4 md:py-12 text-slate-800">
+        <section className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 text-slate-800">
             <div className="w-full mb-8 flex flex-col items-start justify-between gap-4 md:px-8">
                 <Typography variant="h2" tag="h2">
                     Built-In <span className="text-docmosaic-cream">Solutions</span> for Everyday
@@ -81,7 +81,7 @@ export const BouncyCardsFeatures = () => {
                         key={index}
                         className={cn(
                             'col-span-12 md:col-span-4',
-                            Array.isArray(feature.title) && 'md:col-span-8 max-md:min-h-[390px]',
+                            Array.isArray(feature.title) && 'md:col-span-8 max-md:min-h-[480px]',
                             feature.backgroundColor,
                         )}
                     >
@@ -96,13 +96,13 @@ export const BouncyCardsFeatures = () => {
                                 />
                             </>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[300px] md:h-full">
+                            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4 h-[300px] md:h-full">
                                 {feature.title.map((title, index) => (
                                     <div
                                         key={index}
                                         className={cn(
                                             index === 0 &&
-                                                'md:pr-6 md:mr-3 md:border-r border-docmosaic-black/15',
+                                                'md:pr-6 md:mr-3 md:border-r border-docmosaic-black/15 max-md:mb-4 max-md:border-b max-md:border-docmosaic-purple/15',
                                         )}
                                     >
                                         <CardTitle>{title}</CardTitle>
@@ -125,16 +125,35 @@ export const BouncyCardsFeatures = () => {
                         <div
                             className={cn(
                                 'absolute bottom-0 left-4 right-4 top-36 translate-y-8 rounded-t-[20px] transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg] overflow-hidden',
-                                Array.isArray(feature.title) && 'max-md:!top-auto max-md:!bottom-4',
+                                Array.isArray(feature.title) &&
+                                    'max-md:!top-[300px] max-md:!bottom-4',
                             )}
                         >
                             <Image
-                                src={feature.image}
+                                src={
+                                    Array.isArray(feature.image) ? feature.image[0] : feature.image
+                                }
                                 alt={
                                     Array.isArray(feature.title) ? feature.title[0] : feature.title
                                 }
                                 className={cn(
-                                    'object-contain',
+                                    'hidden md:block object-contain',
+                                    Array.isArray(feature.title) && 'max-md:!h-auto',
+                                )}
+                                width={800}
+                                height={800}
+                                loading="lazy"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            />
+                            <Image
+                                src={
+                                    Array.isArray(feature.image) ? feature.image[1] : feature.image
+                                }
+                                alt={
+                                    Array.isArray(feature.title) ? feature.title[0] : feature.title
+                                }
+                                className={cn(
+                                    'block md:hidden object-contain',
                                     Array.isArray(feature.title) && 'max-md:!h-auto',
                                 )}
                                 width={800}
