@@ -44,24 +44,24 @@ export default function PdfHeroSection() {
                         <Image
                             src="/showcases/desktop.png"
                             alt="DocMosaic Desktop Interface"
-                            width={493}
-                            height={298}
-                            className="rounded-lg shadow-lg"
+                            width={450}
+                            height={272}
+                            className="rounded-lg shadow-lg max-w-[450px] h-auto"
                             loading="lazy"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                            style={{ width: 'auto', height: 'auto' }}
+                            quality={85}
+                            sizes="(max-width: 768px) 90vw, 450px"
                         />
                     </div>
                     <div className="relative max-md:hidden">
                         <Image
                             src="/showcases/mobile.png"
                             alt="DocMosaic Mobile Interface"
-                            width={210}
-                            height={349}
-                            className="rounded-lg shadow-lg"
+                            width={180}
+                            height={299}
+                            className="rounded-lg shadow-lg max-w-[180px] h-auto"
                             loading="lazy"
-                            sizes="(max-width: 768px) 0px, 25vw"
-                            style={{ width: 'auto', height: 'auto' }}
+                            quality={85}
+                            sizes="(max-width: 768px) 0px, 180px"
                         />
                     </div>
                 </div>
