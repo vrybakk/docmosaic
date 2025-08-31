@@ -134,21 +134,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel="manifest" href="/manifest.json" />
 
                 {/* Additional social media meta tags */}
-                {/* Additional social media meta tags */}
+
+                {/* Primary OpenGraph image - this is what social platforms will use */}
+                <meta property="og:image" content="/seo/og-image.png" />
                 <meta property="og:image:width" content="1080" />
                 <meta property="og:image:height" content="700" />
                 <meta property="og:image:type" content="image/png" />
                 <meta property="og:image:alt" content="DocMosaic - Visual PDF Creation Tool" />
-
-                {/* Additional preview images for different screen sizes */}
-                <meta property="og:image" content="/seo/preview-1280x720.png" />
-                <meta property="og:image" content="/seo/preview-640x480.png" />
-
-                {/* LinkedIn specific meta tags */}
-                <meta property="og:image" content="/seo/linkedIn.png" />
-
-                {/* Instagram specific meta tags */}
-                <meta property="og:image" content="/seo/instagram.png" />
 
                 {/* Additional mobile and device specific meta tags */}
                 <meta name="theme-color" content="#381D2A" />

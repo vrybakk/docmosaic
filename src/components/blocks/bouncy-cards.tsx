@@ -62,8 +62,8 @@ export const BouncyCardsFeatures = () => {
                     <Typography variant="small">
                         <b>Who Is This For?</b>
                         <br />
-                        From designers to teachers, DocMosaic helps anyone who needs
-                        <br /> to quickly <b>create professional PDF documents.</b>
+                        From designers to teachers, DocMosaic helps anyone who needs to quickly{' '}
+                        <b>create professional PDF documents.</b>
                     </Typography>
                     <CustomLink
                         href="/"
@@ -122,7 +122,12 @@ export const BouncyCardsFeatures = () => {
                                 ))}
                             </div>
                         )}
-                        <div className="absolute bottom-0 left-4 right-4 top-36 translate-y-8 rounded-t-[20px] p-4 transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg]">
+                        <div
+                            className={cn(
+                                'absolute bottom-0 left-4 right-4 top-36 translate-y-8 rounded-t-[20px] p-4 transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg]',
+                                Array.isArray(feature.title) && 'max-md:!top-auto max-md:!bottom-4',
+                            )}
+                        >
                             <Image
                                 src={feature.image}
                                 alt={
@@ -130,10 +135,10 @@ export const BouncyCardsFeatures = () => {
                                 }
                                 className={cn(
                                     'object-contain',
-                                    Array.isArray(feature.title) &&
-                                        'max-md:!h-auto max-md:!top-auto max-md:!bottom-7',
+                                    Array.isArray(feature.title) && 'max-md:!h-auto',
                                 )}
-                                fill
+                                width={800}
+                                height={800}
                             />
                         </div>
                     </BounceCard>

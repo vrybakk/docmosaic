@@ -1,5 +1,6 @@
 import { BouncyCardsFeatures } from '@/components/blocks/bouncy-cards';
 import Hero from '@/components/blocks/hero';
+import PdfHeroSection from '@/components/blocks/pdf-hero-section';
 import { SpringCards } from '@/components/blocks/spring-cards';
 import StackedCards from '@/components/blocks/stacked-cards';
 import VerticalSlideFeatures from '@/components/blocks/vertical-slide-features';
@@ -7,7 +8,7 @@ import Typography from '@/components/common/typography';
 import DonateButton from '@/components/donate-button';
 import Footer from '@/components/layout/footer';
 import { CustomLink } from '@/components/ui/core/link';
-import { ArrowBigRight, Code, Github, Lock, MessageSquareText, Shield } from 'lucide-react';
+import { Code, Github, MessageSquareText, Shield } from 'lucide-react';
 
 export default function Home() {
     return (
@@ -105,34 +106,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                <section className="container mx-auto px-4 py-10 flex flex-col items-center gap-3">
-                    <div className="w-fit p-1 flex items-center gap-3 shadow-[0px_0px_4px_0px_#00000066] rounded-full">
-                        <span className="px-2 py-0.5 bg-docmosaic-sage rounded-full">
-                            <Typography variant="h6" tag="span">
-                                HEY!
-                            </Typography>
-                        </span>
-                        <Typography variant="h6" tag="span">
-                            Download our Mobile App
-                        </Typography>
-                        <ArrowBigRight className="text-docmosaic-black" size={18} />
-                    </div>
-                    <Typography variant="h2" tag="h4">
-                        Tame Your <span className="text-docmosaic-caramel">PDFs</span> with Ease
-                    </Typography>
-                    <Typography variant="h5" tag="p" className="my-5">
-                        <Lock className="w-4 h-4 mr-2 inline-block" />
-                        No sign-up. No personal data collection. No limits. Just open & use.
-                    </Typography>
-                    <CustomLink
-                        variant={'gradient'}
-                        href="/pdf-editor"
-                        className="max-md:w-full web-app-access-trigger"
-                        icon={<ArrowBigRight size={18} />}
-                    >
-                        START EDITING NOW
-                    </CustomLink>
-                </section>
+                <PdfHeroSection />
             </main>
 
             {/* Footer */}
