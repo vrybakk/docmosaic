@@ -47,7 +47,8 @@ export default function PdfHeroSection() {
                             width={493}
                             height={298}
                             className="rounded-lg shadow-lg"
-                            priority
+                            loading="lazy"
+                            sizes="(max-width: 768px) 100vw, 50vw"
                             style={{ width: 'auto', height: 'auto' }}
                         />
                     </div>
@@ -58,7 +59,8 @@ export default function PdfHeroSection() {
                             width={210}
                             height={349}
                             className="rounded-lg shadow-lg"
-                            priority
+                            loading="lazy"
+                            sizes="(max-width: 768px) 0px, 25vw"
                             style={{ width: 'auto', height: 'auto' }}
                         />
                     </div>

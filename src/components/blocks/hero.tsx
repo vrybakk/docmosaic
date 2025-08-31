@@ -86,6 +86,9 @@ const Hero = () => {
                     height={1200}
                     className="object-cover"
                     priority
+                    fetchPriority="high"
+                    quality={90}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                 />
 
                 <div className="mt-4 flex items-center justify-between">

@@ -139,6 +139,8 @@ export const BouncyCardsFeatures = () => {
                                 )}
                                 width={800}
                                 height={800}
+                                loading="lazy"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
                         </div>
                     </BounceCard>

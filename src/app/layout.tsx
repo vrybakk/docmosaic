@@ -76,18 +76,6 @@ export const metadata = {
                 alt: 'DocMosaic - Visual PDF Creation Tool',
             },
             {
-                url: '/seo/preview-1280x720.png',
-                width: 1280,
-                height: 720,
-                alt: 'DocMosaic - Visual PDF Creation Tool (1280x720)',
-            },
-            {
-                url: '/seo/preview-640x480.png',
-                width: 640,
-                height: 480,
-                alt: 'DocMosaic - Visual PDF Creation Tool (640x480)',
-            },
-            {
                 url: '/seo/linkedIn.png',
                 width: 1200,
                 height: 627,
@@ -107,7 +95,7 @@ export const metadata = {
         description:
             'Create beautiful PDFs by arranging images like a mosaic. Free and open source.',
         creator: '@nerdstudio',
-        images: ['/seo/twitter-card.png', '/seo/preview-1280x720.png', '/seo/preview-640x480.png'],
+        images: ['/seo/twitter-card.png'],
     },
     robots: {
         index: true,
@@ -127,13 +115,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
+                <link rel="preconnect" href="https://github.com" />
+                <link rel="preconnect" href="https://nerd-stud.io" />
+                <link rel="preconnect" href="https://buymeacoffee.com" />
+                <link rel="preconnect" href="https://forms.clickup.com" />
+                <link rel="preconnect" href="https://www.googletagmanager.com" />
+                <link rel="preconnect" href="https://www.google-analytics.com" />
+
                 <link rel="icon" href="/favicon-16x16.ico" sizes="16x16" type="image/x-icon" />
                 <link rel="icon" href="/favicon-48x48.ico" sizes="48x48" type="image/x-icon" />
                 <link rel="icon" href="/icon.svg" type="image/svg+xml" />
                 <link rel="apple-touch-icon" href="/seo/apple-touch.png" />
                 <link rel="manifest" href="/manifest.json" />
-
-                {/* Additional social media meta tags */}
 
                 {/* Primary OpenGraph image - this is what social platforms will use */}
                 <meta property="og:image" content="/seo/og-image.png" />
@@ -173,14 +166,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <meta
                     property="og:image:secure_url"
                     content="https://docmosaic.com/seo/og-image.png"
-                />
-                <meta
-                    property="og:image:secure_url"
-                    content="https://docmosaic.com/seo/preview-1280x720.png"
-                />
-                <meta
-                    property="og:image:secure_url"
-                    content="https://docmosaic.com/seo/preview-640x480.png"
                 />
                 <meta
                     property="og:image:secure_url"

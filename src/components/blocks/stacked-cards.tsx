@@ -93,6 +93,7 @@ const SelectBtns = ({
                         key={n}
                         onClick={() => setSelected(n)}
                         className="h-1.5 w-full bg-slate-300 relative"
+                        aria-label={`View ${cards[n]?.title || `slide ${n + 1}`}`}
                     >
                         {selected === n ? (
                             <motion.span

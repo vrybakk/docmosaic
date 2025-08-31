@@ -74,6 +74,8 @@ const VerticalSlideFeatures = () => {
                                     height={800}
                                     className="w-full h-full object-contain"
                                     priority={index === 0}
+                                    loading={index === 0 ? "eager" : "lazy"}
+                                    sizes="(max-width: 768px) 100vw, 50vw"
                                 />
                             )}
                         </motion.div>
@@ -93,7 +95,7 @@ interface TabsProps {
 const Tabs = ({ selected, setSelected }: TabsProps) => {
     return (
         <div className="w-full shrink-0 overflow-scroll scrollbar-hide md:w-fit">
-            <Typography variant="h2" tag="h6" className="mb-10">
+            <Typography variant="h2" tag="h3" className="mb-10">
                 Finally, a <span className="text-docmosaic-caramel">Tool</span>
                 <br />
                 That Just Works
@@ -127,7 +129,7 @@ const Tab = ({ selected, title, setSelected, tabNum }: TabProps) => {
                 onClick={() => setSelected(tabNum)}
                 className="relative z-0 flex w-full border-l-[6px] border-docmosaic-black/5 p-4 transition-colors group-hover:border-docmosaic-sage/50 md:flex-col md:border-l-8 md:p-6"
             >
-                <Typography variant="h3" tag="h6" className="min-w-[150px] max-w-[200px] text-left">
+                <Typography variant="h3" tag="h4" className="min-w-[150px] max-w-[200px] text-left">
                     {title}
                 </Typography>
             </button>

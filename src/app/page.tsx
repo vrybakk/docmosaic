@@ -62,7 +62,7 @@ export default function Home() {
                     <hr className="my-8 border-docmosaic-black/15" />
                     <div className="flex flex-col md:flex-row justify-between items-center gap-10">
                         <div className="flex flex-col gap-3">
-                            <Typography variant="h3" tag="h6">
+                            <Typography variant="h3" tag="h4">
                                 Support This Project
                             </Typography>
                             <Typography>
@@ -73,7 +73,7 @@ export default function Home() {
                             <DonateButton size="lg" />
                         </div>
                         <div className="flex flex-col gap-3 md:items-end md:text-right">
-                            <Typography variant="h3" tag="h6">
+                            <Typography variant="h3" tag="h4">
                                 Help Us Improve
                             </Typography>
                             <Typography>
