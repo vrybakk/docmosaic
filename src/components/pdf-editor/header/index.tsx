@@ -53,7 +53,7 @@ export function Header({
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     return (
-        <header className="bg-docmosaic-purple border-b p-4">
+        <header className="bg-gradient border-b py-[15px] px-4">
             <div className="mx-auto container flex items-center justify-between gap-4">
                 {/* Document Name */}
                 <div className="flex items-center gap-4 flex-1">
@@ -64,12 +64,12 @@ export function Header({
                             onChange={onNameChange}
                             className={cn(
                                 'w-full max-w-[300px] bg-transparent border-none',
-                                'text-docmosaic-cream placeholder-docmosaic-cream/50',
-                                'text-lg font-semibold focus:ring-0 pr-5',
+                                'text-docmosaic-purple placeholder-docmosaic-cream/50',
+                                'text-lg font-semibold focus:ring-0 shadow-none pr-5',
                             )}
                             placeholder="Untitled Document"
                         />
-                        <Pen className="h-4 w-4 text-docmosaic-cream absolute right-2.5 top-0 bottom-0 my-auto" />
+                        <Pen className="h-4 w-4 text-docmosaic-purple absolute right-2.5 top-0 bottom-0 my-auto" />
                     </div>
                 </div>
 
@@ -79,8 +79,8 @@ export function Header({
                         <SelectTrigger
                             className={cn(
                                 'min-w-[120px] w-fit border-docmosaic-cream/20',
-                                'text-docmosaic-cream bg-transparent',
-                                'focus:ring-docmosaic-cream/20',
+                                'text-docmosaic-purple bg-white',
+                                'focus:ring-docmosaic-purple/20',
                             )}
                         >
                             <SelectValue placeholder="Page Size" />
@@ -108,8 +108,8 @@ export function Header({
                     <Select value={orientation} onValueChange={onOrientationChange}>
                         <SelectTrigger
                             className={cn(
-                                'w-[120px] border-docmosaic-cream/20',
-                                'text-docmosaic-cream bg-transparent',
+                                'w-[120px] border-docmosaic-purple/20',
+                                'text-docmosaic-purple bg-white',
                                 'focus:ring-docmosaic-cream/20',
                             )}
                         >
@@ -130,9 +130,8 @@ export function Header({
                     <Sheet open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                         <SheetTrigger asChild>
                             <Button
-                                variant="ghost"
+                                variant="white"
                                 size="icon"
-                                className="text-docmosaic-cream hover:bg-docmosaic-cream/10"
                             >
                                 <Settings2 className="h-5 w-5" />
                             </Button>

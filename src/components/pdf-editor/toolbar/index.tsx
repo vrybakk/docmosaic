@@ -83,43 +83,33 @@ export function Toolbar({
             <div className="mx-auto container flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2 order-2 sm:order-1">
                     <Button
-                        variant="ghost"
+                        variant="white"
                         size="icon"
                         onClick={onUndo}
                         disabled={!canUndo}
-                        className={cn(
-                            'hover:bg-docmosaic-sage/10',
-                            'text-docmosaic-purple',
-                            'disabled:opacity-50',
-                            'h-10 w-10',
-                        )}
+                        className={cn('disabled:opacity-50', 'h-10 w-10')}
                     >
                         <Undo className="h-5 w-5" />
                         <span className="sr-only">Undo</span>
                     </Button>
                     <Button
-                        variant="ghost"
+                        variant="white"
                         size="icon"
                         onClick={onRedo}
                         disabled={!canRedo}
-                        className={cn(
-                            'hover:bg-docmosaic-sage/10',
-                            'text-docmosaic-purple',
-                            'disabled:opacity-50',
-                            'h-10 w-10',
-                        )}
+                        className={cn('disabled:opacity-50', 'h-10 w-10')}
                     >
                         <Redo className="h-5 w-5" />
                         <span className="sr-only">Redo</span>
                     </Button>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 order-1 sm:order-2 w-full sm:w-auto">
+                <div className="min-w-[50%] flex flex-col sm:flex-row items-center gap-4 order-1 sm:order-2 w-full sm:w-auto">
                     {error && (
                         <div className="flex items-center gap-2 text-red-600 text-sm w-full sm:w-auto justify-center">
                             <span>{error}</span>
                             <Button
-                                variant="ghost"
+                                variant="white"
                                 size="sm"
                                 onClick={onErrorDismiss}
                                 className="text-red-600 hover:text-red-700 h-6 px-2"
@@ -129,7 +119,7 @@ export function Toolbar({
                         </div>
                     )}
                     {estimatedSize && !isGenerating && (
-                        <div className="text-sm text-gray-500 hidden sm:block">
+                        <div className="text-sm text-gray-500 hidden sm:block text-nowrap whitespace-nowrap">
                             Estimated size: {formatFileSize(estimatedSize)}
                         </div>
                     )}
@@ -148,57 +138,48 @@ export function Toolbar({
                                 )}
                             </div>
                             <Button
-                                variant="outline"
+                                variant="white"
                                 size="sm"
                                 onClick={onCancel}
                                 className="text-red-600 hover:text-red-700 border-red-200"
+                                icon={<X className="h-4 w-4" />}
                             >
-                                <X className="h-4 w-4" />
-                                <span className="ml-2">Cancel</span>
+                                Cancel
                             </Button>
                         </div>
                     ) : (
-                        <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                        <div className="flex flex-col sm:flex-row items-center gap-2 w-full">
                             <div className="w-full flex items-center gap-2">
                                 <Button
-                                    variant="outline"
+                                    variant="white"
                                     onClick={handlePreview}
                                     disabled={!hasContent}
-                                    className={cn(
-                                        'bg-white hover:bg-gray-50',
-                                        'disabled:opacity-50',
-                                        'w-full',
-                                    )}
+                                    className={cn('disabled:opacity-50', 'w-full')}
+                                    icon={<Eye className="h-4 w-4" />}
                                 >
-                                    <Eye className="h-4 w-4 mr-2" />
                                     Preview
                                 </Button>
                                 <Button
-                                    variant="outline"
+                                    variant="cream"
                                     onClick={handlePrint}
                                     disabled={!hasContent}
-                                    className={cn(
-                                        'bg-white hover:bg-gray-50',
-                                        'disabled:opacity-50',
-                                        'w-full',
-                                    )}
+                                    className={cn('disabled:opacity-50', 'w-full')}
+                                    icon={<Printer className="h-4 w-4" />}
                                 >
-                                    <Printer className="h-4 w-4 mr-2" />
                                     Print
                                 </Button>
                             </div>
                             <Button
-                                variant="default"
+                                variant="sage"
                                 onClick={handleDownload}
                                 disabled={!hasContent}
                                 className={cn(
-                                    'bg-docmosaic-purple hover:bg-docmosaic-purple/90',
-                                    'text-docmosaic-cream min-w-[160px]',
+                                    'min-w-[260px]',
                                     'disabled:opacity-50',
                                     'w-full sm:w-auto download-button-click-trigger',
                                 )}
+                                icon={<Download className="h-4 w-4" />}
                             >
-                                <Download className="h-4 w-4 mr-2" />
                                 Download PDF
                             </Button>
                         </div>

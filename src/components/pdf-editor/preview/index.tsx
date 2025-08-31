@@ -103,26 +103,26 @@ export function Preview({
                     {!isMobile && (
                         <>
                             <Button
-                                variant="outline"
+                                variant="cream"
                                 onClick={handlePrint}
-                                className="bg-white hover:bg-gray-50 print-button-click-trigger"
+                                className="print-button-click-trigger"
                                 disabled={isLoading || !previewUrls.length}
+                                icon={<Printer className="h-4 w-4" />}
                             >
-                                <Printer className="h-4 w-4 mr-2" />
                                 Print
                             </Button>
                             <Button
-                                variant="default"
+                                variant="sage"
                                 onClick={handleDownload}
-                                className="bg-docmosaic-purple hover:bg-docmosaic-purple/90 text-white download-button-click-trigger"
+                                className="download-button-click-trigger"
+                                icon={<Download className="h-4 w-4" />}
                             >
-                                <Download className="h-4 w-4 mr-2" />
                                 Download
                             </Button>
                         </>
                     )}
                     {!isMobile && (
-                        <Button variant="ghost" size="icon" onClick={onClose}>
+                        <Button variant="white" size="icon" onClick={onClose}>
                             <X className="h-5 w-5" />
                         </Button>
                     )}
@@ -158,7 +158,7 @@ export function Preview({
             {pages.length > 1 && (
                 <div className="flex items-center justify-center gap-2 p-4 border-t">
                     <Button
-                        variant="outline"
+                        variant="white"
                         onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
                         disabled={currentPage === 0}
                     >
@@ -168,7 +168,7 @@ export function Preview({
                         Page {currentPage + 1} of {pages.length}
                     </span>
                     <Button
-                        variant="outline"
+                        variant="white"
                         onClick={() =>
                             setCurrentPage((prev) => Math.min(pages.length - 1, prev + 1))
                         }

@@ -121,28 +121,19 @@ export function Sidebar({
             <div className="p-4 border-b bg-white">
                 <div className="space-y-2">
                     <Button
+                        variant="caramel"
                         onClick={onAddSection}
-                        className={cn(
-                            'w-full justify-start',
-                            'bg-docmosaic-purple text-docmosaic-cream',
-                            'hover:bg-docmosaic-purple/90',
-                            'add-image-button-click-trigger',
-                        )}
+                        className={cn('w-full', 'add-image-button-click-trigger')}
+                        icon={<ImageIcon className="h-4 w-4" />}
                     >
-                        <ImageIcon className="h-4 w-4 mr-2" />
                         Add Image
                     </Button>
                     <Button
-                        variant="outline"
+                        variant="white"
                         onClick={onAddPage}
-                        className={cn(
-                            'w-full justify-start',
-                            'border-docmosaic-purple/20 text-docmosaic-purple',
-                            'hover:bg-docmosaic-sage/10',
-                            'add-page-button-click-trigger',
-                        )}
+                        className={cn('w-full', 'add-page-button-click-trigger')}
+                        icon={<Plus className="h-4 w-4" />}
                     >
-                        <Plus className="h-4 w-4 mr-2" />
                         Add Page
                     </Button>
                 </div>

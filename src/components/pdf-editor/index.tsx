@@ -54,33 +54,25 @@ export function PDFEditor() {
         },
     } = useDocumentState();
 
-    // Track selected section
     const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
-    // Track preview dialog state
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-    // Track PDF generation state
     const [generationState, setGenerationState] = useState<GenerationState>({
         isGenerating: false,
     });
-    // Track estimated file size
     const [estimatedSize, setEstimatedSize] = useState<number>(0);
-    // Track mobile sidebar state
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-    // AbortController for cancellation
     const abortControllerRef = useRef<AbortController | null>(null);
 
     useEffect(() => {
         trackEvent.editorInit();
     }, []);
 
-    // Update estimated size when document changes
     useEffect(() => {
         const backgrounds = document.pages.map((page) => page.backgroundPDF);
         const size = estimatePDFSize(document.sections, backgrounds);
         setEstimatedSize(size);
     }, [document.sections, document.pages]);
 
-    // Handle image upload
     const handleImageUpload = (sectionId: string, imageUrl: string) => {
         const section = document.sections.find((s) => s.id === sectionId);
         if (section) {
@@ -88,24 +80,19 @@ export function PDFEditor() {
         }
     };
 
-    // Handle adding a new section
     const handleAddSection = () => {
         trackEvent.addSection();
 
-        // Haptic feedback on mobile for adding section
         if (typeof window !== 'undefined' && isMobile()) {
             hapticFeedback.success();
         }
 
-        // Add section in the center of the viewport
         const section = addSection();
         // Select the new section
         setSelectedSectionId(section.id);
-        // Close mobile sidebar if open
         setIsMobileSidebarOpen(false);
     };
 
-    // Handle PDF generation cancellation
     const handleCancel = () => {
         abortControllerRef.current?.abort();
         setGenerationState({
@@ -114,10 +101,8 @@ export function PDFEditor() {
         });
     };
 
-    // Handle PDF download
     const handleDownload = async () => {
         try {
-            // Create new AbortController
             abortControllerRef.current = new AbortController();
 
             setGenerationState({
@@ -126,7 +111,6 @@ export function PDFEditor() {
                 progress: 0,
             });
 
-            // Generate the PDF
             const blob = await generatePDF(
                 document.sections,
                 {
@@ -143,24 +127,19 @@ export function PDFEditor() {
                 },
             );
 
-            // Create download URL
             const url = URL.createObjectURL(blob);
 
-            // Create and trigger download link
             const link = globalThis.document.createElement('a');
             link.href = url;
             link.download = getDownloadFileName(document.name);
             globalThis.document.body.appendChild(link);
             link.click();
 
-            // Cleanup
             globalThis.document.body.removeChild(link);
             URL.revokeObjectURL(url);
 
-            // Update document with new estimated size
             updateEstimatedSize(blob.size);
 
-            // Reset generation state
             setGenerationState({
                 isGenerating: false,
             });
@@ -178,7 +157,6 @@ export function PDFEditor() {
         }
     };
 
-    // Handle print
     const handlePrint = async () => {
         try {
             setGenerationState({
@@ -223,7 +201,6 @@ export function PDFEditor() {
         }
     };
 
-    // Handle error dismissal
     const handleErrorDismiss = () => {
         setGenerationState((prev) => ({
             ...prev,
@@ -250,7 +227,6 @@ export function PDFEditor() {
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="flex flex-col h-screen bg-gray-50">
-                {/* Header */}
                 <Header
                     name={document.name}
                     pageSize={document.pageSize}
@@ -260,7 +236,6 @@ export function PDFEditor() {
                     onOrientationChange={handleOrientationChange}
                 />
 
-                {/* Toolbar */}
                 <Toolbar
                     canUndo={canUndo}
                     canRedo={canRedo}
@@ -268,7 +243,6 @@ export function PDFEditor() {
                     onUndo={() => {
                         trackEvent.undo();
 
-                        // Haptic feedback on mobile for undo
                         if (typeof window !== 'undefined' && isMobile()) {
                             hapticFeedback.undoRedo();
                         }
@@ -278,7 +252,6 @@ export function PDFEditor() {
                     onRedo={() => {
                         trackEvent.redo();
 
-                        // Haptic feedback on mobile for redo
                         if (typeof window !== 'undefined' && isMobile()) {
                             hapticFeedback.undoRedo();
                         }
@@ -296,16 +269,14 @@ export function PDFEditor() {
                     onErrorDismiss={handleErrorDismiss}
                 />
 
-                {/* Main content area */}
                 <div className="flex-1 flex min-h-0">
-                    {/* Mobile quick actions */}
                     <div className="lg:hidden fixed bottom-4 left-4 z-50 flex flex-col gap-2">
                         <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
                             <SheetTrigger asChild>
                                 <Button
-                                    variant="default"
+                                    variant="white"
                                     size="icon"
-                                    className="h-12 w-12 rounded-full shadow-lg bg-docmosaic-purple text-white"
+                                    className="h-12 w-12 rounded-full shadow-lg"
                                 >
                                     <Menu className="h-6 w-6" />
                                 </Button>
@@ -328,7 +299,6 @@ export function PDFEditor() {
                         </Sheet>
                     </div>
 
-                    {/* Desktop sidebar */}
                     <div className="hidden lg:block">
                         <Sidebar
                             pages={document.pages}
@@ -345,7 +315,6 @@ export function PDFEditor() {
                         />
                     </div>
 
-                    {/* Canvas */}
                     <Canvas
                         page={document.pages[document.currentPage - 1]}
                         pageSize={document.pageSize}
@@ -370,7 +339,6 @@ export function PDFEditor() {
                     />
                 </div>
 
-                {/* Preview Dialog */}
                 <Preview
                     isOpen={isPreviewOpen}
                     onClose={() => setIsPreviewOpen(false)}
