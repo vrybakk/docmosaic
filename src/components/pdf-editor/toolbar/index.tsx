@@ -154,7 +154,7 @@ export function Toolbar({
                                     variant="white"
                                     onClick={handlePreview}
                                     disabled={!hasContent}
-                                    className={cn('disabled:opacity-50', 'w-full')}
+                                    className={cn('disabled:opacity-50', 'w-full', 'preview-button-click-trigger')}
                                     icon={<Eye className="h-4 w-4" />}
                                 >
                                     Preview
@@ -163,7 +163,7 @@ export function Toolbar({
                                     variant="cream"
                                     onClick={handlePrint}
                                     disabled={!hasContent}
-                                    className={cn('disabled:opacity-50', 'w-full')}
+                                    className={cn('disabled:opacity-50', 'w-full', 'print-button-click-trigger')}
                                     icon={<Printer className="h-4 w-4" />}
                                 >
                                     Print

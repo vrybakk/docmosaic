@@ -178,14 +178,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
                 {/* Additional social media meta tags for better sharing */}
                 <meta property="og:image:alt" content="DocMosaic - Visual PDF Creation Tool" />
-                <meta
+                {/* <meta
                     property="og:image:alt"
                     content="DocMosaic - Visual PDF Creation Tool (1280x720)"
                 />
                 <meta
                     property="og:image:alt"
                     content="DocMosaic - Visual PDF Creation Tool (640x480)"
-                />
+                /> */}
                 <meta
                     property="og:image:alt"
                     content="DocMosaic - Visual PDF Creation Tool (LinkedIn)"

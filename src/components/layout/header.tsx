@@ -122,7 +122,7 @@ export default function Header() {
                                                         onClick={(e) =>
                                                             scrollToSection(e, 'features')
                                                         }
-                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full features-button-click-trigger"
                                                     >
                                                         <LayoutList
                                                             className="w-4 h-4 mr-2"
@@ -149,7 +149,7 @@ export default function Header() {
                                                         href="https://github.com/vrybakk/docmosaic"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full view-source-button-click-trigger"
                                                     >
                                                         <Github
                                                             className="w-4 h-4 mr-2"
@@ -166,7 +166,7 @@ export default function Header() {
                                                         href="https://github.com/vrybakk/docmosaic/issues"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full report-issues-click-trigger"
                                                     >
                                                         <Bug
                                                             className="w-4 h-4 mr-2"
@@ -183,7 +183,7 @@ export default function Header() {
                                                         href="https://github.com/vrybakk/docmosaic/blob/main/CONTRIBUTING.md"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full contribute-button-click-trigger"
                                                     >
                                                         <Code
                                                             className="w-4 h-4 mr-2"
@@ -221,7 +221,7 @@ export default function Header() {
                                                     <DonateButton
                                                         variant="coffee"
                                                         size="sm"
-                                                        className="w-full"
+                                                        className="w-full buy-me-a-coffee-click-trigger"
                                                     />
                                                 </div>
                                             </div>
@@ -241,8 +241,7 @@ export default function Header() {
                                 />
                             }
                         >
-                            <span className="hidden sm:inline">Try It Now</span>
-                            <span className="sm:hidden">Try Now</span>
+                            <span className="uppercase">Try DocMosaic</span>
                         </CustomLink>
 
                         <div className="hidden md:flex relative">
@@ -371,7 +370,7 @@ export default function Header() {
                                                             scrollToSection(e, 'features');
                                                             setIsHowItWorksMenuOpen(false);
                                                         }}
-                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full features-button-click-trigger"
                                                     >
                                                         <LayoutList
                                                             className="w-4 h-4 mr-2"
@@ -401,7 +400,7 @@ export default function Header() {
                                                         onClick={() =>
                                                             setIsHowItWorksMenuOpen(false)
                                                         }
-                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full view-source-button-click-trigger"
                                                     >
                                                         <Github
                                                             className="w-4 h-4 mr-2"
@@ -421,7 +420,7 @@ export default function Header() {
                                                         onClick={() =>
                                                             setIsHowItWorksMenuOpen(false)
                                                         }
-                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full report-issues-click-trigger"
                                                     >
                                                         <Bug
                                                             className="w-4 h-4 mr-2"
@@ -441,7 +440,7 @@ export default function Header() {
                                                         onClick={() =>
                                                             setIsHowItWorksMenuOpen(false)
                                                         }
-                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full contribute-button-click-trigger"
                                                     >
                                                         <Code
                                                             className="w-4 h-4 mr-2"
@@ -482,7 +481,7 @@ export default function Header() {
                                                     <DonateButton
                                                         variant="coffee"
                                                         size="sm"
-                                                        className="w-full"
+                                                        className="w-full buy-me-a-coffee-click-trigger"
                                                     />
                                                 </div>
                                             </div>
