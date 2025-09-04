@@ -40,29 +40,56 @@ export default function PdfHeroSection() {
                 </CustomLink>
 
                 <div className="flex items-end gap-10 mt-8 -mb-20">
-                    <div className="relative">
-                        <Image
-                            src="/showcases/desktop.png"
-                            alt="DocMosaic Desktop Interface"
-                            width={450}
-                            height={272}
-                            className="rounded-lg shadow-lg max-w-[450px] h-auto"
-                            loading="lazy"
-                            quality={85}
-                            sizes="(max-width: 768px) 90vw, 450px"
-                        />
+                    <div className="relative top-6 w-full p-4 shadow-[0px_0px_8px_0px_#00000026] rounded-[20px] max-w-[450px]">
+                        <div className="w-full border-b pb-4 border-docmosaic-black/5 flex justify-between items-center">
+                            <div className="flex gap-1.5 rounded-t-xl">
+                                <div className="h-3 w-3 rounded-full bg-red-500" />
+                                <div className="h-3 w-3 rounded-full bg-yellow-500" />
+                                <div className="h-3 w-3 rounded-full bg-green-500" />
+                            </div>
+                            <div className="flex gap-2 items-center">
+                                <Image src="/logo.svg" alt="Logo" width={21} height={21} />
+                                <Typography variant="h6" tag="h6">
+                                    DocMosaic
+                                </Typography>
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <Image
+                                src="/showcases/desktop.png"
+                                alt="DocMosaic Desktop Interface"
+                                width={450}
+                                height={272}
+                                className="rounded-lg max-w-[450px] h-auto w-full"
+                                loading="lazy"
+                                quality={85}
+                                sizes="(max-width: 768px) 90vw, 450px"
+                            />
+                        </div>
                     </div>
-                    <div className="relative max-md:hidden">
-                        <Image
-                            src="/showcases/mobile.png"
-                            alt="DocMosaic Mobile Interface"
-                            width={180}
-                            height={299}
-                            className="rounded-lg shadow-lg max-w-[180px] h-auto"
-                            loading="lazy"
-                            quality={85}
-                            sizes="(max-width: 768px) 0px, 180px"
-                        />
+                    <div className="relative max-md:hidden p-2 shadow-[0px_0px_8px_0px_#00000026] rounded-[20px] max-w-[180px]">
+                        <div className="w-full border-b pb-2 border-docmosaic-black/5 flex justify-between items-center">
+                            <div className="flex gap-1.5 rounded-t-xl">
+                                <div className="h-3 w-3 rounded-full bg-red-500" />
+                                <div className="h-3 w-3 rounded-full bg-yellow-500" />
+                                <div className="h-3 w-3 rounded-full bg-green-500" />
+                            </div>
+                            <div className="flex gap-2 items-center">
+                                <Image src="/logo.svg" alt="Logo" width={21} height={21} />
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <Image
+                                src="/showcases/mobile.png"
+                                alt="DocMosaic Mobile Interface"
+                                width={180}
+                                height={299}
+                                className="rounded-lg max-w-[180px] h-auto w-full"
+                                loading="lazy"
+                                quality={85}
+                                sizes="(max-width: 768px) 0px, 180px"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
