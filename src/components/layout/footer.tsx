@@ -66,7 +66,7 @@ export default function Footer() {
                             </li>
                             {/* <li>
                                 <Link
-                                    href="#mobile-app"
+                                    href="/pdf-editor"
                                     className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black mobile-app-access-trigger"
                                 >
                                     <Smartphone className="w-4 h-4 mr-2" strokeWidth={1} />

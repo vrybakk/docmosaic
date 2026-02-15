@@ -219,7 +219,7 @@ export function ImageSectionComponent({
             }
 
             // Get page dimensions from the parent element
-            const pageElement = document.querySelector('.bg-white.shadow-lg') as HTMLElement;
+            const pageElement = document.querySelector('[data-page-container]') as HTMLElement;
             if (!pageElement) return memo;
 
             const { startX, startY } = memo || { startX: section.x, startY: section.y };
@@ -241,9 +241,8 @@ export function ImageSectionComponent({
         },
         {
             enabled: !isResizing,
-            bounds: { left: 0, top: 0 },
             filterTaps: true,
-            rubberband: true,
+            pointer: { capture: false },
         },
     );
 
@@ -496,20 +495,20 @@ export function ImageSectionComponent({
                 <div className="absolute inset-0 border-2 border-docmosaic-purple border-dashed pointer-events-none z-5" />
             )}
 
-            {/* Top menu - show on hover or when selected */}
+            {/* Top menu - container passes through for drag; only buttons capture */}
             <div
                 className={cn(
-                    'absolute -top-12 right-0 flex gap-1 bg-white rounded-lg shadow-md p-1 z-50 pointer-events-auto',
+                    'absolute top-2 right-2 flex gap-1 bg-white rounded-lg shadow-md p-1 z-50 pointer-events-none',
                     'opacity-0 group-hover:opacity-100 transition-opacity',
-                    isSelected && 'opacity-100', // Always show when selected
+                    isSelected && 'opacity-100',
                 )}
             >
                 {section.imageUrl && (
                     <Button
                         size="icon"
                         variant="ghost"
+                        className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
                         onClick={handleResizeToProportion}
-                        className="h-8 w-8 hover:bg-gray-100"
                         title="Fit to image proportion"
                     >
                         <Maximize2 className="h-4 w-4" />
@@ -518,6 +517,7 @@ export function ImageSectionComponent({
                 <Button
                     size="icon"
                     variant="ghost"
+                    className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
                     onClick={(e) => {
                         e.stopPropagation();
 
@@ -528,13 +528,13 @@ export function ImageSectionComponent({
 
                         onDuplicate(section);
                     }}
-                    className="h-8 w-8 hover:bg-gray-100"
                 >
                     <Copy className="h-4 w-4" />
                 </Button>
                 <Button
                     size="icon"
                     variant="ghost"
+                    className="h-8 w-8 hover:bg-red-50 text-red-600 pointer-events-auto"
                     onClick={(e) => {
                         e.stopPropagation();
 
@@ -545,14 +545,13 @@ export function ImageSectionComponent({
 
                         onDelete(section.id);
                     }}
-                    className="h-8 w-8 hover:bg-red-50 text-red-600"
                 >
                     <Trash2 className="h-4 w-4" />
                 </Button>
             </div>
 
-            {/* Image container */}
-            <div className="relative w-full h-full group">
+            {/* Image container - pointer-events-none so section receives drag; children opt-in with pointer-events-auto */}
+            <div className="relative w-full h-full group pointer-events-none">
                 {section.imageUrl ? (
                     <>
                         <Image
@@ -563,23 +562,24 @@ export function ImageSectionComponent({
                             }}
                             src={section.imageUrl}
                             alt="Section content"
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain pointer-events-none"
                             fill
                             unoptimized
                             draggable={false}
                         />
-                        {/* Hover overlay with replace button */}
+                        {/* Hover overlay - pointer-events-none so drag works; only corner Replace button is clickable */}
                         <div
                             className={cn(
-                                'absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center pointer-events-auto z-20',
+                                'absolute inset-0 rounded-lg pointer-events-none z-20',
                                 'opacity-0 group-hover:opacity-100 transition-opacity',
                                 isDroppingFile && 'opacity-100 bg-docmosaic-purple/40',
+                                !isDroppingFile && 'bg-black/40',
                             )}
                         >
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="bg-white/10 hover:bg-white/20 text-white"
+                                className="absolute bottom-2 right-2 h-8 px-2 bg-white/20 hover:bg-white/30 text-white pointer-events-auto"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     e.preventDefault();
@@ -590,7 +590,7 @@ export function ImageSectionComponent({
                             >
                                 <RefreshCw className="h-4 w-4" />
                                 {section.width >= 150 && (
-                                    <span className="ml-2">
+                                    <span className="ml-1.5 text-xs">
                                         {isDroppingFile ? 'Drop to Replace' : 'Replace'}
                                     </span>
                                 )}
@@ -600,23 +600,27 @@ export function ImageSectionComponent({
                 ) : (
                     <div
                         className={cn(
-                            'w-full h-full flex items-center justify-center pointer-events-auto cursor-pointer',
+                            'w-full h-full flex items-center justify-center pointer-events-none',
                             'bg-gray-50/50 hover:bg-gray-100/50 transition-colors',
                             isDroppingFile && 'bg-docmosaic-purple/5',
                         )}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            if (fileInputRef.current) {
-                                fileInputRef.current.click();
-                            }
-                        }}
                     >
-                        <div className="flex flex-col items-center gap-2 p-4">
+                        {/* Only the upload CTA is clickable; rest passes through for drag */}
+                        <button
+                            type="button"
+                            className="flex flex-col items-center gap-2 p-4 cursor-pointer pointer-events-auto rounded-lg hover:bg-gray-100/50 transition-colors border-0 bg-transparent"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (fileInputRef.current) {
+                                    fileInputRef.current.click();
+                                }
+                            }}
+                        >
                             <ImageIcon className="h-8 w-8 text-gray-400" />
                             <span className="text-sm text-gray-500 text-center">
                                 {isDroppingFile ? 'Drop Image Here' : 'Click to upload image'}
                             </span>
-                        </div>
+                        </button>
                     </div>
                 )}
             </div>

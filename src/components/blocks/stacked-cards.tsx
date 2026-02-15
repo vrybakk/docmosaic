@@ -30,7 +30,7 @@ const cards = [
         title: 'Seamless Desktop Experience',
         description: 'Full functionality on larger screens with keyboard shortcuts.',
         buttonText: 'TRY Docmosaic',
-        buttonLink: '/',
+        buttonLink: '/pdf-editor',
         buttonClass: 'web-app-access-trigger',
     },
     {
@@ -38,7 +38,7 @@ const cards = [
         title: 'Works on All Devices',
         description: 'No app needed. Just open in your browser and start editing.',
         buttonText: 'TRY WEB APP',
-        buttonLink: '/',
+        buttonLink: '/pdf-editor',
         buttonClass: 'web-app-access-trigger',
     },
     {
@@ -46,7 +46,7 @@ const cards = [
         title: 'Instant Export Anywhere',
         description: "Download your PDFs instantly, whether you're on phone or desktop.",
         buttonText: 'TRY Docmosaic',
-        buttonLink: '/',
+        buttonLink: '/pdf-editor',
         buttonClass: 'web-app-access-trigger',
     },
 ];

@@ -407,6 +407,7 @@ export function Canvas({
                     {/* Page container */}
                     <div
                         ref={combinedRef}
+                        data-page-container="true"
                         className="bg-white shadow-lg relative transition-transform duration-200 ease-out"
                         style={{
                             width: (pageDimensions?.width || 0) * finalScale,
