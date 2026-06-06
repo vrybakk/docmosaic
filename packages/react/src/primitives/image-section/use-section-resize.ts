@@ -1,4 +1,4 @@
-import type { ImageSection } from '@docmosaic/core';
+import type { Section } from '@docmosaic/core';
 import { useCallback, useRef, useState } from 'react';
 
 /** Minimum section dimension in pixels. */
@@ -25,8 +25,8 @@ interface ResizeStart {
 }
 
 interface UseSectionResizeArgs {
-    section: ImageSection;
-    onUpdate: (section: ImageSection) => void;
+    section: Section;
+    onUpdate: (section: Section) => void;
     imageRef: React.RefObject<HTMLImageElement | null>;
 }
 

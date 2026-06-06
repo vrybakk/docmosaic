@@ -1,6 +1,6 @@
 'use client';
 
-import { getPageDimensionsWithOrientation, type ImageSection } from '@docmosaic/core';
+import { getPageDimensionsWithOrientation, type Section as SectionData } from '@docmosaic/core';
 import { Children, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import {
@@ -169,8 +169,8 @@ export function Canvas({ children }: CanvasProps = {}) {
                                     height: (pageDimensions?.height || 0) * finalScale,
                                 }}
                             >
-                                {pageSections.map((section: ImageSection) => {
-                                    const scaledSection: ImageSection = {
+                                {pageSections.map((section: SectionData) => {
+                                    const scaledSection: SectionData = {
                                         ...section,
                                         x: section.x * finalScale,
                                         y: section.y * finalScale,

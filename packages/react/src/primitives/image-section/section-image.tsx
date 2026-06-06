@@ -1,6 +1,6 @@
 'use client';
 
-import type { ImageSection } from '@docmosaic/core';
+import type { Section } from '@docmosaic/core';
 import { RefreshCw } from 'lucide-react';
 import type { Ref } from 'react';
 import { useEditorConfig } from '../../context/editor-config';
@@ -8,7 +8,7 @@ import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 
 interface SectionImageProps {
-    section: ImageSection;
+    section: Section;
     imageRef: Ref<HTMLImageElement>;
     isDroppingFile: boolean;
     onReplaceClick: (e: React.MouseEvent) => void;

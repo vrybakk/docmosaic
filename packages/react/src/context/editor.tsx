@@ -20,7 +20,7 @@
  * ```
  */
 
-import type { Document, ImageSection, estimatePDFSize, generatePDF } from '@docmosaic/core';
+import type { Document, Section, estimatePDFSize, generatePDF } from '@docmosaic/core';
 import {
     createContext,
     type ReactNode,
@@ -54,10 +54,10 @@ export interface EditorPdfBackend {
 export interface EditorActions {
     undo: () => void;
     redo: () => void;
-    addSection: () => ImageSection;
-    updateSection: (section: ImageSection) => void;
+    addSection: () => Section;
+    updateSection: (section: Section) => void;
     deleteSection: (sectionId: string) => void;
-    duplicateSection: (section: ImageSection) => void;
+    duplicateSection: (section: Section) => void;
     addPage: () => void;
     deletePage: (pageIndex: number) => void;
     changePage: (pageNumber: number) => void;
@@ -158,9 +158,9 @@ export function useEditor(): EditorContextValue {
  */
 interface EditorSectionContextValue {
     /** Section data in canvas coordinates (already scaled). */
-    section: ImageSection;
+    section: Section;
     /** Section data in raw document coordinates (PDF points). */
-    rawSection: ImageSection;
+    rawSection: Section;
     isSelected: boolean;
     /** Current canvas display scale (`pageScale * zoom`). */
     finalScale: number;
@@ -185,13 +185,13 @@ export function EditorSectionProvider({
  * handlers callers wire to the visual primitive.
  */
 export interface UseEditorSectionResult {
-    section: ImageSection;
+    section: Section;
     isSelected: boolean;
     finalScale: number;
     onClick: (e: React.MouseEvent) => void;
-    onUpdate: (next: ImageSection) => void;
+    onUpdate: (next: Section) => void;
     onImageUpload: (sectionId: string, imageUrl: string) => void;
-    onDuplicate: (section: ImageSection) => void;
+    onDuplicate: (section: Section) => void;
     onDelete: (sectionId: string) => void;
 }
 
@@ -214,7 +214,7 @@ export function useEditorSection(): UseEditorSectionResult {
     const { actions, ui } = editor;
 
     const onUpdate = useCallback(
-        (next: ImageSection) => {
+        (next: Section) => {
             actions.updateSection({
                 ...next,
                 x: next.x / finalScale,

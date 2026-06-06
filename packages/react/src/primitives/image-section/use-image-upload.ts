@@ -1,4 +1,4 @@
-import type { ImageSection } from '@docmosaic/core';
+import type { Section } from '@docmosaic/core';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
@@ -28,8 +28,8 @@ export function validateImageFile(file: File): FileValidationError {
 }
 
 interface UseImageUploadArgs {
-    section: ImageSection;
-    onUpdate: (section: ImageSection) => void;
+    section: Section;
+    onUpdate: (section: Section) => void;
     onImageUpload: (sectionId: string, imageUrl: string) => void;
 }
 

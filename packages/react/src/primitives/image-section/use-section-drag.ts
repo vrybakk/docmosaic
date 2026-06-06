@@ -1,15 +1,15 @@
-import type { ImageSection } from '@docmosaic/core';
+import type { Section } from '@docmosaic/core';
 import { useDrag } from '@use-gesture/react';
 import { useState } from 'react';
 
 interface UseSectionDragArgs {
-    section: ImageSection;
-    onUpdate: (section: ImageSection) => void;
+    section: Section;
+    onUpdate: (section: Section) => void;
     isResizing: boolean;
 }
 
 /**
- * Wraps {@link useDrag} so {@link ImageSection} can stay a thin orchestrator.
+ * Wraps {@link useDrag} so the section orchestrator can stay thin.
  * Position is clamped to the page element matched by `[data-page-container]`,
  * matching the Canvas drop-target wiring. Disabled while resizing.
  */

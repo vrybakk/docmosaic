@@ -14,7 +14,7 @@
  * 'production'`. Local dev/staging never produces events.
  */
 
-import { PageOrientation, PageSize } from './types';
+import { PageOrientation, PageSize } from '@docmosaic/core';
 
 interface DocumentStats {
     totalPages: number;

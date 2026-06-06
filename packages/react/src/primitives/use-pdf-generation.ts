@@ -3,7 +3,7 @@
 import {
     estimatePDFSize as defaultEstimatePDFSize,
     generatePDF as defaultGeneratePDF,
-    type PDFDocument,
+    type Document as DocmosaicDocument,
 } from '@docmosaic/core';
 import { useCallback, useRef, useState } from 'react';
 import type { EditorPdfBackend } from '../context/editor';
@@ -19,7 +19,7 @@ export interface GenerationState {
 
 interface UsePdfGenerationArgs {
     /** Current editor document. Read at call time of download/print. */
-    document: PDFDocument;
+    document: DocmosaicDocument;
     /** Called with the generated blob's size once download completes. */
     onSizeKnown?: (bytes: number) => void;
     /**
@@ -38,7 +38,7 @@ interface UsePdfGenerationResult {
 }
 
 function fireDocumentGeneratedEvent(
-    document: PDFDocument,
+    document: DocmosaicDocument,
     blob: Blob,
     estimate: EditorPdfBackend['estimate'],
 ) {

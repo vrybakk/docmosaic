@@ -2,7 +2,7 @@
 
 import {
     getPageDimensionsWithOrientation,
-    type ImageSection,
+    type Section,
     type Page,
     type PageOrientation,
     type PageSize,
@@ -20,7 +20,7 @@ interface PageThumbProps {
     /** Whether this page is currently selected */
     isSelected: boolean;
     /** The sections (images) on this page */
-    sections: ImageSection[];
+    sections: Section[];
     /** The page size (A4, etc.) */
     pageSize: PageSize;
     /** The page orientation */

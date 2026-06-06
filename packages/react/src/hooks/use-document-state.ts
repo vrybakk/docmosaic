@@ -1,10 +1,10 @@
 import {
     Action,
+    Document,
     HistoryState,
-    ImageSection,
     PageOrientation,
     PageSize,
-    PDFDocument,
+    Section,
     createDocument,
     createSection,
     reducer,
@@ -12,9 +12,9 @@ import {
 } from '@docmosaic/core';
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
-const trackedReducer = withHistory<PDFDocument, Action>(reducer);
+const trackedReducer = withHistory<Document, Action>(reducer);
 
-function init(seed: PDFDocument | undefined): HistoryState<PDFDocument> {
+function init(seed: Document | undefined): HistoryState<Document> {
     return { present: seed ?? createDocument(), past: [], future: [] };
 }
 
@@ -24,7 +24,7 @@ interface UseDocumentStateArgs {
      * changes to this prop are ignored. Pass a new key on the parent to force
      * a remount if you need to swap documents.
      */
-    initialDocument?: PDFDocument;
+    initialDocument?: Document;
 }
 
 /**
@@ -77,11 +77,11 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
                 });
                 return newSection;
             },
-            updateSection: (section: ImageSection) =>
+            updateSection: (section: Section) =>
                 dispatch({ type: 'UPDATE_SECTION', section }),
             deleteSection: (sectionId: string) =>
                 dispatch({ type: 'DELETE_SECTION', sectionId }),
-            duplicateSection: (section: ImageSection) =>
+            duplicateSection: (section: Section) =>
                 dispatch({ type: 'DUPLICATE_SECTION', section }),
             addPage: () => dispatch({ type: 'ADD_PAGE' }),
             deletePage: (pageIndex: number) => {

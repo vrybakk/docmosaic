@@ -18,18 +18,6 @@ export type {
     Section,
 } from './types';
 
-import type { Document, Section } from './types';
-
-/**
- * @deprecated Use `Section` instead. Will be removed in Phase 10.
- */
-export type ImageSection = Section;
-
-/**
- * @deprecated Use `Document` instead. Will be removed in Phase 10.
- */
-export type PDFDocument = Document;
-
 // Page sizes
 export { CUSTOM_PAGE_SIZES, getPageDimensionsWithOrientation } from './page-sizes';
 
@@ -57,10 +45,3 @@ export type { Action, State } from './reducer';
 export { reducer } from './reducer';
 export type { HistoryAction, HistoryState } from './history';
 export { withHistory } from './history';
-
-/** @deprecated Use `createDocument` instead. Will be removed in Phase 10. */
-export { createDocument as createInitialDocument } from './factories';
-/** @deprecated Use `createSection` instead. Will be removed in Phase 10. */
-export { createSection as createNewImageSection } from './factories';
-/** @deprecated Use `createPage` instead. Will be removed in Phase 10. */
-export { createPage as createNewPage } from './factories';

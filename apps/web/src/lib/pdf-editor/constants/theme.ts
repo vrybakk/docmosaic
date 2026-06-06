@@ -1,4 +1,4 @@
-import { PageSize } from '../types';
+import { PageSize } from '@docmosaic/core';
 
 type PageSizeOption = { type: 'title'; label: string } | { type: 'option'; value: PageSize };
 

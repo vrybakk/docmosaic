@@ -15,10 +15,10 @@ vi.mock('@docmosaic/core', async () => {
     };
 });
 
-import type { PDFDocument } from '@docmosaic/core';
+import type { Document as DocmosaicDocument } from '@docmosaic/core';
 import { usePdfGeneration } from './use-pdf-generation';
 
-function makeDocument(): PDFDocument {
+function makeDocument(): DocmosaicDocument {
     return {
         id: 'doc-1',
         name: 'Untitled',
@@ -28,7 +28,7 @@ function makeDocument(): PDFDocument {
         lastModified: new Date(0),
         pages: [{ id: 'p1', backgroundPDF: undefined }],
         sections: [],
-    } as unknown as PDFDocument;
+    } as unknown as DocmosaicDocument;
 }
 
 beforeEach(() => {

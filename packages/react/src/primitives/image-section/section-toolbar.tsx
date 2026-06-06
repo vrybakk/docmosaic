@@ -1,15 +1,15 @@
 'use client';
 
-import type { ImageSection } from '@docmosaic/core';
+import type { Section } from '@docmosaic/core';
 import { Copy, Maximize2, Trash2 } from 'lucide-react';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 
 interface SectionToolbarProps {
-    section: ImageSection;
+    section: Section;
     isSelected: boolean;
     onResizeToProportion: () => void;
-    onDuplicate: (section: ImageSection) => void;
+    onDuplicate: (section: Section) => void;
     onDelete: (sectionId: string) => void;
 }
 

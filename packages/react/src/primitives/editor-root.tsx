@@ -6,7 +6,7 @@ import {
     estimatePDFSize as defaultEstimatePDFSize,
     generatePDF as defaultGeneratePDF,
     type Document,
-    type ImageSection,
+    type Section,
     type PageOrientation,
     type PageSize,
 } from '@docmosaic/core';
@@ -127,7 +127,7 @@ function buildControlledActions(
             onDocumentChange(touch({ ...document, sections: [...document.sections, newSection] }));
             return newSection;
         },
-        updateSection: (section: ImageSection) =>
+        updateSection: (section: Section) =>
             onDocumentChange(
                 touch({
                     ...document,
@@ -141,9 +141,9 @@ function buildControlledActions(
                     sections: document.sections.filter((s) => s.id !== sectionId),
                 }),
             ),
-        duplicateSection: (section: ImageSection) => {
+        duplicateSection: (section: Section) => {
             const clone = createSection(0, 0, section.page);
-            const duplicated: ImageSection = {
+            const duplicated: Section = {
                 ...section,
                 id: clone.id,
                 x: section.x + 20,

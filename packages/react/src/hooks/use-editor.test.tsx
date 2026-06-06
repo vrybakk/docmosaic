@@ -2,7 +2,7 @@
  * @vitest-environment happy-dom
  */
 import { act, render } from '@testing-library/react';
-import type { Document, ImageSection } from '@docmosaic/core';
+import type { Document, Section } from '@docmosaic/core';
 import { createDocument } from '@docmosaic/core';
 import { describe, expect, it, vi } from 'vitest';
 import { useEditor } from '../context/editor';
@@ -93,7 +93,7 @@ describe('useEditor — controlled Editor.Root', () => {
         expect(onDocumentChange).toHaveBeenCalledTimes(1);
         const nextDoc = onDocumentChange.mock.calls[0][0];
         expect(nextDoc.sections).toHaveLength(initialDoc.sections.length + 1);
-        const newSection = nextDoc.sections[nextDoc.sections.length - 1] as ImageSection;
+        const newSection = nextDoc.sections[nextDoc.sections.length - 1] as Section;
         expect(newSection.page).toBe(initialDoc.currentPage);
     });
 
