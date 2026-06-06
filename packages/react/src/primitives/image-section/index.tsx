@@ -12,7 +12,7 @@ import { useImageUpload } from './use-image-upload';
 import { useSectionDrag } from './use-section-drag';
 import { useSectionResize } from './use-section-resize';
 
-interface ImageSectionProps {
+interface SectionProps {
     section: ImageSection;
     isSelected: boolean;
     onUpdate: (section: ImageSection) => void;
@@ -26,7 +26,7 @@ interface ImageSectionProps {
  * Orchestrates the resize/drag/upload hooks and the visual parts.
  * State lives in the hooks; this component composes them.
  */
-export function ImageSectionComponent({
+export function Section({
     section,
     isSelected,
     onUpdate,
@@ -34,7 +34,7 @@ export function ImageSectionComponent({
     onDuplicate,
     onDelete,
     onClick,
-}: ImageSectionProps) {
+}: SectionProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
     const [isDroppingFile, setIsDroppingFile] = useState(false);

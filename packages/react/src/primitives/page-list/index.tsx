@@ -6,9 +6,9 @@ import { useState } from 'react';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 import { ScrollArea } from '../../ui/scroll-area';
-import { PagePreview } from './page-preview';
+import { PageThumb } from './page-thumb';
 
-interface SidebarProps {
+interface PageListProps {
     /** All pages in the document */
     pages: Page[];
     /** All sections in the document */
@@ -34,10 +34,10 @@ interface SidebarProps {
 }
 
 /**
- * Sidebar component for the PDF editor
- * Contains page management and document info
+ * Page list sidebar for the PDF editor.
+ * Contains page management actions and document info.
  */
-export function Sidebar({
+export function PageList({
     pages,
     sections,
     currentPage,
@@ -49,7 +49,7 @@ export function Sidebar({
     onPageChange,
     onDeletePage,
     onReorderPages,
-}: SidebarProps) {
+}: PageListProps) {
     const [dragState, setDragState] = useState<{
         draggedIndex: number | null;
         dropTarget: number | null;
@@ -148,7 +148,7 @@ export function Sidebar({
                     <div className="p-4 pt-2">
                         <div className="space-y-4">
                             {pages.map((page, index) => (
-                                <PagePreview
+                                <PageThumb
                                     key={page.id}
                                     page={page}
                                     index={index}

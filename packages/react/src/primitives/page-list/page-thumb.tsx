@@ -12,7 +12,7 @@ import { useEditorConfig } from '../../context/editor-config';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 
-interface PagePreviewProps {
+interface PageThumbProps {
     /** The page data */
     page: Page;
     /** The page index */
@@ -43,10 +43,10 @@ interface PagePreviewProps {
 }
 
 /**
- * PagePreview component
- * Displays a preview of a single page in the sidebar
+ * PageThumb component
+ * Displays a thumbnail of a single page in the page list sidebar.
  */
-export function PagePreview({
+export function PageThumb({
     page,
     index,
     isSelected,
@@ -57,7 +57,7 @@ export function PagePreview({
     onDelete,
     dragHandlers,
     dropIndicators,
-}: PagePreviewProps) {
+}: PageThumbProps) {
     const { imageRenderer: Image } = useEditorConfig();
     const pageDimensions = getPageDimensionsWithOrientation(pageSize, orientation);
     const scale = Math.min(220 / pageDimensions.width, 310 / pageDimensions.height);

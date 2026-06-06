@@ -1,7 +1,7 @@
-import { PDFEditor } from '@docmosaic/react';
 import Loader from '@/components/ui/data-display/loader';
 import { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
+import { EditorMount } from './editor-mount';
 
 // Define viewport metadata
 export const viewport: Viewport = {
@@ -154,7 +154,7 @@ export default function PDFEditorPage() {
                     </div>
                 }
             >
-                <PDFEditor />
+                <EditorMount />
             </Suspense>
         </main>
     );

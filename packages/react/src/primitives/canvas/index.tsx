@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { trackEvent } from '../../internal/analytics';
 import Loader from '../../ui/loader';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
-import { ImageSectionComponent } from '../image-section';
+import { Section } from '../image-section';
 import { CanvasControls } from './canvas-controls';
 import { useCanvasZoom } from './use-canvas-zoom';
 
@@ -183,7 +183,7 @@ export function Canvas({
                             }}
                         >
                             {pageSections.map((section) => (
-                                <ImageSectionComponent
+                                <Section
                                     key={section.id}
                                     section={{
                                         ...section,

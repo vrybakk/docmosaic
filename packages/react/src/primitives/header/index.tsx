@@ -1,19 +1,9 @@
 'use client';
 
-import { PAGE_SIZE_LABELS, type PageOrientation, type PageSize } from '@docmosaic/core';
-import { Pen, Settings2 } from 'lucide-react';
+import type { PageOrientation, PageSize } from '@docmosaic/core';
+import { Settings2 } from 'lucide-react';
 import { useState } from 'react';
-import { ORIENTATION_OPTIONS, PAGE_SIZE_OPTIONS } from '../../internal/options';
-import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
-import { Input } from '../../ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '../../ui/select';
 import {
     Sheet,
     SheetContent,
@@ -21,6 +11,9 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '../../ui/sheet';
+import { DocumentName } from './document-name';
+import { OrientationSelect } from './orientation-select';
+import { PageSizeSelect } from './page-size-select';
 
 interface HeaderProps {
     /** The name of the document */
@@ -38,8 +31,9 @@ interface HeaderProps {
 }
 
 /**
- * Header component for the PDF editor
- * Contains document name input and page settings (size and orientation)
+ * Default editor header layout. Composes `DocumentName`, `PageSizeSelect`,
+ * and `OrientationSelect` plus a mobile settings sheet. For custom
+ * arrangements use the individual `Editor.DocumentName`, etc. directly.
  */
 export function Header({
     name,
@@ -56,82 +50,20 @@ export function Header({
             <div className="mx-auto container flex items-center justify-between gap-4">
                 {/* Document Name */}
                 <div className="flex items-center gap-4 flex-1">
-                    <div className="relative">
-                        <Input
-                            type="text"
-                            value={name}
-                            onChange={onNameChange}
-                            className={cn(
-                                'w-full max-w-[300px] bg-transparent border-none',
-                                'text-editor-accent placeholder-editor-accent-soft/50',
-                                'text-lg font-semibold focus:ring-0 shadow-none pr-5',
-                            )}
-                            placeholder="Untitled Document"
-                        />
-                        <Pen className="h-4 w-4 text-editor-accent absolute right-2.5 top-0 bottom-0 my-auto" />
-                    </div>
+                    <DocumentName name={name} onNameChange={onNameChange} />
                 </div>
 
                 {/* Desktop Settings */}
                 <div className="hidden md:flex items-center gap-4">
-                    <Select value={pageSize} onValueChange={onPageSizeChange}>
-                        <SelectTrigger
-                            className={cn(
-                                'min-w-[120px] w-fit border-editor-accent-soft/20',
-                                'text-editor-accent bg-white',
-                                'focus:ring-editor-accent/20',
-                            )}
-                        >
-                            <SelectValue placeholder="Page Size" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {PAGE_SIZE_OPTIONS.map((item, index) =>
-                                item.type === 'title' ? (
-                                    <div
-                                        key={index}
-                                        className={cn(
-                                            'px-2 py-1.5 text-sm font-bold uppercase text-muted-foreground',
-                                            index !== 0 && 'border-t',
-                                        )}
-                                    >
-                                        {item.label}
-                                    </div>
-                                ) : (
-                                    <SelectItem key={item.value} value={item.value}>
-                                        {PAGE_SIZE_LABELS[item.value]}
-                                    </SelectItem>
-                                ),
-                            )}
-                        </SelectContent>
-                    </Select>
-                    <Select value={orientation} onValueChange={onOrientationChange}>
-                        <SelectTrigger
-                            className={cn(
-                                'w-[120px] border-editor-accent/20',
-                                'text-editor-accent bg-white',
-                                'focus:ring-editor-accent-soft/20',
-                            )}
-                        >
-                            <SelectValue placeholder="Orientation" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {ORIENTATION_OPTIONS.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <PageSizeSelect value={pageSize} onValueChange={onPageSizeChange} />
+                    <OrientationSelect value={orientation} onValueChange={onOrientationChange} />
                 </div>
 
                 {/* Mobile Settings Button */}
                 <div className="md:hidden">
                     <Sheet open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                         <SheetTrigger asChild>
-                            <Button
-                                variant="white"
-                                size="icon"
-                            >
+                            <Button variant="white" size="icon">
                                 <Settings2 className="h-5 w-5" />
                             </Button>
                         </SheetTrigger>
@@ -142,42 +74,19 @@ export function Header({
                             <div className="mt-4 space-y-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Page Size</label>
-                                    <Select value={pageSize} onValueChange={onPageSizeChange}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select page size" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {PAGE_SIZE_OPTIONS.map((item, index) =>
-                                                item.type === 'title' ? (
-                                                    <div
-                                                        key={index}
-                                                        className="px-2 py-1.5 text-sm font-semibold text-muted-foreground"
-                                                    >
-                                                        {item.label}
-                                                    </div>
-                                                ) : (
-                                                    <SelectItem key={item.value} value={item.value}>
-                                                        {PAGE_SIZE_LABELS[item.value]}
-                                                    </SelectItem>
-                                                ),
-                                            )}
-                                        </SelectContent>
-                                    </Select>
+                                    <PageSizeSelect
+                                        value={pageSize}
+                                        onValueChange={onPageSizeChange}
+                                        fullWidth
+                                    />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Orientation</label>
-                                    <Select value={orientation} onValueChange={onOrientationChange}>
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select orientation" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {ORIENTATION_OPTIONS.map((option) => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    <OrientationSelect
+                                        value={orientation}
+                                        onValueChange={onOrientationChange}
+                                        fullWidth
+                                    />
                                 </div>
                             </div>
                         </SheetContent>

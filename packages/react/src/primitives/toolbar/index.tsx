@@ -1,9 +1,13 @@
 'use client';
 
-import { Download, Eye, Loader2, Printer, Redo, Undo, X } from 'lucide-react';
-import { trackEvent } from '../../internal/analytics';
-import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
+import { DownloadButton } from './download-button';
+import { EstimatedSize } from './estimated-size';
+import { PreviewButton } from './preview-button';
+import { PrintButton } from './print-button';
+import { ProgressOverlay } from './progress-overlay';
+import { RedoButton } from './redo-button';
+import { UndoButton } from './undo-button';
 
 interface ToolbarProps {
     /** Whether the undo action is available */
@@ -37,8 +41,9 @@ interface ToolbarProps {
 }
 
 /**
- * Toolbar component for the PDF editor
- * Contains undo/redo controls and download button
+ * Default toolbar layout for the PDF editor. Composes the standalone
+ * action buttons and progress overlay. For custom arrangements, use the
+ * individual `Editor.UndoButton`, `Editor.DownloadButton`, etc. directly.
  */
 export function Toolbar({
     canUndo,
@@ -56,52 +61,12 @@ export function Toolbar({
     onCancel,
     onErrorDismiss,
 }: ToolbarProps) {
-    // Format file size
-    const formatFileSize = (bytes: number) => {
-        if (bytes < 1024) return `${bytes} B`;
-        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-    };
-
-    const handlePreview = () => {
-        trackEvent.preview();
-        onPreview();
-    };
-
-    const handlePrint = () => {
-        trackEvent.print(false); // false indicates print from toolbar
-        onPrint();
-    };
-
-    const handleDownload = () => {
-        trackEvent.download(false); // false indicates download from toolbar
-        onDownload();
-    };
-
     return (
         <div className="border-b bg-white p-4">
             <div className="mx-auto container flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2 order-2 sm:order-1">
-                    <Button
-                        variant="white"
-                        size="icon"
-                        onClick={onUndo}
-                        disabled={!canUndo}
-                        className={cn('disabled:opacity-50', 'h-10 w-10')}
-                    >
-                        <Undo className="h-5 w-5" />
-                        <span className="sr-only">Undo</span>
-                    </Button>
-                    <Button
-                        variant="white"
-                        size="icon"
-                        onClick={onRedo}
-                        disabled={!canRedo}
-                        className={cn('disabled:opacity-50', 'h-10 w-10')}
-                    >
-                        <Redo className="h-5 w-5" />
-                        <span className="sr-only">Redo</span>
-                    </Button>
+                    <UndoButton canUndo={canUndo} onUndo={onUndo} />
+                    <RedoButton canRedo={canRedo} onRedo={onRedo} />
                 </div>
 
                 <div className="min-w-[50%] flex flex-col sm:flex-row items-center gap-4 order-1 sm:order-2 w-full sm:w-auto">
@@ -118,70 +83,16 @@ export function Toolbar({
                             </Button>
                         </div>
                     )}
-                    {estimatedSize && !isGenerating && (
-                        <div className="text-sm text-gray-500 hidden sm:block text-nowrap whitespace-nowrap">
-                            Estimated size: {formatFileSize(estimatedSize)}
-                        </div>
-                    )}
+                    {!isGenerating && <EstimatedSize bytes={estimatedSize} />}
                     {isGenerating ? (
-                        <div className="flex items-center gap-2 w-full sm:w-auto justify-center">
-                            <div className="flex items-center gap-2 min-w-[160px] bg-editor-accent text-editor-accent-soft px-4 py-2 rounded-md relative">
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                                <span>
-                                    {progress ? `Generating (${progress}%)` : 'Generating...'}
-                                </span>
-                                {progress && (
-                                    <div
-                                        className="absolute bottom-0 left-0 h-1 bg-editor-accent-soft/20"
-                                        style={{ width: `${progress}%` }}
-                                    />
-                                )}
-                            </div>
-                            <Button
-                                variant="white"
-                                size="sm"
-                                onClick={onCancel}
-                                className="text-red-600 hover:text-red-700 border-red-200"
-                                icon={<X className="h-4 w-4" />}
-                            >
-                                Cancel
-                            </Button>
-                        </div>
+                        <ProgressOverlay progress={progress} onCancel={onCancel} />
                     ) : (
                         <div className="flex flex-col sm:flex-row items-center gap-2 w-full">
                             <div className="w-full flex items-center gap-2">
-                                <Button
-                                    variant="white"
-                                    onClick={handlePreview}
-                                    disabled={!hasContent}
-                                    className={cn('disabled:opacity-50', 'w-full', 'preview-button-click-trigger')}
-                                    icon={<Eye className="h-4 w-4" />}
-                                >
-                                    Preview
-                                </Button>
-                                <Button
-                                    variant="cream"
-                                    onClick={handlePrint}
-                                    disabled={!hasContent}
-                                    className={cn('disabled:opacity-50', 'w-full', 'print-button-click-trigger')}
-                                    icon={<Printer className="h-4 w-4" />}
-                                >
-                                    Print
-                                </Button>
+                                <PreviewButton hasContent={hasContent} onPreview={onPreview} />
+                                <PrintButton hasContent={hasContent} onPrint={onPrint} />
                             </div>
-                            <Button
-                                variant="sage"
-                                onClick={handleDownload}
-                                disabled={!hasContent}
-                                className={cn(
-                                    'min-w-[260px]',
-                                    'disabled:opacity-50',
-                                    'w-full sm:w-auto download-button-click-trigger',
-                                )}
-                                icon={<Download className="h-4 w-4" />}
-                            >
-                                Download PDF
-                            </Button>
+                            <DownloadButton hasContent={hasContent} onDownload={onDownload} />
                         </div>
                     )}
                 </div>

@@ -10,16 +10,18 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Canvas } from './canvas/index';
 import { EditorLayout } from './editor-layout';
 import { Header } from './header/index';
+import { PageList } from './page-list/index';
 import { Preview } from './preview/index';
-import { Sidebar } from './sidebar/index';
 import { Toolbar } from './toolbar/index';
 import { usePdfGeneration } from './use-pdf-generation';
 
 /**
- * PDF Editor component
- * Main layout component that integrates all editor components
+ * Editor root.
+ *
+ * Owns the document state and wires the editor's compound parts
+ * (Header, Toolbar, PageList, Canvas, Preview) into the layout shell.
  */
-export function PDFEditor() {
+export function Root() {
     const {
         document,
         formattedDate,
@@ -133,7 +135,7 @@ export function PDFEditor() {
                         />
                     }
                     sidebar={
-                        <Sidebar
+                        <PageList
                             pages={document.pages}
                             sections={document.sections}
                             currentPage={document.currentPage}
