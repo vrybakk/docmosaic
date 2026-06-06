@@ -58,6 +58,15 @@ const config: Config = {
                     gradient:
                         'linear-gradient(90deg, rgba(196,214,176,0.9) 0%, rgba(252,222,156,0.8) 35%, rgba(255,165,82,0.8) 65%, rgba(186,86,36,0.9) 100%)',
                 },
+                editor: {
+                    accent: 'rgb(var(--editor-color-accent) / <alpha-value>)',
+                    'accent-soft': 'rgb(var(--editor-color-accent-soft) / <alpha-value>)',
+                    success: 'rgb(var(--editor-color-success) / <alpha-value>)',
+                    warning: 'rgb(var(--editor-color-warning) / <alpha-value>)',
+                    'warning-soft': 'rgb(var(--editor-color-warning-soft) / <alpha-value>)',
+                    surface: 'rgb(var(--editor-color-surface) / <alpha-value>)',
+                    text: 'rgb(var(--editor-color-text) / <alpha-value>)',
+                },
             },
             backgroundImage: {
                 gradient:
@@ -70,6 +79,10 @@ const config: Config = {
                 lg: 'var(--radius)',
                 md: 'calc(var(--radius) - 2px)',
                 sm: 'calc(var(--radius) - 4px)',
+                'editor-section': 'var(--editor-radius-section)',
+            },
+            boxShadow: {
+                'editor-section': 'var(--editor-shadow-section)',
             },
         },
     },

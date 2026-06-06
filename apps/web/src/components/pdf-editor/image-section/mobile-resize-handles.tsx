@@ -65,138 +65,138 @@ export const MobileResizeHandles: React.FC<MobileResizeHandlesProps> = ({
             <div
                 data-resize-handle="true"
                 className={cn(
-                    'absolute -top-3 -left-3 w-10 h-10 bg-white border-3 border-docmosaic-purple rounded-full shadow-xl',
+                    'absolute -top-3 -left-3 w-10 h-10 bg-white border-3 border-editor-accent rounded-full shadow-xl',
                     'cursor-nw-resize hover:scale-110 transition-transform duration-150',
                     'flex items-center justify-center',
                     'touch-manipulation select-none',
                     'z-30', // Ensure it's above other elements
-                    'hover:bg-docmosaic-purple/10', // Hover effect
+                    'hover:bg-editor-accent/10', // Hover effect
                     'pointer-events-auto', // Added
                 )}
                 onMouseDown={(e) => handleResizeStart(e, 'topLeft')}
                 onTouchStart={(e) => handleResizeStart(e, 'topLeft')}
                 title="Resize from top-left"
             >
-                <Minus className="w-4 h-4 text-docmosaic-purple" />
+                <Minus className="w-4 h-4 text-editor-accent" />
             </div>
 
             <div
                 data-resize-handle="true"
                 className={cn(
-                    'absolute -top-3 -right-3 w-10 h-10 bg-white border-3 border-docmosaic-purple rounded-full shadow-xl',
+                    'absolute -top-3 -right-3 w-10 h-10 bg-white border-3 border-editor-accent rounded-full shadow-xl',
                     'cursor-ne-resize hover:scale-110 transition-transform duration-150',
                     'flex items-center justify-center',
                     'touch-manipulation select-none',
                     'z-30', // Ensure it's above other elements
-                    'hover:bg-docmosaic-purple/10', // Hover effect
+                    'hover:bg-editor-accent/10', // Hover effect
                     'pointer-events-auto', // Added
                 )}
                 onMouseDown={(e) => handleResizeStart(e, 'topRight')}
                 onTouchStart={(e) => handleResizeStart(e, 'topRight')}
                 title="Resize from top-right"
             >
-                <Plus className="w-4 h-4 text-docmosaic-purple" />
+                <Plus className="w-4 h-4 text-editor-accent" />
             </div>
 
             <div
                 data-resize-handle="true"
                 className={cn(
-                    'absolute -bottom-3 -left-3 w-10 h-10 bg-white border-3 border-docmosaic-purple rounded-full shadow-xl',
+                    'absolute -bottom-3 -left-3 w-10 h-10 bg-white border-3 border-editor-accent rounded-full shadow-xl',
                     'cursor-sw-resize hover:scale-110 transition-transform duration-150',
                     'flex items-center justify-center',
                     'touch-manipulation select-none',
                     'z-30', // Ensure it's above other elements
-                    'hover:bg-docmosaic-purple/10', // Hover effect
+                    'hover:bg-editor-accent/10', // Hover effect
                     'pointer-events-auto', // Added
                 )}
                 onMouseDown={(e) => handleResizeStart(e, 'bottomLeft')}
                 onTouchStart={(e) => handleResizeStart(e, 'bottomLeft')}
                 title="Resize from bottom-left"
             >
-                <Plus className="w-4 h-4 text-docmosaic-purple" />
+                <Plus className="w-4 h-4 text-editor-accent" />
             </div>
 
             <div
                 data-resize-handle="true"
                 className={cn(
-                    'absolute -bottom-3 -right-3 w-10 h-10 bg-white border-3 border-docmosaic-purple rounded-full shadow-xl',
+                    'absolute -bottom-3 -right-3 w-10 h-10 bg-white border-3 border-editor-accent rounded-full shadow-xl',
                     'cursor-se-resize hover:scale-110 transition-transform duration-150',
                     'flex items-center justify-center',
                     'touch-manipulation select-none',
                     'z-30', // Ensure it's above other elements
-                    'hover:bg-docmosaic-purple/10', // Hover effect
+                    'hover:bg-editor-accent/10', // Hover effect
                     'pointer-events-auto', // Added
                 )}
                 onMouseDown={(e) => handleResizeStart(e, 'bottomRight')}
                 onTouchStart={(e) => handleResizeStart(e, 'bottomRight')}
                 title="Resize from bottom-right"
             >
-                <Plus className="w-4 h-4 text-docmosaic-purple" />
+                <Plus className="w-4 h-4 text-editor-accent" />
             </div>
 
             {/* Edge handles - full-width/height for better touch targets */}
             <div
                 data-resize-handle="true"
                 className={cn(
-                    'absolute top-0 left-4 right-4 h-4 bg-transparent hover:bg-docmosaic-purple/20',
+                    'absolute top-0 left-4 right-4 h-4 bg-transparent hover:bg-editor-accent/20',
                     'cursor-n-resize group/edge',
                     'touch-manipulation select-none',
                     'z-30', // Ensure it's above other elements
-                    'border-t-2 border-transparent hover:border-docmosaic-purple/30', // Visual indicator
+                    'border-t-2 border-transparent hover:border-editor-accent/30', // Visual indicator
                     'pointer-events-auto', // Added
                 )}
                 onMouseDown={(e) => handleResizeStart(e, 'top')}
                 onTouchStart={(e) => handleResizeStart(e, 'top')}
             >
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-docmosaic-purple rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
             </div>
 
             <div
                 data-resize-handle="true"
                 className={cn(
-                    'absolute bottom-0 left-4 right-4 h-4 bg-transparent hover:bg-docmosaic-purple/20',
+                    'absolute bottom-0 left-4 right-4 h-4 bg-transparent hover:bg-editor-accent/20',
                     'cursor-s-resize group/edge',
                     'touch-manipulation select-none',
                     'z-30', // Ensure it's above other elements
-                    'border-b-2 border-transparent hover:border-docmosaic-purple/30', // Visual indicator
+                    'border-b-2 border-transparent hover:border-editor-accent/30', // Visual indicator
                     'pointer-events-auto', // Added
                 )}
                 onMouseDown={(e) => handleResizeStart(e, 'bottom')}
                 onTouchStart={(e) => handleResizeStart(e, 'bottom')}
             >
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-4 h-4 bg-white border-2 border-docmosaic-purple rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
             </div>
 
             <div
                 data-resize-handle="true"
                 className={cn(
-                    'absolute left-0 top-4 bottom-4 w-4 bg-transparent hover:bg-docmosaic-purple/20',
+                    'absolute left-0 top-4 bottom-4 w-4 bg-transparent hover:bg-editor-accent/20',
                     'cursor-w-resize group/edge',
                     'touch-manipulation select-none',
                     'z-30', // Ensure it's above other elements
-                    'border-l-2 border-transparent hover:border-docmosaic-purple/30', // Visual indicator
+                    'border-l-2 border-transparent hover:border-editor-accent/30', // Visual indicator
                     'pointer-events-auto', // Added
                 )}
                 onMouseDown={(e) => handleResizeStart(e, 'left')}
                 onTouchStart={(e) => handleResizeStart(e, 'left')}
             >
-                <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-docmosaic-purple rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
+                <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
             </div>
 
             <div
                 data-resize-handle="true"
                 className={cn(
-                    'absolute right-0 top-4 bottom-4 w-4 bg-transparent hover:bg-docmosaic-purple/20',
+                    'absolute right-0 top-4 bottom-4 w-4 bg-transparent hover:bg-editor-accent/20',
                     'cursor-e-resize group/edge',
                     'touch-manipulation select-none',
                     'z-30', // Ensure it's above other elements
-                    'border-r-2 border-transparent hover:border-docmosaic-purple/30', // Visual indicator
+                    'border-r-2 border-transparent hover:border-editor-accent/30', // Visual indicator
                     'pointer-events-auto', // Added
                 )}
                 onMouseDown={(e) => handleResizeStart(e, 'right')}
                 onTouchStart={(e) => handleResizeStart(e, 'right')}
             >
-                <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-docmosaic-purple rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
+                <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
             </div>
         </div>
     );
@@ -226,7 +226,7 @@ export const MobileResizeHandle: React.FC<{
     return (
         <div
             className={cn(
-                'bg-white border-2 border-docmosaic-purple rounded-full',
+                'bg-white border-2 border-editor-accent rounded-full',
                 'cursor-pointer hover:scale-110 transition-transform duration-150',
                 'flex items-center justify-center',
                 'touch-manipulation select-none',

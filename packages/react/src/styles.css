@@ -1,1 +1,21 @@
-/* @docmosaic/react default styles — populated in Phase 6+ */
+/*
+ * @docmosaic/react default styles
+ *
+ * Seed values for the --editor-* theming layer consumed by the editor's
+ * Tailwind `editor-*` utilities. Defaults map 1:1 to the DocMosaic palette so
+ * consumers who import this file get the brand look out of the box.
+ *
+ * Override any token in your own stylesheet to retheme the editor.
+ */
+
+:root {
+    --editor-color-accent: 56 29 42; /* #381D2A */
+    --editor-color-accent-soft: 252 222 156; /* #FCDE9C */
+    --editor-color-success: 196 214 176; /* #C4D6B0 */
+    --editor-color-warning: 186 86 36; /* #BA5624 */
+    --editor-color-warning-soft: 255 165 82; /* #FFA552 */
+    --editor-color-surface: 255 255 255; /* #FFFFFF */
+    --editor-color-text: 56 29 42; /* #381D2A */
+    --editor-radius-section: 4px;
+    --editor-shadow-section: 0 1px 3px rgba(0, 0, 0, 0.1);
+}

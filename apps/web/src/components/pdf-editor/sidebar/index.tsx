@@ -142,7 +142,7 @@ export function Sidebar({
             {/* Pages */}
             <div className="flex-1 flex flex-col min-h-0">
                 <div className="p-4 pb-2">
-                    <h2 className="text-sm font-semibold text-docmosaic-purple">Pages</h2>
+                    <h2 className="text-sm font-semibold text-editor-accent">Pages</h2>
                 </div>
                 <ScrollArea className="flex-1">
                     <div className="p-4 pt-2">
@@ -180,7 +180,7 @@ export function Sidebar({
 
             {/* Info */}
             <div className="p-4 border-t bg-white">
-                <div className="text-sm text-docmosaic-purple/70 space-y-1">
+                <div className="text-sm text-editor-accent/70 space-y-1">
                     <p>Pages: {pages.length}</p>
                     <p>Last modified: {lastModified}</p>
                 </div>

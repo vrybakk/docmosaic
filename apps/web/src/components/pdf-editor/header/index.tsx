@@ -64,12 +64,12 @@ export function Header({
                             onChange={onNameChange}
                             className={cn(
                                 'w-full max-w-[300px] bg-transparent border-none',
-                                'text-docmosaic-purple placeholder-docmosaic-cream/50',
+                                'text-editor-accent placeholder-editor-accent-soft/50',
                                 'text-lg font-semibold focus:ring-0 shadow-none pr-5',
                             )}
                             placeholder="Untitled Document"
                         />
-                        <Pen className="h-4 w-4 text-docmosaic-purple absolute right-2.5 top-0 bottom-0 my-auto" />
+                        <Pen className="h-4 w-4 text-editor-accent absolute right-2.5 top-0 bottom-0 my-auto" />
                     </div>
                 </div>
 
@@ -78,9 +78,9 @@ export function Header({
                     <Select value={pageSize} onValueChange={onPageSizeChange}>
                         <SelectTrigger
                             className={cn(
-                                'min-w-[120px] w-fit border-docmosaic-cream/20',
-                                'text-docmosaic-purple bg-white',
-                                'focus:ring-docmosaic-purple/20',
+                                'min-w-[120px] w-fit border-editor-accent-soft/20',
+                                'text-editor-accent bg-white',
+                                'focus:ring-editor-accent/20',
                             )}
                         >
                             <SelectValue placeholder="Page Size" />
@@ -108,9 +108,9 @@ export function Header({
                     <Select value={orientation} onValueChange={onOrientationChange}>
                         <SelectTrigger
                             className={cn(
-                                'w-[120px] border-docmosaic-purple/20',
-                                'text-docmosaic-purple bg-white',
-                                'focus:ring-docmosaic-cream/20',
+                                'w-[120px] border-editor-accent/20',
+                                'text-editor-accent bg-white',
+                                'focus:ring-editor-accent-soft/20',
                             )}
                         >
                             <SelectValue placeholder="Orientation" />

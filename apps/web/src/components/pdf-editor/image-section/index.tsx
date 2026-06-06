@@ -465,10 +465,10 @@ export function ImageSectionComponent({
             data-section="true"
             className={cn(
                 'absolute p-1',
-                'border-2 border-dashed border-gray-300 hover:border-docmosaic-purple/50',
+                'border-2 border-dashed border-gray-300 hover:border-editor-accent/50',
                 'rounded-lg overflow-visible group touch-none pointer-events-auto',
-                isSelected && 'border-solid border-docmosaic-purple shadow-lg',
-                isDroppingFile && 'border-docmosaic-purple border-solid bg-docmosaic-purple/5',
+                isSelected && 'border-solid border-editor-accent shadow-lg',
+                isDroppingFile && 'border-editor-accent border-solid bg-editor-accent/5',
                 isDragging && 'opacity-50 cursor-grabbing',
                 isResizing && 'pointer-events-none',
             )}
@@ -493,7 +493,7 @@ export function ImageSectionComponent({
 
             {/* Selection indicator */}
             {isSelected && (
-                <div className="absolute inset-0 border-2 border-docmosaic-purple border-dashed pointer-events-none z-5" />
+                <div className="absolute inset-0 border-2 border-editor-accent border-dashed pointer-events-none z-5" />
             )}
 
             {/* Top menu - container passes through for drag; only buttons capture */}
@@ -572,7 +572,7 @@ export function ImageSectionComponent({
                             className={cn(
                                 'absolute inset-0 rounded-lg pointer-events-none z-20',
                                 'opacity-0 group-hover:opacity-100 transition-opacity',
-                                isDroppingFile && 'opacity-100 bg-docmosaic-purple/40',
+                                isDroppingFile && 'opacity-100 bg-editor-accent/40',
                                 !isDroppingFile && 'bg-black/40',
                             )}
                         >
@@ -602,7 +602,7 @@ export function ImageSectionComponent({
                         className={cn(
                             'w-full h-full flex items-center justify-center pointer-events-none',
                             'bg-gray-50/50 hover:bg-gray-100/50 transition-colors',
-                            isDroppingFile && 'bg-docmosaic-purple/5',
+                            isDroppingFile && 'bg-editor-accent/5',
                         )}
                     >
                         {/* Only the upload CTA is clickable; rest passes through for drag */}

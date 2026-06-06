@@ -132,7 +132,7 @@ export function Preview({
             <div className="flex-1 overflow-hidden relative">
                 {isLoading ? (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-docmosaic-purple" />
+                        <Loader2 className="h-8 w-8 animate-spin text-editor-accent" />
                     </div>
                 ) : (
                     <div className="h-full overflow-auto p-4">

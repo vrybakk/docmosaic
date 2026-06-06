@@ -68,14 +68,14 @@ export function PagePreview({
             <div
                 className={cn(
                     'w-full bg-white rounded-lg shadow cursor-pointer transition-all relative overflow-hidden',
-                    isSelected && 'ring-2 ring-docmosaic-cream',
-                    !isSelected && 'hover:ring-2 hover:ring-docmosaic-sage',
+                    isSelected && 'ring-2 ring-editor-accent-soft',
+                    !isSelected && 'hover:ring-2 hover:ring-editor-success',
                     dropIndicators?.isDragOver &&
                         dropIndicators.dropPosition === 'top' &&
-                        'border-t-4 border-docmosaic-cream',
+                        'border-t-4 border-editor-accent-soft',
                     dropIndicators?.isDragOver &&
                         dropIndicators.dropPosition === 'bottom' &&
-                        'border-b-4 border-docmosaic-cream',
+                        'border-b-4 border-editor-accent-soft',
                 )}
                 style={{
                     aspectRatio: `${pageDimensions.width} / ${pageDimensions.height}`,
@@ -127,7 +127,7 @@ export function PagePreview({
                     </div>
                 </div>
 
-                <div className="absolute top-2 left-2 bg-docmosaic-cream text-docmosaic-purple text-xs px-2 py-1 rounded-full">
+                <div className="absolute top-2 left-2 bg-editor-accent-soft text-editor-accent text-xs px-2 py-1 rounded-full">
                     Page {index + 1}
                 </div>
             </div>
