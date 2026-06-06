@@ -1,7 +1,12 @@
 'use client';
 
-import { estimatePDFSize, generatePDF, type PDFDocument } from '@docmosaic/core';
+import {
+    estimatePDFSize as defaultEstimatePDFSize,
+    generatePDF as defaultGeneratePDF,
+    type PDFDocument,
+} from '@docmosaic/core';
 import { useCallback, useRef, useState } from 'react';
+import type { EditorPdfBackend } from '../context/editor';
 import { trackEvent } from '../internal/analytics';
 import { getDownloadFileName } from '../internal/download';
 
@@ -17,6 +22,11 @@ interface UsePdfGenerationArgs {
     document: PDFDocument;
     /** Called with the generated blob's size once download completes. */
     onSizeKnown?: (bytes: number) => void;
+    /**
+     * Optional PDF backend override. Defaults to `@docmosaic/core` exports.
+     * Use this to swap the bundled jsPDF path for a custom implementation.
+     */
+    backend?: Partial<EditorPdfBackend>;
 }
 
 interface UsePdfGenerationResult {
@@ -27,8 +37,12 @@ interface UsePdfGenerationResult {
     dismissError: () => void;
 }
 
-function fireDocumentGeneratedEvent(document: PDFDocument, blob: Blob) {
-    const estimated = estimatePDFSize(
+function fireDocumentGeneratedEvent(
+    document: PDFDocument,
+    blob: Blob,
+    estimate: EditorPdfBackend['estimate'],
+) {
+    const estimated = estimate(
         document.sections,
         document.pages.map((page) => page.backgroundPDF),
     );
@@ -49,11 +63,18 @@ function fireDocumentGeneratedEvent(document: PDFDocument, blob: Blob) {
  * download blob URL plumbing, print-window handoff, and progress state.
  *
  * Fires `documentGenerated` analytics after each successful render.
+ *
+ * The PDF backend (`generate` + `estimate`) is pluggable via the `backend`
+ * argument; omitted or partial values fall back to `@docmosaic/core`.
  */
 export function usePdfGeneration({
     document,
     onSizeKnown,
+    backend,
 }: UsePdfGenerationArgs): UsePdfGenerationResult {
+    const generate = backend?.generate ?? defaultGeneratePDF;
+    const estimate = backend?.estimate ?? defaultEstimatePDFSize;
+
     const [state, setState] = useState<GenerationState>({ isGenerating: false });
     const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -72,7 +93,7 @@ export function usePdfGeneration({
 
             setState({ isGenerating: true, stage: 'optimizing', progress: 0 });
 
-            const blob = await generatePDF(
+            const blob = await generate(
                 document.sections,
                 {
                     pageSize: document.pageSize,
@@ -94,7 +115,7 @@ export function usePdfGeneration({
             globalThis.document.body.removeChild(link);
             URL.revokeObjectURL(url);
 
-            fireDocumentGeneratedEvent(document, blob);
+            fireDocumentGeneratedEvent(document, blob, estimate);
             onSizeKnown?.(blob.size);
 
             setState({ isGenerating: false });
@@ -110,13 +131,13 @@ export function usePdfGeneration({
         } finally {
             abortControllerRef.current = null;
         }
-    }, [document, onSizeKnown]);
+    }, [document, onSizeKnown, generate, estimate]);
 
     const print = useCallback(async () => {
         try {
             setState({ isGenerating: true, stage: 'optimizing', progress: 0 });
 
-            const blob = await generatePDF(
+            const blob = await generate(
                 document.sections,
                 {
                     pageSize: document.pageSize,
@@ -135,7 +156,7 @@ export function usePdfGeneration({
                 };
             }
 
-            fireDocumentGeneratedEvent(document, blob);
+            fireDocumentGeneratedEvent(document, blob, estimate);
             setState({ isGenerating: false });
         } catch (error) {
             console.error('Error printing PDF:', error);
@@ -144,7 +165,7 @@ export function usePdfGeneration({
                 error: 'Failed to print PDF. Please try again.',
             });
         }
-    }, [document]);
+    }, [document, generate, estimate]);
 
     return { state, download, print, abort, dismissError };
 }

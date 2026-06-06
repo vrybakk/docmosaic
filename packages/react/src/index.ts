@@ -100,6 +100,7 @@ export type {
     EditorActions,
     EditorContextValue,
     EditorPdfApi,
+    EditorPdfBackend,
     EditorUiState,
     UseEditorSectionResult,
 } from './context/editor';

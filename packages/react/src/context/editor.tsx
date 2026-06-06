@@ -20,7 +20,7 @@
  * ```
  */
 
-import type { Document, ImageSection } from '@docmosaic/core';
+import type { Document, ImageSection, estimatePDFSize, generatePDF } from '@docmosaic/core';
 import {
     createContext,
     type ReactNode,
@@ -30,6 +30,19 @@ import {
     useState,
 } from 'react';
 import type { GenerationState } from '../primitives/use-pdf-generation';
+
+/**
+ * Pluggable PDF backend.
+ *
+ * Editor.Root resolves these to {@link generatePDF} / {@link estimatePDFSize}
+ * from `@docmosaic/core` by default. Consumers can override either function
+ * (e.g. to swap jsPDF for `pdf-lib`, mock generation in tests, or run rendering
+ * in a Web Worker) via the `pdf` prop on `Editor.Root`.
+ */
+export interface EditorPdfBackend {
+    generate: typeof generatePDF;
+    estimate: typeof estimatePDFSize;
+}
 
 /**
  * Action surface exposed by the editor context.
@@ -97,6 +110,13 @@ export interface EditorContextValue {
     canRedo: boolean;
     actions: EditorActions;
     pdfApi: EditorPdfApi;
+    /**
+     * Resolved PDF backend (generate + estimate). Mirrors what was passed via
+     * `Editor.Root` `pdf` prop, falling back to `@docmosaic/core`. Primitives
+     * that render PDFs (preview, download) call through this rather than
+     * importing the core helpers directly.
+     */
+    pdfBackend: EditorPdfBackend;
     ui: EditorUiState;
 }
 

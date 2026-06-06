@@ -3,7 +3,8 @@
 import {
     createPage,
     createSection,
-    estimatePDFSize,
+    estimatePDFSize as defaultEstimatePDFSize,
+    generatePDF as defaultGeneratePDF,
     type Document,
     type ImageSection,
     type PageOrientation,
@@ -18,6 +19,7 @@ import {
     useEditorUiState,
     type EditorActions,
     type EditorContextValue,
+    type EditorPdfBackend,
 } from '../context/editor';
 import { useDocumentState } from '../hooks/use-document-state';
 import { trackEvent } from '../internal/analytics';
@@ -46,6 +48,34 @@ import { usePdfGeneration } from './use-pdf-generation';
  */
 export type EditorRootProps = {
     children: ReactNode;
+    /**
+     * Pluggable PDF backend.
+     *
+     * Either or both functions can be overridden. Anything omitted falls back
+     * to the bundled `@docmosaic/core` implementation (`generatePDF` /
+     * `estimatePDFSize`).
+     *
+     * Use this to swap the jsPDF path for a different renderer, run generation
+     * in a Worker, or mock it out in tests.
+     *
+     * @example
+     * ```tsx
+     * import type { generatePDF, estimatePDFSize } from '@docmosaic/core';
+     *
+     * const generate: typeof generatePDF = async (sections, options, onProgress) => {
+     *   // Custom pipeline — e.g. delegate to a Worker or use pdf-lib.
+     *   return await myCustomRenderer(sections, options, onProgress);
+     * };
+     *
+     * const estimate: typeof estimatePDFSize = (sections, backgrounds) => {
+     *   // Faster heuristic that matches the custom renderer's output.
+     *   return mySizeHeuristic(sections, backgrounds);
+     * };
+     *
+     * <Editor.Root pdf={{ generate, estimate }}>...</Editor.Root>
+     * ```
+     */
+    pdf?: Partial<EditorPdfBackend>;
 } & (
     | {
           /** Controlled: caller owns the document. */
@@ -190,10 +220,12 @@ function buildControlledActions(
 function ControlledRoot({
     document,
     onDocumentChange,
+    pdfBackend,
     children,
 }: {
     document: Document;
     onDocumentChange: (next: Document) => void;
+    pdfBackend: EditorPdfBackend;
     children: ReactNode;
 }) {
     const formattedDate = useFormattedDate(document.updatedAt);
@@ -233,12 +265,13 @@ function ControlledRoot({
     const pdfApi = usePdfGeneration({
         document,
         onSizeKnown: (size) => actions.updateEstimatedSize(size),
+        backend: pdfBackend,
     });
 
     useEffect(() => {
         const backgrounds = document.pages.map((p) => p.backgroundPDF);
-        ui.setEstimatedSize(estimatePDFSize(document.sections, backgrounds));
-    }, [document.sections, document.pages, ui]);
+        ui.setEstimatedSize(pdfBackend.estimate(document.sections, backgrounds));
+    }, [document.sections, document.pages, ui, pdfBackend]);
 
     const value: EditorContextValue = {
         state: document,
@@ -246,6 +279,7 @@ function ControlledRoot({
         canRedo: false,
         actions: wrappedActions,
         pdfApi,
+        pdfBackend,
         ui,
     };
 
@@ -260,9 +294,11 @@ function ControlledRoot({
  */
 function UncontrolledRoot({
     defaultDocument,
+    pdfBackend,
     children,
 }: {
     defaultDocument?: Document;
+    pdfBackend: EditorPdfBackend;
     children: ReactNode;
 }) {
     const { document, formattedDate, canUndo, canRedo, actions } = useDocumentState({
@@ -274,6 +310,7 @@ function UncontrolledRoot({
     const pdfApi = usePdfGeneration({
         document,
         onSizeKnown: (size) => actions.updateEstimatedSize(size),
+        backend: pdfBackend,
     });
 
     useEffect(() => {
@@ -282,8 +319,8 @@ function UncontrolledRoot({
 
     useEffect(() => {
         const backgrounds = document.pages.map((p) => p.backgroundPDF);
-        ui.setEstimatedSize(estimatePDFSize(document.sections, backgrounds));
-    }, [document.sections, document.pages, ui]);
+        ui.setEstimatedSize(pdfBackend.estimate(document.sections, backgrounds));
+    }, [document.sections, document.pages, ui, pdfBackend]);
 
     const wrappedActions = useMemo<EditorActions>(
         () => ({
@@ -325,6 +362,7 @@ function UncontrolledRoot({
         canRedo,
         actions: wrappedActions,
         pdfApi,
+        pdfBackend,
         ui,
     };
 
@@ -419,6 +457,14 @@ function arrangeChildren(children: ReactNode): ReactNode {
  */
 export function Root(props: EditorRootProps) {
     const isControlled = props.document !== undefined;
+    const pdfBackend = useMemo<EditorPdfBackend>(
+        () => ({
+            generate: props.pdf?.generate ?? defaultGeneratePDF,
+            estimate: props.pdf?.estimate ?? defaultEstimatePDFSize,
+        }),
+        [props.pdf?.generate, props.pdf?.estimate],
+    );
+
     const layout = (
         <div className="flex flex-col h-screen bg-gray-50">
             {arrangeChildren(props.children)}
@@ -432,11 +478,15 @@ export function Root(props: EditorRootProps) {
                     <ControlledRoot
                         document={props.document!}
                         onDocumentChange={props.onDocumentChange!}
+                        pdfBackend={pdfBackend}
                     >
                         {layout}
                     </ControlledRoot>
                 ) : (
-                    <UncontrolledRoot defaultDocument={props.defaultDocument}>
+                    <UncontrolledRoot
+                        defaultDocument={props.defaultDocument}
+                        pdfBackend={pdfBackend}
+                    >
                         {layout}
                     </UncontrolledRoot>
                 )}

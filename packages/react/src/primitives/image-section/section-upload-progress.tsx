@@ -1,5 +1,3 @@
-'use client';
-
 import type { UploadProgressInfo } from './use-image-upload';
 
 interface SectionUploadProgressProps {

@@ -1,6 +1,5 @@
 'use client';
 
-import { generatePDF } from '@docmosaic/core';
 import { Download, Loader2, Printer, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useEditor } from '../../context/editor';
@@ -12,9 +11,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../ui/dialo
  * Preview dialog. Reads its open state, the document, and the download
  * action from the editor context. Generates a preview blob whenever the
  * dialog opens and re-renders if the document changes underneath it.
+ *
+ * Uses `pdfBackend.generate` from context so a custom backend supplied via
+ * `Editor.Root` `pdf` prop is honored here too.
  */
 export function Preview() {
-    const { state, ui, pdfApi } = useEditor();
+    const { state, ui, pdfApi, pdfBackend } = useEditor();
     const { pages, sections, pageSize, orientation } = state;
     const { isPreviewOpen, closePreview } = ui;
 
@@ -29,7 +31,7 @@ export function Preview() {
         const generatePreviews = async () => {
             setIsLoading(true);
             try {
-                const blob = await generatePDF(sections, {
+                const blob = await pdfBackend.generate(sections, {
                     pageSize,
                     orientation,
                     pages,
