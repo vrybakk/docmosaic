@@ -1,25 +1,14 @@
 import { jsPDF } from 'jspdf';
+import { CUSTOM_PAGE_SIZES, estimatePDFSize } from '@docmosaic/core';
 import { trackEvent } from './analytics';
 import { processImagesForPDF } from './pdf-editor/utils/image';
-import { PDFGenerationOptions, PageSize, Section } from './types';
+import { PDFGenerationOptions, Section } from './types';
 
-// Standard page sizes in points (72 DPI)
-const CUSTOM_PAGE_SIZES: Record<PageSize, [number, number]> = {
-    A0: [2383.94, 3370.39],
-    A1: [1683.78, 2383.94],
-    A2: [1190.55, 1683.78],
-    A3: [841.89, 1190.55],
-    A4: [595.28, 841.89],
-    A5: [419.53, 595.28],
-    B4: [708.66, 1000.63],
-    B5: [498.9, 708.66],
-    LETTER: [612.0, 792.0],
-    LEGAL: [612.0, 1008.0],
-    TABLOID: [792.0, 1224.0],
-    EXECUTIVE: [521.86, 756.0],
-    STATEMENT: [396.0, 612.0],
-    FOLIO: [612.0, 936.0],
-};
+/**
+ * Re-export so existing `from '@/lib/pdf'` callers (e.g. the toolbar live
+ * size estimator) keep working without churn. Source of truth: `@docmosaic/core`.
+ */
+export { estimatePDFSize };
 
 interface GenerationProgress {
     stage: 'optimizing' | 'generating' | 'complete';
@@ -28,32 +17,6 @@ interface GenerationProgress {
 
 interface GenerationOptions extends PDFGenerationOptions {
     signal?: AbortSignal;
-}
-
-/**
- * Estimates final PDF size based on sections and backgrounds
- * Uses base64 length and compression estimates for calculation
- */
-export function estimatePDFSize(sections: Section[], backgrounds: (string | null)[]): number {
-    let estimatedSize = 5 * 1024; // 5KB base size
-
-    sections.forEach((section) => {
-        if (section.imageUrl) {
-            const base64Length = section.imageUrl.split(',')[1]?.length || 0;
-            const imageSize = Math.ceil(((base64Length * 3) / 4) * 0.7); // 0.7 for JPEG compression
-            estimatedSize += imageSize;
-        }
-    });
-
-    backgrounds.forEach((bg) => {
-        if (bg) {
-            const base64Length = bg.split(',')[1]?.length || 0;
-            const bgSize = Math.ceil(((base64Length * 3) / 4) * 0.7);
-            estimatedSize += bgSize;
-        }
-    });
-
-    return estimatedSize;
 }
 
 /**

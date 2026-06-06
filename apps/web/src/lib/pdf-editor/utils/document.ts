@@ -24,28 +24,6 @@ export function createInitialDocument(): PDFDocument {
 }
 
 /**
- * Estimates the size of the final PDF in bytes
- * Accounts for base document size and image data
- */
-export function calculateEstimatedSize(sections: ImageSection[]): number {
-    // Base PDF size (empty document)
-    let estimatedSize = 5 * 1024; // 5KB base
-
-    // Add size for each image section
-    sections.forEach((section) => {
-        if (section.imageUrl) {
-            // Extract base64 data
-            const base64Length = section.imageUrl.split(',')[1]?.length || 0;
-            // Convert base64 to approximate byte size
-            const imageSize = Math.ceil((base64Length * 3) / 4);
-            estimatedSize += imageSize;
-        }
-    });
-
-    return estimatedSize;
-}
-
-/**
  * Generates a timestamped filename for document download
  * Format: "{document name} YYYY-MM-DD HH-mm.pdf"
  */

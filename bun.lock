@@ -17,6 +17,7 @@
       "name": "@docmosaic/web",
       "version": "0.2.0",
       "dependencies": {
+        "@docmosaic/core": "workspace:*",
         "@next/third-parties": "^15.2.4",
         "@radix-ui/react-dialog": "^1.1.6",
         "@radix-ui/react-dropdown-menu": "^2.1.6",
