@@ -3,11 +3,11 @@
 import { Button } from '@/components/ui/core/button';
 import { isMobile } from '@/lib/mobile/detection';
 import { hapticFeedback } from '@/lib/mobile/haptics';
+import { useEditorConfig } from '@/lib/pdf-editor/context/editor-config';
 import { ImageSection } from '@/lib/pdf-editor/types';
 import { cn } from '@/lib/utils';
 import { useDrag } from '@use-gesture/react';
 import { Copy, ImageIcon, Maximize2, RefreshCw, Trash2 } from 'lucide-react';
-import Image from 'next/image';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { MobileResizeHandles } from './mobile-resize-handles';
@@ -63,6 +63,7 @@ export function ImageSectionComponent({
     onDelete,
     onClick,
 }: ImageSectionProps) {
+    const { imageRenderer: Image } = useEditorConfig();
     const [isResizing, setIsResizing] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const resizeStart = useRef<{
@@ -564,7 +565,6 @@ export function ImageSectionComponent({
                             alt="Section content"
                             className="w-full h-full object-contain pointer-events-none"
                             fill
-                            unoptimized
                             draggable={false}
                         />
                         {/* Hover overlay - pointer-events-none so drag works; only corner Replace button is clickable */}

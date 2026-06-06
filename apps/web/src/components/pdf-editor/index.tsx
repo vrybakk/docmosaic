@@ -4,6 +4,10 @@ import { trackEvent } from '@/lib/analytics';
 import { isMobile } from '@/lib/mobile/detection';
 import { hapticFeedback } from '@/lib/mobile/haptics';
 import { estimatePDFSize, generatePDF } from '@/lib/pdf';
+import {
+    EditorConfigProvider,
+    defaultImageRenderer,
+} from '@/lib/pdf-editor/context/editor-config';
 import { useDocumentState } from '@/lib/pdf-editor/hooks/useDocumentState';
 import { getDownloadFileName } from '@/lib/pdf-editor/utils/document';
 import { PageOrientation, PageSize } from '@/lib/types';
@@ -225,130 +229,135 @@ export function PDFEditor() {
     };
 
     return (
-        <DndProvider backend={HTML5Backend}>
-            <div className="flex flex-col h-screen bg-gray-50">
-                <Header
-                    name={document.name}
-                    pageSize={document.pageSize}
-                    orientation={document.orientation}
-                    onNameChange={handleNameChange}
-                    onPageSizeChange={handlePageSizeChange}
-                    onOrientationChange={handleOrientationChange}
-                />
+        <EditorConfigProvider value={{ imageRenderer: defaultImageRenderer }}>
+            <DndProvider backend={HTML5Backend}>
+                <div className="flex flex-col h-screen bg-gray-50">
+                    <Header
+                        name={document.name}
+                        pageSize={document.pageSize}
+                        orientation={document.orientation}
+                        onNameChange={handleNameChange}
+                        onPageSizeChange={handlePageSizeChange}
+                        onOrientationChange={handleOrientationChange}
+                    />
 
-                <Toolbar
-                    canUndo={canUndo}
-                    canRedo={canRedo}
-                    hasContent={document.sections.length > 0}
-                    onUndo={() => {
-                        trackEvent.undo();
+                    <Toolbar
+                        canUndo={canUndo}
+                        canRedo={canRedo}
+                        hasContent={document.sections.length > 0}
+                        onUndo={() => {
+                            trackEvent.undo();
 
-                        if (typeof window !== 'undefined' && isMobile()) {
-                            hapticFeedback.undoRedo();
-                        }
+                            if (typeof window !== 'undefined' && isMobile()) {
+                                hapticFeedback.undoRedo();
+                            }
 
-                        undo();
-                    }}
-                    onRedo={() => {
-                        trackEvent.redo();
+                            undo();
+                        }}
+                        onRedo={() => {
+                            trackEvent.redo();
 
-                        if (typeof window !== 'undefined' && isMobile()) {
-                            hapticFeedback.undoRedo();
-                        }
+                            if (typeof window !== 'undefined' && isMobile()) {
+                                hapticFeedback.undoRedo();
+                            }
 
-                        redo();
-                    }}
-                    onPreview={() => setIsPreviewOpen(true)}
-                    onPrint={handlePrint}
-                    onDownload={handleDownload}
-                    isGenerating={generationState.isGenerating}
-                    progress={generationState.progress}
-                    error={generationState.error}
-                    estimatedSize={estimatedSize}
-                    onCancel={handleCancel}
-                    onErrorDismiss={handleErrorDismiss}
-                />
+                            redo();
+                        }}
+                        onPreview={() => setIsPreviewOpen(true)}
+                        onPrint={handlePrint}
+                        onDownload={handleDownload}
+                        isGenerating={generationState.isGenerating}
+                        progress={generationState.progress}
+                        error={generationState.error}
+                        estimatedSize={estimatedSize}
+                        onCancel={handleCancel}
+                        onErrorDismiss={handleErrorDismiss}
+                    />
 
-                <div className="flex-1 flex min-h-0">
-                    <div className="lg:hidden fixed bottom-4 left-4 z-50 flex flex-col gap-2">
-                        <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-                            <SheetTrigger asChild>
-                                <Button
-                                    variant="white"
-                                    size="icon"
-                                    className="h-12 w-12 rounded-full shadow-lg"
-                                >
-                                    <Menu className="h-6 w-6" />
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="left" className="w-[300px] p-0">
-                                <Sidebar
-                                    pages={document.pages}
-                                    sections={document.sections}
-                                    currentPage={document.currentPage}
-                                    pageSize={document.pageSize}
-                                    orientation={document.orientation}
-                                    lastModified={formattedDate}
-                                    onAddSection={handleAddSection}
-                                    onAddPage={addPage}
-                                    onPageChange={changePage}
-                                    onDeletePage={deletePage}
-                                    onReorderPages={reorderPages}
-                                />
-                            </SheetContent>
-                        </Sheet>
-                    </div>
+                    <div className="flex-1 flex min-h-0">
+                        <div className="lg:hidden fixed bottom-4 left-4 z-50 flex flex-col gap-2">
+                            <Sheet
+                                open={isMobileSidebarOpen}
+                                onOpenChange={setIsMobileSidebarOpen}
+                            >
+                                <SheetTrigger asChild>
+                                    <Button
+                                        variant="white"
+                                        size="icon"
+                                        className="h-12 w-12 rounded-full shadow-lg"
+                                    >
+                                        <Menu className="h-6 w-6" />
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent side="left" className="w-[300px] p-0">
+                                    <Sidebar
+                                        pages={document.pages}
+                                        sections={document.sections}
+                                        currentPage={document.currentPage}
+                                        pageSize={document.pageSize}
+                                        orientation={document.orientation}
+                                        lastModified={formattedDate}
+                                        onAddSection={handleAddSection}
+                                        onAddPage={addPage}
+                                        onPageChange={changePage}
+                                        onDeletePage={deletePage}
+                                        onReorderPages={reorderPages}
+                                    />
+                                </SheetContent>
+                            </Sheet>
+                        </div>
 
-                    <div className="hidden lg:block">
-                        <Sidebar
-                            pages={document.pages}
-                            sections={document.sections}
-                            currentPage={document.currentPage}
+                        <div className="hidden lg:block">
+                            <Sidebar
+                                pages={document.pages}
+                                sections={document.sections}
+                                currentPage={document.currentPage}
+                                pageSize={document.pageSize}
+                                orientation={document.orientation}
+                                lastModified={formattedDate}
+                                onAddSection={handleAddSection}
+                                onAddPage={addPage}
+                                onPageChange={changePage}
+                                onDeletePage={deletePage}
+                                onReorderPages={reorderPages}
+                            />
+                        </div>
+
+                        <Canvas
+                            page={document.pages[document.currentPage - 1]}
                             pageSize={document.pageSize}
                             orientation={document.orientation}
-                            lastModified={formattedDate}
-                            onAddSection={handleAddSection}
-                            onAddPage={addPage}
-                            onPageChange={changePage}
-                            onDeletePage={deletePage}
-                            onReorderPages={reorderPages}
+                            sections={document.sections}
+                            selectedSectionId={selectedSectionId}
+                            currentPage={document.currentPage}
+                            totalPages={document.pages.length}
+                            onSectionSelect={setSelectedSectionId}
+                            onSectionUpdate={updateSection}
+                            onSectionDuplicate={duplicateSection}
+                            onSectionDelete={deleteSection}
+                            onImageUpload={handleImageUpload}
+                            onSectionCreate={(section) => {
+                                const newSection = addSection();
+                                updateSection({
+                                    ...section,
+                                    id: newSection.id,
+                                });
+                                setSelectedSectionId(newSection.id);
+                            }}
                         />
                     </div>
 
-                    <Canvas
-                        page={document.pages[document.currentPage - 1]}
+                    <Preview
+                        isOpen={isPreviewOpen}
+                        onClose={() => setIsPreviewOpen(false)}
+                        onDownload={handleDownload}
+                        pages={document.pages}
+                        sections={document.sections}
                         pageSize={document.pageSize}
                         orientation={document.orientation}
-                        sections={document.sections}
-                        selectedSectionId={selectedSectionId}
-                        currentPage={document.currentPage}
-                        totalPages={document.pages.length}
-                        onSectionSelect={setSelectedSectionId}
-                        onSectionUpdate={updateSection}
-                        onSectionDuplicate={duplicateSection}
-                        onSectionDelete={deleteSection}
-                        onImageUpload={handleImageUpload}
-                        onSectionCreate={(section) => {
-                            const newSection = addSection();
-                            updateSection({
-                                ...section,
-                                id: newSection.id,
-                            });
-                            setSelectedSectionId(newSection.id);
-                        }}
                     />
                 </div>
-
-                <Preview
-                    isOpen={isPreviewOpen}
-                    onClose={() => setIsPreviewOpen(false)}
-                    onDownload={handleDownload}
-                    pages={document.pages}
-                    sections={document.sections}
-                    pageSize={document.pageSize}
-                    orientation={document.orientation}
-                />
-            </div>
-        </DndProvider>
+            </DndProvider>
+        </EditorConfigProvider>
     );
 }

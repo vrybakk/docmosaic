@@ -1,11 +1,11 @@
 'use client';
 
 import { Button } from '@/components/ui/core/button';
+import { useEditorConfig } from '@/lib/pdf-editor/context/editor-config';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
 import { cn } from '@/lib/utils';
 import { Trash2 } from 'lucide-react';
-import Image from 'next/image';
 
 interface PagePreviewProps {
     /** The page data */
@@ -53,6 +53,7 @@ export function PagePreview({
     dragHandlers,
     dropIndicators,
 }: PagePreviewProps) {
+    const { imageRenderer: Image } = useEditorConfig();
     const pageDimensions = getPageDimensionsWithOrientation(pageSize, orientation);
     const scale = Math.min(220 / pageDimensions.width, 310 / pageDimensions.height);
 
