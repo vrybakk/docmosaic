@@ -55,7 +55,7 @@ const StackedCards = () => {
     const [selected, setSelected] = useState(0);
 
     return (
-        <section className="bg-white py-12 md:py-24 lg:px-8 grid items-center grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 overflow-hidden">
+        <section className="bg-white py-12 md:py-24 lg:pl-8 lg:mr-[calc(50%-50vw)] grid items-center grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 overflow-hidden">
             <div className="md:p-4">
                 <Typography variant="h2" tag="h2">
                     Works on Desktop & Mobile – Edit{' '}
@@ -136,7 +136,7 @@ const Cards = ({
     setSelected: Dispatch<SetStateAction<number>>;
 }) => {
     return (
-        <div className="p-4 relative min-h-[250px] lg:min-h-[350px]">
+        <div className="py-4 pl-4 relative min-h-[250px] lg:min-h-[350px]">
             {cards.map((t, i) => {
                 return (
                     <Card
