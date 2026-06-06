@@ -1,5 +1,7 @@
 echo "Running pre-commit checks..."
 
+cd apps/web || exit 1
+
 # Run TypeScript type checking
 echo "Running type check..."
 bun typecheck || exit 1

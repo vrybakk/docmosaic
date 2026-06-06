@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Repo layout (post-Phase 2)
+
+This is a Bun workspaces monorepo. The Next.js app lives at [apps/web/](apps/web) and is published as `@docmosaic/web`. Shared libraries will live under [packages/](packages) as they are extracted. Root holds only repo-wide concerns: Husky hooks, commitlint, Prettier, and the workspace `package.json`. App-level scripts (`dev`, `build`, `lint`, `typecheck`, `test`, `test:run`) run from `apps/web/`; older path references elsewhere in this file may still point at the pre-move layout and will be cleaned up in later phases.
+
 ## Commands
 
 Bun is the package manager and runtime (see global CLAUDE.md). All scripts come from [package.json](package.json):

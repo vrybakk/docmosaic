@@ -1,0 +1,19 @@
+{
+    // Shared TypeScript compiler options for all workspace packages.
+    // Workspace tsconfigs extend this and add their own paths/includes/plugins.
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "jsx": "preserve",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "allowJs": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "incremental": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true
+    }
+}

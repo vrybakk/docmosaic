@@ -1,4 +1,4 @@
-[test]
-preload = ["./src/test/setup.ts"]
-environment = { "NODE_ENV" = "test" }
-dom = true 
+[install]
+# Hoist workspace deps to root node_modules so tools like next lint
+# (which spawn from inside apps/*) can resolve their plugin chains.
+linker = "hoisted"
