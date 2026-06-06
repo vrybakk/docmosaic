@@ -45,6 +45,9 @@ export {
 
 // PDF helpers
 export { estimatePDFSize } from './pdf/estimate';
+export type { GenerationOptions, GenerationProgress } from './pdf/generate';
+export { generatePDF } from './pdf/generate';
+export { optimizeImageForPDF, processImagesForPDF } from './pdf/optimize-image';
 
 // Factories
 export { createDocument, createPage, createSection } from './factories';

@@ -74,6 +74,7 @@
       "name": "@docmosaic/core",
       "version": "0.0.0",
       "dependencies": {
+        "jspdf": "^2.5.2",
         "uuid": "^11.0.5",
       },
       "devDependencies": {
