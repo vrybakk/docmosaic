@@ -1,4 +1,19 @@
-import { track } from '@vercel/analytics';
+/**
+ * @packageDocumentation
+ *
+ * Analytics wrapper with an injectable tracker.
+ *
+ * Editor code (and anything else in this app) calls into `trackEvent.*` and
+ * stays decoupled from any concrete analytics provider. The wrapper consults
+ * a module-level `currentTracker` function which defaults to a no-op.
+ *
+ * To wire a real provider (e.g. Vercel Analytics), call `setAnalyticsTracker`
+ * once at app boot. See `apps/web/src/app/analytics-bridge.tsx`.
+ *
+ * Events are only forwarded to the tracker when `process.env.NODE_ENV ===
+ * 'production'`. Local dev/staging never produces events.
+ */
+
 import { PageOrientation, PageSize } from './types';
 
 interface DocumentStats {
@@ -13,9 +28,34 @@ interface DocumentStats {
 
 type AllowedPropertyValues = string | number | boolean | null;
 
+/**
+ * Signature for an analytics tracker function.
+ *
+ * Receives an event name and an optional payload of primitive properties.
+ * Implementations should be side-effect-only (no return value used).
+ */
+export type AnalyticsTracker = (
+    event: string,
+    payload?: Record<string, AllowedPropertyValues>,
+) => void;
+
+const noop: AnalyticsTracker = () => {};
+
+let currentTracker: AnalyticsTracker = noop;
+
+/**
+ * Install the active analytics tracker.
+ *
+ * Call once at app boot to wire a concrete provider. Passing `noop` (or
+ * calling with no argument via a wrapper) effectively disables tracking.
+ */
+export function setAnalyticsTracker(tracker: AnalyticsTracker): void {
+    currentTracker = tracker;
+}
+
 const safeTrack = (eventName: string, props?: Record<string, AllowedPropertyValues>) => {
     if (process.env.NODE_ENV === 'production') {
-        track(eventName, props);
+        currentTracker(eventName, props);
     }
 };
 

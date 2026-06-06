@@ -5,6 +5,7 @@ import { Viewport } from 'next';
 import { Montserrat } from 'next/font/google';
 import Script from 'next/script';
 import type React from 'react';
+import { AnalyticsBridge } from './analytics-bridge';
 import './globals.css';
 
 const montserrat = Montserrat({
@@ -247,6 +248,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Header />
                 {children}
                 <Analytics />
+                <AnalyticsBridge />
             </body>
         </html>
     );
