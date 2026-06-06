@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { estimatePDFSize } from './pdf';
-import type { Section } from './types';
+import { estimatePDFSize } from './estimate';
+import type { Section } from '../types';
 
 describe('estimatePDFSize', () => {
     it('returns a non-negative finite number for an empty document', () => {
