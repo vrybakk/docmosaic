@@ -1,4 +1,4 @@
-import { PDFEditor } from '@/components/pdf-editor';
+import { PDFEditor } from '@docmosaic/react';
 import Loader from '@/components/ui/data-display/loader';
 import { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';

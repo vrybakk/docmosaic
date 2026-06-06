@@ -10,6 +10,7 @@ const config: Config = {
         '*.{js,ts,jsx,tsx,mdx}',
         'app/**/*.{ts,tsx}',
         'components/**/*.{ts,tsx}',
+        '../../packages/react/src/**/*.{ts,tsx}',
     ],
     theme: {
         extend: {
