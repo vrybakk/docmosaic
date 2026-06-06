@@ -1,15 +1,37 @@
-import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { ImageSection, PageOrientation, PageSize, PDFDocument } from '../types';
-import { createInitialDocument, createNewImageSection, createNewPage } from '../utils/document';
+import {
+    Action,
+    HistoryState,
+    ImageSection,
+    PageOrientation,
+    PageSize,
+    PDFDocument,
+    createDocument,
+    createSection,
+    reducer,
+    withHistory,
+} from '@docmosaic/core';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+
+const trackedReducer = withHistory<PDFDocument, Action>(reducer);
+
+function init(): HistoryState<PDFDocument> {
+    return { present: createDocument(), past: [], future: [] };
+}
 
 export function useDocumentState() {
-    const [document, setDocument] = useState<PDFDocument>(createInitialDocument());
-    const [formattedDate, setFormattedDate] = useState('');
-    const [history, setHistory] = useState<PDFDocument[]>([]);
-    const [historyIndex, setHistoryIndex] = useState(-1);
+    const [state, dispatch] = useReducer(trackedReducer, undefined, init);
 
-    // Format date on client side only
+    const document = state.present;
+
+    // Keep a ref so dispatch wrappers that need to read the latest document
+    // (e.g. `addSection` returns the freshly created section) stay accurate
+    // without rebuilding the `actions` object on every state change.
+    const stateRef = useRef(state);
+    useEffect(() => {
+        stateRef.current = state;
+    }, [state]);
+
+    const [formattedDate, setFormattedDate] = useState('');
     useEffect(() => {
         setFormattedDate(
             document.updatedAt.toLocaleString('en-US', {
@@ -23,199 +45,53 @@ export function useDocumentState() {
         );
     }, [document.updatedAt]);
 
-    const addToHistory = (newDocument: PDFDocument) => {
-        const newHistory = history.slice(0, historyIndex + 1);
-        newHistory.push(newDocument);
-        setHistory(newHistory);
-        setHistoryIndex(newHistory.length - 1);
-    };
-
-    const handleUndo = () => {
-        if (historyIndex > 0) {
-            setHistoryIndex(historyIndex - 1);
-            setDocument(history[historyIndex - 1]);
-        }
-    };
-
-    const handleRedo = () => {
-        if (historyIndex < history.length - 1) {
-            setHistoryIndex(historyIndex + 1);
-            setDocument(history[historyIndex + 1]);
-        }
-    };
-
-    const updateDocument = (updates: Partial<PDFDocument>) => {
-        const newDocument = {
-            ...document,
-            ...updates,
-            updatedAt: new Date(),
-        };
-        setDocument(newDocument);
-        addToHistory(newDocument);
-    };
-
-    const addSection = () => {
-        const newSection = createNewImageSection(5, 5, document.currentPage);
-        const newDocument = {
-            ...document,
-            sections: [...document.sections, newSection],
-            updatedAt: new Date(),
-        };
-        setDocument(newDocument);
-        addToHistory(newDocument);
-        return newSection;
-    };
-
-    const updateSection = (updatedSection: ImageSection) => {
-        updateDocument({
-            sections: document.sections.map((section) =>
-                section.id === updatedSection.id ? updatedSection : section,
-            ),
-        });
-    };
-
-    const deleteSection = (sectionId: string) => {
-        updateDocument({
-            sections: document.sections.filter((section) => section.id !== sectionId),
-        });
-    };
-
-    const duplicateSection = (section: ImageSection) => {
-        const newSection = {
-            ...section,
-            id: uuidv4(),
-            x: section.x + 20,
-            y: section.y + 20,
-        };
-        updateDocument({
-            sections: [...document.sections, newSection],
-        });
-    };
-
-    const addPage = () => {
-        updateDocument({
-            pages: [...document.pages, createNewPage()],
-            totalPages: document.totalPages + 1,
-            currentPage: document.totalPages + 1,
-        });
-    };
-
-    const deletePage = (pageIndex: number) => {
-        if (document.pages.length <= 1) {
-            alert('Cannot delete the last page');
-            return;
-        }
-
-        const newPages = document.pages.filter((_, index) => index !== pageIndex);
-        const newSections = document.sections.filter((section) => section.page !== pageIndex + 1);
-        const adjustedSections = newSections.map((section) => {
-            if (section.page > pageIndex + 1) {
-                return { ...section, page: section.page - 1 };
-            }
-            return section;
-        });
-
-        updateDocument({
-            pages: newPages,
-            sections: adjustedSections,
-            totalPages: document.totalPages - 1,
-            currentPage: Math.min(document.currentPage, document.totalPages - 1),
-        });
-    };
-
-    const changePage = (pageNumber: number) => {
-        updateDocument({
-            currentPage: pageNumber,
-        });
-    };
-
-    const updatePageSize = (value: PageSize) => {
-        updateDocument({
-            pageSize: value,
-        });
-    };
-
-    const updateOrientation = (value: PageOrientation) => {
-        updateDocument({
-            orientation: value,
-        });
-    };
-
-    const updateName = (name: string) => {
-        updateDocument({
-            name,
-        });
-    };
-
-    const reorderPages = (fromIndex: number, toIndex: number) => {
-        // Get the page being moved
-        const pageToMove = document.pages[fromIndex];
-
-        // Create new pages array with reordered pages
-        const newPages = [...document.pages];
-        newPages.splice(fromIndex, 1);
-        newPages.splice(toIndex, 0, pageToMove);
-
-        // Update sections to reflect new page order
-        const updatedSections = document.sections.map((section) => {
-            if (section.page === fromIndex + 1) {
-                return { ...section, page: toIndex + 1 };
-            } else if (
-                fromIndex < toIndex &&
-                section.page > fromIndex + 1 &&
-                section.page <= toIndex + 1
-            ) {
-                return { ...section, page: section.page - 1 };
-            } else if (
-                fromIndex > toIndex &&
-                section.page >= toIndex + 1 &&
-                section.page < fromIndex + 1
-            ) {
-                return { ...section, page: section.page + 1 };
-            }
-            return section;
-        });
-
-        // Update document with new page order
-        const newDocument = {
-            ...document,
-            pages: newPages,
-            sections: updatedSections,
-            currentPage: document.currentPage,
-            updatedAt: new Date(),
-        };
-
-        setDocument(newDocument);
-        addToHistory(newDocument);
-    };
-
-    const updateEstimatedSize = (size: number) => {
-        updateDocument({
-            estimatedSize: size,
-            updatedAt: new Date(),
-        });
-    };
+    const actions = useMemo(
+        () => ({
+            undo: () => dispatch({ type: 'UNDO' }),
+            redo: () => dispatch({ type: 'REDO' }),
+            addSection: () => {
+                const current = stateRef.current.present;
+                const newSection = createSection(5, 5, current.currentPage);
+                dispatch({
+                    type: 'UPDATE_DOCUMENT',
+                    updates: { sections: [...current.sections, newSection] },
+                });
+                return newSection;
+            },
+            updateSection: (section: ImageSection) =>
+                dispatch({ type: 'UPDATE_SECTION', section }),
+            deleteSection: (sectionId: string) =>
+                dispatch({ type: 'DELETE_SECTION', sectionId }),
+            duplicateSection: (section: ImageSection) =>
+                dispatch({ type: 'DUPLICATE_SECTION', section }),
+            addPage: () => dispatch({ type: 'ADD_PAGE' }),
+            deletePage: (pageIndex: number) => {
+                if (stateRef.current.present.pages.length <= 1) {
+                    alert('Cannot delete the last page');
+                    return;
+                }
+                dispatch({ type: 'DELETE_PAGE', pageIndex });
+            },
+            changePage: (pageNumber: number) =>
+                dispatch({ type: 'CHANGE_PAGE', pageNumber }),
+            updatePageSize: (pageSize: PageSize) =>
+                dispatch({ type: 'UPDATE_PAGE_SIZE', pageSize }),
+            updateOrientation: (orientation: PageOrientation) =>
+                dispatch({ type: 'UPDATE_ORIENTATION', orientation }),
+            updateName: (name: string) => dispatch({ type: 'UPDATE_NAME', name }),
+            reorderPages: (fromIndex: number, toIndex: number) =>
+                dispatch({ type: 'REORDER_PAGES', fromIndex, toIndex }),
+            updateEstimatedSize: (size: number) =>
+                dispatch({ type: 'UPDATE_ESTIMATED_SIZE', size }),
+        }),
+        [],
+    );
 
     return {
         document,
         formattedDate,
-        canUndo: historyIndex > 0,
-        canRedo: historyIndex < history.length - 1,
-        actions: {
-            undo: handleUndo,
-            redo: handleRedo,
-            addSection,
-            updateSection,
-            deleteSection,
-            duplicateSection,
-            addPage,
-            deletePage,
-            changePage,
-            updatePageSize,
-            updateOrientation,
-            updateName,
-            reorderPages,
-            updateEstimatedSize,
-        },
+        canUndo: state.past.length > 0,
+        canRedo: state.future.length > 0,
+        actions,
     };
 }
