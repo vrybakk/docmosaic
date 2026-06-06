@@ -7,7 +7,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/data-display/dialog';
-import { Sheet, SheetContent } from '@/components/ui/navigation/sheet';
 import { trackEvent } from '@/lib/analytics';
 import { generatePDF } from '@/lib/pdf';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
@@ -40,7 +39,6 @@ export function Preview({
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
     // Generate preview when dialog opens
     useEffect(() => {
@@ -100,32 +98,26 @@ export function Preview({
             <div className="flex items-center justify-between p-4 border-b">
                 <h2 className="text-lg font-semibold">Preview</h2>
                 <div className="flex items-center gap-2">
-                    {!isMobile && (
-                        <>
-                            <Button
-                                variant="cream"
-                                onClick={handlePrint}
-                                className="print-button-click-trigger"
-                                disabled={isLoading || !previewUrls.length}
-                                icon={<Printer className="h-4 w-4" />}
-                            >
-                                Print
-                            </Button>
-                            <Button
-                                variant="sage"
-                                onClick={handleDownload}
-                                className="download-button-click-trigger"
-                                icon={<Download className="h-4 w-4" />}
-                            >
-                                Download
-                            </Button>
-                        </>
-                    )}
-                    {!isMobile && (
-                        <Button variant="white" size="icon" onClick={onClose}>
-                            <X className="h-5 w-5" />
-                        </Button>
-                    )}
+                    <Button
+                        variant="cream"
+                        onClick={handlePrint}
+                        className="print-button-click-trigger"
+                        disabled={isLoading || !previewUrls.length}
+                        icon={<Printer className="h-4 w-4" />}
+                    >
+                        Print
+                    </Button>
+                    <Button
+                        variant="sage"
+                        onClick={handleDownload}
+                        className="download-button-click-trigger"
+                        icon={<Download className="h-4 w-4" />}
+                    >
+                        Download
+                    </Button>
+                    <Button variant="white" size="icon" onClick={onClose}>
+                        <X className="h-5 w-5" />
+                    </Button>
                 </div>
             </div>
 
@@ -180,17 +172,6 @@ export function Preview({
             )}
         </div>
     );
-
-    // Render mobile sheet or desktop dialog
-    if (isMobile) {
-        return (
-            <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-                <SheetContent side="bottom" className="h-[90vh]">
-                    <PreviewContent />
-                </SheetContent>
-            </Sheet>
-        );
-    }
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

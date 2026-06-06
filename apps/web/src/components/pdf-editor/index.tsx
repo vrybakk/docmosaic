@@ -1,8 +1,6 @@
 'use client';
 
 import { trackEvent } from '@/lib/analytics';
-import { isMobile } from '@/lib/mobile/detection';
-import { hapticFeedback } from '@/lib/mobile/haptics';
 import { estimatePDFSize, generatePDF } from '@/lib/pdf';
 import {
     EditorConfigProvider,
@@ -11,12 +9,9 @@ import {
 import { useDocumentState } from '@/lib/pdf-editor/hooks/useDocumentState';
 import { getDownloadFileName } from '@/lib/pdf-editor/utils/document';
 import { PageOrientation, PageSize } from '@/lib/types';
-import { Menu } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Button } from '../ui/core/button';
-import { Sheet, SheetContent, SheetTrigger } from '../ui/navigation/sheet';
 import { Canvas } from './canvas/index';
 import { Header } from './header/index';
 import { Preview } from './preview/index';
@@ -64,7 +59,6 @@ export function PDFEditor() {
         isGenerating: false,
     });
     const [estimatedSize, setEstimatedSize] = useState<number>(0);
-    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const abortControllerRef = useRef<AbortController | null>(null);
 
     useEffect(() => {
@@ -87,14 +81,9 @@ export function PDFEditor() {
     const handleAddSection = () => {
         trackEvent.addSection();
 
-        if (typeof window !== 'undefined' && isMobile()) {
-            hapticFeedback.success();
-        }
-
         const section = addSection();
         // Select the new section
         setSelectedSectionId(section.id);
-        setIsMobileSidebarOpen(false);
     };
 
     const handleCancel = () => {
@@ -247,20 +236,10 @@ export function PDFEditor() {
                         hasContent={document.sections.length > 0}
                         onUndo={() => {
                             trackEvent.undo();
-
-                            if (typeof window !== 'undefined' && isMobile()) {
-                                hapticFeedback.undoRedo();
-                            }
-
                             undo();
                         }}
                         onRedo={() => {
                             trackEvent.redo();
-
-                            if (typeof window !== 'undefined' && isMobile()) {
-                                hapticFeedback.undoRedo();
-                            }
-
                             redo();
                         }}
                         onPreview={() => setIsPreviewOpen(true)}
@@ -275,53 +254,19 @@ export function PDFEditor() {
                     />
 
                     <div className="flex-1 flex min-h-0">
-                        <div className="lg:hidden fixed bottom-4 left-4 z-50 flex flex-col gap-2">
-                            <Sheet
-                                open={isMobileSidebarOpen}
-                                onOpenChange={setIsMobileSidebarOpen}
-                            >
-                                <SheetTrigger asChild>
-                                    <Button
-                                        variant="white"
-                                        size="icon"
-                                        className="h-12 w-12 rounded-full shadow-lg"
-                                    >
-                                        <Menu className="h-6 w-6" />
-                                    </Button>
-                                </SheetTrigger>
-                                <SheetContent side="left" className="w-[300px] p-0">
-                                    <Sidebar
-                                        pages={document.pages}
-                                        sections={document.sections}
-                                        currentPage={document.currentPage}
-                                        pageSize={document.pageSize}
-                                        orientation={document.orientation}
-                                        lastModified={formattedDate}
-                                        onAddSection={handleAddSection}
-                                        onAddPage={addPage}
-                                        onPageChange={changePage}
-                                        onDeletePage={deletePage}
-                                        onReorderPages={reorderPages}
-                                    />
-                                </SheetContent>
-                            </Sheet>
-                        </div>
-
-                        <div className="hidden lg:block">
-                            <Sidebar
-                                pages={document.pages}
-                                sections={document.sections}
-                                currentPage={document.currentPage}
-                                pageSize={document.pageSize}
-                                orientation={document.orientation}
-                                lastModified={formattedDate}
-                                onAddSection={handleAddSection}
-                                onAddPage={addPage}
-                                onPageChange={changePage}
-                                onDeletePage={deletePage}
-                                onReorderPages={reorderPages}
-                            />
-                        </div>
+                        <Sidebar
+                            pages={document.pages}
+                            sections={document.sections}
+                            currentPage={document.currentPage}
+                            pageSize={document.pageSize}
+                            orientation={document.orientation}
+                            lastModified={formattedDate}
+                            onAddSection={handleAddSection}
+                            onAddPage={addPage}
+                            onPageChange={changePage}
+                            onDeletePage={deletePage}
+                            onReorderPages={reorderPages}
+                        />
 
                         <Canvas
                             page={document.pages[document.currentPage - 1]}

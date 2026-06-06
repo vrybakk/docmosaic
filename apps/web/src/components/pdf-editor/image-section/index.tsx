@@ -1,16 +1,13 @@
 'use client';
 
 import { Button } from '@/components/ui/core/button';
-import { isMobile } from '@/lib/mobile/detection';
-import { hapticFeedback } from '@/lib/mobile/haptics';
 import { useEditorConfig } from '@/lib/pdf-editor/context/editor-config';
 import { ImageSection } from '@/lib/pdf-editor/types';
 import { cn } from '@/lib/utils';
 import { useDrag } from '@use-gesture/react';
-import { Copy, ImageIcon, Maximize2, RefreshCw, Trash2 } from 'lucide-react';
+import { Copy, ImageIcon, Maximize2, Minus, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { MobileResizeHandles } from './mobile-resize-handles';
 
 // Constants for size constraints
 const MIN_SECTION_SIZE = 100; // Minimum size in pixels
@@ -250,12 +247,6 @@ export function ImageSectionComponent({
     // Handle click to select
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-
-        // Haptic feedback on mobile for selection
-        if (typeof window !== 'undefined' && isMobile()) {
-            hapticFeedback.selection();
-        }
-
         onClick(e);
     };
 
@@ -484,12 +475,74 @@ export function ImageSectionComponent({
             onDragLeave={handleDragLeave}
             onDrop={handleFileDrop}
         >
-            {/* Mobile-optimized resize handles */}
-            <MobileResizeHandles
-                onResizeStart={(e, handle) => handleResizeStart(e as React.MouseEvent, handle)}
-                isResizing={isResizing}
-                show={isSelected}
-            />
+            {/* Resize handles */}
+            {isSelected && !isResizing && (
+                <div className="absolute inset-0 transition-opacity duration-200 z-30 pointer-events-none">
+                    {/* Corner handles */}
+                    <div
+                        data-resize-handle="true"
+                        className="absolute -top-3 -left-3 w-8 h-8 bg-white border-2 border-editor-accent rounded-full shadow-lg cursor-nw-resize hover:scale-110 hover:bg-editor-accent/10 transition-transform duration-150 flex items-center justify-center select-none z-30 pointer-events-auto"
+                        onMouseDown={(e) => handleResizeStart(e, 'topLeft')}
+                        title="Resize from top-left"
+                    >
+                        <Minus className="w-4 h-4 text-editor-accent" />
+                    </div>
+                    <div
+                        data-resize-handle="true"
+                        className="absolute -top-3 -right-3 w-8 h-8 bg-white border-2 border-editor-accent rounded-full shadow-lg cursor-ne-resize hover:scale-110 hover:bg-editor-accent/10 transition-transform duration-150 flex items-center justify-center select-none z-30 pointer-events-auto"
+                        onMouseDown={(e) => handleResizeStart(e, 'topRight')}
+                        title="Resize from top-right"
+                    >
+                        <Plus className="w-4 h-4 text-editor-accent" />
+                    </div>
+                    <div
+                        data-resize-handle="true"
+                        className="absolute -bottom-3 -left-3 w-8 h-8 bg-white border-2 border-editor-accent rounded-full shadow-lg cursor-sw-resize hover:scale-110 hover:bg-editor-accent/10 transition-transform duration-150 flex items-center justify-center select-none z-30 pointer-events-auto"
+                        onMouseDown={(e) => handleResizeStart(e, 'bottomLeft')}
+                        title="Resize from bottom-left"
+                    >
+                        <Plus className="w-4 h-4 text-editor-accent" />
+                    </div>
+                    <div
+                        data-resize-handle="true"
+                        className="absolute -bottom-3 -right-3 w-8 h-8 bg-white border-2 border-editor-accent rounded-full shadow-lg cursor-se-resize hover:scale-110 hover:bg-editor-accent/10 transition-transform duration-150 flex items-center justify-center select-none z-30 pointer-events-auto"
+                        onMouseDown={(e) => handleResizeStart(e, 'bottomRight')}
+                        title="Resize from bottom-right"
+                    >
+                        <Plus className="w-4 h-4 text-editor-accent" />
+                    </div>
+
+                    {/* Edge handles */}
+                    <div
+                        data-resize-handle="true"
+                        className="absolute top-0 left-4 right-4 h-4 bg-transparent hover:bg-editor-accent/20 cursor-n-resize group/edge select-none z-30 border-t-2 border-transparent hover:border-editor-accent/30 pointer-events-auto"
+                        onMouseDown={(e) => handleResizeStart(e, 'top')}
+                    >
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
+                    </div>
+                    <div
+                        data-resize-handle="true"
+                        className="absolute bottom-0 left-4 right-4 h-4 bg-transparent hover:bg-editor-accent/20 cursor-s-resize group/edge select-none z-30 border-b-2 border-transparent hover:border-editor-accent/30 pointer-events-auto"
+                        onMouseDown={(e) => handleResizeStart(e, 'bottom')}
+                    >
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
+                    </div>
+                    <div
+                        data-resize-handle="true"
+                        className="absolute left-0 top-4 bottom-4 w-4 bg-transparent hover:bg-editor-accent/20 cursor-w-resize group/edge select-none z-30 border-l-2 border-transparent hover:border-editor-accent/30 pointer-events-auto"
+                        onMouseDown={(e) => handleResizeStart(e, 'left')}
+                    >
+                        <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
+                    </div>
+                    <div
+                        data-resize-handle="true"
+                        className="absolute right-0 top-4 bottom-4 w-4 bg-transparent hover:bg-editor-accent/20 cursor-e-resize group/edge select-none z-30 border-r-2 border-transparent hover:border-editor-accent/30 pointer-events-auto"
+                        onMouseDown={(e) => handleResizeStart(e, 'right')}
+                    >
+                        <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
+                    </div>
+                </div>
+            )}
 
             {/* Selection indicator */}
             {isSelected && (
@@ -521,12 +574,6 @@ export function ImageSectionComponent({
                     className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
                     onClick={(e) => {
                         e.stopPropagation();
-
-                        // Haptic feedback on mobile for duplication
-                        if (typeof window !== 'undefined' && isMobile()) {
-                            hapticFeedback.success();
-                        }
-
                         onDuplicate(section);
                     }}
                 >
@@ -538,12 +585,6 @@ export function ImageSectionComponent({
                     className="h-8 w-8 hover:bg-red-50 text-red-600 pointer-events-auto"
                     onClick={(e) => {
                         e.stopPropagation();
-
-                        // Haptic feedback on mobile for deletion
-                        if (typeof window !== 'undefined' && isMobile()) {
-                            hapticFeedback.deletion();
-                        }
-
                         onDelete(section.id);
                     }}
                 >
