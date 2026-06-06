@@ -45,3 +45,6 @@ yarn-error.log*
 
 # turborepo
 .turbo
+
+# changesets
+.changeset/.cache

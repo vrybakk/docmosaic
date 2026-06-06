@@ -14,9 +14,13 @@
         "lint": "turbo run lint",
         "test": "turbo run test",
         "test:run": "turbo run test:run",
+        "changeset": "changeset",
+        "version-packages": "changeset version",
+        "release": "turbo run build && changeset publish",
         "prepare": "husky"
     },
     "devDependencies": {
+        "@changesets/cli": "^2.31.0",
         "@commitlint/cli": "^19.3.0",
         "@commitlint/config-conventional": "^19.2.2",
         "husky": "^9.1.7",
