@@ -49,6 +49,12 @@ export { estimatePDFSize } from './pdf/estimate';
 // Factories
 export { createDocument, createPage, createSection } from './factories';
 
+// Reducer + history
+export type { Action, State } from './reducer';
+export { reducer } from './reducer';
+export type { HistoryAction, HistoryState } from './history';
+export { withHistory } from './history';
+
 /** @deprecated Use `createDocument` instead. Will be removed in Phase 10. */
 export { createDocument as createInitialDocument } from './factories';
 /** @deprecated Use `createSection` instead. Will be removed in Phase 10. */
