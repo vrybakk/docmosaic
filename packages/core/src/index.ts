@@ -45,3 +45,13 @@ export {
 
 // PDF helpers
 export { estimatePDFSize } from './pdf/estimate';
+
+// Factories
+export { createDocument, createPage, createSection } from './factories';
+
+/** @deprecated Use `createDocument` instead. Will be removed in Phase 10. */
+export { createDocument as createInitialDocument } from './factories';
+/** @deprecated Use `createSection` instead. Will be removed in Phase 10. */
+export { createSection as createNewImageSection } from './factories';
+/** @deprecated Use `createPage` instead. Will be removed in Phase 10. */
+export { createPage as createNewPage } from './factories';

@@ -9,7 +9,7 @@
         "lint": "next lint",
         "typecheck": "tsc --noEmit",
         "test": "vitest",
-        "test:run": "vitest run"
+        "test:run": "vitest run --passWithNoTests"
     },
     "dependencies": {
         "@docmosaic/core": "workspace:*",
