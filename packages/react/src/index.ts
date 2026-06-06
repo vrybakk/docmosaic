@@ -41,6 +41,47 @@ import { PageSizeSelect } from './primitives/header/page-size-select';
 import { OrientationSelect } from './primitives/header/orientation-select';
 import { Preview } from './primitives/preview';
 
+/**
+ * Compound primitive namespace for the DocMosaic editor.
+ *
+ * `Editor.Root` owns the document state (controlled or uncontrolled) and
+ * the surrounding DnD + config providers. Every other member reads from
+ * the editor context exposed by {@link useEditor} — children are placed
+ * freely in the tree without prop drilling.
+ *
+ * @remarks
+ * Members:
+ * - `Root` — orchestrator + default shell.
+ * - `Header` (+ `DocumentName`, `PageSizeSelect`, `OrientationSelect`) — top bar.
+ * - `Toolbar` (+ `UndoButton`, `RedoButton`, `PreviewButton`, `PrintButton`,
+ *   `DownloadButton`, `AddSectionButton`, `EstimatedSize`, `ProgressOverlay`).
+ * - `PageList` (+ `PageThumb`) — left sidebar of page thumbnails.
+ * - `Canvas` (+ `CanvasControls`, `Section`) — interactive workspace.
+ * - `Preview` — full-document preview dialog.
+ *
+ * @example
+ * ```tsx
+ * import { Editor } from '@docmosaic/react';
+ * import '@docmosaic/react/styles.css';
+ *
+ * export function MyEditor() {
+ *   return (
+ *     <Editor.Root>
+ *       <Editor.Header />
+ *       <Editor.Toolbar />
+ *       <Editor.PageList />
+ *       <Editor.Canvas>
+ *         <Editor.Section />
+ *       </Editor.Canvas>
+ *       <Editor.Preview />
+ *     </Editor.Root>
+ *   );
+ * }
+ * ```
+ *
+ * @see {@link useEditor} for the per-render context value.
+ * @see {@link useDocumentState} for the headless ("BYO-UI") state hook.
+ */
 export const Editor = {
     Root,
     Canvas,

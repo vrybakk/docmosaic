@@ -26,6 +26,14 @@ interface DocumentStats {
 
 type AllowedPropertyValues = string | number | boolean | null;
 
+/**
+ * Function shape expected by {@link setReactPackageTracker}. Matches
+ * Vercel's `track(name, payload)` signature so the host app can pass it in
+ * unchanged.
+ *
+ * @internal Stable enough to depend on, but treated as an internal seam
+ * between this package and the host app's analytics bridge.
+ */
 export type AnalyticsTracker = (
     event: string,
     payload?: Record<string, AllowedPropertyValues>,
@@ -38,6 +46,22 @@ let currentTracker: AnalyticsTracker = noop;
 /**
  * Install the active analytics tracker for the React package. Called once at
  * app boot from a host-side bridge (e.g. apps/web/src/app/analytics-bridge.tsx).
+ *
+ * @param tracker - Function that receives `(eventName, payload)` and forwards
+ * it to the host's analytics provider (Vercel `track`, PostHog, etc.). The
+ * package only fires when `process.env.NODE_ENV === 'production'`.
+ *
+ * @internal Intended for the host app's analytics bridge — not a primary
+ * extension point for editor consumers.
+ *
+ * @example
+ * ```ts
+ * // apps/web/src/app/analytics-bridge.tsx
+ * import { track } from '@vercel/analytics';
+ * import { setReactPackageTracker } from '@docmosaic/react';
+ *
+ * setReactPackageTracker((event, payload) => track(event, payload));
+ * ```
  */
 export function setReactPackageTracker(tracker: AnalyticsTracker): void {
     currentTracker = tracker;

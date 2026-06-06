@@ -106,6 +106,15 @@ export function convertDimensions(
  * @param pageSize - Standard paper size.
  * @param unit - Output unit. Defaults to `'mm'`.
  * @returns Width/height in the requested unit.
+ *
+ * @example
+ * ```ts
+ * getPageDimensions('A4');         // => { width: 210, height: 297 }
+ * getPageDimensions('A4', 'in');   // => { width: 8.2677..., height: 11.6929... }
+ * getPageDimensions('LETTER', 'px'); // => { width: 816, height: 1054.488... }
+ * ```
+ *
+ * @see {@link getPageDimensionsWithOrientation} for landscape-aware lookups.
  */
 export function getPageDimensions(
     pageSize: PageSize,
@@ -139,6 +148,11 @@ export function formatDimensions(dimensions: PageDimensions, unit: MeasurementUn
  *
  * @param mm - Length in millimeters.
  * @returns Length in PDF points.
+ *
+ * @example
+ * ```ts
+ * mmToPt(210); // 595.28 — A4 width in points
+ * ```
  */
 export function mmToPt(mm: number): number {
     return mm * 2.83465;
@@ -149,6 +163,11 @@ export function mmToPt(mm: number): number {
  *
  * @param pt - Length in PDF points.
  * @returns Length in millimeters.
+ *
+ * @example
+ * ```ts
+ * ptToMm(595.28); // 210 — A4 width in millimeters
+ * ```
  */
 export function ptToMm(pt: number): number {
     return pt / 2.83465;

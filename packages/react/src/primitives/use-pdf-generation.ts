@@ -10,10 +10,19 @@ import type { EditorPdfBackend } from '../context/editor';
 import { trackEvent } from '../internal/analytics';
 import { getDownloadFileName } from '../internal/download';
 
+/**
+ * In-flight PDF generation status. Surfaced through `pdfApi.state` on the
+ * editor context (see {@link EditorPdfApi}); primitives like the toolbar
+ * progress bar read this to render lifecycle UI.
+ */
 export interface GenerationState {
+    /** `true` while a download/print render is in progress. */
     isGenerating: boolean;
+    /** Current `0`–`100` progress within `stage`. Undefined before the first tick. */
     progress?: number;
+    /** Pipeline stage reported by `@docmosaic/core`'s `generatePDF`. */
     stage?: 'optimizing' | 'generating' | 'complete';
+    /** Human-readable error message when generation fails or is cancelled. */
     error?: string;
 }
 
@@ -66,6 +75,13 @@ function fireDocumentGeneratedEvent(
  *
  * The PDF backend (`generate` + `estimate`) is pluggable via the `backend`
  * argument; omitted or partial values fall back to `@docmosaic/core`.
+ *
+ * @remarks
+ * Editor.Root mounts this internally and exposes its result as `pdfApi` on
+ * the editor context — most consumers should call {@link useEditor} and read
+ * `pdfApi` instead of invoking this hook directly.
+ *
+ * @internal
  */
 export function usePdfGeneration({
     document,

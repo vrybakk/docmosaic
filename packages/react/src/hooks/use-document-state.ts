@@ -36,6 +36,39 @@ interface UseDocumentStateArgs {
  * want to drive their own UI ("BYO-UI") can reuse the same state machine
  * without going through `Editor.Root`. Pair this with a custom provider if
  * you want to feed the same shape into a different visual tree.
+ *
+ * @param args - Optional initial document seed (read once on mount).
+ * @returns An object with:
+ * - `document` — current {@link Document} state (the reducer's `present`).
+ * - `formattedDate` — locale-formatted `updatedAt` string (empty on SSR).
+ * - `canUndo` / `canRedo` — booleans driven by the history timeline.
+ * - `actions` — stable 14-action surface mirroring {@link EditorActions}
+ *   (`undo`, `redo`, `addSection`, `updateSection`, `deleteSection`,
+ *   `duplicateSection`, `addPage`, `deletePage`, `changePage`,
+ *   `updatePageSize`, `updateOrientation`, `updateName`, `reorderPages`,
+ *   `updateEstimatedSize`).
+ *
+ * @example
+ * ```tsx
+ * import { createDocument } from '@docmosaic/core';
+ * import { useDocumentState } from '@docmosaic/react';
+ *
+ * function CustomEditor() {
+ *   const { document, canUndo, actions } = useDocumentState({
+ *     initialDocument: createDocument(),
+ *   });
+ *
+ *   return (
+ *     <>
+ *       <button disabled={!canUndo} onClick={actions.undo}>Undo</button>
+ *       <button onClick={actions.addSection}>Add section</button>
+ *       <p>{document.name} — {document.sections.length} sections</p>
+ *     </>
+ *   );
+ * }
+ * ```
+ *
+ * @see {@link useEditor} for the in-`Editor.Root` equivalent.
  */
 export function useDocumentState(args: UseDocumentStateArgs = {}) {
     const [state, dispatch] = useReducer(trackedReducer, args.initialDocument, init);

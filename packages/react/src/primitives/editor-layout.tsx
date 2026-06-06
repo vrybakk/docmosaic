@@ -11,6 +11,13 @@ interface EditorLayoutProps {
 /**
  * Pure layout shell for the PDF editor. Composes the five panels into the
  * editor's flex column. No state, no analytics, no callbacks — just slots.
+ *
+ * @remarks
+ * `Editor.Root` arranges its children automatically; this export exists for
+ * the legacy slot-prop integration path. Prefer the compound primitives
+ * (`Editor.Root` + children) for new code.
+ *
+ * @internal Kept for back-compat with pre-namespace consumers.
  */
 export function EditorLayout({ header, toolbar, sidebar, canvas, preview }: EditorLayoutProps) {
     return (

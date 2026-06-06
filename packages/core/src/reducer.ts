@@ -53,9 +53,26 @@ function touch(state: State, now: Date | undefined): State {
 /**
  * Apply an {@link Action} to {@link State} and return a new state value.
  *
+ * @remarks
+ * Pure: `state` and `action` are never mutated and `new Date()` is only
+ * read when the action omits `now`. Wrap with {@link withHistory} to gain
+ * undo/redo on top of any of these actions.
+ *
  * @param state - The current document state. Not mutated.
  * @param action - The action to apply.
  * @returns A new document state reflecting `action`.
+ *
+ * @example
+ * ```ts
+ * import { createDocument, reducer } from '@docmosaic/core';
+ *
+ * const initial = createDocument();
+ * const renamed = reducer(initial, { type: 'UPDATE_NAME', name: 'Invoice' });
+ * renamed.name; // 'Invoice'
+ *
+ * const withSection = reducer(renamed, { type: 'ADD_SECTION' });
+ * withSection.sections.length; // 1
+ * ```
  */
 export function reducer(state: State, action: Action): State {
     switch (action.type) {

@@ -43,8 +43,29 @@ interface PageThumbProps {
 }
 
 /**
- * PageThumb component
- * Displays a thumbnail of a single page in the page list sidebar.
+ * Single-page thumbnail rendered inside `Editor.PageList`.
+ *
+ * @remarks
+ * Mostly used internally by the bundled `PageList`. Exposed so consumers
+ * who build their own sidebar (or render thumbnails outside the editor —
+ * e.g. an export preview) can reuse the visuals. Unlike most primitives
+ * this one takes explicit props instead of reading from {@link useEditor}
+ * because it can be rendered detached from any document state.
+ *
+ * @example
+ * ```tsx
+ * <Editor.PageThumb
+ *   page={document.pages[0]}
+ *   index={0}
+ *   isSelected
+ *   sections={document.sections}
+ *   pageSize={document.pageSize}
+ *   orientation={document.orientation}
+ *   onSelect={() => {}}
+ *   onDelete={() => {}}
+ *   dragHandlers={{ onDragStart: noop, onDragEnd: noop, onDragOver: noop }}
+ * />
+ * ```
  */
 export function PageThumb({
     page,

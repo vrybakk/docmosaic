@@ -126,6 +126,10 @@ const EditorContext = createContext<EditorContextValue | null>(null);
  * Provider mounted by `Editor.Root`. Consumers should not render this
  * directly — use `Editor.Root` to get the full controlled/uncontrolled prop
  * surface and the surrounding DnD/config providers.
+ *
+ * @internal Exposed for advanced "BYO-UI" composition where the caller owns
+ * state via {@link useDocumentState} and wants compound primitives to read
+ * from a custom-built {@link EditorContextValue}.
  */
 export function EditorProvider({
     value,
@@ -142,6 +146,30 @@ export function EditorProvider({
  *
  * Throws when called outside an `Editor.Root` — primitives that rely on the
  * document don't have a meaningful default to fall back on.
+ *
+ * @returns The full {@link EditorContextValue}: document state, undo/redo
+ * flags, mutating {@link EditorActions}, the {@link EditorPdfApi} generation
+ * surface, the resolved {@link EditorPdfBackend}, and shared {@link EditorUiState}.
+ * @throws {Error} When called outside `<Editor.Root>`.
+ *
+ * @example
+ * ```tsx
+ * import { Editor, useEditor } from '@docmosaic/react';
+ *
+ * function PageCount() {
+ *   const { state } = useEditor();
+ *   return <span>Page {state.currentPage} / {state.pages.length}</span>;
+ * }
+ *
+ * <Editor.Root>
+ *   <Editor.Header />
+ *   <PageCount />
+ *   <Editor.Canvas />
+ * </Editor.Root>
+ * ```
+ *
+ * @see {@link useEditorSection} for per-section context (inside `Editor.Canvas`).
+ * @see {@link useEditorCanvas} for zoom/pan viewport state.
  */
 export function useEditor(): EditorContextValue {
     const ctx = useContext(EditorContext);
@@ -168,6 +196,11 @@ interface EditorSectionContextValue {
 
 const EditorSectionContext = createContext<EditorSectionContextValue | null>(null);
 
+/**
+ * @internal Provider mounted internally by `Editor.Canvas` around each
+ * section iteration so {@link useEditorSection} can resolve the current
+ * section without a prop.
+ */
 export function EditorSectionProvider({
     value,
     children,
@@ -275,6 +308,10 @@ interface EditorCanvasContextValue {
 
 const EditorCanvasContext = createContext<EditorCanvasContextValue | null>(null);
 
+/**
+ * @internal Provider mounted internally by `Editor.Canvas` so children like
+ * `Editor.CanvasControls` can read zoom state via {@link useEditorCanvas}.
+ */
 export function EditorCanvasProvider({
     value,
     children,
