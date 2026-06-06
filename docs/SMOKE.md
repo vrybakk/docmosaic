@@ -2,7 +2,7 @@
 
 Run after every refactor phase. Estimated time: 90 seconds.
 
-1. `bun dev` and open http://localhost:4001/pdf-editor
+1. `bun run dev` (from repo root) and open http://localhost:4001/pdf-editor
 2. Click "Add Image Section" — section appears on canvas
 3. Drop a JPG file onto a section — image renders
 4. Drag the section to a new position — it moves
