@@ -1,5 +1,7 @@
 'use client';
 
+import { Children, type ReactNode } from 'react';
+import { useEditor } from '../../context/editor';
 import { Button } from '../../ui/button';
 import { DownloadButton } from './download-button';
 import { EstimatedSize } from './estimated-size';
@@ -10,63 +12,36 @@ import { RedoButton } from './redo-button';
 import { UndoButton } from './undo-button';
 
 interface ToolbarProps {
-    /** Whether the undo action is available */
-    canUndo: boolean;
-    /** Whether the redo action is available */
-    canRedo: boolean;
-    /** Whether there is content to download */
-    hasContent: boolean;
-    /** Whether the PDF is being generated */
-    isGenerating: boolean;
-    /** Current generation progress (0-100) */
-    progress?: number;
-    /** Error message if PDF generation failed */
-    error?: string;
-    /** Estimated file size in bytes */
-    estimatedSize: number;
-    /** Callback for undo action */
-    onUndo: () => void;
-    /** Callback for redo action */
-    onRedo: () => void;
-    /** Callback for preview action */
-    onPreview: () => void;
-    /** Callback for print action */
-    onPrint: () => void;
-    /** Callback for download action */
-    onDownload: () => void;
-    /** Callback to cancel generation */
-    onCancel: () => void;
-    /** Callback to clear error */
-    onErrorDismiss: () => void;
+    /**
+     * Optional children. When provided, the toolbar renders the inverse
+     * default layout and shows whatever children the caller passes.
+     * When omitted, falls back to the bundled default layout — the same
+     * arrangement the editor has always shipped with.
+     */
+    children?: ReactNode;
 }
 
 /**
- * Default toolbar layout for the PDF editor. Composes the standalone
- * action buttons and progress overlay. For custom arrangements, use the
- * individual `Editor.UndoButton`, `Editor.DownloadButton`, etc. directly.
+ * Default toolbar layout for the PDF editor.
+ *
+ * Reads all of its state from {@link useEditor} and composes the standalone
+ * action buttons. Pass children to override the layout entirely.
  */
-export function Toolbar({
-    canUndo,
-    canRedo,
-    hasContent,
-    isGenerating,
-    progress,
-    error,
-    estimatedSize,
-    onUndo,
-    onRedo,
-    onPreview,
-    onPrint,
-    onDownload,
-    onCancel,
-    onErrorDismiss,
-}: ToolbarProps) {
+export function Toolbar({ children }: ToolbarProps = {}) {
+    const { pdfApi } = useEditor();
+    const { state, dismissError } = pdfApi;
+    const { error, isGenerating } = state;
+
+    if (children !== undefined && Children.count(children) > 0) {
+        return <div className="border-b bg-white p-4">{children}</div>;
+    }
+
     return (
         <div className="border-b bg-white p-4">
             <div className="mx-auto container flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-2 order-2 sm:order-1">
-                    <UndoButton canUndo={canUndo} onUndo={onUndo} />
-                    <RedoButton canRedo={canRedo} onRedo={onRedo} />
+                    <UndoButton />
+                    <RedoButton />
                 </div>
 
                 <div className="min-w-[50%] flex flex-col sm:flex-row items-center gap-4 order-1 sm:order-2 w-full sm:w-auto">
@@ -76,23 +51,23 @@ export function Toolbar({
                             <Button
                                 variant="white"
                                 size="sm"
-                                onClick={onErrorDismiss}
+                                onClick={dismissError}
                                 className="text-red-600 hover:text-red-700 h-6 px-2"
                             >
                                 Dismiss
                             </Button>
                         </div>
                     )}
-                    {!isGenerating && <EstimatedSize bytes={estimatedSize} />}
+                    {!isGenerating && <EstimatedSize />}
                     {isGenerating ? (
-                        <ProgressOverlay progress={progress} onCancel={onCancel} />
+                        <ProgressOverlay />
                     ) : (
                         <div className="flex flex-col sm:flex-row items-center gap-2 w-full">
                             <div className="w-full flex items-center gap-2">
-                                <PreviewButton hasContent={hasContent} onPreview={onPreview} />
-                                <PrintButton hasContent={hasContent} onPrint={onPrint} />
+                                <PreviewButton />
+                                <PrintButton />
                             </div>
-                            <DownloadButton hasContent={hasContent} onDownload={onDownload} />
+                            <DownloadButton />
                         </div>
                     )}
                 </div>

@@ -1,23 +1,22 @@
 'use client';
 
 import { Printer } from 'lucide-react';
+import { useEditor } from '../../context/editor';
 import { trackEvent } from '../../internal/analytics';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 
-interface PrintButtonProps {
-    hasContent: boolean;
-    onPrint: () => void;
-}
-
 /**
  * Print action button. Fires the `print` analytics event (toolbar source)
- * before delegating to `onPrint`.
+ * and triggers `pdfApi.print` from the editor context.
  */
-export function PrintButton({ hasContent, onPrint }: PrintButtonProps) {
+export function PrintButton() {
+    const { state, pdfApi } = useEditor();
+    const hasContent = state.sections.length > 0;
+
     const handleClick = () => {
         trackEvent.print(false);
-        onPrint();
+        void pdfApi.print();
     };
 
     return (

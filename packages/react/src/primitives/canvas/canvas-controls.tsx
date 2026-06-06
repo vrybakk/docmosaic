@@ -1,35 +1,22 @@
 'use client';
 
 import { Minus, Plus, RotateCcw } from 'lucide-react';
+import { useEditorCanvas } from '../../context/editor';
 import { Button } from '../../ui/button';
 
-interface CanvasControlsProps {
-    zoom: number;
-    minZoom: number;
-    maxZoom: number;
-    onZoomIn: () => void;
-    onZoomOut: () => void;
-    onReset: () => void;
-}
-
 /**
- * Floating zoom controls overlaid on the canvas. Pure presentational —
- * state lives in {@link useCanvasZoom}.
+ * Floating zoom controls overlaid on the canvas. Reads zoom state from
+ * {@link useEditorCanvas} — must be rendered inside `Editor.Canvas`.
  */
-export function CanvasControls({
-    zoom,
-    minZoom,
-    maxZoom,
-    onZoomIn,
-    onZoomOut,
-    onReset,
-}: CanvasControlsProps) {
+export function CanvasControls() {
+    const { zoom, minZoom, maxZoom, zoomIn, zoomOut, reset } = useEditorCanvas();
+
     return (
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-white rounded-lg shadow-sm p-1 z-10 transition-all duration-200">
             <Button
                 variant="ghost"
                 size="icon"
-                onClick={onZoomOut}
+                onClick={zoomOut}
                 disabled={zoom <= minZoom}
                 className="h-8 w-8"
             >
@@ -38,7 +25,7 @@ export function CanvasControls({
             <Button
                 variant="ghost"
                 size="icon"
-                onClick={onReset}
+                onClick={reset}
                 disabled={zoom === 1}
                 className="h-8 w-8"
                 title="Reset zoom"
@@ -49,7 +36,7 @@ export function CanvasControls({
             <Button
                 variant="ghost"
                 size="icon"
-                onClick={onZoomIn}
+                onClick={zoomIn}
                 disabled={zoom >= maxZoom}
                 className="h-8 w-8"
             >

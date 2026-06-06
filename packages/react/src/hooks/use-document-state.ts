@@ -14,12 +14,31 @@ import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 const trackedReducer = withHistory<PDFDocument, Action>(reducer);
 
-function init(): HistoryState<PDFDocument> {
-    return { present: createDocument(), past: [], future: [] };
+function init(seed: PDFDocument | undefined): HistoryState<PDFDocument> {
+    return { present: seed ?? createDocument(), past: [], future: [] };
 }
 
-export function useDocumentState() {
-    const [state, dispatch] = useReducer(trackedReducer, undefined, init);
+interface UseDocumentStateArgs {
+    /**
+     * Optional seed document. Only read once (initial mount); subsequent
+     * changes to this prop are ignored. Pass a new key on the parent to force
+     * a remount if you need to swap documents.
+     */
+    initialDocument?: PDFDocument;
+}
+
+/**
+ * Headless document-state hook. Owns a reducer + history timeline over the
+ * editor document. Returned `actions` are stable; the document and
+ * undo/redo flags re-render through React on every change.
+ *
+ * Exposed as a standalone export from `@docmosaic/react` so consumers who
+ * want to drive their own UI ("BYO-UI") can reuse the same state machine
+ * without going through `Editor.Root`. Pair this with a custom provider if
+ * you want to feed the same shape into a different visual tree.
+ */
+export function useDocumentState(args: UseDocumentStateArgs = {}) {
+    const [state, dispatch] = useReducer(trackedReducer, args.initialDocument, init);
 
     const document = state.present;
 

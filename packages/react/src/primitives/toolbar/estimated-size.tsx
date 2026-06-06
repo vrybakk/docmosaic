@@ -1,9 +1,6 @@
 'use client';
 
-interface EstimatedSizeProps {
-    /** Estimated file size in bytes. */
-    bytes: number;
-}
+import { useEditor } from '../../context/editor';
 
 function formatFileSize(bytes: number) {
     if (bytes < 1024) return `${bytes} B`;
@@ -12,14 +9,18 @@ function formatFileSize(bytes: number) {
 }
 
 /**
- * Read-only label that shows the estimated output PDF size. Renders nothing
- * when `bytes` is falsy.
+ * Read-only label that shows the estimated output PDF size. Reads
+ * `ui.estimatedSize` from the editor context. Renders nothing while the
+ * size is unknown (zero).
  */
-export function EstimatedSize({ bytes }: EstimatedSizeProps) {
-    if (!bytes) return null;
+export function EstimatedSize() {
+    const {
+        ui: { estimatedSize },
+    } = useEditor();
+    if (!estimatedSize) return null;
     return (
         <div className="text-sm text-gray-500 hidden sm:block text-nowrap whitespace-nowrap">
-            Estimated size: {formatFileSize(bytes)}
+            Estimated size: {formatFileSize(estimatedSize)}
         </div>
     );
 }

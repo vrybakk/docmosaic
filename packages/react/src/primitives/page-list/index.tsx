@@ -1,55 +1,24 @@
 'use client';
 
-import type { ImageSection, Page, PageOrientation, PageSize } from '@docmosaic/core';
 import { ImageIcon, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { useEditor } from '../../context/editor';
+import { trackEvent } from '../../internal/analytics';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 import { ScrollArea } from '../../ui/scroll-area';
 import { PageThumb } from './page-thumb';
 
-interface PageListProps {
-    /** All pages in the document */
-    pages: Page[];
-    /** All sections in the document */
-    sections: ImageSection[];
-    /** Currently selected page number */
-    currentPage: number;
-    /** The page size (A4, etc.) */
-    pageSize: PageSize;
-    /** The page orientation */
-    orientation: PageOrientation;
-    /** The formatted last modified date */
-    lastModified: string;
-    /** Callback to add a new image section */
-    onAddSection: () => void;
-    /** Callback to add a new page */
-    onAddPage: () => void;
-    /** Callback when a page is selected */
-    onPageChange: (pageNumber: number) => void;
-    /** Callback when a page is deleted */
-    onDeletePage: (pageIndex: number) => void;
-    /** Callback when pages are reordered */
-    onReorderPages: (fromIndex: number, toIndex: number) => void;
-}
-
 /**
- * Page list sidebar for the PDF editor.
- * Contains page management actions and document info.
+ * Page list sidebar for the PDF editor. Reads pages, sections, and current
+ * page from {@link useEditor}; renders one {@link PageThumb} per page and
+ * handles drag-reorder locally.
  */
-export function PageList({
-    pages,
-    sections,
-    currentPage,
-    pageSize,
-    orientation,
-    lastModified,
-    onAddSection,
-    onAddPage,
-    onPageChange,
-    onDeletePage,
-    onReorderPages,
-}: PageListProps) {
+export function PageList() {
+    const { state, actions, ui } = useEditor();
+    const { pages, sections, currentPage, pageSize, orientation } = state;
+    const { formattedDate } = ui;
+
     const [dragState, setDragState] = useState<{
         draggedIndex: number | null;
         dropTarget: number | null;
@@ -60,17 +29,11 @@ export function PageList({
         dropPosition: null,
     });
 
-    // Handle drag start
     const handleDragStart = (e: React.DragEvent, index: number) => {
         e.dataTransfer.effectAllowed = 'move';
-        setDragState({
-            draggedIndex: index,
-            dropTarget: null,
-            dropPosition: null,
-        });
+        setDragState({ draggedIndex: index, dropTarget: null, dropPosition: null });
     };
 
-    // Handle drag over
     const handleDragOver = (e: React.DragEvent, index: number) => {
         e.preventDefault();
         e.stopPropagation();
@@ -83,14 +46,9 @@ export function PageList({
         const midpoint = (rect.bottom + rect.top) / 2;
         const position = e.clientY < midpoint ? 'top' : 'bottom';
 
-        setDragState((prev) => ({
-            ...prev,
-            dropTarget: index,
-            dropPosition: position,
-        }));
+        setDragState((prev) => ({ ...prev, dropTarget: index, dropPosition: position }));
     };
 
-    // Handle drag end
     const handleDragEnd = () => {
         if (
             dragState.draggedIndex !== null &&
@@ -102,27 +60,24 @@ export function PageList({
                     ? dragState.dropTarget + 1
                     : dragState.dropTarget;
 
-            // Only reorder if the position actually changes
             if (dragState.draggedIndex !== toIndex && dragState.draggedIndex !== toIndex - 1) {
-                onReorderPages(dragState.draggedIndex, toIndex);
+                trackEvent.reorderPages();
+                actions.reorderPages(dragState.draggedIndex, toIndex);
             }
         }
 
-        setDragState({
-            draggedIndex: null,
-            dropTarget: null,
-            dropPosition: null,
-        });
+        setDragState({ draggedIndex: null, dropTarget: null, dropPosition: null });
     };
 
     return (
         <div className="w-64 border-r bg-gray-50/50 flex flex-col">
-            {/* Actions */}
             <div className="p-4 border-b bg-white">
                 <div className="space-y-2">
                     <Button
                         variant="caramel"
-                        onClick={onAddSection}
+                        onClick={() => {
+                            actions.addSection();
+                        }}
                         className={cn('w-full', 'add-image-button-click-trigger')}
                         icon={<ImageIcon className="h-4 w-4" />}
                     >
@@ -130,7 +85,10 @@ export function PageList({
                     </Button>
                     <Button
                         variant="white"
-                        onClick={onAddPage}
+                        onClick={() => {
+                            trackEvent.addPage();
+                            actions.addPage();
+                        }}
                         className={cn('w-full', 'add-page-button-click-trigger')}
                         icon={<Plus className="h-4 w-4" />}
                     >
@@ -139,7 +97,6 @@ export function PageList({
                 </div>
             </div>
 
-            {/* Pages */}
             <div className="flex-1 flex flex-col min-h-0">
                 <div className="p-4 pb-2">
                     <h2 className="text-sm font-semibold text-editor-accent">Pages</h2>
@@ -156,8 +113,8 @@ export function PageList({
                                     sections={sections}
                                     pageSize={pageSize}
                                     orientation={orientation}
-                                    onSelect={() => onPageChange(index + 1)}
-                                    onDelete={() => onDeletePage(index)}
+                                    onSelect={() => actions.changePage(index + 1)}
+                                    onDelete={() => actions.deletePage(index)}
                                     dragHandlers={{
                                         onDragStart: (e) => handleDragStart(e, index),
                                         onDragEnd: handleDragEnd,
@@ -178,11 +135,10 @@ export function PageList({
                 </ScrollArea>
             </div>
 
-            {/* Info */}
             <div className="p-4 border-t bg-white">
                 <div className="text-sm text-editor-accent/70 space-y-1">
                     <p>Pages: {pages.length}</p>
-                    <p>Last modified: {lastModified}</p>
+                    <p>Last modified: {formattedDate}</p>
                 </div>
             </div>
         </div>

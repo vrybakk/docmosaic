@@ -1,7 +1,7 @@
 'use client';
 
-import type { ImageSection } from '@docmosaic/core';
 import { useCallback, useRef, useState } from 'react';
+import { useEditorSection } from '../../context/editor';
 import { cn } from '../../internal/utils';
 import { SectionEmptyState } from './section-empty-state';
 import { SectionImage } from './section-image';
@@ -12,29 +12,25 @@ import { useImageUpload } from './use-image-upload';
 import { useSectionDrag } from './use-section-drag';
 import { useSectionResize } from './use-section-resize';
 
-interface SectionProps {
-    section: ImageSection;
-    isSelected: boolean;
-    onUpdate: (section: ImageSection) => void;
-    onImageUpload: (sectionId: string, imageUrl: string) => void;
-    onDuplicate: (section: ImageSection) => void;
-    onDelete: (sectionId: string) => void;
-    onClick: (e: React.MouseEvent) => void;
-}
-
 /**
- * Orchestrates the resize/drag/upload hooks and the visual parts.
- * State lives in the hooks; this component composes them.
+ * Section primitive. Reads its data + handlers from
+ * {@link useEditorSection}, which must be invoked inside the per-section
+ * provider that `Editor.Canvas` sets up.
+ *
+ * Visual state (drag, resize, file-drop hover, upload progress) lives in
+ * the section's own hooks; the canvas-aware handlers (selection, geometry
+ * descaling, image upload routing) come from context.
  */
-export function Section({
-    section,
-    isSelected,
-    onUpdate,
-    onImageUpload,
-    onDuplicate,
-    onDelete,
-    onClick,
-}: SectionProps) {
+export function Section() {
+    const {
+        section,
+        isSelected,
+        onClick,
+        onUpdate,
+        onImageUpload,
+        onDuplicate,
+        onDelete,
+    } = useEditorSection();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
     const [isDroppingFile, setIsDroppingFile] = useState(false);

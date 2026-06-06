@@ -1,48 +1,29 @@
 'use client';
 
-import {
-    generatePDF,
-    type ImageSection,
-    type Page,
-    type PageOrientation,
-    type PageSize,
-} from '@docmosaic/core';
+import { generatePDF } from '@docmosaic/core';
 import { Download, Loader2, Printer, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useEditor } from '../../context/editor';
 import { trackEvent } from '../../internal/analytics';
 import { Button } from '../../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../ui/dialog';
 
-interface PreviewProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onDownload: () => void;
-    pages: Page[];
-    sections: ImageSection[];
-    pageSize: PageSize;
-    orientation: PageOrientation;
-}
-
 /**
- * Preview component for PDF editor
- * Shows live preview of the PDF with print and download options
+ * Preview dialog. Reads its open state, the document, and the download
+ * action from the editor context. Generates a preview blob whenever the
+ * dialog opens and re-renders if the document changes underneath it.
  */
-export function Preview({
-    isOpen,
-    onClose,
-    onDownload,
-    pages,
-    sections,
-    pageSize,
-    orientation,
-}: PreviewProps) {
+export function Preview() {
+    const { state, ui, pdfApi } = useEditor();
+    const { pages, sections, pageSize, orientation } = state;
+    const { isPreviewOpen, closePreview } = ui;
+
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
 
-    // Generate preview when dialog opens
     useEffect(() => {
-        if (!isOpen) return;
+        if (!isPreviewOpen) return;
         trackEvent.preview();
 
         const generatePreviews = async () => {
@@ -70,11 +51,11 @@ export function Preview({
             setPreviewUrls([]);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen, sections, pageSize, orientation, pages]);
+    }, [isPreviewOpen, sections, pageSize, orientation, pages]);
 
     const handlePrint = async () => {
         if (!previewUrls[0]) return;
-        trackEvent.print(true); // true indicates print from preview
+        trackEvent.print(true);
         const response = await fetch(previewUrls[0]);
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
@@ -88,11 +69,10 @@ export function Preview({
     };
 
     const handleDownload = () => {
-        trackEvent.download(true); // true indicates download from preview
-        onDownload();
+        trackEvent.download(true);
+        void pdfApi.download();
     };
 
-    // Preview content with controls
     const PreviewContent = () => (
         <div className="flex flex-col h-full">
             <div className="flex items-center justify-between p-4 border-b">
@@ -115,7 +95,7 @@ export function Preview({
                     >
                         Download
                     </Button>
-                    <Button variant="white" size="icon" onClick={onClose}>
+                    <Button variant="white" size="icon" onClick={closePreview}>
                         <X className="h-5 w-5" />
                     </Button>
                 </div>
@@ -174,7 +154,7 @@ export function Preview({
     );
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <Dialog open={isPreviewOpen} onOpenChange={(open) => !open && closePreview()}>
             <DialogHeader className="hidden">
                 <DialogTitle>Preview</DialogTitle>
             </DialogHeader>

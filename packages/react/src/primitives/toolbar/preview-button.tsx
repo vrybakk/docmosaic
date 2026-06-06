@@ -1,23 +1,22 @@
 'use client';
 
 import { Eye } from 'lucide-react';
+import { useEditor } from '../../context/editor';
 import { trackEvent } from '../../internal/analytics';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 
-interface PreviewButtonProps {
-    hasContent: boolean;
-    onPreview: () => void;
-}
-
 /**
- * Open-preview action button. Fires the `preview` analytics event before
- * delegating to `onPreview`.
+ * Open-preview action button. Fires the `preview` analytics event and
+ * flips the editor's `isPreviewOpen` flag through context.
  */
-export function PreviewButton({ hasContent, onPreview }: PreviewButtonProps) {
+export function PreviewButton() {
+    const { state, ui } = useEditor();
+    const hasContent = state.sections.length > 0;
+
     const handleClick = () => {
         trackEvent.preview();
-        onPreview();
+        ui.openPreview();
     };
 
     return (

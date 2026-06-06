@@ -1,23 +1,22 @@
 'use client';
 
 import { Download } from 'lucide-react';
+import { useEditor } from '../../context/editor';
 import { trackEvent } from '../../internal/analytics';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 
-interface DownloadButtonProps {
-    hasContent: boolean;
-    onDownload: () => void;
-}
-
 /**
  * Download action button. Fires the `download` analytics event (toolbar
- * source) before delegating to `onDownload`.
+ * source) and triggers `pdfApi.download` from the editor context.
  */
-export function DownloadButton({ hasContent, onDownload }: DownloadButtonProps) {
+export function DownloadButton() {
+    const { state, pdfApi } = useEditor();
+    const hasContent = state.sections.length > 0;
+
     const handleClick = () => {
         trackEvent.download(false);
-        onDownload();
+        void pdfApi.download();
     };
 
     return (

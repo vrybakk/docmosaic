@@ -10,7 +10,21 @@ import { Editor } from '@docmosaic/react';
  * Component (`Editor.Root` reads `undefined` on the proxy), so we mount it
  * here in a Client Component while the page itself stays server-rendered
  * for metadata + JSON-LD.
+ *
+ * The composition below is the canonical compound tree advertised in the
+ * package docs: pass the named buttons/selects as children and the
+ * Header/Toolbar primitives fall back to their default layouts.
  */
 export function EditorMount() {
-    return <Editor.Root />;
+    return (
+        <Editor.Root>
+            <Editor.Header />
+            <Editor.Toolbar />
+            <Editor.PageList />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
 }

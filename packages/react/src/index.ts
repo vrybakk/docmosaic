@@ -2,13 +2,21 @@
  * @packageDocumentation
  * `@docmosaic/react` — UI primitives for the DocMosaic editor.
  *
- * Phase 7f ships the compound-namespace export. Consumers import a single
- * `Editor` namespace and reach for `Editor.Root`, `Editor.Canvas`, etc.
+ * Phase 7g/7h ships controlled/uncontrolled `Editor.Root` plus hook-based
+ * state plumbing. Compound primitives reach into {@link useEditor},
+ * {@link useEditorSection}, and {@link useEditorCanvas} for everything they
+ * need; consumers compose the tree without prop-drilling.
  *
  * ```tsx
  * import { Editor } from '@docmosaic/react';
  *
- * <Editor.Root />
+ * <Editor.Root>
+ *   <Editor.Header />
+ *   <Editor.Toolbar />
+ *   <Editor.Canvas><Editor.Section /></Editor.Canvas>
+ *   <Editor.PageList />
+ *   <Editor.Preview />
+ * </Editor.Root>
  * ```
  */
 
@@ -56,6 +64,8 @@ export const Editor = {
     Preview,
 } as const;
 
+export type { EditorRootProps } from './primitives/editor-root';
+
 export { EditorLayout } from './primitives/editor-layout';
 export { usePdfGeneration } from './primitives/use-pdf-generation';
 export type { GenerationState } from './primitives/use-pdf-generation';
@@ -72,6 +82,35 @@ export type {
     ImageRendererProps,
 } from './context/editor-config';
 
+/**
+ * Hook returning the active editor context. Composed primitives use this
+ * to read document state and dispatch mutations without prop drilling.
+ *
+ * Pair with {@link useDocumentState} when you want to drive a custom
+ * `Editor.Root`-style provider; in that case you're responsible for
+ * mounting your own `EditorProvider`.
+ */
+export {
+    useEditor,
+    useEditorCanvas,
+    useEditorSection,
+    EditorProvider,
+} from './context/editor';
+export type {
+    EditorActions,
+    EditorContextValue,
+    EditorPdfApi,
+    EditorUiState,
+    UseEditorSectionResult,
+} from './context/editor';
+
+/**
+ * Headless document-state escape hatch. Owns the reducer + history
+ * timeline. Use directly when wiring a fully-custom UI ("BYO-UI") —
+ * combine with {@link EditorProvider} if you want compound primitives to
+ * see the same state. The default `Editor.Root` already uses this under
+ * the hood in uncontrolled mode.
+ */
 export { useDocumentState } from './hooks/use-document-state';
 
 export { setReactPackageTracker } from './internal/analytics';

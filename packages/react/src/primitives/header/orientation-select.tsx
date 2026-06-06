@@ -1,6 +1,6 @@
 'use client';
 
-import type { PageOrientation } from '@docmosaic/core';
+import { useEditor } from '../../context/editor';
 import { ORIENTATION_OPTIONS } from '../../internal/options';
 import { cn } from '../../internal/utils';
 import {
@@ -12,22 +12,19 @@ import {
 } from '../../ui/select';
 
 interface OrientationSelectProps {
-    value: PageOrientation;
-    onValueChange: (value: PageOrientation) => void;
     /** When true, expands the trigger to fill its container (mobile sheet). */
     fullWidth?: boolean;
 }
 
 /**
- * Page orientation dropdown (portrait / landscape).
+ * Page orientation dropdown (portrait / landscape). Reads
+ * `state.orientation` and dispatches through `actions.updateOrientation`.
  */
-export function OrientationSelect({
-    value,
-    onValueChange,
-    fullWidth = false,
-}: OrientationSelectProps) {
+export function OrientationSelect({ fullWidth = false }: OrientationSelectProps = {}) {
+    const { state, actions } = useEditor();
+
     return (
-        <Select value={value} onValueChange={onValueChange}>
+        <Select value={state.orientation} onValueChange={actions.updateOrientation}>
             <SelectTrigger
                 className={
                     fullWidth

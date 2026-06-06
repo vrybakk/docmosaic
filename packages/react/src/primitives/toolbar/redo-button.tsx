@@ -1,24 +1,22 @@
 'use client';
 
 import { Redo } from 'lucide-react';
+import { useEditor } from '../../context/editor';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 
-interface RedoButtonProps {
-    canRedo: boolean;
-    onRedo: () => void;
-}
-
 /**
- * Redo action button. Pure presentation — caller wires redo state and
- * analytics in `onRedo`.
+ * Redo action button. Reads `canRedo` and the `redo` action from the
+ * editor context — no props.
  */
-export function RedoButton({ canRedo, onRedo }: RedoButtonProps) {
+export function RedoButton() {
+    const { canRedo, actions } = useEditor();
+
     return (
         <Button
             variant="white"
             size="icon"
-            onClick={onRedo}
+            onClick={actions.redo}
             disabled={!canRedo}
             className={cn('disabled:opacity-50', 'h-10 w-10')}
         >

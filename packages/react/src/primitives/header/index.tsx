@@ -1,8 +1,7 @@
 'use client';
 
-import type { PageOrientation, PageSize } from '@docmosaic/core';
 import { Settings2 } from 'lucide-react';
-import { useState } from 'react';
+import { Children, type ReactNode, useState } from 'react';
 import { Button } from '../../ui/button';
 import {
     Sheet,
@@ -16,50 +15,44 @@ import { OrientationSelect } from './orientation-select';
 import { PageSizeSelect } from './page-size-select';
 
 interface HeaderProps {
-    /** The name of the document */
-    name: string;
-    /** The current page size */
-    pageSize: PageSize;
-    /** The current page orientation */
-    orientation: PageOrientation;
-    /** Callback when the document name changes */
-    onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    /** Callback when the page size changes */
-    onPageSizeChange: (value: PageSize) => void;
-    /** Callback when the orientation changes */
-    onOrientationChange: (value: PageOrientation) => void;
+    /**
+     * Optional children. When provided, the header renders an empty shell
+     * with the children inside. When omitted, falls back to the bundled
+     * default layout (document name + page size + orientation, plus a
+     * mobile settings sheet).
+     */
+    children?: ReactNode;
 }
 
 /**
- * Default editor header layout. Composes `DocumentName`, `PageSizeSelect`,
- * and `OrientationSelect` plus a mobile settings sheet. For custom
- * arrangements use the individual `Editor.DocumentName`, etc. directly.
+ * Default editor header layout. All state-reading children are
+ * context-aware, so the header itself takes no state props.
  */
-export function Header({
-    name,
-    pageSize,
-    orientation,
-    onNameChange,
-    onPageSizeChange,
-    onOrientationChange,
-}: HeaderProps) {
+export function Header({ children }: HeaderProps = {}) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    if (children !== undefined && Children.count(children) > 0) {
+        return (
+            <header className="bg-gradient border-b py-[15px] px-4">
+                <div className="mx-auto container flex items-center justify-between gap-4">
+                    {children}
+                </div>
+            </header>
+        );
+    }
 
     return (
         <header className="bg-gradient border-b py-[15px] px-4">
             <div className="mx-auto container flex items-center justify-between gap-4">
-                {/* Document Name */}
                 <div className="flex items-center gap-4 flex-1">
-                    <DocumentName name={name} onNameChange={onNameChange} />
+                    <DocumentName />
                 </div>
 
-                {/* Desktop Settings */}
                 <div className="hidden md:flex items-center gap-4">
-                    <PageSizeSelect value={pageSize} onValueChange={onPageSizeChange} />
-                    <OrientationSelect value={orientation} onValueChange={onOrientationChange} />
+                    <PageSizeSelect />
+                    <OrientationSelect />
                 </div>
 
-                {/* Mobile Settings Button */}
                 <div className="md:hidden">
                     <Sheet open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                         <SheetTrigger asChild>
@@ -74,19 +67,11 @@ export function Header({
                             <div className="mt-4 space-y-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Page Size</label>
-                                    <PageSizeSelect
-                                        value={pageSize}
-                                        onValueChange={onPageSizeChange}
-                                        fullWidth
-                                    />
+                                    <PageSizeSelect fullWidth />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Orientation</label>
-                                    <OrientationSelect
-                                        value={orientation}
-                                        onValueChange={onOrientationChange}
-                                        fullWidth
-                                    />
+                                    <OrientationSelect fullWidth />
                                 </div>
                             </div>
                         </SheetContent>

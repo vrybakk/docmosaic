@@ -1,6 +1,7 @@
 'use client';
 
-import { PAGE_SIZE_LABELS, type PageSize } from '@docmosaic/core';
+import { PAGE_SIZE_LABELS } from '@docmosaic/core';
+import { useEditor } from '../../context/editor';
 import { PAGE_SIZE_OPTIONS } from '../../internal/options';
 import { cn } from '../../internal/utils';
 import {
@@ -12,18 +13,19 @@ import {
 } from '../../ui/select';
 
 interface PageSizeSelectProps {
-    value: PageSize;
-    onValueChange: (value: PageSize) => void;
     /** When true, expands the trigger to fill its container (mobile sheet). */
     fullWidth?: boolean;
 }
 
 /**
  * Page-size dropdown with grouped section titles (ISO / North American).
+ * Reads `state.pageSize` and dispatches through `actions.updatePageSize`.
  */
-export function PageSizeSelect({ value, onValueChange, fullWidth = false }: PageSizeSelectProps) {
+export function PageSizeSelect({ fullWidth = false }: PageSizeSelectProps = {}) {
+    const { state, actions } = useEditor();
+
     return (
-        <Select value={value} onValueChange={onValueChange}>
+        <Select value={state.pageSize} onValueChange={actions.updatePageSize}>
             <SelectTrigger
                 className={
                     fullWidth

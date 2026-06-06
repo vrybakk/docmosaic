@@ -1,20 +1,22 @@
 'use client';
 
 import { Loader2, X } from 'lucide-react';
+import { useEditor } from '../../context/editor';
 import { Button } from '../../ui/button';
 
-interface ProgressOverlayProps {
-    /** Current generation progress (0-100). */
-    progress?: number;
-    /** Cancel the in-flight generation. */
-    onCancel: () => void;
-}
-
 /**
- * Inline progress UI shown while a PDF is being generated. Includes a
- * cancel button wired to the generation hook's `abort()`.
+ * Inline progress UI shown while a PDF is being generated. Renders nothing
+ * unless `pdfApi.state.isGenerating` is true. Reads progress + abort from
+ * the editor context.
  */
-export function ProgressOverlay({ progress, onCancel }: ProgressOverlayProps) {
+export function ProgressOverlay() {
+    const { pdfApi } = useEditor();
+    const { state, abort } = pdfApi;
+
+    if (!state.isGenerating) return null;
+
+    const { progress } = state;
+
     return (
         <div className="flex items-center gap-2 w-full sm:w-auto justify-center">
             <div className="flex items-center gap-2 min-w-[160px] bg-editor-accent text-editor-accent-soft px-4 py-2 rounded-md relative">
@@ -30,7 +32,7 @@ export function ProgressOverlay({ progress, onCancel }: ProgressOverlayProps) {
             <Button
                 variant="white"
                 size="sm"
-                onClick={onCancel}
+                onClick={abort}
                 className="text-red-600 hover:text-red-700 border-red-200"
                 icon={<X className="h-4 w-4" />}
             >
