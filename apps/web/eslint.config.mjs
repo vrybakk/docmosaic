@@ -14,12 +14,6 @@ const compat = new FlatCompat({
 const eslintConfig = [
     ...compat.extends('next/core-web-vitals', 'next/typescript'),
     {
-        files: ['src/components/pdf-editor/PDFDocument.tsx'],
-        rules: {
-            'jsx-a11y/alt-text': 'off',
-        },
-    },
-    {
         files: ['src/test/**/*.ts', 'src/test/**/*.tsx'],
         rules: {
             '@typescript-eslint/no-explicit-any': 'off',
