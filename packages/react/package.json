@@ -1,16 +1,21 @@
 {
     "name": "@docmosaic/react",
-    "version": "0.0.0",
-    "private": true,
+    "version": "0.1.0",
+    "private": false,
     "type": "module",
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js",
-            "require": "./dist/index.cjs"
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
         },
         "./styles.css": "./dist/styles.css"
     },
@@ -20,6 +25,9 @@
     "files": [
         "dist"
     ],
+    "engines": {
+        "node": ">=18.18.0"
+    },
     "scripts": {
         "build": "tsup",
         "dev": "tsup --watch",

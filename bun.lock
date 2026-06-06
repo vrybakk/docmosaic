@@ -73,7 +73,7 @@
     },
     "packages/core": {
       "name": "@docmosaic/core",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "dependencies": {
         "jspdf": "^2.5.2",
         "uuid": "^11.0.5",
@@ -88,7 +88,7 @@
     },
     "packages/react": {
       "name": "@docmosaic/react",
-      "version": "0.0.0",
+      "version": "0.1.0",
       "dependencies": {
         "@radix-ui/react-dialog": "^1.1.6",
         "@radix-ui/react-scroll-area": "^1.2.3",
