@@ -2,6 +2,7 @@
 
 import { ArrowBigRight } from 'lucide-react';
 import { MotionConfig, motion } from 'motion/react';
+import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 import Typography from '../common/typography';
 
@@ -108,7 +109,10 @@ const Card = ({
                             <Typography className="transition-[margin] duration-300 ease-in-out group-hover:mb-10">
                                 {subtitle}
                             </Typography>
-                            <button className="absolute bottom-2 left-2 right-2 translate-y-full bg-white px-4 py-2 opacity-0 transition-all duration-300 ease-in-out group-hover:translate-y-0 group-hover:opacity-100 rounded-lg">
+                            <Link
+                                href="/pdf-editor"
+                                className="absolute bottom-2 left-2 right-2 translate-y-full bg-white px-4 py-2 opacity-0 transition-all duration-300 ease-in-out group-hover:translate-y-0 group-hover:opacity-100 rounded-lg text-center"
+                            >
                                 <Typography
                                     variant="h4"
                                     tag="span"
@@ -116,7 +120,7 @@ const Card = ({
                                 >
                                     LET&apos;S GO
                                 </Typography>
-                            </button>
+                            </Link>
                         </div>
 
                         <motion.svg
