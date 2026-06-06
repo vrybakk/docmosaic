@@ -1,55 +1,30 @@
 'use client';
 
-import { Button } from '@/components/ui/core/button';
-import { useEditorConfig } from '@/lib/pdf-editor/context/editor-config';
-import { ImageSection } from '@/lib/pdf-editor/types';
+import type { ImageSection } from '@/lib/pdf-editor/types';
 import { cn } from '@/lib/utils';
-import { useDrag } from '@use-gesture/react';
-import { Copy, ImageIcon, Maximize2, Minus, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
-import { toast } from 'react-hot-toast';
-
-// Constants for size constraints
-const MIN_SECTION_SIZE = 100; // Minimum size in pixels
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+import { SectionEmptyState } from './section-empty-state';
+import { SectionImage } from './section-image';
+import { SectionResizeHandles } from './section-resize-handles';
+import { SectionToolbar } from './section-toolbar';
+import { SectionUploadProgress } from './section-upload-progress';
+import { useImageUpload } from './use-image-upload';
+import { useSectionDrag } from './use-section-drag';
+import { useSectionResize } from './use-section-resize';
 
 interface ImageSectionProps {
-    /** The section data */
     section: ImageSection;
-    /** Whether the section is currently selected */
     isSelected: boolean;
-    /** Callback when the section is updated */
     onUpdate: (section: ImageSection) => void;
-    /** Callback when an image is uploaded */
     onImageUpload: (sectionId: string, imageUrl: string) => void;
-    /** Callback when the section is duplicated */
     onDuplicate: (section: ImageSection) => void;
-    /** Callback when the section is deleted */
     onDelete: (sectionId: string) => void;
-    /** Click handler */
     onClick: (e: React.MouseEvent) => void;
 }
 
-type ResizeHandle =
-    | 'left'
-    | 'right'
-    | 'top'
-    | 'bottom'
-    | 'topLeft'
-    | 'topRight'
-    | 'bottomLeft'
-    | 'bottomRight';
-
-interface UploadProgressInfo {
-    status: 'reading' | 'processing' | 'resizing' | 'complete' | 'error';
-    progress: number;
-    message: string;
-}
-
 /**
- * ImageSection component
- * Handles individual image sections within the Canvas
+ * Orchestrates the resize/drag/upload hooks and the visual parts.
+ * State lives in the hooks; this component composes them.
  */
 export function ImageSectionComponent({
     section,
@@ -60,301 +35,27 @@ export function ImageSectionComponent({
     onDelete,
     onClick,
 }: ImageSectionProps) {
-    const { imageRenderer: Image } = useEditorConfig();
-    const [isResizing, setIsResizing] = useState(false);
-    const [isDragging, setIsDragging] = useState(false);
-    const resizeStart = useRef<{
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-        left: number;
-        top: number;
-        aspectRatio?: number;
-    } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
     const [isDroppingFile, setIsDroppingFile] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState<UploadProgressInfo | null>(null);
 
-    // Handle resize start
-    const handleResizeStart = (e: React.MouseEvent, handle: ResizeHandle) => {
-        e.preventDefault();
-        e.stopPropagation();
+    const { isResizing, handleResizeStart, handleResizeToProportion } = useSectionResize({
+        section,
+        onUpdate,
+        imageRef,
+    });
+    const { bindDrag, isDragging } = useSectionDrag({ section, onUpdate, isResizing });
+    const { handleFileDrop, handleImageUpload, uploadProgress } = useImageUpload({
+        section,
+        onUpdate,
+        onImageUpload,
+    });
 
-        // Set resize state
-        setIsResizing(true);
-        setIsDragging(false);
-
-        // Store initial dimensions
-        const startData = {
-            x: e.clientX,
-            y: e.clientY,
-            width: section.width,
-            height: section.height,
-            left: section.x,
-            top: section.y,
-            aspectRatio: section.imageUrl ? section.width / section.height : undefined,
-        };
-        resizeStart.current = startData;
-
-        // Add event listeners
-        const handleMouseMove = (e: MouseEvent) => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            if (!resizeStart.current || !handle) return;
-
-            const dx = e.clientX - startData.x;
-            const dy = e.clientY - startData.y;
-
-            let newWidth = startData.width;
-            let newHeight = startData.height;
-            let newX = startData.left;
-            let newY = startData.top;
-
-            const isCorner = handle.length > 5;
-            const aspectRatio = isCorner && startData.aspectRatio;
-
-            // Resize logic with aspect ratio maintenance for corners
-            switch (handle) {
-                case 'right':
-                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width + dx);
-                    break;
-                case 'left':
-                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width - dx);
-                    newX = startData.left + (startData.width - newWidth);
-                    break;
-                case 'bottom':
-                    newHeight = Math.max(MIN_SECTION_SIZE, startData.height + dy);
-                    break;
-                case 'top':
-                    newHeight = Math.max(MIN_SECTION_SIZE, startData.height - dy);
-                    newY = startData.top + (startData.height - newHeight);
-                    break;
-                case 'bottomRight':
-                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width + dx);
-                    if (aspectRatio) {
-                        newHeight = newWidth / aspectRatio;
-                    } else {
-                        newHeight = Math.max(MIN_SECTION_SIZE, startData.height + dy);
-                    }
-                    break;
-                case 'bottomLeft':
-                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width - dx);
-                    newX = startData.left + (startData.width - newWidth);
-                    if (aspectRatio) {
-                        newHeight = newWidth / aspectRatio;
-                    } else {
-                        newHeight = Math.max(MIN_SECTION_SIZE, startData.height + dy);
-                    }
-                    break;
-                case 'topRight':
-                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width + dx);
-                    if (aspectRatio) {
-                        newHeight = newWidth / aspectRatio;
-                        newY = startData.top + (startData.height - newHeight);
-                    } else {
-                        newHeight = Math.max(MIN_SECTION_SIZE, startData.height - dy);
-                        newY = startData.top + (startData.height - newHeight);
-                    }
-                    break;
-                case 'topLeft':
-                    newWidth = Math.max(MIN_SECTION_SIZE, startData.width - dx);
-                    newX = startData.left + (startData.width - newWidth);
-                    if (aspectRatio) {
-                        newHeight = newWidth / aspectRatio;
-                        newY = startData.top + (startData.height - newHeight);
-                    } else {
-                        newHeight = Math.max(MIN_SECTION_SIZE, startData.height - dy);
-                        newY = startData.top + (startData.height - newHeight);
-                    }
-                    break;
-            }
-
-            onUpdate({
-                ...section,
-                width: Math.round(newWidth),
-                height: Math.round(newHeight),
-                x: Math.round(newX),
-                y: Math.round(newY),
-            });
-        };
-
-        const handleMouseUp = (e: MouseEvent) => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            // Clear resize state
-            setIsResizing(false);
-            resizeStart.current = null;
-
-            // Remove event listeners
-            window.removeEventListener('mousemove', handleMouseMove, { capture: true });
-            window.removeEventListener('mouseup', handleMouseUp, { capture: true });
-        };
-
-        // Add event listeners with capture phase
-        window.addEventListener('mousemove', handleMouseMove, { capture: true });
-        window.addEventListener('mouseup', handleMouseUp, { capture: true });
-    };
-
-    // Use gesture hook for drag
-    const bindDrag = useDrag(
-        ({ movement: [mx, my], first, active, memo }) => {
-            if (isResizing) {
-                return false;
-            }
-
-            if (first) {
-                setIsDragging(true);
-                return { startX: section.x, startY: section.y };
-            }
-
-            if (!active) {
-                setIsDragging(false);
-                return memo;
-            }
-
-            // Get page dimensions from the parent element
-            const pageElement = document.querySelector('[data-page-container]') as HTMLElement;
-            if (!pageElement) return memo;
-
-            const { startX, startY } = memo || { startX: section.x, startY: section.y };
-
-            // Calculate new position with bounds
-            const maxX = Math.max(0, pageElement.clientWidth - section.width);
-            const maxY = Math.max(0, pageElement.clientHeight - section.height);
-
-            const newX = Math.max(0, Math.min(maxX, startX + mx));
-            const newY = Math.max(0, Math.min(maxY, startY + my));
-
-            onUpdate({
-                ...section,
-                x: Math.round(newX),
-                y: Math.round(newY),
-            });
-
-            return memo;
-        },
-        {
-            enabled: !isResizing,
-            filterTaps: true,
-            pointer: { capture: false },
-        },
-    );
-
-    // Handle click to select
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         onClick(e);
     };
 
-    // Handle file drop
-    const handleFileDrop = async (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDroppingFile(false);
-
-        const file = e.dataTransfer.files[0];
-        if (!file) return;
-
-        // Validate file type
-        if (!ALLOWED_TYPES.includes(file.type)) {
-            toast.error('Please upload a valid image file (JPEG, PNG, or WebP)');
-            return;
-        }
-
-        // Validate file size
-        if (file.size > MAX_FILE_SIZE) {
-            toast.error(`File size must be less than ${MAX_FILE_SIZE / (1024 * 1024)}MB`);
-            return;
-        }
-
-        try {
-            setUploadProgress({ status: 'reading', progress: 0, message: 'Reading file...' });
-            const img = document.createElement('img');
-
-            const reader = new FileReader();
-            reader.onprogress = (event) => {
-                if (event.lengthComputable) {
-                    const progress = (event.loaded / event.total) * 100;
-                    setUploadProgress({
-                        status: 'reading',
-                        progress,
-                        message: `Reading file... ${Math.round(progress)}%`,
-                    });
-                }
-            };
-
-            reader.onload = () => {
-                setUploadProgress({
-                    status: 'processing',
-                    progress: 0,
-                    message: 'Processing image...',
-                });
-                img.src = reader.result as string;
-            };
-
-            reader.readAsDataURL(file);
-
-            img.onload = () => {
-                setUploadProgress({
-                    status: 'resizing',
-                    progress: 50,
-                    message: 'Resizing image...',
-                });
-
-                // Create a canvas to resize the image if needed
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                if (!ctx) {
-                    throw new Error('Could not get canvas context');
-                }
-
-                // Set canvas dimensions to match the section size while maintaining aspect ratio
-                const aspectRatio = img.width / img.height;
-                const targetWidth = section.width;
-                const targetHeight = section.width / aspectRatio;
-
-                // Update section height to maintain aspect ratio
-                onUpdate({
-                    ...section,
-                    height: Math.round(targetHeight),
-                });
-
-                // Set canvas dimensions
-                canvas.width = targetWidth;
-                canvas.height = targetHeight;
-
-                // Draw the image with proper dimensions
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                setUploadProgress({
-                    status: 'complete',
-                    progress: 100,
-                    message: 'Upload complete!',
-                });
-
-                // Convert to base64 and update the section
-                const base64 = canvas.toDataURL(file.type);
-                onImageUpload(section.id, base64);
-
-                // Clear progress after a short delay
-                setTimeout(() => setUploadProgress(null), 1000);
-            };
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            setUploadProgress({
-                status: 'error',
-                progress: 0,
-                message: 'Error uploading image. Please try again.',
-            });
-            toast.error('Error uploading image. Please try again.');
-        }
-    };
-
-    // Handle drag over for files
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -363,92 +64,32 @@ export function ImageSectionComponent({
         }
     };
 
-    // Handle drag leave for files
     const handleDragLeave = (e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
         setIsDroppingFile(false);
     };
 
-    // Handle image upload
-    const handleImageUpload = useCallback(
-        async (e: React.ChangeEvent<HTMLInputElement>) => {
-            e.stopPropagation();
-            const file = e.target.files?.[0];
-            if (!file) return;
+    const onFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDroppingFile(false);
+        const file = e.dataTransfer.files[0];
+        if (file) void handleFileDrop(file);
+    };
 
-            try {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const imageUrl = event.target?.result as string;
-                    if (imageUrl) {
-                        const img = document.createElement('img');
-                        img.onload = () => {
-                            const aspectRatio = img.width / img.height;
-                            const newHeight = section.width / aspectRatio;
-                            onUpdate({
-                                ...section,
-                                imageUrl,
-                                height: newHeight,
-                            });
-                        };
-                        img.src = imageUrl;
-                        onImageUpload(section.id, imageUrl);
-                    }
-                };
-                reader.readAsDataURL(file);
-            } catch (error) {
-                console.error('Failed to upload image:', error);
-            } finally {
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = '';
-                }
-            }
-        },
-        [section, onImageUpload, onUpdate],
-    );
+    const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.stopPropagation();
+        const file = e.target.files?.[0];
+        if (file) void handleImageUpload(file);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+    };
 
-    // Handle resize to proportion
-    const handleResizeToProportion = useCallback(() => {
-        if (!section.imageUrl || !imageRef.current) return;
-
-        const img = imageRef.current;
-        const aspectRatio = img.naturalWidth / img.naturalHeight;
-
-        // If image is too small, enforce minimum size while maintaining aspect ratio
-        if (img.naturalWidth < MIN_SECTION_SIZE || img.naturalHeight < MIN_SECTION_SIZE) {
-            // Calculate new dimensions that maintain aspect ratio and meet minimum size
-            let newWidth = Math.max(MIN_SECTION_SIZE, img.naturalWidth);
-            let newHeight = newWidth / aspectRatio;
-
-            // If height is still too small, base it on height instead
-            if (newHeight < MIN_SECTION_SIZE) {
-                newHeight = MIN_SECTION_SIZE;
-                newWidth = newHeight * aspectRatio;
-            }
-
-            onUpdate({
-                ...section,
-                width: Math.round(newWidth),
-                height: Math.round(newHeight),
-            });
-        }
-        // If image is smaller than current width but larger than minimum, resize to actual size
-        else if (img.naturalWidth < section.width) {
-            onUpdate({
-                ...section,
-                width: Math.max(MIN_SECTION_SIZE, img.naturalWidth),
-                height: Math.max(MIN_SECTION_SIZE, img.naturalHeight),
-            });
-        } else {
-            // Otherwise just adjust height to maintain proportion
-            const newHeight = section.width / aspectRatio;
-            onUpdate({
-                ...section,
-                height: Math.max(MIN_SECTION_SIZE, newHeight),
-            });
-        }
-    }, [section, onUpdate]);
+    const openFilePicker = useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        fileInputRef.current?.click();
+    }, []);
 
     return (
         <div
@@ -473,230 +114,52 @@ export function ImageSectionComponent({
             onClick={handleClick}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
-            onDrop={handleFileDrop}
+            onDrop={onFileDrop}
         >
-            {/* Resize handles */}
             {isSelected && !isResizing && (
-                <div className="absolute inset-0 transition-opacity duration-200 z-30 pointer-events-none">
-                    {/* Corner handles */}
-                    <div
-                        data-resize-handle="true"
-                        className="absolute -top-3 -left-3 w-8 h-8 bg-white border-2 border-editor-accent rounded-full shadow-lg cursor-nw-resize hover:scale-110 hover:bg-editor-accent/10 transition-transform duration-150 flex items-center justify-center select-none z-30 pointer-events-auto"
-                        onMouseDown={(e) => handleResizeStart(e, 'topLeft')}
-                        title="Resize from top-left"
-                    >
-                        <Minus className="w-4 h-4 text-editor-accent" />
-                    </div>
-                    <div
-                        data-resize-handle="true"
-                        className="absolute -top-3 -right-3 w-8 h-8 bg-white border-2 border-editor-accent rounded-full shadow-lg cursor-ne-resize hover:scale-110 hover:bg-editor-accent/10 transition-transform duration-150 flex items-center justify-center select-none z-30 pointer-events-auto"
-                        onMouseDown={(e) => handleResizeStart(e, 'topRight')}
-                        title="Resize from top-right"
-                    >
-                        <Plus className="w-4 h-4 text-editor-accent" />
-                    </div>
-                    <div
-                        data-resize-handle="true"
-                        className="absolute -bottom-3 -left-3 w-8 h-8 bg-white border-2 border-editor-accent rounded-full shadow-lg cursor-sw-resize hover:scale-110 hover:bg-editor-accent/10 transition-transform duration-150 flex items-center justify-center select-none z-30 pointer-events-auto"
-                        onMouseDown={(e) => handleResizeStart(e, 'bottomLeft')}
-                        title="Resize from bottom-left"
-                    >
-                        <Plus className="w-4 h-4 text-editor-accent" />
-                    </div>
-                    <div
-                        data-resize-handle="true"
-                        className="absolute -bottom-3 -right-3 w-8 h-8 bg-white border-2 border-editor-accent rounded-full shadow-lg cursor-se-resize hover:scale-110 hover:bg-editor-accent/10 transition-transform duration-150 flex items-center justify-center select-none z-30 pointer-events-auto"
-                        onMouseDown={(e) => handleResizeStart(e, 'bottomRight')}
-                        title="Resize from bottom-right"
-                    >
-                        <Plus className="w-4 h-4 text-editor-accent" />
-                    </div>
-
-                    {/* Edge handles */}
-                    <div
-                        data-resize-handle="true"
-                        className="absolute top-0 left-4 right-4 h-4 bg-transparent hover:bg-editor-accent/20 cursor-n-resize group/edge select-none z-30 border-t-2 border-transparent hover:border-editor-accent/30 pointer-events-auto"
-                        onMouseDown={(e) => handleResizeStart(e, 'top')}
-                    >
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
-                    </div>
-                    <div
-                        data-resize-handle="true"
-                        className="absolute bottom-0 left-4 right-4 h-4 bg-transparent hover:bg-editor-accent/20 cursor-s-resize group/edge select-none z-30 border-b-2 border-transparent hover:border-editor-accent/30 pointer-events-auto"
-                        onMouseDown={(e) => handleResizeStart(e, 'bottom')}
-                    >
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
-                    </div>
-                    <div
-                        data-resize-handle="true"
-                        className="absolute left-0 top-4 bottom-4 w-4 bg-transparent hover:bg-editor-accent/20 cursor-w-resize group/edge select-none z-30 border-l-2 border-transparent hover:border-editor-accent/30 pointer-events-auto"
-                        onMouseDown={(e) => handleResizeStart(e, 'left')}
-                    >
-                        <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
-                    </div>
-                    <div
-                        data-resize-handle="true"
-                        className="absolute right-0 top-4 bottom-4 w-4 bg-transparent hover:bg-editor-accent/20 cursor-e-resize group/edge select-none z-30 border-r-2 border-transparent hover:border-editor-accent/30 pointer-events-auto"
-                        onMouseDown={(e) => handleResizeStart(e, 'right')}
-                    >
-                        <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-editor-accent rounded-full opacity-0 group-hover/edge:opacity-100 transition-opacity duration-150" />
-                    </div>
-                </div>
+                <SectionResizeHandles onResizeStart={handleResizeStart} />
             )}
 
-            {/* Selection indicator */}
             {isSelected && (
                 <div className="absolute inset-0 border-2 border-editor-accent border-dashed pointer-events-none z-5" />
             )}
 
-            {/* Top menu - container passes through for drag; only buttons capture */}
-            <div
-                className={cn(
-                    'absolute top-2 right-2 flex gap-1 bg-white rounded-lg shadow-md p-1 z-50 pointer-events-none',
-                    'opacity-0 group-hover:opacity-100 transition-opacity',
-                    isSelected && 'opacity-100',
-                )}
-            >
-                {section.imageUrl && (
-                    <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
-                        onClick={handleResizeToProportion}
-                        title="Fit to image proportion"
-                    >
-                        <Maximize2 className="h-4 w-4" />
-                    </Button>
-                )}
-                <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDuplicate(section);
-                    }}
-                >
-                    <Copy className="h-4 w-4" />
-                </Button>
-                <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8 hover:bg-red-50 text-red-600 pointer-events-auto"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(section.id);
-                    }}
-                >
-                    <Trash2 className="h-4 w-4" />
-                </Button>
-            </div>
+            <SectionToolbar
+                section={section}
+                isSelected={isSelected}
+                onResizeToProportion={handleResizeToProportion}
+                onDuplicate={onDuplicate}
+                onDelete={onDelete}
+            />
 
-            {/* Image container - pointer-events-none so section receives drag; children opt-in with pointer-events-auto */}
             <div className="relative w-full h-full group pointer-events-none">
                 {section.imageUrl ? (
-                    <>
-                        <Image
-                            ref={(el) => {
-                                if (el) {
-                                    imageRef.current = el;
-                                }
-                            }}
-                            src={section.imageUrl}
-                            alt="Section content"
-                            className="w-full h-full object-contain pointer-events-none"
-                            fill
-                            draggable={false}
-                        />
-                        {/* Hover overlay - pointer-events-none so drag works; only corner Replace button is clickable */}
-                        <div
-                            className={cn(
-                                'absolute inset-0 rounded-lg pointer-events-none z-20',
-                                'opacity-0 group-hover:opacity-100 transition-opacity',
-                                isDroppingFile && 'opacity-100 bg-editor-accent/40',
-                                !isDroppingFile && 'bg-black/40',
-                            )}
-                        >
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="absolute bottom-2 right-2 h-8 px-2 bg-white/20 hover:bg-white/30 text-white pointer-events-auto"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    if (fileInputRef.current) {
-                                        fileInputRef.current.click();
-                                    }
-                                }}
-                            >
-                                <RefreshCw className="h-4 w-4" />
-                                {section.width >= 150 && (
-                                    <span className="ml-1.5 text-xs">
-                                        {isDroppingFile ? 'Drop to Replace' : 'Replace'}
-                                    </span>
-                                )}
-                            </Button>
-                        </div>
-                    </>
+                    <SectionImage
+                        section={section}
+                        imageRef={(el) => {
+                            if (el) imageRef.current = el;
+                        }}
+                        isDroppingFile={isDroppingFile}
+                        onReplaceClick={openFilePicker}
+                    />
                 ) : (
-                    <div
-                        className={cn(
-                            'w-full h-full flex items-center justify-center pointer-events-none',
-                            'bg-gray-50/50 hover:bg-gray-100/50 transition-colors',
-                            isDroppingFile && 'bg-editor-accent/5',
-                        )}
-                    >
-                        {/* Only the upload CTA is clickable; rest passes through for drag */}
-                        <button
-                            type="button"
-                            className="flex flex-col items-center gap-2 p-4 cursor-pointer pointer-events-auto rounded-lg hover:bg-gray-100/50 transition-colors border-0 bg-transparent"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (fileInputRef.current) {
-                                    fileInputRef.current.click();
-                                }
-                            }}
-                        >
-                            <ImageIcon className="h-8 w-8 text-gray-400" />
-                            <span className="text-sm text-gray-500 text-center">
-                                {isDroppingFile ? 'Drop Image Here' : 'Click to upload image'}
-                            </span>
-                        </button>
-                    </div>
+                    <SectionEmptyState
+                        isDroppingFile={isDroppingFile}
+                        onUploadClick={openFilePicker}
+                    />
                 )}
             </div>
 
-            {/* Hidden file input */}
             <input
                 ref={fileInputRef}
                 type="file"
                 className="hidden"
                 accept="image/*"
-                onChange={handleImageUpload}
+                onChange={onInputChange}
                 data-section-input="true"
             />
 
-            {/* Upload progress overlay */}
-            {uploadProgress && (
-                <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center z-50">
-                    <div className="w-full max-w-xs px-4">
-                        <div className="mb-2 flex items-center justify-between">
-                            <span className="text-sm font-medium text-gray-700">
-                                {uploadProgress.message}
-                            </span>
-                            <span className="text-sm font-medium text-gray-500">
-                                {Math.round(uploadProgress.progress)}%
-                            </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-1.5">
-                            <div
-                                className="bg-purple-500 h-1.5 rounded-full transition-all duration-300"
-                                style={{ width: `${uploadProgress.progress}%` }}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
+            {uploadProgress && <SectionUploadProgress progress={uploadProgress} />}
         </div>
     );
 }
