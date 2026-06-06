@@ -1,11 +1,9 @@
 echo "Running pre-commit checks..."
 
-cd apps/web || exit 1
-
 # Run TypeScript type checking
 echo "Running type check..."
-bun typecheck || exit 1
+bun run typecheck || exit 1
 
 # Run linting
 echo "Running lint..."
-bun lint || exit 1
+bun run lint || exit 1

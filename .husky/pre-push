@@ -1,1 +1,1 @@
-cd apps/web && bun run build
+bun run build
