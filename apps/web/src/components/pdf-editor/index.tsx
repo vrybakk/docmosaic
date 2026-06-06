@@ -1,29 +1,20 @@
 'use client';
 
 import { trackEvent } from '@/lib/analytics';
-import { estimatePDFSize, generatePDF } from '@/lib/pdf';
-import {
-    EditorConfigProvider,
-    defaultImageRenderer,
-} from '@/lib/pdf-editor/context/editor-config';
+import { estimatePDFSize } from '@/lib/pdf';
+import { EditorConfigProvider, defaultImageRenderer } from '@/lib/pdf-editor/context/editor-config';
 import { useDocumentState } from '@/lib/pdf-editor/hooks/useDocumentState';
-import { getDownloadFileName } from '@/lib/pdf-editor/utils/document';
 import { PageOrientation, PageSize } from '@/lib/types';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Canvas } from './canvas/index';
+import { EditorLayout } from './editor-layout';
 import { Header } from './header/index';
 import { Preview } from './preview/index';
 import { Sidebar } from './sidebar/index';
 import { Toolbar } from './toolbar/index';
-
-interface GenerationState {
-    isGenerating: boolean;
-    progress?: number;
-    stage?: 'optimizing' | 'generating' | 'complete';
-    error?: string;
-}
+import { usePdfGeneration } from './use-pdf-generation';
 
 /**
  * PDF Editor component
@@ -55,11 +46,15 @@ export function PDFEditor() {
 
     const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-    const [generationState, setGenerationState] = useState<GenerationState>({
-        isGenerating: false,
-    });
     const [estimatedSize, setEstimatedSize] = useState<number>(0);
-    const abortControllerRef = useRef<AbortController | null>(null);
+
+    const {
+        state: generationState,
+        download,
+        print,
+        abort,
+        dismissError,
+    } = usePdfGeneration({ document, onSizeKnown: updateEstimatedSize });
 
     useEffect(() => {
         trackEvent.editorInit();
@@ -80,125 +75,8 @@ export function PDFEditor() {
 
     const handleAddSection = () => {
         trackEvent.addSection();
-
         const section = addSection();
-        // Select the new section
         setSelectedSectionId(section.id);
-    };
-
-    const handleCancel = () => {
-        abortControllerRef.current?.abort();
-        setGenerationState({
-            isGenerating: false,
-            error: 'PDF generation cancelled.',
-        });
-    };
-
-    const handleDownload = async () => {
-        try {
-            abortControllerRef.current = new AbortController();
-
-            setGenerationState({
-                isGenerating: true,
-                stage: 'optimizing',
-                progress: 0,
-            });
-
-            const blob = await generatePDF(
-                document.sections,
-                {
-                    pageSize: document.pageSize,
-                    orientation: document.orientation,
-                    pages: document.pages,
-                    signal: abortControllerRef.current.signal,
-                },
-                (progress) => {
-                    setGenerationState((prev) => ({
-                        ...prev,
-                        ...progress,
-                    }));
-                },
-            );
-
-            const url = URL.createObjectURL(blob);
-
-            const link = globalThis.document.createElement('a');
-            link.href = url;
-            link.download = getDownloadFileName(document.name);
-            globalThis.document.body.appendChild(link);
-            link.click();
-
-            globalThis.document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-
-            updateEstimatedSize(blob.size);
-
-            setGenerationState({
-                isGenerating: false,
-            });
-        } catch (error) {
-            console.error('Error generating PDF:', error);
-            setGenerationState({
-                isGenerating: false,
-                error:
-                    (error as Error).message === 'PDF generation cancelled'
-                        ? 'PDF generation cancelled.'
-                        : 'Failed to generate PDF. Please try again.',
-            });
-        } finally {
-            abortControllerRef.current = null;
-        }
-    };
-
-    const handlePrint = async () => {
-        try {
-            setGenerationState({
-                isGenerating: true,
-                stage: 'optimizing',
-                progress: 0,
-            });
-
-            const blob = await generatePDF(
-                document.sections,
-                {
-                    pageSize: document.pageSize,
-                    orientation: document.orientation,
-                    pages: document.pages,
-                },
-                (progress) => {
-                    setGenerationState((prev) => ({
-                        ...prev,
-                        ...progress,
-                    }));
-                },
-            );
-
-            const url = URL.createObjectURL(blob);
-            const printWindow = window.open(url);
-            if (printWindow) {
-                printWindow.onload = () => {
-                    printWindow.print();
-                    URL.revokeObjectURL(url);
-                };
-            }
-
-            setGenerationState({
-                isGenerating: false,
-            });
-        } catch (error) {
-            console.error('Error printing PDF:', error);
-            setGenerationState({
-                isGenerating: false,
-                error: 'Failed to print PDF. Please try again.',
-            });
-        }
-    };
-
-    const handleErrorDismiss = () => {
-        setGenerationState((prev) => ({
-            ...prev,
-            error: undefined,
-        }));
     };
 
     const handlePageSizeChange = (value: PageSize) => {
@@ -220,40 +98,42 @@ export function PDFEditor() {
     return (
         <EditorConfigProvider value={{ imageRenderer: defaultImageRenderer }}>
             <DndProvider backend={HTML5Backend}>
-                <div className="flex flex-col h-screen bg-gray-50">
-                    <Header
-                        name={document.name}
-                        pageSize={document.pageSize}
-                        orientation={document.orientation}
-                        onNameChange={handleNameChange}
-                        onPageSizeChange={handlePageSizeChange}
-                        onOrientationChange={handleOrientationChange}
-                    />
-
-                    <Toolbar
-                        canUndo={canUndo}
-                        canRedo={canRedo}
-                        hasContent={document.sections.length > 0}
-                        onUndo={() => {
-                            trackEvent.undo();
-                            undo();
-                        }}
-                        onRedo={() => {
-                            trackEvent.redo();
-                            redo();
-                        }}
-                        onPreview={() => setIsPreviewOpen(true)}
-                        onPrint={handlePrint}
-                        onDownload={handleDownload}
-                        isGenerating={generationState.isGenerating}
-                        progress={generationState.progress}
-                        error={generationState.error}
-                        estimatedSize={estimatedSize}
-                        onCancel={handleCancel}
-                        onErrorDismiss={handleErrorDismiss}
-                    />
-
-                    <div className="flex-1 flex min-h-0">
+                <EditorLayout
+                    header={
+                        <Header
+                            name={document.name}
+                            pageSize={document.pageSize}
+                            orientation={document.orientation}
+                            onNameChange={handleNameChange}
+                            onPageSizeChange={handlePageSizeChange}
+                            onOrientationChange={handleOrientationChange}
+                        />
+                    }
+                    toolbar={
+                        <Toolbar
+                            canUndo={canUndo}
+                            canRedo={canRedo}
+                            hasContent={document.sections.length > 0}
+                            onUndo={() => {
+                                trackEvent.undo();
+                                undo();
+                            }}
+                            onRedo={() => {
+                                trackEvent.redo();
+                                redo();
+                            }}
+                            onPreview={() => setIsPreviewOpen(true)}
+                            onPrint={print}
+                            onDownload={download}
+                            isGenerating={generationState.isGenerating}
+                            progress={generationState.progress}
+                            error={generationState.error}
+                            estimatedSize={estimatedSize}
+                            onCancel={abort}
+                            onErrorDismiss={dismissError}
+                        />
+                    }
+                    sidebar={
                         <Sidebar
                             pages={document.pages}
                             sections={document.sections}
@@ -267,7 +147,8 @@ export function PDFEditor() {
                             onDeletePage={deletePage}
                             onReorderPages={reorderPages}
                         />
-
+                    }
+                    canvas={
                         <Canvas
                             page={document.pages[document.currentPage - 1]}
                             pageSize={document.pageSize}
@@ -290,18 +171,19 @@ export function PDFEditor() {
                                 setSelectedSectionId(newSection.id);
                             }}
                         />
-                    </div>
-
-                    <Preview
-                        isOpen={isPreviewOpen}
-                        onClose={() => setIsPreviewOpen(false)}
-                        onDownload={handleDownload}
-                        pages={document.pages}
-                        sections={document.sections}
-                        pageSize={document.pageSize}
-                        orientation={document.orientation}
-                    />
-                </div>
+                    }
+                    preview={
+                        <Preview
+                            isOpen={isPreviewOpen}
+                            onClose={() => setIsPreviewOpen(false)}
+                            onDownload={download}
+                            pages={document.pages}
+                            sections={document.sections}
+                            pageSize={document.pageSize}
+                            orientation={document.orientation}
+                        />
+                    }
+                />
             </DndProvider>
         </EditorConfigProvider>
     );

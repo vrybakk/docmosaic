@@ -1,14 +1,14 @@
 'use client';
 
-import { Button } from '@/components/ui/core/button';
 import Loader from '@/components/ui/data-display/loader';
 import { trackEvent } from '@/lib/analytics';
 import { ImageSection, Page, PageOrientation, PageSize } from '@/lib/pdf-editor/types';
 import { getPageDimensionsWithOrientation } from '@/lib/pdf-editor/utils/dimensions';
-import { Minus, Plus, RotateCcw } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { ImageSectionComponent } from '../image-section';
+import { CanvasControls } from './canvas-controls';
+import { useCanvasZoom } from './use-canvas-zoom';
 
 interface CanvasProps {
     /** The current page data */
@@ -39,10 +39,6 @@ interface CanvasProps {
     onSectionCreate?: (section: ImageSection) => void;
 }
 
-const ZOOM_STEP = 0.1;
-const MIN_ZOOM = 0.5;
-const MAX_ZOOM = 2;
-
 /**
  * Canvas component for PDF editor
  * Handles page display, zoom, and image section interactions
@@ -62,9 +58,12 @@ export function Canvas({
 }: CanvasProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
-    const [zoom, setZoom] = useState(1);
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [isLoading, setIsLoading] = useState(true);
+
+    const { zoom, minZoom, maxZoom, zoomIn, zoomOut, reset, handleWheel } = useCanvasZoom({
+        onZoomChange: trackEvent.zoom,
+    });
 
     const pageDimensions = useMemo(() => {
         return getPageDimensionsWithOrientation(pageSize, orientation);
@@ -96,34 +95,9 @@ export function Canvas({
         return () => window.removeEventListener('resize', updateScale);
     }, [pageDimensions]);
 
-    // Zoom controls with analytics
-    const handleZoomIn = () => {
-        const newZoom = Math.min(zoom + ZOOM_STEP, MAX_ZOOM);
-        setZoom(newZoom);
-        trackEvent.zoom(newZoom);
-    };
-
-    const handleZoomOut = () => {
-        const newZoom = Math.max(zoom - ZOOM_STEP, MIN_ZOOM);
-        setZoom(newZoom);
-        trackEvent.zoom(newZoom);
-    };
-
-    const handleZoomReset = () => {
-        setZoom(1);
+    const handleResetZoom = () => {
+        reset();
         setPan({ x: 0, y: 0 });
-        trackEvent.zoom(1);
-    };
-
-    // Mouse wheel zoom with analytics
-    const handleWheel = (e: React.WheelEvent) => {
-        if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            const delta = e.deltaY * -0.01;
-            const newZoom = Math.min(Math.max(zoom + delta, MIN_ZOOM), MAX_ZOOM);
-            setZoom(newZoom);
-            trackEvent.zoom(newZoom);
-        }
     };
 
     // Filter sections for current page
@@ -237,41 +211,15 @@ export function Canvas({
                 </div>
             )}
 
-            {/* Zoom controls */}
             {!isLoading && (
-                <div className="absolute top-4 right-4 flex items-center gap-2 bg-white rounded-lg shadow-sm p-1 z-10 transition-all duration-200">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleZoomOut}
-                        disabled={(zoom || 1) <= MIN_ZOOM}
-                        className="h-8 w-8"
-                    >
-                        <Minus className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleZoomReset}
-                        disabled={(zoom || 1) === 1}
-                        className="h-8 w-8"
-                        title="Reset zoom"
-                    >
-                        <RotateCcw className="h-4 w-4" />
-                    </Button>
-                    <span className="text-sm font-medium w-12 text-center">
-                        {Math.round((zoom || 1) * 100)}%
-                    </span>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleZoomIn}
-                        disabled={(zoom || 1) >= MAX_ZOOM}
-                        className="h-8 w-8"
-                    >
-                        <Plus className="h-4 w-4" />
-                    </Button>
-                </div>
+                <CanvasControls
+                    zoom={zoom}
+                    minZoom={minZoom}
+                    maxZoom={maxZoom}
+                    onZoomIn={zoomIn}
+                    onZoomOut={zoomOut}
+                    onReset={handleResetZoom}
+                />
             )}
         </div>
     );
