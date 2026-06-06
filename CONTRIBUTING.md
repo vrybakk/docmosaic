@@ -1,89 +1,93 @@
 # Contributing to DocMosaic
 
-We love your input! We want to make contributing to DocMosaic as easy and transparent as possible, whether it's:
+Thanks for your interest in DocMosaic. This file covers everything you need to develop, test, and ship a change.
 
--   Reporting a bug
--   Discussing the current state of the code
--   Submitting a fix
--   Proposing new features
--   Becoming a maintainer
+## Develop locally
 
-## Development Process
+1. Clone the repo and install dependencies (Bun is required — see `packageManager` in `package.json`):
 
-We use GitHub to host code, to track issues and feature requests, as well as accept pull requests.
+    ```bash
+    git clone https://github.com/vrybakk/doc-mosaic.git
+    cd doc-mosaic
+    bun install
+    ```
 
-1. Fork the repo and create your branch from `main`
-2. If you've added code that should be tested, add tests
-3. If you've changed APIs, update the documentation
-4. Ensure the test suite passes
-5. Make sure your code lints
-6. Issue that pull request!
+2. Boot the reference app:
 
-## Local Development Setup
+    ```bash
+    bun run dev
+    ```
 
-1. Clone the repository
+    The Next.js dev server runs on port **4001**. The editor lives at <http://localhost:4001/pdf-editor>.
+
+3. While iterating, run the workspace gates from the repo root:
+
+    ```bash
+    bun run typecheck
+    bun run lint
+    bun run test:run
+    bun run build
+    ```
+
+    Each command fans out across `@docmosaic/core`, `@docmosaic/react`, and `@docmosaic/web` via Turborepo. All four must pass before opening a PR.
+
+## Repo layout
+
+```text
+packages/
+├── core/           @docmosaic/core   — pure TS, no React
+└── react/          @docmosaic/react  — UI primitives + hooks
+apps/
+└── web/            @docmosaic/web    — Next.js 15 reference app
+docs/
+└── SMOKE.md        Manual smoke checklist
+```
+
+## Writing a Changeset
+
+Any change to `@docmosaic/core` or `@docmosaic/react` that ships to npm needs a Changeset. `@docmosaic/web` is in the `ignore` list — site-only changes don't need one.
 
 ```bash
-git clone https://github.com/yourusername/doc-mosaic.git
-cd doc-mosaic
+bunx changeset
 ```
 
-2. Install dependencies
+Pick the affected packages, choose the bump (`patch` / `minor` / `major`), and write a one-line summary of what changed. Commit the generated file under `.changeset/` along with your code.
 
-```bash
-npm install
-# or
-yarn
-```
+When a release lands on `main`, `bun run version-packages` (`changeset version`) opens the version PR; `bun run release` publishes once that's merged.
 
-3. Start the development server
+## Commit conventions
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+[Conventional Commits](https://www.conventionalcommits.org/), enforced by commitlint via the `commit-msg` Husky hook:
 
-## Project Structure
+-   `feat: …` — user-facing feature
+-   `fix: …` — bug fix
+-   `refactor: …` — internal change, no behavior change
+-   `docs: …` — docs only
+-   `chore: …` — tooling, deps, repo plumbing
+-   `test: …` — tests only
 
-```
-doc-mosaic/
-├── src/
-│   ├── app/              # Next.js app router pages
-│   ├── components/       # React components
-│   │   ├── pdf-editor/   # PDF editor components
-│   │   └── ui/          # Shared UI components
-│   └── lib/             # Utilities and helpers
-├── public/              # Static files
-└── tests/              # Test files
-```
+Keep the subject under ~72 chars. One concern per commit; if a change touches the core, the React layer, and the reference app, split it where the seams are.
 
-## Coding Style
+## Pull request process
 
--   Use TypeScript for type safety
--   Follow the existing code style
--   Use functional components with hooks
--   Write meaningful commit messages following conventional commits
--   Document complex logic with comments
--   Use meaningful variable and function names
+1. Branch off `main` (or rebase before opening the PR).
+2. Make sure typecheck, lint, test, and build all pass locally.
+3. Walk through [`docs/SMOKE.md`](docs/SMOKE.md) for any change that touches the editor — it covers the regressions our automated tests don't.
+4. Include a Changeset for npm-shipping packages.
+5. Open the PR with a short summary of what changed and why. Screenshots help for UI work.
 
 ## Testing
 
--   Write unit tests for utilities and components
--   Add integration tests for complex features
--   Test edge cases and error scenarios
--   Ensure accessibility compliance
+-   `bun run test:run` runs every workspace's Vitest suite once.
+-   `bun run test` watches.
+-   Add unit tests next to the file they cover (`foo.test.ts` next to `foo.ts`).
+-   The PDF byte-diff in `packages/core/src/pdf/generate.test.ts` is the canary for the rendering pipeline — it must keep passing across refactors.
+-   Manual smoke checklist: [`docs/SMOKE.md`](docs/SMOKE.md).
 
-## Pull Request Process
+## Reporting issues
 
-1. Update the README.md with details of changes if needed
-2. Update the documentation with details of any new features
-3. The PR will be merged once you have the sign-off of maintainers
-
-## Any Questions?
-
-Feel free to file an issue with your question or reach out to the maintainers directly.
+Bug reports and feature requests go to the [issue tracker](https://github.com/vrybakk/doc-mosaic/issues). For bugs, please include reproduction steps, the page size + orientation, and a screenshot of the editor state if relevant.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under its MIT License.
+By contributing, you agree your contributions are licensed under the MIT License — see [LICENSE](LICENSE).

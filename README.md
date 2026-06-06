@@ -1,62 +1,80 @@
-# DocMosaic - Visual PDF Creation Tool
+# DocMosaic
 
-DocMosaic is a powerful, open-source PDF creation tool that allows users to visually arrange images and create structured documents directly in the browser. Built with Next.js 14, React, TypeScript, and modern web technologies.
+DocMosaic is an open-source, fully client-side PDF builder. Users drop images into rectangular sections on a virtual page; the whole document model lives in React state and renders to a PDF in the browser via `jspdf`. No backend, no uploads — privacy is a product promise, not a side effect.
 
-## 🌟 Features
+This repository is the monorepo. It contains the reusable libraries plus the reference Next.js app that runs at [docmosaic.com](https://docmosaic.com).
 
--   **Visual Document Building**: Drag-and-drop interface for arranging images
--   **Multiple Page Support**: Create multi-page documents with ease
--   **Flexible Page Settings**: Support for various paper sizes and orientations
--   **Real-time Preview**: Instant visual feedback as you build your document
--   **Privacy-First**: All processing happens in your browser - no server uploads
--   **Responsive Design**: Works seamlessly on desktop and mobile devices
--   **Accessibility**: Built with ARIA support and keyboard navigation
+## What's in here
 
-## 🚀 Getting Started
+| Package                                  | Description                                                                        |
+| ---------------------------------------- | ---------------------------------------------------------------------------------- |
+| [`@docmosaic/core`](packages/core)       | Framework-agnostic TypeScript core: document model, reducer + history, PDF engine. |
+| [`@docmosaic/react`](packages/react)     | React UI primitives: compound `Editor.*` namespace plus headless hooks.            |
+| [`@docmosaic/web`](apps/web) _(private)_ | Reference Next.js 15 app — the site at docmosaic.com.                              |
 
-```bash
-# Clone the repository
-git clone https://github.com/vrybakk/doc-mosaic.git
+## Architecture
 
-# Install dependencies
-bun install
-# or use npm if you prefer
-npm install
-
-# Start development server
-bun dev
-# or
-npm run dev
+```text
+apps/web (Next.js 15)
+    │
+    ▼
+@docmosaic/react   ──  compound primitives + hooks
+    │
+    ▼
+@docmosaic/core    ──  pure types, reducer, PDF engine
 ```
 
-Visit `http://localhost:3000` to start using DocMosaic.
+`apps/web` is a thin layer: a marketing landing page, the `/pdf-editor` route that mounts `Editor.Root`, and the analytics bridge that wires Vercel `track` into both the app and `@docmosaic/react`. Everything interactive lives in the packages.
 
-## 🛠️ Tech Stack
+## Features
 
--   **Framework**: Next.js 14 with App Router
--   **Runtime**: Bun
--   **Language**: TypeScript
--   **Styling**: Tailwind CSS
--   **Components**: Shadcn UI & Radix UI
--   **PDF Generation**: Client-side processing
--   **Analytics**: Vercel Analytics
+-   Drag-and-drop image arrangement on a virtual page
+-   Multi-page documents with reorderable pages
+-   Per-page PDF backgrounds
+-   Live PDF size estimate
+-   Undo/redo with a history timeline
+-   All A-series, US Letter/Legal, plus portrait/landscape orientations
+-   Mobile gesture support (pinch, swipe, long-press) in the reference app
+-   Privacy-first: everything runs in the browser
 
-## 📊 Privacy
+## Develop locally
 
-DocMosaic respects your privacy. All document processing happens in your browser - your files never leave your device. We collect minimal anonymous usage data to improve the application (like page count and feature usage), but never any personal information or document content.
+```bash
+bun install
+bun run dev
+```
 
-## 🤝 Contributing
+The reference app boots at <http://localhost:4001>. The editor itself is at `/pdf-editor`.
 
-We welcome contributions! Check out our [Contributing Guide](CONTRIBUTING.md) to get started. Whether it's bug fixes, new features, or documentation improvements - every contribution matters!
+Other Turborepo tasks:
 
-## 📝 License
+```bash
+bun run build       # build every package + the web app
+bun run typecheck   # tsc --noEmit across the workspace
+bun run lint        # ESLint where configured
+bun run test:run    # vitest run in CI mode
+```
 
-MIT License - see [LICENSE](LICENSE) for details.
+After a manual change, walk through [`docs/SMOKE.md`](docs/SMOKE.md) — a 90-second checklist that catches the regressions our automated tests can't.
 
-## 🔗 Links
+## Repo conventions
 
--   [Documentation](docs/README.md)
+-   **Bun** as package manager and runtime (`packageManager: "bun@1.3.11"`).
+-   **Turborepo** for task orchestration (`turbo.json`) with caching.
+-   **Changesets** for versioning the public packages — `@docmosaic/web` is in the ignore list because it never ships to npm.
+-   **Conventional Commits**, enforced by commitlint via Husky.
+-   Husky hooks: `pre-commit` runs typecheck + lint, `pre-push` runs the full build.
+
+## Contributing
+
+We welcome bug fixes, new features, and documentation improvements. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow, commit conventions, and Changeset instructions.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+## Links
+
 -   [Production](https://docmosaic.com)
--   [Live Demo](https://docmosaic.vercel.app)
--   [Report Bug](https://github.com/vrybakk/doc-mosaic/issues)
--   [Request Feature](https://github.com/vrybakk/doc-mosaic/issues)
+-   [Live demo](https://docmosaic.vercel.app)
+-   [Issue tracker](https://github.com/vrybakk/doc-mosaic/issues)
