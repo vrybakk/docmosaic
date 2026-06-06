@@ -260,7 +260,7 @@ export function useEditorSection(): UseEditorSectionResult {
     );
 
     const onImageUpload = useCallback(
-        (sectionId: string, imageUrl: string) => {
+        (_sectionId: string, imageUrl: string) => {
             // Read from rawSection so we don't accidentally pollute geometry
             // with the scaled values from the wrapping section context.
             actions.updateSection({ ...rawSection, imageUrl });
