@@ -2,12 +2,12 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "./dist",
-        "rootDir": "./src",
         "declaration": true,
         "noEmit": false,
         "incremental": false,
-        "jsx": "react-jsx"
+        "jsx": "react-jsx",
+        "types": ["node"]
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "tsup.config.ts", "vitest.config.ts"],
     "exclude": ["**/*.test.ts", "**/*.test.tsx", "dist", "node_modules"]
 }

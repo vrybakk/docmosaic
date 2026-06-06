@@ -35,6 +35,7 @@
     },
     "devDependencies": {
         "@docmosaic/core": "workspace:*",
+        "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",
         "@vitejs/plugin-react": "^4.3.4",
