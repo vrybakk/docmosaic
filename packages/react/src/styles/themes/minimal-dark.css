@@ -2,20 +2,48 @@
  * Minimal dark theme — shadcn-inspired neutral grays + subtle borders.
  * Pair with @docmosaic/react/styles/base.css.
  *
+ * Exposes the same shadcn-aligned semantic surface as `docmosaic.css` with
+ * dark-mode values. Legacy `--editor-color-*` aliases preserved for back-compat.
+ *
  * Color triplets are space-separated to compose with the modern
  * `rgb(R G B / <alpha-value>)` syntax used by the editor's Tailwind utilities.
  */
 
-:root {
-    --editor-color-accent: 250 250 250; /* zinc-50 — near-white primary on dark */
-    --editor-color-accent-soft: 38 38 38; /* zinc-800 — soft accent on dark */
-    --editor-color-success: 134 239 172; /* green-300 */
-    --editor-color-warning: 253 224 71; /* yellow-300 */
-    --editor-color-warning-soft: 67 56 0; /* yellow-800 */
-    --editor-color-surface: 9 9 11; /* zinc-950 — base surface */
-    --editor-color-text: 250 250 250; /* zinc-50 */
+@layer docmosaic {
+    :root {
+        /* Semantic surface (shadcn-aligned). */
+        --background: 9 9 11; /* zinc-950 */
+        --foreground: 250 250 250; /* zinc-50 */
+        --card: 24 24 27; /* zinc-900 */
+        --card-foreground: 250 250 250;
+        --primary: 250 250 250;
+        --primary-foreground: 9 9 11;
+        --secondary: 39 39 42; /* zinc-800 */
+        --secondary-foreground: 250 250 250;
+        --muted: 39 39 42;
+        --muted-foreground: 161 161 170; /* zinc-400 */
+        --accent: 39 39 42;
+        --accent-foreground: 250 250 250;
+        --destructive: 248 113 113; /* red-400 */
+        --destructive-foreground: 9 9 11;
+        --border: 39 39 42;
+        --input: 39 39 42;
+        --ring: 250 250 250;
+        --radius: 0.5rem;
 
-    /* Tighter, more shadcn-y structural tokens. */
-    --editor-radius-section: 6px;
-    --editor-shadow-section: 0 1px 2px rgba(0, 0, 0, 0.4);
+        /* Legacy --editor-color-* aliases — soft-deprecated. Historic values
+           pinned where the semantic surface diverges, to keep existing
+           primitives byte-equivalent to the previous release. */
+        --editor-color-accent: var(--primary);
+        --editor-color-accent-soft: 38 38 38; /* zinc-800-ish — preserved historic */
+        --editor-color-success: 134 239 172; /* green-300 */
+        --editor-color-warning: 253 224 71; /* yellow-300 */
+        --editor-color-warning-soft: 67 56 0; /* yellow-800 */
+        --editor-color-surface: var(--background);
+        --editor-color-text: var(--foreground);
+
+        /* Tighter, more shadcn-y structural tokens. */
+        --editor-radius-section: 6px;
+        --editor-shadow-section: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
 }

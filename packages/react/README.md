@@ -218,14 +218,34 @@ import './my-theme.css';
 ```css
 /* my-theme.css */
 :root {
-    --editor-color-accent: 30 41 59; /* slate-800 */
-    --editor-color-accent-soft: 226 232 240; /* slate-200 */
-    --editor-color-success: 34 197 94; /* green-500 */
-    --editor-color-warning: 234 88 12; /* orange-600 */
-    --editor-color-warning-soft: 251 191 36; /* amber-400 */
-    --editor-color-surface: 255 255 255;
-    --editor-color-text: 15 23 42; /* slate-900 */
+    --background: 250 250 252;
+    --foreground: 15 23 42;
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
+    --primary: 79 70 229; /* indigo-600 */
+    --primary-foreground: 255 255 255;
+    --secondary: 224 231 255; /* indigo-100 */
+    --secondary-foreground: 15 23 42;
+    --muted: 244 244 245;
+    --muted-foreground: 113 113 122;
+    --accent: 34 197 94; /* green-500 */
+    --accent-foreground: 255 255 255;
+    --destructive: 220 38 38;
+    --destructive-foreground: 255 255 255;
+    --border: 228 228 231;
+    --input: 228 228 231;
+    --ring: 79 70 229;
+    --radius: 0.5rem;
 }
+```
+
+### Minimal dark / light (shadcn-inspired)
+
+```ts
+import '@docmosaic/react/styles/base.css';
+import '@docmosaic/react/styles/themes/minimal-dark.css';
+// or:
+import '@docmosaic/react/styles/themes/minimal-light.css';
 ```
 
 ### Explicit DocMosaic theme on the base
@@ -239,24 +259,50 @@ import '@docmosaic/react/styles/themes/docmosaic.css';
 
 ### Token reference
 
-Color tokens (RGB triplets — space-separated for `rgb(R G B / <alpha-value>)`):
+Color tokens are space-separated RGB triplets — compose with `rgb(R G B / <alpha-value>)`.
 
-| Token                        | Purpose                                                       | DocMosaic value      |
-| ---------------------------- | ------------------------------------------------------------- | -------------------- |
-| `--editor-color-accent`      | Primary accent — buttons, active section borders, focus rings | `56 29 42` (#381D2A) |
-| `--editor-color-accent-soft` | Soft accent — hover states, subtle highlights                 | `252 222 156`        |
-| `--editor-color-success`     | Success state — confirmation, completed steps                 | `196 214 176`        |
-| `--editor-color-warning`     | Warning — destructive actions, alerts                         | `186 86 36`          |
-| `--editor-color-warning-soft`| Soft warning — caution badges, partial states                 | `255 165 82`         |
-| `--editor-color-surface`     | Editor background surface                                     | `255 255 255`        |
-| `--editor-color-text`        | Default editor text color                                     | `56 29 42`           |
+**Semantic surface (shadcn-aligned) — recommended:**
 
-Structural tokens:
+| Token                    | Purpose                                       | DocMosaic value        |
+| ------------------------ | --------------------------------------------- | ---------------------- |
+| `--background`           | Editor canvas surround                        | `255 255 255`          |
+| `--foreground`           | Default text on `--background`                | `56 29 42` (#381D2A)   |
+| `--card`                 | Elevated surfaces — sidebars, inspector       | `255 255 255`          |
+| `--card-foreground`      | Text on `--card`                              | `56 29 42`             |
+| `--primary`              | Primary accent — buttons, active borders      | `56 29 42`             |
+| `--primary-foreground`   | Text/icons on `--primary`                     | `252 222 156`          |
+| `--secondary`            | Soft accent — hover states, subtle fills      | `252 222 156`          |
+| `--secondary-foreground` | Text on `--secondary`                         | `56 29 42`             |
+| `--muted`                | Placeholder / disabled background             | `244 244 245`          |
+| `--muted-foreground`     | Placeholder / disabled text                   | `113 113 122`          |
+| `--accent`               | Selection highlight                           | `196 214 176`          |
+| `--accent-foreground`    | Text on `--accent`                            | `56 29 42`             |
+| `--destructive`          | Errors, destructive actions, warnings         | `186 86 36`            |
+| `--destructive-foreground` | Text on `--destructive`                     | `255 255 255`          |
+| `--border`               | Default border color                          | `228 228 231`          |
+| `--input`                | Input border color                            | `228 228 231`          |
+| `--ring`                 | Focus ring                                    | `56 29 42`             |
+| `--radius`               | Default border radius                         | `0.5rem`               |
+
+**Legacy `--editor-color-*` aliases (back-compat, soft-deprecated):**
+
+| Token                         | Resolves to              | DocMosaic value       |
+| ----------------------------- | ------------------------ | --------------------- |
+| `--editor-color-accent`       | `var(--primary)`         | `56 29 42`            |
+| `--editor-color-accent-soft`  | `var(--secondary)`       | `252 222 156`         |
+| `--editor-color-success`      | `var(--accent)`          | `196 214 176`         |
+| `--editor-color-warning`      | `var(--destructive)`     | `186 86 36`           |
+| `--editor-color-warning-soft` | (preserved historic)     | `255 165 82`          |
+| `--editor-color-surface`      | `var(--background)`      | `255 255 255`         |
+| `--editor-color-text`         | `var(--foreground)`      | `56 29 42`            |
+
+Structural tokens carry full CSS values (length, shorthand):
 
 | Token                     | Purpose                          | Default                       |
 | ------------------------- | -------------------------------- | ----------------------------- |
 | `--editor-radius-section` | Border radius for image sections | `6px`                         |
 | `--editor-shadow-section` | Shadow for image sections        | `0 1px 3px rgba(0, 0, 0, 0.1)`|
+| `--radius`                | Default border radius            | `0.5rem`                      |
 
 ## Keybindings
 

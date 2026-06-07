@@ -3,19 +3,43 @@
  * Pair with @docmosaic/react/styles/base.css.
  *
  * Brand-agnostic counterpart to minimal-dark — same restrained palette,
- * inverted for a light editor surface.
+ * inverted for a light editor surface. Exposes the shadcn-aligned semantic
+ * surface plus legacy `--editor-color-*` aliases for back-compat.
  */
 
-:root {
-    --editor-color-accent: 9 9 11; /* zinc-950 — near-black primary on light */
-    --editor-color-accent-soft: 244 244 245; /* zinc-100 — soft accent */
-    --editor-color-success: 22 163 74; /* green-600 */
-    --editor-color-warning: 202 138 4; /* yellow-600 */
-    --editor-color-warning-soft: 254 249 195; /* yellow-100 */
-    --editor-color-surface: 255 255 255; /* white */
-    --editor-color-text: 24 24 27; /* zinc-900 */
+@layer docmosaic {
+    :root {
+        /* Semantic surface (shadcn-aligned). */
+        --background: 255 255 255; /* white */
+        --foreground: 24 24 27; /* zinc-900 */
+        --card: 255 255 255;
+        --card-foreground: 24 24 27;
+        --primary: 9 9 11; /* zinc-950 — near-black accent */
+        --primary-foreground: 250 250 250; /* zinc-50 */
+        --secondary: 244 244 245; /* zinc-100 */
+        --secondary-foreground: 9 9 11;
+        --muted: 244 244 245;
+        --muted-foreground: 113 113 122; /* zinc-500 */
+        --accent: 244 244 245;
+        --accent-foreground: 9 9 11;
+        --destructive: 220 38 38; /* red-600 */
+        --destructive-foreground: 250 250 250;
+        --border: 228 228 231; /* zinc-200 */
+        --input: 228 228 231;
+        --ring: 9 9 11;
+        --radius: 0.5rem;
 
-    /* Tighter, more shadcn-y structural tokens. */
-    --editor-radius-section: 6px;
-    --editor-shadow-section: 0 1px 2px rgba(0, 0, 0, 0.08);
+        /* Legacy --editor-color-* aliases — soft-deprecated. */
+        --editor-color-accent: var(--primary);
+        --editor-color-accent-soft: var(--secondary);
+        --editor-color-success: 22 163 74; /* green-600 — no semantic equivalent */
+        --editor-color-warning: 202 138 4; /* yellow-600 */
+        --editor-color-warning-soft: 254 249 195; /* yellow-100 */
+        --editor-color-surface: var(--background);
+        --editor-color-text: var(--foreground);
+
+        /* Tighter, more shadcn-y structural tokens. */
+        --editor-radius-section: 6px;
+        --editor-shadow-section: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
 }
