@@ -3,6 +3,7 @@
 import type React from 'react';
 
 import DonateButton from '@/components/donate-button';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { CustomLink } from '@/components/ui/core/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -244,6 +245,8 @@ export default function Header() {
                             <span className="uppercase">Try DocMosaic</span>
                         </CustomLink>
 
+                        <ThemeToggle />
+
                         <div className="hidden md:flex relative">
                             <button
                                 onClick={toggleLanguageMenu}
@@ -283,6 +286,7 @@ export default function Header() {
 
                     {/* Mobile Navigation */}
                     <div className="flex md:hidden items-center space-x-4">
+                        <ThemeToggle />
                         <div className="relative">
                             <button
                                 onClick={toggleLanguageMenu}

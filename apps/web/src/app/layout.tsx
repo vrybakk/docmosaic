@@ -1,4 +1,5 @@
 import Header from '@/components/layout/header';
+import { ThemeProvider } from '@/components/theme-provider';
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import { Analytics } from '@vercel/analytics/next';
 import { Viewport } from 'next';
@@ -245,8 +246,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <GoogleTagManager gtmId={'GTM-WFRMPQ7Q'} />
                 <GoogleAnalytics gaId={'G-9GLFL0DT7W'} />
 
-                <Header />
-                {children}
+                <ThemeProvider>
+                    <Header />
+                    {children}
+                </ThemeProvider>
                 <Analytics />
                 <AnalyticsBridge />
             </body>
