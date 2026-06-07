@@ -155,5 +155,11 @@ export type {
  */
 export { useDocumentState } from './hooks/use-document-state';
 
+export {
+    DEFAULT_KEYMAP,
+    useEditorKeybindings,
+} from './hooks/use-editor-keybindings';
+export type { EditorKeybinding, EditorKeymap } from './hooks/use-editor-keybindings';
+
 export { setReactPackageTracker } from './internal/analytics';
 export type { AnalyticsTracker } from './internal/analytics';

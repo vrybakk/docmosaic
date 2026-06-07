@@ -22,6 +22,10 @@ import {
     type EditorPdfBackend,
 } from '../context/editor';
 import { useDocumentState } from '../hooks/use-document-state';
+import {
+    useEditorKeybindings,
+    type EditorKeymap,
+} from '../hooks/use-editor-keybindings';
 import { trackEvent } from '../internal/analytics';
 import { Canvas } from './canvas';
 import { Header } from './header';
@@ -76,6 +80,33 @@ export type EditorRootProps = {
      * ```
      */
     pdf?: Partial<EditorPdfBackend>;
+    /**
+     * Keyboard shortcuts.
+     *
+     * - Omit (default): the built-in keymap is active — `mod+z` undo,
+     *   `mod+shift+z` / `mod+y` redo, `Delete` / `Backspace` removes the
+     *   selected section, `Escape` deselects, and `Arrow` / `Shift+Arrow`
+     *   nudge the selected section by 1pt / 10pt.
+     * - Pass a partial {@link EditorKeymap} to override individual bindings or
+     *   register alternates (e.g. `{ redo: 'mod+r' }`).
+     * - Pass `false` to disable the layer entirely — no window listener is
+     *   attached.
+     *
+     * Bindings are skipped while focus is inside an `<input>`, `<textarea>`,
+     * `<select>`, or anything `contenteditable`, so text fields like the
+     * document-name input remain typeable.
+     *
+     * @example Override redo
+     * ```tsx
+     * <Editor.Root keybindings={{ redo: 'mod+r' }}>...</Editor.Root>
+     * ```
+     *
+     * @example Disable all shortcuts
+     * ```tsx
+     * <Editor.Root keybindings={false}>...</Editor.Root>
+     * ```
+     */
+    keybindings?: Partial<EditorKeymap> | false;
 } & (
     | {
           /** Controlled: caller owns the document. */
@@ -90,6 +121,16 @@ export type EditorRootProps = {
           defaultDocument?: Document;
       }
 );
+
+/**
+ * Internal component that calls {@link useEditorKeybindings} from inside the
+ * editor context. Rendering it conditionally lets `Editor.Root` skip attaching
+ * the window listener entirely when `keybindings={false}`.
+ */
+function KeybindingsListener({ keymap }: { keymap: Partial<EditorKeymap> }) {
+    useEditorKeybindings(keymap);
+    return null;
+}
 
 function useFormattedDate(updatedAt: Date) {
     const [formatted, setFormatted] = useState('');
@@ -454,6 +495,15 @@ function arrangeChildren(children: ReactNode): ReactNode {
  *   ...
  * </Editor.Root>
  * ```
+ *
+ * @example Override or disable keyboard shortcuts
+ * ```tsx
+ * // Add a custom redo binding alongside the defaults.
+ * <Editor.Root keybindings={{ redo: 'mod+r' }}>...</Editor.Root>
+ *
+ * // Or turn the layer off entirely.
+ * <Editor.Root keybindings={false}>...</Editor.Root>
+ * ```
  */
 export function Root(props: EditorRootProps) {
     const isControlled = props.document !== undefined;
@@ -465,8 +515,12 @@ export function Root(props: EditorRootProps) {
         [props.pdf?.generate, props.pdf?.estimate],
     );
 
+    const keybindingsEnabled = props.keybindings !== false;
+    const keymap: Partial<EditorKeymap> = props.keybindings ? props.keybindings : {};
+
     const layout = (
         <div className="flex flex-col h-screen bg-gray-50">
+            {keybindingsEnabled && <KeybindingsListener keymap={keymap} />}
             {arrangeChildren(props.children)}
         </div>
     );

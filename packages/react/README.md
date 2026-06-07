@@ -148,6 +148,48 @@ Structural tokens:
 | `--editor-radius-section` | Border radius for image sections | `4px`                         |
 | `--editor-shadow-section` | Shadow for image sections        | `0 1px 3px rgba(0, 0, 0, 0.1)`|
 
+## Keybindings
+
+`Editor.Root` ships with a default keyboard-shortcut layer. Shortcuts are skipped while focus is in an `<input>`, `<textarea>`, `<select>`, or anything `contenteditable`, so text fields stay typeable.
+
+Default keymap (`mod` = Cmd on macOS, Ctrl elsewhere):
+
+| Action            | Default binding                  |
+| ----------------- | -------------------------------- |
+| Undo              | `mod+z`                          |
+| Redo              | `mod+shift+z`, `mod+y`           |
+| Delete section    | `Delete`, `Backspace`            |
+| Deselect          | `Escape`                         |
+| Nudge by 1pt      | `ArrowUp/Down/Left/Right`        |
+| Nudge by 10pt     | `Shift+ArrowUp/Down/Left/Right`  |
+
+### Override individual bindings
+
+Pass a `Partial<EditorKeymap>` — anything omitted keeps its default. Use an array to register alternates.
+
+```tsx
+<Editor.Root
+    keybindings={{
+        redo: 'mod+r',
+        deleteSection: ['Delete', 'Backspace', 'x'],
+    }}
+>
+    {/* … */}
+</Editor.Root>
+```
+
+### Disable all shortcuts
+
+```tsx
+<Editor.Root keybindings={false}>{/* … */}</Editor.Root>
+```
+
+The headless hook is also exported for "BYO-UI" trees that mount their own provider:
+
+```tsx
+import { useEditorKeybindings, DEFAULT_KEYMAP } from '@docmosaic/react';
+```
+
 ## Analytics callback
 
 `@docmosaic/react` ships a no-op analytics tracker. Install your provider once at boot — Vercel `track`, PostHog `capture`, anything matching the `(event, payload)` signature. Events fire only when `process.env.NODE_ENV === 'production'`.
@@ -179,10 +221,10 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 Every export is documented inline with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The public surface is:
 
 -   `Editor` namespace — `Root`, `Header`, `Toolbar`, `PageList`, `Canvas`, `Section`, `Preview`, and their child buttons/selects.
--   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `usePdfGeneration`.
+-   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `usePdfGeneration`.
 -   Providers — `EditorProvider`, `EditorConfigProvider`, `EditorConfigContext`.
--   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`.
--   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `UseEditorSectionResult`.
+-   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`.
+-   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorKeybinding`, `EditorKeymap`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `UseEditorSectionResult`.
 
 ## Compatibility
 
