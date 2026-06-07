@@ -1,13 +1,13 @@
 'use client';
 
-import type { PageBackground } from '@docmosaic/core';
+import type { PageBackground as CorePageBackground } from '@docmosaic/core';
 import { Image as ImageIcon, Trash2 } from 'lucide-react';
 import { useRef } from 'react';
 import { useEditor } from '../context/editor';
 import { cn } from '../internal/utils';
 import { Button } from '../ui/button';
 
-interface PageBackgroundPickerProps {
+interface PageBackgroundProps {
     /**
      * Page to target. Defaults to the document's current page (1-based
      * index, converted to 0-based internally to match the reducer action).
@@ -28,22 +28,22 @@ interface PageBackgroundPickerProps {
  *
  * @example
  * ```tsx
- * <Editor.PageBackgroundPicker />
- * <Editor.PageBackgroundPicker pageIndex={2} />
+ * <Editor.PageBackground />
+ * <Editor.PageBackground pageIndex={2} />
  * ```
  */
-export function PageBackgroundPicker({ pageIndex, className }: PageBackgroundPickerProps = {}) {
+export function PageBackground({ pageIndex, className }: PageBackgroundProps = {}) {
     const { state, actions } = useEditor();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const targetIndex = pageIndex ?? state.currentPage - 1;
     const page = state.pages[targetIndex];
-    const background: PageBackground | undefined = page?.background;
+    const background: CorePageBackground | undefined = page?.background;
     const color = background?.color ?? '';
     const hasImage = Boolean(background?.image);
 
     const updateColor = (nextColor: string | undefined) => {
-        const next: PageBackground = { ...(background ?? {}) };
+        const next: CorePageBackground = { ...(background ?? {}) };
         if (nextColor) {
             next.color = nextColor;
         } else {
@@ -56,7 +56,7 @@ export function PageBackgroundPicker({ pageIndex, className }: PageBackgroundPic
     };
 
     const updateImage = (nextImage: string | undefined) => {
-        const next: PageBackground = { ...(background ?? {}) };
+        const next: CorePageBackground = { ...(background ?? {}) };
         if (nextImage) {
             next.image = nextImage;
         } else {

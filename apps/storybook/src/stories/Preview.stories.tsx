@@ -38,7 +38,7 @@ export const OpenWithContent: Story = {
             defaultDocument={documentWithSections()}
             pdf={createMockPdfBackend()}
         >
-            <Editor.Inspector />
+            <Editor.Properties />
             <OpenOnMount />
             <Editor.Preview />
         </Editor.Root>
@@ -63,7 +63,7 @@ export const Generating: Story = {
                 estimate: () => 1024,
             }}
         >
-            <Editor.Inspector />
+            <Editor.Properties />
             <OpenOnMount />
             <Editor.Preview />
         </Editor.Root>
@@ -74,7 +74,7 @@ export const Generating: Story = {
 export const Empty: Story = {
     render: () => (
         <Editor.Root defaultDocument={emptyDocument()} pdf={createMockPdfBackend()}>
-            <Editor.Inspector />
+            <Editor.Properties />
             <OpenOnMount />
             <Editor.Preview />
         </Editor.Root>

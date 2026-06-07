@@ -193,7 +193,7 @@ export const MultiSelectHeterogeneous: Story = {
 
 /**
  * Full editor shell with the panel docked to the right rail next to the
- * canvas. Mirrors the consumer-facing layout: Inspector on top, Toolbar
+ * canvas. Mirrors the consumer-facing layout: Properties on top, Toolbar
  * below, Pages on the left, Canvas in the middle, PropertiesPanel on the
  * right. Click a section in the canvas to see the panel update.
  */
@@ -201,7 +201,7 @@ export const InEditor: Story = {
     render: () => (
         <Editor.Root defaultDocument={documentWithSections()}>
             <div className="flex h-[640px] flex-col">
-                <Editor.Inspector />
+                <Editor.Properties />
                 <Editor.Toolbar />
                 <div className="flex flex-1 min-h-0">
                     <Editor.Pages />

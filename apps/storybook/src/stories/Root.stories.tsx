@@ -13,7 +13,7 @@ import {
 /**
  * `Editor.Root` is the orchestrator: it owns the DnD provider, the editor
  * config (image renderer), and either internal or external document state.
- * It also arranges the bundled primitives (`Inspector`, `Toolbar`, `Pages`,
+ * It also arranges the bundled primitives (`Properties`, `Toolbar`, `Pages`,
  * `Canvas`, `Preview`) into the editor's default shell.
  */
 const meta: Meta<typeof Editor.Root> = {
@@ -53,7 +53,7 @@ export const Default: Story = {
     args: {
         children: (
             <>
-                <Editor.Inspector />
+                <Editor.Properties />
                 <Editor.Toolbar />
                 <Editor.Pages />
                 <Editor.Canvas />
@@ -69,7 +69,7 @@ export const WithSections: Story = {
         defaultDocument: documentWithSections(),
         children: (
             <>
-                <Editor.Inspector />
+                <Editor.Properties />
                 <Editor.Toolbar />
                 <Editor.Pages />
                 <Editor.Canvas />
@@ -86,7 +86,7 @@ export const Controlled: Story = {
             const [doc, setDoc] = useState<Document>(emptyDocument());
             return (
                 <Editor.Root document={doc} onDocumentChange={setDoc}>
-                    <Editor.Inspector />
+                    <Editor.Properties />
                     <Editor.Toolbar />
                     <Editor.Pages />
                     <Editor.Canvas />
@@ -104,7 +104,7 @@ export const CustomPdfBackend: Story = {
         pdf: createMockPdfBackend(),
         children: (
             <>
-                <Editor.Inspector />
+                <Editor.Properties />
                 <Editor.Toolbar />
                 <Editor.Pages />
                 <Editor.Canvas />
@@ -120,7 +120,7 @@ export const MinimalTheme: Story = {
         defaultDocument: documentWithSections(),
         children: (
             <>
-                <Editor.Inspector />
+                <Editor.Properties />
                 <Editor.Toolbar />
                 <Editor.Pages />
                 <Editor.Canvas />
@@ -142,7 +142,7 @@ export const DrawingMode: Story = {
     render: function DrawingModeStory() {
         return (
             <Editor.Root defaultDocument={documentWithDrawingSection([])}>
-                <Editor.Inspector />
+                <Editor.Properties />
                 <Editor.Toolbar>
                     <div className="flex items-center gap-2">
                         <Editor.UndoButton />
@@ -167,7 +167,7 @@ export const KeybindingsDisabled: Story = {
         keybindings: false,
         children: (
             <>
-                <Editor.Inspector />
+                <Editor.Properties />
                 <Editor.Toolbar />
                 <Editor.Pages />
                 <Editor.Canvas />

@@ -12,7 +12,7 @@ Think of the editor as three concentric layers:
 
 ```text
 Editor.Root                        ← owns Document + history + DnD provider
- ├─ Editor.Inspector               ← document name, page size, orientation
+ ├─ Editor.Properties              ← document name, page size, orientation
  ├─ Editor.Toolbar                 ← undo/redo, preview, download, add-section
  ├─ Editor.Pages                   ← left rail of page thumbnails
  ├─ Editor.Canvas                  ← interactive workspace (drag, resize, zoom)
@@ -31,7 +31,7 @@ import '@docmosaic/react/styles.css';
 export function MyEditor() {
     return (
         <Editor.Root>
-            <Editor.Inspector />
+            <Editor.Properties />
             <Editor.Toolbar />
             <Editor.Pages />
             <Editor.Canvas>

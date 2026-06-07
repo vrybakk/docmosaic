@@ -44,13 +44,13 @@ export const CustomArrangement: Story = {
     args: {
         children: (
             <div className="flex items-center justify-between gap-4 w-full">
-                <Editor.AddSectionButton />
+                <Editor.AddImageButton />
                 <div className="flex items-center gap-2">
                     <Editor.UndoButton />
                     <Editor.RedoButton />
                 </div>
                 <div className="flex items-center gap-2">
-                    <Editor.EstimatedSize />
+                    <Editor.FileSizeBadge />
                     <Editor.DownloadButton />
                 </div>
             </div>

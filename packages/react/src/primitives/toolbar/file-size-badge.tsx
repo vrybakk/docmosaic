@@ -13,7 +13,7 @@ function formatFileSize(bytes: number) {
  * `ui.estimatedSize` from the editor context. Renders nothing while the
  * size is unknown (zero).
  */
-export function EstimatedSize() {
+export function FileSizeBadge() {
     const {
         ui: { estimatedSize },
     } = useEditor();

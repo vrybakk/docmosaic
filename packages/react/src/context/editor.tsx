@@ -295,7 +295,7 @@ export function EditorProvider({
  * }
  *
  * <Editor.Root>
- *   <Editor.Inspector />
+ *   <Editor.Properties />
  *   <PageCount />
  *   <Editor.Canvas />
  * </Editor.Root>

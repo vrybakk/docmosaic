@@ -44,7 +44,7 @@ interface PropertiesPanelProps {
  * @example Right rail next to the canvas
  * ```tsx
  * <Editor.Root>
- *   <Editor.Inspector />
+ *   <Editor.Properties />
  *   <Editor.Toolbar />
  *   <Editor.Pages />
  *   <Editor.Canvas><Editor.Section /></Editor.Canvas>

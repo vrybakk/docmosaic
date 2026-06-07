@@ -10,7 +10,7 @@ import { Button } from '../../ui/button';
  * from context — which selects the newly-created section and fires the
  * analytics event.
  */
-export function AddSectionButton() {
+export function AddImageButton() {
     const { actions } = useEditor();
 
     return (

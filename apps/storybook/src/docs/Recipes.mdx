@@ -15,7 +15,7 @@ this mode.
 const [doc, setDoc] = useState(createDocument());
 
 <Editor.Root document={doc} onDocumentChange={setDoc}>
-    <Editor.Inspector />
+    <Editor.Properties />
     <Editor.Toolbar />
     <Editor.Pages />
     <Editor.Canvas>
@@ -32,7 +32,7 @@ Pass children to `Editor.Toolbar` to replace its default arrangement.
 ```tsx
 <Editor.Toolbar>
     <div className="flex items-center justify-between w-full">
-        <Editor.AddSectionButton />
+        <Editor.AddImageButton />
         <div className="flex items-center gap-2">
             <Editor.UndoButton />
             <Editor.RedoButton />

@@ -64,9 +64,9 @@ export const DownloadButtonWithFormatMenu: Story = {
     ),
 };
 
-/** `Editor.AddSectionButton` — appends a new image section to the current page. */
-export const AddSectionButton: Story = {
-    render: () => <Editor.AddSectionButton />,
+/** `Editor.AddImageButton` — appends a new image section to the current page. */
+export const AddImageButton: Story = {
+    render: () => <Editor.AddImageButton />,
 };
 
 /** `Editor.AddTextButton` — appends a new text section to the current page. */
@@ -94,9 +94,9 @@ export const DrawButton: Story = {
     render: () => <Editor.DrawButton />,
 };
 
-/** `Editor.EstimatedSize` — projected file size of the current document. */
-export const EstimatedSize: Story = {
-    render: () => <Editor.EstimatedSize />,
+/** `Editor.FileSizeBadge` — projected file size of the current document. */
+export const FileSizeBadge: Story = {
+    render: () => <Editor.FileSizeBadge />,
 };
 
 /**

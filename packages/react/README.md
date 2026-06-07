@@ -35,7 +35,7 @@ import '@docmosaic/react/styles.css';
 export function MyEditor() {
     return (
         <Editor.Root>
-            <Editor.Inspector />
+            <Editor.Properties />
             <Editor.Toolbar />
             <Editor.Pages />
             <Editor.Canvas>
@@ -142,7 +142,7 @@ import Image from 'next/image';
 
 ```tsx
 <Editor.Root>
-    <Editor.Inspector />
+    <Editor.Properties />
     <Editor.Toolbar />
     <div className="flex flex-1">
         <Editor.Pages />
@@ -362,7 +362,7 @@ A `Section` is a discriminated union on the `type` field. Four variants ship tod
 Add a new section of any variant from the toolbar:
 
 ```tsx
-<Editor.AddSectionButton />              {/* Image */}
+<Editor.AddImageButton />                {/* Image */}
 <Editor.AddTextButton />                 {/* Text */}
 <Editor.AddShapeButton shape="rect" />   {/* Rectangle */}
 <Editor.AddShapeButton shape="circle" /> {/* Circle */}
@@ -382,11 +382,11 @@ actions.addSection({ type: 'drawing' });
 
 ### Page background
 
-Each page can carry an optional `background` (color, image, or both) layered behind sections. The bundled `Editor.PageBackgroundPicker` drives the `setPageBackground` action — drop it next to the canvas, or wire your own picker:
+Each page can carry an optional `background` (color, image, or both) layered behind sections. The bundled `Editor.PageBackground` drives the `setPageBackground` action — drop it next to the canvas, or wire your own picker:
 
 ```tsx
-<Editor.PageBackgroundPicker />              {/* targets the active page */}
-<Editor.PageBackgroundPicker pageIndex={1} />
+<Editor.PageBackground />                {/* targets the active page */}
+<Editor.PageBackground pageIndex={1} />
 
 const { actions } = useEditor();
 actions.setPageBackground(0, { color: '#f5f5f5' });
@@ -656,7 +656,7 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 
 Every export is documented inline with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The public surface is:
 
--   `Editor` namespace — `Root`, `Inspector`, `Toolbar`, `Pages`, `Canvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, and their child buttons/selects (including `DrawButton`). Back-compat: `Editor.Header` (= `Inspector`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
+-   `Editor` namespace — `Root`, `Properties`, `Toolbar`, `Pages`, `Canvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, `PageBackground`, `FileSizeBadge`, `GenerationProgress`, and their child buttons/selects (including `AddImageButton`, `DrawButton`). Flat `EditorXxx` exports mirror the namespace for tree-shake-friendly imports. Back-compat: `Editor.Inspector` (= `Properties`), `Editor.PageBackgroundPicker` (= `PageBackground`), `Editor.EstimatedSize` (= `FileSizeBadge`), `Editor.ProgressOverlay` (= `GenerationProgress`), `Editor.AddSectionButton` (= `AddImageButton`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
 -   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `usePdfGeneration`.
 -   Providers — `EditorProvider`, `EditorConfigProvider`, `EditorConfigContext`.
 -   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`.

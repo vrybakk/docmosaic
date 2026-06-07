@@ -8,13 +8,13 @@ import {
 } from '../helpers/sample-documents';
 
 /**
- * `Editor.PageBackgroundPicker` drives the `setPageBackground` action — a
- * color swatch + image uploader for the active page. Combine with
- * `Editor.Canvas` to see the background paint behind sections.
+ * `Editor.PageBackground` drives the `setPageBackground` action — a color
+ * swatch + image uploader for the active page. Combine with `Editor.Canvas`
+ * to see the background paint behind sections.
  */
-const meta: Meta<typeof Editor.PageBackgroundPicker> = {
-    title: 'Editor/PageBackgroundPicker',
-    component: Editor.PageBackgroundPicker,
+const meta: Meta<typeof Editor.PageBackground> = {
+    title: 'Editor/PageBackground',
+    component: Editor.PageBackground,
     tags: ['autodocs'],
     parameters: {
         layout: 'fullscreen',
@@ -22,14 +22,14 @@ const meta: Meta<typeof Editor.PageBackgroundPicker> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Editor.PageBackgroundPicker>;
+type Story = StoryObj<typeof Editor.PageBackground>;
 
 /** Empty page — pick a color or upload an image to set the background. */
 export const Empty: Story = {
     render: () => (
         <Editor.Root defaultDocument={emptyDocument()}>
             <div style={{ padding: 16 }}>
-                <Editor.PageBackgroundPicker />
+                <Editor.PageBackground />
             </div>
             <div style={{ height: '500px', display: 'flex' }}>
                 <Editor.Canvas>
@@ -45,7 +45,7 @@ export const WithColor: Story = {
     render: () => (
         <Editor.Root defaultDocument={documentWithPageBackground('#fff7e6')}>
             <div style={{ padding: 16 }}>
-                <Editor.PageBackgroundPicker />
+                <Editor.PageBackground />
             </div>
             <div style={{ height: '500px', display: 'flex' }}>
                 <Editor.Canvas>
@@ -61,7 +61,7 @@ export const NextToCanvas: Story = {
     render: () => (
         <Editor.Root defaultDocument={documentWithSections()}>
             <div style={{ padding: 16 }}>
-                <Editor.PageBackgroundPicker />
+                <Editor.PageBackground />
             </div>
             <div style={{ height: '500px', display: 'flex' }}>
                 <Editor.Canvas>

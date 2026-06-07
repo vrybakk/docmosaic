@@ -4,10 +4,10 @@ import { Children, type ReactNode } from 'react';
 import { useEditor } from '../../context/editor';
 import { Button } from '../../ui/button';
 import { DownloadButton } from './download-button';
-import { EstimatedSize } from './estimated-size';
+import { FileSizeBadge } from './file-size-badge';
+import { GenerationProgress } from './generation-progress';
 import { PreviewButton } from './preview-button';
 import { PrintButton } from './print-button';
-import { ProgressOverlay } from './progress-overlay';
 import { RedoButton } from './redo-button';
 import { UndoButton } from './undo-button';
 
@@ -58,9 +58,9 @@ export function Toolbar({ children }: ToolbarProps = {}) {
                             </Button>
                         </div>
                     )}
-                    {!isGenerating && <EstimatedSize />}
+                    {!isGenerating && <FileSizeBadge />}
                     {isGenerating ? (
-                        <ProgressOverlay />
+                        <GenerationProgress />
                     ) : (
                         <div className="flex flex-col sm:flex-row items-center gap-2 w-full">
                             <div className="w-full flex items-center gap-2">

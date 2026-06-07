@@ -14,22 +14,22 @@ import { DocumentName } from './document-name';
 import { OrientationSelect } from './orientation-select';
 import { PageSizeSelect } from './page-size-select';
 
-interface InspectorProps {
+interface PropertiesProps {
     /**
-     * Optional children. When provided, the inspector renders an empty shell
-     * with the children inside. When omitted, falls back to the bundled
-     * default layout (document name + page size + orientation, plus a
-     * mobile settings sheet).
+     * Optional children. When provided, the properties bar renders an empty
+     * shell with the children inside. When omitted, falls back to the bundled
+     * default layout (document name + page size + orientation, plus a mobile
+     * settings sheet).
      */
     children?: ReactNode;
 }
 
 /**
- * Default editor inspector layout — the document-properties bar at the top
- * of the editor. All state-reading children are context-aware, so the
- * inspector itself takes no state props.
+ * Default editor document-properties bar — sits at the top of the editor
+ * shell. All state-reading children are context-aware, so the properties bar
+ * itself takes no state props.
  */
-export function Inspector({ children }: InspectorProps = {}) {
+export function Properties({ children }: PropertiesProps = {}) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     if (children !== undefined && Children.count(children) > 0) {

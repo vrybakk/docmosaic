@@ -5,17 +5,17 @@ import { Editor, useEditor } from '@docmosaic/react';
 import { documentWithSections } from '../helpers/sample-documents';
 
 /**
- * `Editor.ProgressOverlay` is the inline UI shown while a PDF is being
+ * `Editor.GenerationProgress` is the inline UI shown while a PDF is being
  * generated. Renders nothing when `pdfApi.state.isGenerating` is false.
  */
-const meta: Meta<typeof Editor.ProgressOverlay> = {
-    title: 'Editor/ProgressOverlay',
-    component: Editor.ProgressOverlay,
+const meta: Meta<typeof Editor.GenerationProgress> = {
+    title: 'Editor/GenerationProgress',
+    component: Editor.GenerationProgress,
     tags: ['autodocs'],
 };
 
 export default meta;
-type Story = StoryObj<typeof Editor.ProgressOverlay>;
+type Story = StoryObj<typeof Editor.GenerationProgress>;
 
 /** Trigger a `download()` call on mount with a backend that never resolves
  * — the overlay then sees `isGenerating: true` until the story unmounts. */
@@ -41,7 +41,7 @@ export const Generating: Story = {
             }}
         >
             <StartGenerating />
-            <Editor.ProgressOverlay />
+            <Editor.GenerationProgress />
         </Editor.Root>
     ),
 };
@@ -60,7 +60,7 @@ export const GeneratingWithProgress: Story = {
             }}
         >
             <StartGenerating />
-            <Editor.ProgressOverlay />
+            <Editor.GenerationProgress />
         </Editor.Root>
     ),
 };
@@ -72,7 +72,7 @@ export const Idle: Story = {
             <div className="text-sm text-gray-500">
                 Idle — the overlay renders nothing when `isGenerating` is false.
             </div>
-            <Editor.ProgressOverlay />
+            <Editor.GenerationProgress />
         </Editor.Root>
     ),
 };

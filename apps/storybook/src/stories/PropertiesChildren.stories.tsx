@@ -4,11 +4,11 @@ import { Editor } from '@docmosaic/react';
 import { emptyDocument } from '../helpers/sample-documents';
 
 /**
- * Standalone inspector children — drop into a custom `Editor.Inspector`
+ * Standalone properties-bar children — drop into a custom `Editor.Properties`
  * shell or use elsewhere in a layout.
  */
 const meta: Meta = {
-    title: 'Editor/Inspector Children',
+    title: 'Editor/Properties Children',
     tags: ['autodocs'],
     decorators: [
         (Story) => (

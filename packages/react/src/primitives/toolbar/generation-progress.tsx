@@ -9,7 +9,7 @@ import { Button } from '../../ui/button';
  * unless `pdfApi.state.isGenerating` is true. Reads progress + abort from
  * the editor context.
  */
-export function ProgressOverlay() {
+export function GenerationProgress() {
     const { pdfApi } = useEditor();
     const { state, abort } = pdfApi;
 
