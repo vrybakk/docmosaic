@@ -1,0 +1,13 @@
+/*
+ * Structural baseline for @docmosaic/react. Brand-agnostic.
+ *
+ * Provides layout-level defaults (section radius, section shadow) that any
+ * theme can inherit. Brand colors are intentionally NOT defined here — pair
+ * this file with `styles/themes/docmosaic.css` for the default look, or with
+ * your own stylesheet that supplies the `--editor-color-*` tokens.
+ */
+
+:root {
+    --editor-radius-section: 4px;
+    --editor-shadow-section: 0 1px 3px rgba(0, 0, 0, 0.1);
+}

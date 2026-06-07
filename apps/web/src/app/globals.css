@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dog-food the published theme: structural defaults + DocMosaic brand colors
+   for the `--editor-*` tokens come from @docmosaic/react. apps/web is a
+   consumer of its own published package — no duplicate values to drift from. */
+@import '@docmosaic/react/styles.css';
+
 :root {
     --cream: #fcde9c;
     --deep-purple: #381d2a;
@@ -37,22 +42,6 @@ svg[data-lucide] {
     body {
         @apply text-docmosaic-purple font-sans;
         background-attachment: fixed;
-    }
-
-    /* Editor theming layer — consumed by tailwind `editor-*` utilities.
-       Defaults map 1:1 to the DocMosaic palette so visual output is unchanged.
-       Triplets are space-separated to support modern `rgb(R G B / A)` syntax
-       with `<alpha-value>`. */
-    :root {
-        --editor-color-accent: 56 29 42; /* docmosaic-purple */
-        --editor-color-accent-soft: 252 222 156; /* docmosaic-cream */
-        --editor-color-success: 196 214 176; /* docmosaic-sage */
-        --editor-color-warning: 186 86 36; /* docmosaic-orange */
-        --editor-color-warning-soft: 255 165 82; /* docmosaic-caramel */
-        --editor-color-surface: 255 255 255; /* docmosaic-white */
-        --editor-color-text: 56 29 42; /* docmosaic-black */
-        --editor-radius-section: 4px;
-        --editor-shadow-section: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 }
 

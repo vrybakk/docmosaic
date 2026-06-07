@@ -1,4 +1,4 @@
 {
     "$schema": "https://raw.githubusercontent.com/arethetypeswrong/arethetypeswrong.github.io/main/packages/cli/schema.json",
-    "excludeEntrypoints": ["styles.css"]
+    "excludeEntrypoints": ["styles.css", "styles/base.css", "styles/themes/docmosaic.css"]
 }

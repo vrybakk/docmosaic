@@ -17,7 +17,9 @@
                 "default": "./dist/index.cjs"
             }
         },
-        "./styles.css": "./dist/styles.css"
+        "./styles.css": "./dist/styles.css",
+        "./styles/base.css": "./dist/styles/base.css",
+        "./styles/themes/docmosaic.css": "./dist/styles/themes/docmosaic.css"
     },
     "sideEffects": [
         "**/*.css"

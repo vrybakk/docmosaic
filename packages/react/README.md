@@ -84,16 +84,69 @@ import Image from 'next/image';
 
 ## Theming
 
-The editor reads CSS custom properties for every accent color, radius, and shadow. Override the tokens defined in `styles.css` to retheme without forking components.
+The editor reads CSS custom properties for every accent color, radius, and shadow. The stylesheet ships in two layers so you can keep the structural defaults and swap only the brand colors:
+
+-   `styles/base.css` — brand-agnostic structural tokens (`--editor-radius-section`, `--editor-shadow-section`).
+-   `styles/themes/docmosaic.css` — the DocMosaic brand colors (`--editor-color-*` triplets).
+-   `styles.css` — convenience bundle that imports both.
+
+### Default DocMosaic look
+
+```ts
+import '@docmosaic/react/styles.css';
+```
+
+### Custom theme on the shared base
+
+Supply your own `--editor-color-*` values in a stylesheet next to your app code, then import the base first so structural defaults come along:
+
+```ts
+import '@docmosaic/react/styles/base.css';
+import './my-theme.css';
+```
 
 ```css
+/* my-theme.css */
 :root {
     --editor-color-accent: 30 41 59; /* slate-800 */
-    --editor-radius-section: 8px;
+    --editor-color-accent-soft: 226 232 240; /* slate-200 */
+    --editor-color-success: 34 197 94; /* green-500 */
+    --editor-color-warning: 234 88 12; /* orange-600 */
+    --editor-color-warning-soft: 251 191 36; /* amber-400 */
+    --editor-color-surface: 255 255 255;
+    --editor-color-text: 15 23 42; /* slate-900 */
 }
 ```
 
-The full token list lives in [`src/styles.css`](src/styles.css).
+### Explicit DocMosaic theme on the base
+
+Same as `styles.css` but spelled out — useful when you want to layer the brand theme conditionally:
+
+```ts
+import '@docmosaic/react/styles/base.css';
+import '@docmosaic/react/styles/themes/docmosaic.css';
+```
+
+### Token reference
+
+Color tokens (RGB triplets — space-separated for `rgb(R G B / <alpha-value>)`):
+
+| Token                        | Purpose                                                       | DocMosaic value      |
+| ---------------------------- | ------------------------------------------------------------- | -------------------- |
+| `--editor-color-accent`      | Primary accent — buttons, active section borders, focus rings | `56 29 42` (#381D2A) |
+| `--editor-color-accent-soft` | Soft accent — hover states, subtle highlights                 | `252 222 156`        |
+| `--editor-color-success`     | Success state — confirmation, completed steps                 | `196 214 176`        |
+| `--editor-color-warning`     | Warning — destructive actions, alerts                         | `186 86 36`          |
+| `--editor-color-warning-soft`| Soft warning — caution badges, partial states                 | `255 165 82`         |
+| `--editor-color-surface`     | Editor background surface                                     | `255 255 255`        |
+| `--editor-color-text`        | Default editor text color                                     | `56 29 42`           |
+
+Structural tokens:
+
+| Token                     | Purpose                          | Default                       |
+| ------------------------- | -------------------------------- | ----------------------------- |
+| `--editor-radius-section` | Border radius for image sections | `4px`                         |
+| `--editor-shadow-section` | Shadow for image sections        | `0 1px 3px rgba(0, 0, 0, 0.1)`|
 
 ## Analytics callback
 

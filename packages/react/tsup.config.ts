@@ -45,10 +45,21 @@ export default defineConfig({
         return {};
     },
     onSuccess: async () => {
-        const src = resolve(__dirname, 'src/styles.css');
-        const dest = resolve(__dirname, 'dist/styles.css');
-        if (!existsSync(src)) return;
-        mkdirSync(dirname(dest), { recursive: true });
-        copyFileSync(src, dest);
+        // CSS files ship as static assets alongside the JS bundle. Keep the
+        // src/ -> dist/ layout identical so `./styles/base.css` and
+        // `./styles/themes/docmosaic.css` resolve correctly through the
+        // package.json exports map.
+        const cssFiles = [
+            'styles.css',
+            'styles/base.css',
+            'styles/themes/docmosaic.css',
+        ];
+        for (const relPath of cssFiles) {
+            const src = resolve(__dirname, 'src', relPath);
+            const dest = resolve(__dirname, 'dist', relPath);
+            if (!existsSync(src)) continue;
+            mkdirSync(dirname(dest), { recursive: true });
+            copyFileSync(src, dest);
+        }
     },
 });
