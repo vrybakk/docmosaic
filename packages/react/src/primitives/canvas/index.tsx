@@ -1,6 +1,10 @@
 'use client';
 
-import { getPageDimensionsWithOrientation, type Section as SectionData } from '@docmosaic/core';
+import {
+    getPageDimensionsWithOrientation,
+    type Section as SectionData,
+    type Stroke,
+} from '@docmosaic/core';
 import { Children, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import {
@@ -106,8 +110,120 @@ export function Canvas({ children }: CanvasProps = {}) {
         [sections, finalScale, actions],
     );
 
+    const pageRef = useRef<HTMLDivElement | null>(null);
     const combinedRef = (node: HTMLDivElement | null) => {
+        pageRef.current = node;
         if (node) dropRef(node);
+    };
+
+    // Esc exits drawing mode. Scoped to the canvas surface (window listener)
+    // so the keybinding works regardless of focus.
+    useEffect(() => {
+        if (!ui.drawingMode) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') ui.setDrawingMode(false);
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [ui]);
+
+    // Pointer-driven drawing: in drawing mode, a pointerdown on the page
+    // surface creates a fresh DrawingSection at the drag's start point and
+    // accumulates points into a single stroke until pointerup. The section
+    // grows to fit the drag bounding box on commit.
+    const drawingDragRef = useRef<{
+        sectionId: string;
+        startX: number;
+        startY: number;
+        points: { x: number; y: number }[];
+        minX: number;
+        minY: number;
+        maxX: number;
+        maxY: number;
+    } | null>(null);
+
+    const toPagePoint = (clientX: number, clientY: number) => {
+        const node = pageRef.current;
+        if (!node) return null;
+        const rect = node.getBoundingClientRect();
+        return {
+            x: (clientX - rect.left) / finalScale,
+            y: (clientY - rect.top) / finalScale,
+        };
+    };
+
+    const handlePagePointerDown = (e: React.PointerEvent) => {
+        if (!ui.drawingMode) return;
+        // Only react to clicks landing on the page surface itself — don't
+        // hijack pointer events targeted at an existing section.
+        if ((e.target as HTMLElement).closest('[data-section="true"]')) return;
+        const start = toPagePoint(e.clientX, e.clientY);
+        if (!start) return;
+        e.stopPropagation();
+        e.preventDefault();
+        drawingDragRef.current = {
+            sectionId: '',
+            startX: start.x,
+            startY: start.y,
+            points: [start],
+            minX: start.x,
+            minY: start.y,
+            maxX: start.x,
+            maxY: start.y,
+        };
+        (e.target as Element).setPointerCapture?.(e.pointerId);
+    };
+
+    const handlePagePointerMove = (e: React.PointerEvent) => {
+        if (!ui.drawingMode) return;
+        const drag = drawingDragRef.current;
+        if (!drag) return;
+        const pt = toPagePoint(e.clientX, e.clientY);
+        if (!pt) return;
+        drag.points.push(pt);
+        drag.minX = Math.min(drag.minX, pt.x);
+        drag.minY = Math.min(drag.minY, pt.y);
+        drag.maxX = Math.max(drag.maxX, pt.x);
+        drag.maxY = Math.max(drag.maxY, pt.y);
+    };
+
+    const handlePagePointerUp = (e: React.PointerEvent) => {
+        if (!ui.drawingMode) return;
+        const drag = drawingDragRef.current;
+        if (!drag) return;
+        drawingDragRef.current = null;
+        try {
+            (e.target as Element).releasePointerCapture?.(e.pointerId);
+        } catch {
+            // capture may not have been set on this element
+        }
+        if (drag.points.length < 2) return;
+        const pad = 4;
+        const bbox = {
+            x: drag.minX - pad,
+            y: drag.minY - pad,
+            width: Math.max(1, drag.maxX - drag.minX + pad * 2),
+            height: Math.max(1, drag.maxY - drag.minY + pad * 2),
+        };
+        // Insert via addSection then immediately patch geometry + push the
+        // stroke. Geometry is in PDF points (createSection treats x/y as px
+        // and converts — we pre-multiply by 96/72 so the persisted value
+        // lands at our desired point coordinate).
+        const inserted = actions.addSection({ type: 'drawing' });
+        actions.updateSection({
+            ...inserted,
+            x: bbox.x,
+            y: bbox.y,
+            width: bbox.width,
+            height: bbox.height,
+            page: currentPage,
+        });
+        const stroke: Stroke = {
+            points: drag.points,
+            color: ui.drawingColor,
+            weight: ui.drawingWeight,
+        };
+        actions.addStroke(inserted.id, stroke);
     };
 
     if (!page || !pageDimensions || !pageDimensions.width || !pageDimensions.height) {
@@ -138,8 +254,14 @@ export function Canvas({ children }: CanvasProps = {}) {
             <div
                 ref={containerRef}
                 className="flex-1 min-h-0 overflow-auto bg-gray-100 p-6 relative"
-                onClick={() => ui.setSelectedSectionId(null)}
+                onClick={() => {
+                    // In drawing mode the canvas owns pointer events for stroke
+                    // capture — deselecting on click would feel out of place.
+                    if (ui.drawingMode) return;
+                    ui.setSelectedSectionId(null);
+                }}
                 onWheel={handleWheel}
+                style={{ cursor: ui.drawingMode ? 'crosshair' : undefined }}
             >
                 {isLoading ? (
                     <Loader />
@@ -153,7 +275,12 @@ export function Canvas({ children }: CanvasProps = {}) {
                                 width: (pageDimensions?.width || 0) * finalScale,
                                 height: (pageDimensions?.height || 0) * finalScale,
                                 transform: `translate(${pan?.x || 0}px, ${pan?.y || 0}px)`,
+                                touchAction: ui.drawingMode ? 'none' : undefined,
                             }}
+                            onPointerDown={handlePagePointerDown}
+                            onPointerMove={handlePagePointerMove}
+                            onPointerUp={handlePagePointerUp}
+                            onPointerCancel={handlePagePointerUp}
                         >
                             {/* Page.background — color first, then image — mirrors
                                 the PDF generator's draw order so the canvas

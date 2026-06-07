@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Editor } from '@docmosaic/react';
 
 import {
+    documentWithDrawingSection,
     documentWithSections,
     documentWithShapeSection,
     documentWithTextSection,
@@ -244,6 +245,32 @@ export const ShapeLine: Story = {
                 height: 4,
             })}
         >
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Drawing section seeded with sample strokes — shows the rendered polylines. */
+export const DrawingWithStrokes: Story = {
+    render: () => (
+        <Editor.Root defaultDocument={documentWithDrawingSection()}>
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Empty drawing section — capture surface is ready but no strokes yet. */
+export const DrawingEmpty: Story = {
+    render: () => (
+        <Editor.Root defaultDocument={documentWithDrawingSection([])}>
             <div style={{ height: '600px', display: 'flex' }}>
                 <Editor.Canvas>
                     <Editor.Section />

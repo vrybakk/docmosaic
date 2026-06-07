@@ -74,6 +74,11 @@ export const AddLineButton: Story = {
     render: () => <Editor.AddShapeButton shape="line" />,
 };
 
+/** `Editor.DrawButton` — toggles freehand drawing mode on/off. */
+export const DrawButton: Story = {
+    render: () => <Editor.DrawButton />,
+};
+
 /** `Editor.EstimatedSize` — projected file size of the current document. */
 export const EstimatedSize: Story = {
     render: () => <Editor.EstimatedSize />,

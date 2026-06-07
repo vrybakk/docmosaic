@@ -21,8 +21,11 @@
  */
 
 import { Root } from './primitives/editor-root';
+import { BrushWeightSlider } from './primitives/brush-weight-slider';
 import { Canvas } from './primitives/canvas';
 import { CanvasControls } from './primitives/canvas/canvas-controls';
+import { ColorPicker } from './primitives/color-picker';
+import { DrawingControls } from './primitives/drawing-controls';
 import { Section } from './primitives/section';
 import { PageList } from './primitives/page-list';
 import { PageThumb } from './primitives/page-list/page-thumb';
@@ -35,6 +38,7 @@ import { DownloadButton } from './primitives/toolbar/download-button';
 import { AddSectionButton } from './primitives/toolbar/add-section-button';
 import { AddShapeButton } from './primitives/toolbar/add-shape-button';
 import { AddTextButton } from './primitives/toolbar/add-text-button';
+import { DrawButton } from './primitives/toolbar/draw-button';
 import { PageBackgroundPicker } from './primitives/page-background-picker';
 import { EstimatedSize } from './primitives/toolbar/estimated-size';
 import { ProgressOverlay } from './primitives/toolbar/progress-overlay';
@@ -58,7 +62,9 @@ import { Preview } from './primitives/preview';
  * - `Header` (+ `DocumentName`, `PageSizeSelect`, `OrientationSelect`) — top bar.
  * - `Toolbar` (+ `UndoButton`, `RedoButton`, `PreviewButton`, `PrintButton`,
  *   `DownloadButton`, `AddSectionButton`, `AddTextButton`, `AddShapeButton`,
- *   `EstimatedSize`, `ProgressOverlay`).
+ *   `DrawButton`, `EstimatedSize`, `ProgressOverlay`).
+ * - `DrawingControls` (+ `ColorPicker`, `BrushWeightSlider`) — drawing-mode
+ *   side panel.
  * - `PageList` (+ `PageThumb`) — left sidebar of page thumbnails.
  * - `PageBackgroundPicker` — color + image picker for `Page.background`.
  * - `Canvas` (+ `CanvasControls`, `Section`) — interactive workspace.
@@ -103,6 +109,10 @@ export const Editor = {
     AddSectionButton,
     AddTextButton,
     AddShapeButton,
+    DrawButton,
+    DrawingControls,
+    ColorPicker,
+    BrushWeightSlider,
     PageBackgroundPicker,
     EstimatedSize,
     ProgressOverlay,

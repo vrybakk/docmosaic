@@ -24,6 +24,7 @@ import type {
     Document,
     PageBackground,
     Section,
+    Stroke,
     estimatePDFSize,
     generatePDF,
 } from '@docmosaic/core';
@@ -69,12 +70,22 @@ export interface EditorActions {
      * for other variants.
      */
     addSection: (opts?: {
-        type?: 'image' | 'text' | 'shape';
+        type?: 'image' | 'text' | 'shape' | 'drawing';
         shape?: 'rect' | 'circle' | 'line';
     }) => Section;
     updateSection: (section: Section) => void;
     deleteSection: (sectionId: string) => void;
     duplicateSection: (section: Section) => void;
+    /**
+     * Append a new stroke to a drawing section. No-op when the target id is
+     * not a drawing section.
+     */
+    addStroke: (sectionId: string, stroke: Stroke) => void;
+    /**
+     * Empty all strokes from a drawing section. No-op when the target id is
+     * not a drawing section.
+     */
+    clearStrokes: (sectionId: string) => void;
     addPage: () => void;
     deletePage: (pageIndex: number) => void;
     changePage: (pageNumber: number) => void;
@@ -130,6 +141,19 @@ export interface EditorUiState {
     estimatedSize: number;
     setEstimatedSize: (size: number) => void;
     formattedDate: string;
+    /**
+     * Whether the editor is in freehand drawing mode. While `true`, the
+     * canvas captures pointer events as strokes (see Phase 15) instead of
+     * performing the normal click-to-deselect behavior.
+     */
+    drawingMode: boolean;
+    setDrawingMode: (on: boolean) => void;
+    /** Active brush color used by the drawing canvas while drawing. */
+    drawingColor: string;
+    setDrawingColor: (color: string) => void;
+    /** Active brush weight (PDF points) used by the drawing canvas. */
+    drawingWeight: number;
+    setDrawingWeight: (weight: number) => void;
 }
 
 /**
@@ -250,6 +274,12 @@ export function EditorSectionProvider({
  */
 export interface UseEditorSectionResult {
     section: Section;
+    /**
+     * Section in raw document coordinates (PDF points), before the Canvas
+     * applies its display scale. Use this when persisting geometry or when
+     * a child needs the un-scaled box (e.g. the drawing canvas viewBox).
+     */
+    rawSection: Section;
     isSelected: boolean;
     finalScale: number;
     onClick: (e: React.MouseEvent) => void;
@@ -316,6 +346,7 @@ export function useEditorSection(): UseEditorSectionResult {
 
     return {
         section,
+        rawSection,
         isSelected,
         finalScale,
         onClick,
@@ -388,6 +419,9 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
     const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [estimatedSize, setEstimatedSize] = useState(0);
+    const [drawingMode, setDrawingMode] = useState(false);
+    const [drawingColor, setDrawingColor] = useState('#000000');
+    const [drawingWeight, setDrawingWeight] = useState(3);
 
     return useMemo(
         () => ({
@@ -399,7 +433,21 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
             estimatedSize,
             setEstimatedSize,
             formattedDate,
+            drawingMode,
+            setDrawingMode,
+            drawingColor,
+            setDrawingColor,
+            drawingWeight,
+            setDrawingWeight,
         }),
-        [selectedSectionId, isPreviewOpen, estimatedSize, formattedDate],
+        [
+            selectedSectionId,
+            isPreviewOpen,
+            estimatedSize,
+            formattedDate,
+            drawingMode,
+            drawingColor,
+            drawingWeight,
+        ],
     );
 }

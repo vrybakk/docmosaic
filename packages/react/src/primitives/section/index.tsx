@@ -1,6 +1,7 @@
 'use client';
 
 import { useEditorSection } from '../../context/editor';
+import { DrawingSectionView } from './drawing-section';
 import { ImageSectionView } from './image-section';
 import { ShapeSectionView } from './shape-section';
 import { TextSectionView } from './text-section';
@@ -12,6 +13,7 @@ import { TextSectionView } from './text-section';
  * - `'image'` → {@link ImageSectionView}
  * - `'text'` → {@link TextSectionView}
  * - `'shape'` → {@link ShapeSectionView}
+ * - `'drawing'` → {@link DrawingSectionView}
  *
  * All variants read their data + handlers from {@link useEditorSection},
  * which must be invoked inside the per-section provider that
@@ -24,6 +26,9 @@ export function Section() {
     }
     if (section.type === 'shape') {
         return <ShapeSectionView />;
+    }
+    if (section.type === 'drawing') {
+        return <DrawingSectionView />;
     }
     return <ImageSectionView />;
 }

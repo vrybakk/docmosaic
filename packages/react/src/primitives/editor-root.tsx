@@ -10,6 +10,7 @@ import {
     type PageOrientation,
     type PageSize,
     type Section,
+    type Stroke,
 } from '@docmosaic/core';
 import { Children, isValidElement, type ReactNode, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
@@ -165,7 +166,7 @@ function buildControlledActions(
         undo: () => {},
         redo: () => {},
         addSection: (opts?: {
-            type?: 'image' | 'text' | 'shape';
+            type?: 'image' | 'text' | 'shape' | 'drawing';
             shape?: 'rect' | 'circle' | 'line';
         }) => {
             const newSection = createSection({
@@ -177,6 +178,32 @@ function buildControlledActions(
             });
             onDocumentChange(touch({ ...document, sections: [...document.sections, newSection] }));
             return newSection;
+        },
+        addStroke: (sectionId: string, stroke: Stroke) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target || target.type !== 'drawing') return;
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) =>
+                        s.id === sectionId && s.type === 'drawing'
+                            ? { ...s, strokes: [...s.strokes, stroke] }
+                            : s,
+                    ),
+                }),
+            );
+        },
+        clearStrokes: (sectionId: string) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target || target.type !== 'drawing') return;
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) =>
+                        s.id === sectionId && s.type === 'drawing' ? { ...s, strokes: [] } : s,
+                    ),
+                }),
+            );
         },
         updateSection: (section: Section) =>
             onDocumentChange(
@@ -370,7 +397,7 @@ function ControlledRoot({
         () => ({
             ...actions,
             addSection: (opts?: {
-                type?: 'image' | 'text' | 'shape';
+                type?: 'image' | 'text' | 'shape' | 'drawing';
                 shape?: 'rect' | 'circle' | 'line';
             }) => {
                 trackEvent.addSection();
@@ -467,7 +494,7 @@ function UncontrolledRoot({
                 actions.redo();
             },
             addSection: (opts?: {
-                type?: 'image' | 'text' | 'shape';
+                type?: 'image' | 'text' | 'shape' | 'drawing';
                 shape?: 'rect' | 'circle' | 'line';
             }) => {
                 trackEvent.addSection();

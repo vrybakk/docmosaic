@@ -6,6 +6,7 @@ import {
     PageOrientation,
     PageSize,
     Section,
+    Stroke,
     createDocument,
     createSection,
     reducer,
@@ -104,7 +105,7 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
             undo: () => dispatch({ type: 'UNDO' }),
             redo: () => dispatch({ type: 'REDO' }),
             addSection: (opts?: {
-                type?: 'image' | 'text' | 'shape';
+                type?: 'image' | 'text' | 'shape' | 'drawing';
                 shape?: 'rect' | 'circle' | 'line';
             }) => {
                 const current = stateRef.current.present;
@@ -121,6 +122,10 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
                 });
                 return newSection;
             },
+            addStroke: (sectionId: string, stroke: Stroke) =>
+                dispatch({ type: 'ADD_STROKE', sectionId, stroke }),
+            clearStrokes: (sectionId: string) =>
+                dispatch({ type: 'CLEAR_STROKES', sectionId }),
             updateSection: (section: Section) =>
                 dispatch({ type: 'UPDATE_SECTION', section }),
             deleteSection: (sectionId: string) =>

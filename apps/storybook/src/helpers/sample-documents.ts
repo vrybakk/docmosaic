@@ -6,9 +6,11 @@
 import { createDocument, createPage, createSection } from '@docmosaic/core';
 import type {
     Document,
+    DrawingSection,
     ImageSection,
     ShapeKind,
     ShapeSection,
+    Stroke,
     TextSection,
 } from '@docmosaic/core';
 
@@ -80,6 +82,52 @@ export function documentWithShapeSection(
                 width: 260,
                 height: 180,
                 ...overrides,
+            },
+        ],
+    };
+}
+
+/**
+ * Document with a single drawing section seeded with a couple of strokes —
+ * useful for previewing the drawing renderer without entering drawing mode.
+ */
+export function documentWithDrawingSection(
+    strokes: Stroke[] = [
+        {
+            color: '#c97b22',
+            weight: 3,
+            points: [
+                { x: 80, y: 90 },
+                { x: 120, y: 140 },
+                { x: 160, y: 100 },
+                { x: 200, y: 150 },
+                { x: 240, y: 110 },
+            ],
+        },
+        {
+            color: '#3b6e3b',
+            weight: 2,
+            points: [
+                { x: 100, y: 220 },
+                { x: 140, y: 200 },
+                { x: 180, y: 230 },
+                { x: 220, y: 210 },
+            ],
+        },
+    ],
+): Document {
+    const base = createDocument();
+    const section = createSection({ type: 'drawing', x: 60, y: 60, page: 1 }) as DrawingSection;
+    return {
+        ...base,
+        sections: [
+            {
+                ...section,
+                x: 60,
+                y: 60,
+                width: 360,
+                height: 260,
+                strokes,
             },
         ],
     };

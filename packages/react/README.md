@@ -202,13 +202,14 @@ import { useEditorKeybindings, DEFAULT_KEYMAP } from '@docmosaic/react';
 
 ## Section types
 
-A `Section` is a discriminated union on the `type` field. Three variants ship today:
+A `Section` is a discriminated union on the `type` field. Four variants ship today:
 
-| Variant | Discriminator   | Renders                                |
-| ------- | --------------- | -------------------------------------- |
-| Image   | `type: 'image'` | `Editor.Section` → `ImageSectionView`  |
-| Text    | `type: 'text'`  | `Editor.Section` → `TextSectionView`   |
-| Shape   | `type: 'shape'` | `Editor.Section` → `ShapeSectionView`  |
+| Variant | Discriminator     | Renders                                  |
+| ------- | ----------------- | ---------------------------------------- |
+| Image   | `type: 'image'`   | `Editor.Section` → `ImageSectionView`    |
+| Text    | `type: 'text'`    | `Editor.Section` → `TextSectionView`     |
+| Shape   | `type: 'shape'`   | `Editor.Section` → `ShapeSectionView`    |
+| Drawing | `type: 'drawing'` | `Editor.Section` → `DrawingSectionView`  |
 
 `Editor.Section` is a dispatcher — it reads `section.type` from `useEditorSection()` and renders the matching view. All variants share the same drag + resize + selection shell. Legacy documents without a `type` field are normalized to `'image'` via `normalizeSection`.
 
@@ -220,6 +221,7 @@ Add a new section of any variant from the toolbar:
 <Editor.AddShapeButton shape="rect" />   {/* Rectangle */}
 <Editor.AddShapeButton shape="circle" /> {/* Circle */}
 <Editor.AddShapeButton shape="line" />   {/* Line */}
+<Editor.DrawButton />                    {/* Toggle drawing mode */}
 ```
 
 Programmatically:
@@ -229,6 +231,7 @@ const { actions } = useEditor();
 actions.addSection({ type: 'image' });
 actions.addSection({ type: 'text' });
 actions.addSection({ type: 'shape', shape: 'circle' });
+actions.addSection({ type: 'drawing' });
 ```
 
 ### Page background
@@ -305,6 +308,78 @@ const section: TextSection = {
 };
 ```
 
+### Drawing section
+
+Drawing sections capture freehand pointer drags as polylines. Click `Editor.DrawButton` to enter drawing mode — the canvas cursor switches to a crosshair, and each click-and-drag commits a stroke into a fresh `DrawingSection`. Subsequent drags on the same surface create more sections; drags on top of an existing drawing section append to that section's stroke list. Press `Escape` to exit.
+
+```
+┌───────────────────────────┐
+│  page                     │
+│   ┌───── DrawingSection ──┐
+│   │   stroke A (red)      │
+│   │      ╱╲    ╱╲         │
+│   │   __╱  ╲__╱  ╲___     │
+│   │   stroke B (green)    │
+│   │     ⌒‾‾⌒              │
+│   └───────────────────────┘
+│                           │
+└───────────────────────────┘
+```
+
+| Field     | Type        | Notes                                                       |
+| --------- | ----------- | ----------------------------------------------------------- |
+| `type`    | `'drawing'` | Discriminator.                                              |
+| `strokes` | `Stroke[]`  | Append-only list. Each stroke carries `points`, `color`, `weight`. |
+
+```tsx
+import type { DrawingSection } from '@docmosaic/core';
+
+const section: DrawingSection = {
+    id: 'c',
+    type: 'drawing',
+    x: 72,
+    y: 72,
+    width: 400,
+    height: 300,
+    page: 1,
+    zIndex: 0,
+    strokes: [
+        {
+            color: '#c97b22',
+            weight: 3,
+            points: [
+                { x: 80, y: 90 },
+                { x: 120, y: 140 },
+                { x: 160, y: 100 },
+            ],
+        },
+    ],
+};
+```
+
+The brush color and weight live on the editor's UI state (`ui.drawingColor`, `ui.drawingWeight`). `Editor.DrawingControls` composes `Editor.ColorPicker` + `Editor.BrushWeightSlider` with "Clear" and "Done" actions to drive them:
+
+```tsx
+<Editor.DrawingControls />
+```
+
+Or assemble the pieces directly:
+
+```tsx
+const { ui } = useEditor();
+
+<Editor.ColorPicker value={ui.drawingColor} onChange={ui.setDrawingColor} />
+<Editor.BrushWeightSlider value={ui.drawingWeight} onChange={ui.setDrawingWeight} />
+```
+
+Two reducer actions drive strokes: `ADD_STROKE` (append-only) and `CLEAR_STROKES` (empty the section's list). Both are exposed via `EditorActions`:
+
+```tsx
+const { actions } = useEditor();
+actions.addStroke(sectionId, { points: [...], color: '#000', weight: 2 });
+actions.clearStrokes(sectionId);
+```
+
 ## Layers
 
 Every `Section` carries a `zIndex` (default `0`). The PDF generator and the on-canvas preview render sections in `(zIndex asc, array index asc)` order — lower draws first, higher draws on top. Ties fall back to insertion order so legacy documents (where every section sits at `zIndex: 0`) render exactly as before.
@@ -358,13 +433,13 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 });
 ```
 
-`actions` is a stable 18-method surface (`undo`, `redo`, `addSection`, `updateSection`, `deleteSection`, `duplicateSection`, `addPage`, `deletePage`, `changePage`, `updatePageSize`, `updateOrientation`, `updateName`, `reorderPages`, `updateEstimatedSize`, `bringToFront`, `sendToBack`, `moveForward`, `moveBackward`). See the [JSDoc on `useDocumentState`](src/hooks/use-document-state.ts) for parameter details.
+`actions` is a stable method surface (`undo`, `redo`, `addSection`, `updateSection`, `deleteSection`, `duplicateSection`, `addStroke`, `clearStrokes`, `addPage`, `deletePage`, `changePage`, `updatePageSize`, `updateOrientation`, `updateName`, `reorderPages`, `updateEstimatedSize`, `setPageBackground`, `bringToFront`, `sendToBack`, `moveForward`, `moveBackward`). See the [JSDoc on `useDocumentState`](src/hooks/use-document-state.ts) for parameter details.
 
 ## Full API reference
 
 Every export is documented inline with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The public surface is:
 
--   `Editor` namespace — `Root`, `Header`, `Toolbar`, `PageList`, `Canvas`, `Section`, `Preview`, and their child buttons/selects.
+-   `Editor` namespace — `Root`, `Header`, `Toolbar`, `PageList`, `Canvas`, `Section`, `Preview`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, and their child buttons/selects (including `DrawButton`).
 -   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `usePdfGeneration`.
 -   Providers — `EditorProvider`, `EditorConfigProvider`, `EditorConfigContext`.
 -   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`.

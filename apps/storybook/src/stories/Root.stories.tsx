@@ -5,6 +5,7 @@ import { Editor } from '@docmosaic/react';
 
 import { createMockPdfBackend } from '../helpers/mock-pdf-backend';
 import {
+    documentWithDrawingSection,
     documentWithSections,
     emptyDocument,
 } from '../helpers/sample-documents';
@@ -129,6 +130,34 @@ export const MinimalTheme: Story = {
     },
     parameters: {
         themes: { themeOverride: 'minimal' },
+    },
+};
+
+/**
+ * Drawing mode active — the canvas captures pointer drags as strokes and the
+ * `Editor.DrawingControls` panel exposes color, brush weight, and clear/done.
+ * Drag inside the canvas to author a new freehand stroke.
+ */
+export const DrawingMode: Story = {
+    render: function DrawingModeStory() {
+        return (
+            <Editor.Root defaultDocument={documentWithDrawingSection([])}>
+                <Editor.Header />
+                <Editor.Toolbar>
+                    <div className="flex items-center gap-2">
+                        <Editor.UndoButton />
+                        <Editor.RedoButton />
+                        <Editor.DrawButton />
+                    </div>
+                </Editor.Toolbar>
+                <div className="flex-1 min-h-0 flex gap-3 p-3">
+                    <Editor.DrawingControls />
+                    <Editor.Canvas>
+                        <Editor.Section />
+                    </Editor.Canvas>
+                </div>
+            </Editor.Root>
+        );
     },
 };
 
