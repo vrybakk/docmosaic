@@ -73,9 +73,48 @@ function LayerControls({ sectionId }: { sectionId: string }) {
 
 Same actions, your visual. The reducer doesn't care who calls it.
 
-## Future scope
+## `Editor.LayerList`
 
-A dedicated `Editor.LayerList` primitive — an outliner-style stack panel listing every section on the current page in z-order, with drag-to-reorder — is intentionally **not** part of v1. The per-section toolbar covers the common "this image needs to be on top" case; a list view is the right tool when users need to see the whole stack at once. Track it as a follow-up if you need bulk layer reordering or a Photoshop-style sidebar UI.
+Phase 25 ships the dedicated outliner. `Editor.LayerList` renders every section on the current page in render order (top of stack first) with click-to-select, shift/meta-click to extend the selection, drag-to-reorder via the grip handle, and per-row toggles for hide and lock.
+
+```tsx
+import { Editor } from '@docmosaic/react';
+
+<Editor.Root>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.Pages />
+    <Editor.Canvas><Editor.Section /></Editor.Canvas>
+    <div className="flex flex-col border-l">
+        <Editor.LayerList className="border-b" />
+        <Editor.PropertiesPanel />
+    </div>
+    <Editor.Preview />
+</Editor.Root>
+```
+
+The panel reads its data from the editor context — drop it anywhere underneath `Editor.Root` and it lights up.
+
+### Hide and lock
+
+Each row has two toggles, mirroring Figma:
+
+| Toggle | Action | Effect |
+| ------ | ------ | ------ |
+| Eye    | `actions.toggleHidden(sectionId)` | Skips the section in the canvas and the PDF output. |
+| Lock   | `actions.toggleLocked(sectionId)` | Refuses selection, drag, and resize for the section. The properties panel still surfaces its fields. |
+
+Hidden and locked are independent — a section can be both. They live as `Section.hidden` and `Section.locked` on the core type so they survive document round-trips and undo/redo. Programmatic callers can also use `actions.setHidden(id, true)` / `actions.setLocked(id, true)` when they want to write an explicit value instead of toggling.
+
+The PDF generator filters out hidden sections before drawing, so a hidden layer leaves no trace in the exported file (the byte-diff gate covers this).
+
+### Drag-to-reorder
+
+Grabbing the grip handle and dragging up/down past another row's midpoint reorders the layer stack — the panel reassigns `zIndex` to every section on the page in one atomic pass so the visible order matches the new list order. Reorder is suppressed in `readOnly` mode (along with the hide/lock toggles).
+
+### Reorder semantics
+
+Drag-reorder writes a fresh contiguous `zIndex` per page so the visible order in the list mirrors the canvas (and PDF) stacking. The per-section toolbar's `bringToFront` / `sendToBack` / `moveForward` / `moveBackward` keep working exactly as before — both surfaces converge on the same `zIndex` field.
 
 ## See also
 

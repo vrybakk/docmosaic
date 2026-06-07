@@ -708,7 +708,43 @@ actions.moveBackward(sectionId);
 
 The same actions are available as dispatchable reducer actions — `BRING_TO_FRONT`, `SEND_TO_BACK`, `MOVE_FORWARD`, `MOVE_BACKWARD` — from `@docmosaic/core` for callers driving the reducer directly.
 
-> **Future scope:** a dedicated `Editor.LayerList` primitive (an outliner-style stack panel) is intentionally not shipped in this version — the per-section toolbar buttons cover the v1 use case. Track it as a follow-up if you need bulk layer reordering or a sidebar UI.
+### `Editor.LayerList`
+
+Phase 25 adds a Figma/Photoshop-style outliner that lists every section on the current page in render order (top of stack first). Click a row to select, shift/meta-click to extend the selection, drag the grip handle to reorder, and use the per-row buttons to toggle hide and lock.
+
+```tsx
+<Editor.Root>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.Pages />
+    <Editor.Canvas><Editor.Section /></Editor.Canvas>
+    <div className="flex flex-col border-l">
+        <Editor.LayerList className="border-b" />
+        <Editor.PropertiesPanel />
+    </div>
+    <Editor.Preview />
+</Editor.Root>
+```
+
+The panel reads sections + current page from `useEditor()` so no other wiring is needed. The flat export `EditorLayerList` is available alongside the namespace member for tree-shake-friendly imports.
+
+#### Hide and lock
+
+Each row carries an eye and a lock button. Hide writes `section.hidden`, which the PDF generator skips entirely (covered by the `generatePDF` hidden-section byte-diff gate). Lock writes `section.locked`, which makes the section refuse selection, drag, and resize — the `PropertiesPanel` still reads the section so callers can inspect it.
+
+Both flags surface as four new editor actions, ready to wire into custom UI:
+
+```tsx
+const { actions } = useEditor();
+actions.toggleHidden(sectionId);
+actions.toggleLocked(sectionId);
+actions.setHidden(sectionId, true);   // or false
+actions.setLocked(sectionId, true);
+```
+
+#### Drag-to-reorder
+
+Drag a row by its grip handle past another row's midpoint to reorder. The panel rewrites every page-1 section's `zIndex` in one atomic pass so the canvas and the PDF mirror the new list order. Reorder + the hide/lock toggles are suppressed in `readOnly` mode; rows still render so viewers can see the stack.
 
 ## Multi-select + snap
 

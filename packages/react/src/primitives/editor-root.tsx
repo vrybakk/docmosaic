@@ -402,6 +402,54 @@ function buildControlledActions(
                 }),
             );
         },
+        toggleHidden: (sectionId: string) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target) return;
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) =>
+                        s.id === sectionId ? { ...s, hidden: !s.hidden } : s,
+                    ),
+                }),
+            );
+        },
+        toggleLocked: (sectionId: string) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target) return;
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) =>
+                        s.id === sectionId ? { ...s, locked: !s.locked } : s,
+                    ),
+                }),
+            );
+        },
+        setHidden: (sectionId: string, hidden: boolean) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target) return;
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) =>
+                        s.id === sectionId ? { ...s, hidden } : s,
+                    ),
+                }),
+            );
+        },
+        setLocked: (sectionId: string, locked: boolean) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target) return;
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) =>
+                        s.id === sectionId ? { ...s, locked } : s,
+                    ),
+                }),
+            );
+        },
         loadDocument: (next: Document) => onDocumentChange(touch(next)),
     };
 }

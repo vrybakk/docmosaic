@@ -54,6 +54,7 @@ import { PropertiesPanel } from './primitives/properties-panel';
 import { TemplateGallery } from './primitives/template-gallery';
 import { Zoom } from './primitives/zoom';
 import { KeybindingHelp } from './primitives/keybinding-help';
+import { LayerList } from './primitives/layer-list';
 
 /**
  * Compound primitive namespace for the DocMosaic editor.
@@ -79,6 +80,8 @@ import { KeybindingHelp } from './primitives/keybinding-help';
  * - `StaticCanvas` — read-only canvas variant; equivalent to `Canvas readOnly`.
  * - `PropertiesPanel` (+ `Layout`, `Text`, `Shape`, `Layer`, `EmptyState`) —
  *   contextual right-side panel that reflects the selected section(s).
+ * - `LayerList` (+ `Row`) — Figma/Photoshop-style outliner listing every
+ *   section on the current page with hide/lock toggles and drag-reorder.
  * - `Preview` — full-document preview dialog.
  *
  * @example
@@ -139,6 +142,7 @@ export const Editor = {
     TemplateGallery,
     Zoom,
     KeybindingHelp,
+    LayerList,
     /** @deprecated Use `Editor.Properties` instead. Removed in next major. */
     Inspector: Properties,
     /** @deprecated Use `Editor.PageBackground` instead. Removed in next major. */
@@ -208,6 +212,12 @@ export {
     KeybindingHelp as EditorKeybindingHelp,
     type KeybindingHelpProps as EditorKeybindingHelpProps,
 } from './primitives/keybinding-help';
+export {
+    LayerList as EditorLayerList,
+    type LayerListProps as EditorLayerListProps,
+} from './primitives/layer-list';
+export { LayerRow as EditorLayerRow } from './primitives/layer-list/layer-row';
+export type { LayerRowProps as EditorLayerRowProps } from './primitives/layer-list/layer-row';
 
 export type { TemplateGalleryItem, TemplateGalleryProps } from './primitives/template-gallery';
 

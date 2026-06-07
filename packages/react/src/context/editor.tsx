@@ -125,6 +125,20 @@ export interface EditorActions {
     /** Swap zIndex with the next-lower section on the same page (no-op if already at the bottom). */
     moveBackward: (sectionId: string) => void;
     /**
+     * Flip the section's `hidden` flag. Hidden sections are skipped during
+     * canvas and PDF rendering.
+     */
+    toggleHidden: (sectionId: string) => void;
+    /**
+     * Flip the section's `locked` flag. Locked sections refuse selection,
+     * drag, and resize but stay visible in the canvas and the PDF output.
+     */
+    toggleLocked: (sectionId: string) => void;
+    /** Set the section's `hidden` flag to an explicit value. */
+    setHidden: (sectionId: string, hidden: boolean) => void;
+    /** Set the section's `locked` flag to an explicit value. */
+    setLocked: (sectionId: string, locked: boolean) => void;
+    /**
      * Replace the entire document with the given snapshot. Used by
      * `Editor.TemplateGallery` to load a template; in uncontrolled mode the
      * swap goes through the history timeline as a single undoable step.
@@ -554,6 +568,10 @@ export function useEditorSection(): UseEditorSectionResult {
     const onClick = useCallback(
         (e: React.MouseEvent) => {
             e.stopPropagation();
+            // Locked sections refuse selection — the click is consumed
+            // (stopPropagation above) so it doesn't clear the existing
+            // selection either, but the lock stays the floor.
+            if (rawSection.locked) return;
             // Shift / meta toggles the section in/out of selection without
             // touching the other selected ids. Plain click replaces the
             // selection — matches the convention from Figma / Sketch.
@@ -563,15 +581,21 @@ export function useEditorSection(): UseEditorSectionResult {
             }
             ui.setSelectedSectionId(rawSection.id);
         },
-        [rawSection.id, ui],
+        [rawSection.id, rawSection.locked, ui],
     );
+
+    // Locked sections fold into readOnly so the existing drag/resize/file
+    // drop/toolbar guards short-circuit without each variant having to know
+    // about `section.locked` directly. The properties panel still reads the
+    // raw section, so locked properties remain inspectable.
+    const effectiveReadOnly = readOnly || rawSection.locked === true;
 
     return {
         section,
         rawSection,
         isSelected,
         finalScale,
-        readOnly,
+        readOnly: effectiveReadOnly,
         onClick,
         onUpdate,
         onImageUpload,

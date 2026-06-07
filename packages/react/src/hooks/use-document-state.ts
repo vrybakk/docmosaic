@@ -161,6 +161,14 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
                 dispatch({ type: 'MOVE_FORWARD', sectionId }),
             moveBackward: (sectionId: string) =>
                 dispatch({ type: 'MOVE_BACKWARD', sectionId }),
+            toggleHidden: (sectionId: string) =>
+                dispatch({ type: 'TOGGLE_HIDDEN', sectionId }),
+            toggleLocked: (sectionId: string) =>
+                dispatch({ type: 'TOGGLE_LOCKED', sectionId }),
+            setHidden: (sectionId: string, hidden: boolean) =>
+                dispatch({ type: 'SET_HIDDEN', sectionId, hidden }),
+            setLocked: (sectionId: string, locked: boolean) =>
+                dispatch({ type: 'SET_LOCKED', sectionId, locked }),
             loadDocument: (next: Document) =>
                 dispatch({ type: 'UPDATE_DOCUMENT', updates: next }),
         }),

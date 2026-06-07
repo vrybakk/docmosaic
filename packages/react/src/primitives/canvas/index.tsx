@@ -120,7 +120,11 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
         setPan({ x: 0, y: 0 });
     };
 
-    const pageSections = (sections || []).filter((s) => s.page === currentPage);
+    // Sections marked `hidden` are skipped on canvas, matching the PDF
+    // generator. They keep their geometry and live in `state.sections` so
+    // `Editor.LayerList` can still show them with a struck-through eye and
+    // let the user toggle visibility back on.
+    const pageSections = (sections || []).filter((s) => s.page === currentPage && !s.hidden);
     const finalScale = (pageScale || 1) * (zoom || 1);
 
     const [, dropRef] = useDrop(
@@ -135,7 +139,10 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
                 if (!delta) return;
 
                 const section = sections.find((s) => s.id === item.id);
-                if (section) {
+                // Locked sections refuse drag-induced position changes —
+                // matches the locked guard in `useEditorSection`'s readOnly
+                // fold, which suppresses the drag hook itself.
+                if (section && !section.locked) {
                     trackEvent.dragSection();
                     actions.updateSection({
                         ...section,
