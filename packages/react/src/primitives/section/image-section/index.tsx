@@ -32,6 +32,7 @@ export function ImageSectionView() {
         onSendToBack,
         onMoveForward,
         onMoveBackward,
+        groupDrag,
     } = editor;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
@@ -42,7 +43,12 @@ export function ImageSectionView() {
         onUpdate,
         imageRef,
     });
-    const { bindDrag, isDragging } = useSectionDrag({ section, onUpdate, isResizing });
+    const { bindDrag, isDragging } = useSectionDrag({
+        section,
+        onUpdate,
+        isResizing,
+        groupDrag,
+    });
     const { handleFileDrop, handleImageUpload, uploadProgress } = useImageUpload({
         section,
         onUpdate,

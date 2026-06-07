@@ -409,6 +409,63 @@ The same actions are available as dispatchable reducer actions — `BRING_TO_FRO
 
 > **Future scope:** a dedicated `Editor.LayerList` primitive (an outliner-style stack panel) is intentionally not shipped in this version — the per-section toolbar buttons cover the v1 use case. Track it as a follow-up if you need bulk layer reordering or a sidebar UI.
 
+## Multi-select + snap
+
+The editor supports multi-section selection out of the box. The selection lives on the editor's UI state as `ui.selectedSectionIds: Set<string>` — `Editor.Canvas` reacts to three input patterns:
+
+| Input                          | Effect                                                                |
+| ------------------------------ | --------------------------------------------------------------------- |
+| Click a section                | Replaces the selection with that section.                             |
+| `Shift`/`Cmd` + click section  | Toggles the section in/out of the selection without touching others.  |
+| Click-and-drag on empty canvas | Draws a marquee box; sections whose bbox intersects it get selected.  |
+| Click on empty canvas (no drag)| Clears the selection.                                                 |
+
+When `selectedSectionIds.size > 1`, the Canvas renders `Editor.SelectionBounds` — a dashed group rectangle with 8 resize handles. Dragging any handle scales every selected section proportionally about the group bbox. Dragging any selected section translates the entire group together; arrow keys (and `Shift+Arrow`) nudge every selected section at once.
+
+### Snap guides
+
+While a multi-select group is being dragged, the editor compares each group edge (left/right/top/bottom/horizontal-mid/vertical-mid) against:
+
+- the page margins (left, right, top, bottom)
+- the page mid-lines (vertical center, horizontal middle)
+- the edges + center / middle of every non-selected section on the same page
+
+Any candidate within `SNAP_THRESHOLD` (5px) wins — the group snaps to it and `Editor.SnapGuides` paints a thin accent-colored line spanning the page so the alignment is visible. Guides clear automatically on pointer release.
+
+```tsx
+import { Editor, useEditor } from '@docmosaic/react';
+
+function SelectAllSections() {
+  const editor = useEditor();
+  React.useEffect(() => {
+    editor.ui.selectMany(editor.state.sections.map((s) => s.id));
+  }, []);
+  return null;
+}
+
+<Editor.Root>
+  <SelectAllSections />
+  <Editor.Canvas>
+    <Editor.Section />
+  </Editor.Canvas>
+</Editor.Root>;
+```
+
+The selection action surface (mirrors the keyboard / pointer paths the canvas uses):
+
+```tsx
+const { ui } = useEditor();
+
+ui.setSelectedSectionId(id);       // replace selection with a single id (or null)
+ui.selectMany([id1, id2, id3]);    // replace selection with the given ids
+ui.addToSelection(id);             // grow the set
+ui.removeFromSelection(id);        // shrink the set
+ui.toggleSelection(id);            // shift+click behavior
+ui.clearSelection();               // empty
+```
+
+Single-select callers can keep reading `ui.selectedSectionId` — it returns the first id of the set (or `null` when empty).
+
 ## Analytics callback
 
 `@docmosaic/react` ships a no-op analytics tracker. Install your provider once at boot — Vercel `track`, PostHog `capture`, anything matching the `(event, payload)` signature. Events fire only when `process.env.NODE_ENV === 'production'`.

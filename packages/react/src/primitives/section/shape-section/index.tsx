@@ -19,7 +19,7 @@ import { SectionShapeToolbar } from './section-shape-toolbar';
 export function ShapeSectionView() {
     const editor = useEditorSection();
     const section = editor.section as ShapeSectionData;
-    const { isSelected, onClick, onUpdate, onDuplicate, onDelete } = editor;
+    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, groupDrag } = editor;
     // No image element for shape; provide a stable empty ref so the resize
     // hook can keep its narrow signature.
     const imageRef = { current: null } as React.RefObject<HTMLImageElement | null>;
@@ -33,6 +33,7 @@ export function ShapeSectionView() {
         section,
         onUpdate,
         isResizing,
+        groupDrag,
     });
 
     const handleClick = (e: React.MouseEvent) => {

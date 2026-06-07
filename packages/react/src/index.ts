@@ -24,6 +24,8 @@ import { Root } from './primitives/editor-root';
 import { BrushWeightSlider } from './primitives/brush-weight-slider';
 import { Canvas } from './primitives/canvas';
 import { CanvasControls } from './primitives/canvas/canvas-controls';
+import { SelectionBounds } from './primitives/canvas/selection-bounds';
+import { SnapGuides } from './primitives/canvas/snap-guides';
 import { ColorPicker } from './primitives/color-picker';
 import { DrawingControls } from './primitives/drawing-controls';
 import { Section } from './primitives/section';
@@ -97,6 +99,8 @@ export const Editor = {
     Root,
     Canvas,
     CanvasControls,
+    SelectionBounds,
+    SnapGuides,
     Section,
     PageList,
     PageThumb,
@@ -161,6 +165,8 @@ export type {
     EditorPdfApi,
     EditorPdfBackend,
     EditorUiState,
+    SnapGuide,
+    UseEditorSectionGroupDrag,
     UseEditorSectionResult,
 } from './context/editor';
 

@@ -133,6 +133,25 @@ export function documentWithDrawingSection(
     };
 }
 
+/**
+ * Document with three image sections arranged in a row — useful for the
+ * Phase 16 multi-select + snap stories.
+ */
+export function documentWithThreeSections(): Document {
+    const base = createDocument();
+    const a = createSection({ x: 40, y: 40, page: 1 }) as ImageSection;
+    const b = createSection({ x: 240, y: 40, page: 1 }) as ImageSection;
+    const c = createSection({ x: 40, y: 240, page: 1 }) as ImageSection;
+    return {
+        ...base,
+        sections: [
+            { ...a, width: 160, height: 120 },
+            { ...b, width: 160, height: 120 },
+            { ...c, width: 160, height: 120 },
+        ],
+    };
+}
+
 /** Document with a colored page background and a single image section. */
 export function documentWithPageBackground(color = '#fff7e6'): Document {
     const base = createDocument();

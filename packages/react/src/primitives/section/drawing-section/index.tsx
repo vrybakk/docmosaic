@@ -23,7 +23,8 @@ export function DrawingSectionView() {
     const { ui } = useEditor();
     const section = editor.section as DrawingSectionData;
     const rawSection = editor.rawSection as DrawingSectionData;
-    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, finalScale } = editor;
+    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, finalScale, groupDrag } =
+        editor;
     const imageRef = { current: null } as React.RefObject<HTMLImageElement | null>;
 
     const { isResizing, handleResizeStart } = useSectionResize({
@@ -37,6 +38,7 @@ export function DrawingSectionView() {
         // While drawing mode is active, drag is suppressed so the canvas
         // pointer handlers see the gesture.
         isResizing: isResizing || ui.drawingMode,
+        groupDrag,
     });
 
     const handleClick = (e: React.MouseEvent) => {

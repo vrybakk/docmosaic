@@ -28,6 +28,7 @@ export function TextSectionView() {
         onUpdate,
         onDuplicate,
         onDelete,
+        groupDrag,
     } = editor;
     const imageRef = { current: null } as React.RefObject<HTMLImageElement | null>;
 
@@ -42,6 +43,7 @@ export function TextSectionView() {
         section,
         onUpdate,
         isResizing: isResizing || isEditing,
+        groupDrag,
     });
 
     const handleClick = (e: React.MouseEvent) => {

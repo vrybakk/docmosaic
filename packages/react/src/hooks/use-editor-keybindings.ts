@@ -252,10 +252,7 @@ function dispatchAction(
     editor: ReturnType<typeof useEditor>,
 ): boolean {
     const { state, actions, ui, canUndo, canRedo } = editor;
-    const selectedId = ui.selectedSectionId;
-    const section = selectedId
-        ? (state.sections.find((s) => s.id === selectedId) ?? null)
-        : null;
+    const selectedIds = ui.selectedSectionIds;
 
     switch (action) {
         case 'undo':
@@ -267,40 +264,48 @@ function dispatchAction(
             actions.redo();
             return true;
         case 'deleteSection':
-            if (!section) return false;
-            actions.deleteSection(section.id);
-            ui.setSelectedSectionId(null);
+            if (selectedIds.size === 0) return false;
+            // Delete every selected section, not just the head of the set —
+            // Phase 16 made selection multi.
+            for (const id of selectedIds) actions.deleteSection(id);
+            ui.clearSelection();
             return true;
         case 'deselect':
-            if (!selectedId) return false;
-            ui.setSelectedSectionId(null);
+            if (selectedIds.size === 0) return false;
+            ui.clearSelection();
             return true;
         case 'nudgeUp':
-            return nudge(section, 0, -1, actions.updateSection);
+            return nudgeAll(state.sections, selectedIds, 0, -1, actions.updateSection);
         case 'nudgeDown':
-            return nudge(section, 0, 1, actions.updateSection);
+            return nudgeAll(state.sections, selectedIds, 0, 1, actions.updateSection);
         case 'nudgeLeft':
-            return nudge(section, -1, 0, actions.updateSection);
+            return nudgeAll(state.sections, selectedIds, -1, 0, actions.updateSection);
         case 'nudgeRight':
-            return nudge(section, 1, 0, actions.updateSection);
+            return nudgeAll(state.sections, selectedIds, 1, 0, actions.updateSection);
         case 'nudgeUpLarge':
-            return nudge(section, 0, -10, actions.updateSection);
+            return nudgeAll(state.sections, selectedIds, 0, -10, actions.updateSection);
         case 'nudgeDownLarge':
-            return nudge(section, 0, 10, actions.updateSection);
+            return nudgeAll(state.sections, selectedIds, 0, 10, actions.updateSection);
         case 'nudgeLeftLarge':
-            return nudge(section, -10, 0, actions.updateSection);
+            return nudgeAll(state.sections, selectedIds, -10, 0, actions.updateSection);
         case 'nudgeRightLarge':
-            return nudge(section, 10, 0, actions.updateSection);
+            return nudgeAll(state.sections, selectedIds, 10, 0, actions.updateSection);
     }
 }
 
-function nudge(
-    section: ReturnType<typeof useEditor>['state']['sections'][number] | null,
+function nudgeAll(
+    sections: ReadonlyArray<ReturnType<typeof useEditor>['state']['sections'][number]>,
+    selectedIds: ReadonlySet<string>,
     dx: number,
     dy: number,
     updateSection: ReturnType<typeof useEditor>['actions']['updateSection'],
 ): boolean {
-    if (!section) return false;
-    updateSection({ ...section, x: section.x + dx, y: section.y + dy });
-    return true;
+    if (selectedIds.size === 0) return false;
+    let touched = false;
+    for (const s of sections) {
+        if (!selectedIds.has(s.id)) continue;
+        updateSection({ ...s, x: s.x + dx, y: s.y + dy });
+        touched = true;
+    }
+    return touched;
 }

@@ -20,13 +20,14 @@
  * ```
  */
 
-import type {
-    Document,
-    PageBackground,
-    Section,
-    Stroke,
-    estimatePDFSize,
-    generatePDF,
+import {
+    getPageDimensionsWithOrientation,
+    type Document,
+    type PageBackground,
+    type Section,
+    type Stroke,
+    type estimatePDFSize,
+    type generatePDF,
 } from '@docmosaic/core';
 import {
     createContext,
@@ -34,8 +35,16 @@ import {
     useCallback,
     useContext,
     useMemo,
+    useRef,
     useState,
 } from 'react';
+import {
+    computeGroupBBox,
+    computeSnap,
+    computeSnapTargets,
+    type SnapBBox,
+    type SnapTarget,
+} from '../primitives/canvas/snap';
 import type { GenerationState } from '../primitives/use-pdf-generation';
 
 /**
@@ -125,16 +134,58 @@ export interface EditorPdfApi {
 }
 
 /**
+ * Snap guide rendered while a multi-select group is being dragged. Coordinates
+ * are in canvas display pixels (raw section coords * `finalScale`) so the
+ * `Editor.SnapGuides` primitive can absolutely-position lines without re-doing
+ * the transform.
+ */
+export interface SnapGuide {
+    /** Orientation of the guide line. */
+    orientation: 'vertical' | 'horizontal';
+    /**
+     * Position along the cross axis. For `'vertical'` this is the x coordinate;
+     * for `'horizontal'` it's the y coordinate. Canvas display pixels.
+     */
+    position: number;
+    /** Optional label for stories / debugging — not rendered by default. */
+    label?: string;
+}
+
+/**
  * UI-only state the editor tracks for primitive coordination — selected
- * section, preview dialog visibility, estimated file size, formatted date.
+ * section(s), preview dialog visibility, estimated file size, formatted date.
  *
  * Lives in context so primitives that don't see each other can still
  * synchronise (e.g. the preview button opens the preview dialog rendered
  * elsewhere in the tree).
  */
 export interface EditorUiState {
+    /**
+     * Set of currently selected section ids. Phase 16 grew this from a single
+     * id to a multi-select model — callers that need a single id can read
+     * {@link selectedSectionId} (first item of the set, kept for backwards
+     * compatibility with keyboard nudge / delete bindings and the
+     * `addSection` auto-select side effect).
+     */
+    selectedSectionIds: Set<string>;
+    /**
+     * First-of-set id, or `null` when the selection is empty. Convenience
+     * accessor for primitives written against the pre-Phase-16 single-select
+     * surface. Prefer {@link selectedSectionIds} for new code.
+     */
     selectedSectionId: string | null;
+    /** Replace the selection with a single id (or clear when `null`). */
     setSelectedSectionId: (id: string | null) => void;
+    /** Replace the selection with the given ids. */
+    selectMany: (ids: ReadonlyArray<string>) => void;
+    /** Add an id to the selection (no-op when already present). */
+    addToSelection: (id: string) => void;
+    /** Remove an id from the selection (no-op when absent). */
+    removeFromSelection: (id: string) => void;
+    /** Toggle an id in/out of the selection — the shift+click handler. */
+    toggleSelection: (id: string) => void;
+    /** Empty the selection. */
+    clearSelection: () => void;
     isPreviewOpen: boolean;
     openPreview: () => void;
     closePreview: () => void;
@@ -154,6 +205,13 @@ export interface EditorUiState {
     /** Active brush weight (PDF points) used by the drawing canvas. */
     drawingWeight: number;
     setDrawingWeight: (weight: number) => void;
+    /**
+     * Active snap guides rendered by {@link SnapGuides} while a multi-select
+     * group is being dragged. Set by the group drag handler; empty array when
+     * not snapping.
+     */
+    activeSnapGuides: SnapGuide[];
+    setActiveSnapGuides: (guides: SnapGuide[]) => void;
 }
 
 /**
@@ -269,6 +327,27 @@ export function EditorSectionProvider({
 }
 
 /**
+ * Group-drag handlers exposed by {@link useEditorSection}. When the active
+ * selection contains more than one section, the section's individual drag
+ * routes through these so all selected sections translate together and snap
+ * guides activate.
+ */
+export interface UseEditorSectionGroupDrag {
+    /** Selection size at the time of the hook call. */
+    size: number;
+    /** Snapshot the original positions and seed snap targets for the drag. */
+    onStart: () => void;
+    /**
+     * Apply a translation delta (display pixels, same units the gesture
+     * library hands out) to every selected section, snapping to targets when
+     * within {@link SNAP_THRESHOLD}.
+     */
+    onMove: (dx: number, dy: number) => void;
+    /** Drop the snapshot and clear active guides. */
+    onEnd: () => void;
+}
+
+/**
  * Returned by {@link useEditorSection}: the section data plus the bound
  * handlers callers wire to the visual primitive.
  */
@@ -291,6 +370,12 @@ export interface UseEditorSectionResult {
     onSendToBack: (sectionId: string) => void;
     onMoveForward: (sectionId: string) => void;
     onMoveBackward: (sectionId: string) => void;
+    /**
+     * Group-drag handlers. Always defined; the hook returns a stub with
+     * `size === 1` for single-select so callers can wire the drag without
+     * a conditional.
+     */
+    groupDrag: UseEditorSectionGroupDrag;
 }
 
 /**
@@ -309,7 +394,7 @@ export function useEditorSection(): UseEditorSectionResult {
         throw new Error('useEditorSection must be used inside <Editor.Canvas>');
     }
     const { section, rawSection, isSelected, finalScale } = ctx;
-    const { actions, ui } = editor;
+    const { actions, ui, state } = editor;
 
     const onUpdate = useCallback(
         (next: Section) => {
@@ -323,6 +408,92 @@ export function useEditorSection(): UseEditorSectionResult {
         },
         [actions, finalScale],
     );
+
+    // ----- Group drag (Phase 16) ----------------------------------------------
+    //
+    // When the active selection is multi-section, the per-section drag wires
+    // through these handlers. The snapshot lives in a ref so successive
+    // `onMove` calls keep referring to the original positions even as state
+    // updates re-render the component.
+    const groupDragSnapshot = useRef<{
+        positions: Map<string, { x: number; y: number; width: number; height: number }>;
+        bbox: SnapBBox;
+        targets: SnapTarget[];
+    } | null>(null);
+
+    const selectedSectionIds = ui.selectedSectionIds;
+    const currentPage = state.currentPage;
+    const pageSize = state.pageSize;
+    const orientation = state.orientation;
+    const sectionsRef = useRef(state.sections);
+    sectionsRef.current = state.sections;
+    const setActiveSnapGuides = ui.setActiveSnapGuides;
+
+    const groupDrag = useMemo<UseEditorSectionGroupDrag>(() => {
+        const size = selectedSectionIds.size;
+
+        const onStart = () => {
+            const selected = sectionsRef.current.filter(
+                (s) => selectedSectionIds.has(s.id) && s.page === currentPage,
+            );
+            const bbox = computeGroupBBox(selected);
+            if (!bbox) return;
+            const positions = new Map(
+                selected.map((s) => [
+                    s.id,
+                    { x: s.x, y: s.y, width: s.width, height: s.height },
+                ]),
+            );
+            const pageDims = getPageDimensionsWithOrientation(pageSize, orientation);
+            const targets = computeSnapTargets(
+                sectionsRef.current.filter((s) => s.page === currentPage),
+                selectedSectionIds,
+                pageDims ?? { width: 0, height: 0 },
+            );
+            groupDragSnapshot.current = { positions, bbox, targets };
+        };
+
+        const onMove = (dxPx: number, dyPx: number) => {
+            const snapshot = groupDragSnapshot.current;
+            if (!snapshot) return;
+            const dx = dxPx / finalScale;
+            const dy = dyPx / finalScale;
+            const snap = computeSnap(snapshot.bbox, dx, dy, snapshot.targets);
+            for (const s of sectionsRef.current) {
+                if (!selectedSectionIds.has(s.id)) continue;
+                const start = snapshot.positions.get(s.id);
+                if (!start) continue;
+                actions.updateSection({
+                    ...s,
+                    x: Math.round(start.x + snap.dx),
+                    y: Math.round(start.y + snap.dy),
+                });
+            }
+            // Convert matched targets to display-pixel guides for rendering.
+            setActiveSnapGuides(
+                snap.matched.map((t) => ({
+                    orientation: t.orientation,
+                    position: t.position * finalScale,
+                    label: t.source,
+                })),
+            );
+        };
+
+        const onEnd = () => {
+            groupDragSnapshot.current = null;
+            setActiveSnapGuides([]);
+        };
+
+        return { size, onStart, onMove, onEnd };
+    }, [
+        actions,
+        currentPage,
+        finalScale,
+        orientation,
+        pageSize,
+        selectedSectionIds,
+        setActiveSnapGuides,
+    ]);
 
     const onImageUpload = useCallback(
         (_sectionId: string, imageUrl: string) => {
@@ -339,6 +510,13 @@ export function useEditorSection(): UseEditorSectionResult {
     const onClick = useCallback(
         (e: React.MouseEvent) => {
             e.stopPropagation();
+            // Shift / meta toggles the section in/out of selection without
+            // touching the other selected ids. Plain click replaces the
+            // selection — matches the convention from Figma / Sketch.
+            if (e.shiftKey || e.metaKey) {
+                ui.toggleSelection(rawSection.id);
+                return;
+            }
             ui.setSelectedSectionId(rawSection.id);
         },
         [rawSection.id, ui],
@@ -358,6 +536,7 @@ export function useEditorSection(): UseEditorSectionResult {
         onSendToBack: actions.sendToBack,
         onMoveForward: actions.moveForward,
         onMoveBackward: actions.moveBackward,
+        groupDrag,
     };
 }
 
@@ -416,17 +595,73 @@ export function useEditorCanvas(): EditorCanvasContextValue {
  * `Editor.Root`. Kept here so the root component stays focused on wiring.
  */
 export function useEditorUiState(formattedDate: string): EditorUiState {
-    const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+    const [selectedSectionIds, setSelectedSectionIds] = useState<Set<string>>(
+        () => new Set<string>(),
+    );
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [estimatedSize, setEstimatedSize] = useState(0);
     const [drawingMode, setDrawingMode] = useState(false);
     const [drawingColor, setDrawingColor] = useState('#000000');
     const [drawingWeight, setDrawingWeight] = useState(3);
+    const [activeSnapGuides, setActiveSnapGuides] = useState<SnapGuide[]>([]);
+
+    const setSelectedSectionId = useCallback((id: string | null) => {
+        setSelectedSectionIds(id === null ? new Set<string>() : new Set([id]));
+    }, []);
+
+    const selectMany = useCallback((ids: ReadonlyArray<string>) => {
+        setSelectedSectionIds(new Set(ids));
+    }, []);
+
+    const addToSelection = useCallback((id: string) => {
+        setSelectedSectionIds((prev) => {
+            if (prev.has(id)) return prev;
+            const next = new Set(prev);
+            next.add(id);
+            return next;
+        });
+    }, []);
+
+    const removeFromSelection = useCallback((id: string) => {
+        setSelectedSectionIds((prev) => {
+            if (!prev.has(id)) return prev;
+            const next = new Set(prev);
+            next.delete(id);
+            return next;
+        });
+    }, []);
+
+    const toggleSelection = useCallback((id: string) => {
+        setSelectedSectionIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    }, []);
+
+    const clearSelection = useCallback(() => {
+        setSelectedSectionIds((prev) => (prev.size === 0 ? prev : new Set<string>()));
+    }, []);
+
+    // First-of-set accessor. Iteration order of a Set follows insertion order,
+    // so callers that only care about a single id (e.g. keyboard nudge) get a
+    // stable choice rather than an arbitrary one.
+    const selectedSectionId = useMemo<string | null>(() => {
+        const first = selectedSectionIds.values().next();
+        return first.done ? null : first.value;
+    }, [selectedSectionIds]);
 
     return useMemo(
         () => ({
+            selectedSectionIds,
             selectedSectionId,
             setSelectedSectionId,
+            selectMany,
+            addToSelection,
+            removeFromSelection,
+            toggleSelection,
+            clearSelection,
             isPreviewOpen,
             openPreview: () => setIsPreviewOpen(true),
             closePreview: () => setIsPreviewOpen(false),
@@ -439,15 +674,25 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
             setDrawingColor,
             drawingWeight,
             setDrawingWeight,
+            activeSnapGuides,
+            setActiveSnapGuides,
         }),
         [
+            selectedSectionIds,
             selectedSectionId,
+            setSelectedSectionId,
+            selectMany,
+            addToSelection,
+            removeFromSelection,
+            toggleSelection,
+            clearSelection,
             isPreviewOpen,
             estimatedSize,
             formattedDate,
             drawingMode,
             drawingColor,
             drawingWeight,
+            activeSnapGuides,
         ],
     );
 }

@@ -16,6 +16,9 @@ import { trackEvent } from '../../internal/analytics';
 import Loader from '../../ui/loader';
 import { Section } from '../section';
 import { CanvasControls } from './canvas-controls';
+import { SelectionBounds } from './selection-bounds';
+import { SnapGuides } from './snap-guides';
+import { bboxesIntersect } from './snap';
 import { useCanvasZoom } from './use-canvas-zoom';
 
 interface CanvasProps {
@@ -114,6 +117,90 @@ export function Canvas({ children }: CanvasProps = {}) {
     const combinedRef = (node: HTMLDivElement | null) => {
         pageRef.current = node;
         if (node) dropRef(node);
+    };
+
+    // Marquee selection — pointerdown on the empty page surface starts a drag
+    // box; on pointerup, any section whose PDF-points bbox intersects the
+    // marquee becomes selected (replacing the previous selection). The
+    // marquee is stored as page-relative display pixels so the overlay div
+    // can render without re-doing the scale.
+    const [marquee, setMarquee] = useState<
+        { startX: number; startY: number; x: number; y: number; width: number; height: number } | null
+    >(null);
+    const marqueeRef = useRef<typeof marquee>(null);
+    const marqueeMovedRef = useRef(false);
+
+    const handleCanvasPointerDown = (e: React.PointerEvent) => {
+        if (ui.drawingMode) return;
+        // Only react when the press lands on the page surface (or canvas) —
+        // not on an existing section / resize handle / control.
+        const target = e.target as HTMLElement;
+        if (target.closest('[data-section="true"]')) return;
+        if (target.closest('[data-resize-handle="true"]')) return;
+        if (target.closest('[data-selection-handle="true"]')) return;
+        if (target.closest('[data-canvas-controls="true"]')) return;
+        if (e.button !== 0) return;
+        const node = pageRef.current;
+        if (!node) return;
+        const rect = node.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const next = { startX: x, startY: y, x, y, width: 0, height: 0 };
+        marqueeRef.current = next;
+        marqueeMovedRef.current = false;
+        setMarquee(next);
+    };
+
+    const handleCanvasPointerMove = (e: React.PointerEvent) => {
+        const current = marqueeRef.current;
+        if (!current) return;
+        const node = pageRef.current;
+        if (!node) return;
+        const rect = node.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const nx = Math.min(current.startX, x);
+        const ny = Math.min(current.startY, y);
+        const width = Math.abs(x - current.startX);
+        const height = Math.abs(y - current.startY);
+        if (width > 2 || height > 2) marqueeMovedRef.current = true;
+        const next = { ...current, x: nx, y: ny, width, height };
+        marqueeRef.current = next;
+        setMarquee(next);
+    };
+
+    const handleCanvasPointerUp = () => {
+        const current = marqueeRef.current;
+        if (!current) return;
+        marqueeRef.current = null;
+        if (!marqueeMovedRef.current) {
+            // No drag — let the click handler clear selection instead.
+            setMarquee(null);
+            return;
+        }
+        // Convert marquee (display px relative to page) to PDF-points and
+        // intersect with each section's bbox.
+        const marqueeBox = {
+            x: current.x / finalScale,
+            y: current.y / finalScale,
+            width: current.width / finalScale,
+            height: current.height / finalScale,
+        };
+        const hits: string[] = [];
+        for (const s of pageSections) {
+            if (
+                bboxesIntersect(marqueeBox, {
+                    x: s.x,
+                    y: s.y,
+                    width: s.width,
+                    height: s.height,
+                })
+            ) {
+                hits.push(s.id);
+            }
+        }
+        ui.selectMany(hits);
+        setMarquee(null);
     };
 
     // Esc exits drawing mode. Scoped to the canvas surface (window listener)
@@ -254,12 +341,24 @@ export function Canvas({ children }: CanvasProps = {}) {
             <div
                 ref={containerRef}
                 className="flex-1 min-h-0 overflow-auto bg-gray-100 p-6 relative"
-                onClick={() => {
+                onClick={(e) => {
                     // In drawing mode the canvas owns pointer events for stroke
                     // capture — deselecting on click would feel out of place.
                     if (ui.drawingMode) return;
-                    ui.setSelectedSectionId(null);
+                    // Ignore clicks that fired at the tail of a marquee drag;
+                    // the marquee already updated the selection.
+                    if (marqueeMovedRef.current) {
+                        marqueeMovedRef.current = false;
+                        return;
+                    }
+                    const target = e.target as HTMLElement;
+                    if (target.closest('[data-section="true"]')) return;
+                    ui.clearSelection();
                 }}
+                onPointerDown={handleCanvasPointerDown}
+                onPointerMove={handleCanvasPointerMove}
+                onPointerUp={handleCanvasPointerUp}
+                onPointerCancel={handleCanvasPointerUp}
                 onWheel={handleWheel}
                 style={{ cursor: ui.drawingMode ? 'crosshair' : undefined }}
             >
@@ -325,8 +424,9 @@ export function Canvas({ children }: CanvasProps = {}) {
                                             value={{
                                                 section: scaledSection,
                                                 rawSection: section,
-                                                isSelected:
-                                                    section.id === ui.selectedSectionId,
+                                                isSelected: ui.selectedSectionIds.has(
+                                                    section.id,
+                                                ),
                                                 finalScale,
                                             }}
                                         >
@@ -334,6 +434,34 @@ export function Canvas({ children }: CanvasProps = {}) {
                                         </EditorSectionProvider>
                                     );
                                 })}
+
+                                {ui.selectedSectionIds.size > 1 && (
+                                    <SelectionBounds
+                                        sections={pageSections}
+                                        selectedIds={ui.selectedSectionIds}
+                                        finalScale={finalScale}
+                                        pageDimensions={pageDimensions}
+                                    />
+                                )}
+
+                                <SnapGuides
+                                    guides={ui.activeSnapGuides}
+                                    pageDimensions={pageDimensions}
+                                    finalScale={finalScale}
+                                />
+
+                                {marquee && (
+                                    <div
+                                        data-marquee="true"
+                                        className="absolute pointer-events-none border border-editor-accent bg-editor-accent/10"
+                                        style={{
+                                            left: marquee.x,
+                                            top: marquee.y,
+                                            width: marquee.width,
+                                            height: marquee.height,
+                                        }}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
