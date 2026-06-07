@@ -14,6 +14,7 @@ import { createPage, createSection } from './factories';
 import type {
     Document,
     PageBackground,
+    PageGuides,
     PageOrientation,
     PageSize,
     Section,
@@ -83,7 +84,27 @@ export type Action =
     | { type: 'TOGGLE_HIDDEN'; sectionId: string; now?: Date }
     | { type: 'TOGGLE_LOCKED'; sectionId: string; now?: Date }
     | { type: 'SET_HIDDEN'; sectionId: string; hidden: boolean; now?: Date }
-    | { type: 'SET_LOCKED'; sectionId: string; locked: boolean; now?: Date };
+    | { type: 'SET_LOCKED'; sectionId: string; locked: boolean; now?: Date }
+    /**
+     * Add a ruler-dragged guide line on a page. Duplicates (same axis +
+     * position) are skipped so repeated drags onto the same value don't
+     * grow the array.
+     */
+    | {
+          type: 'ADD_GUIDE';
+          pageIndex: number;
+          axis: 'vertical' | 'horizontal';
+          position: number;
+          now?: Date;
+      }
+    /** Remove a previously-placed guide line. No-op when not found. */
+    | {
+          type: 'REMOVE_GUIDE';
+          pageIndex: number;
+          axis: 'vertical' | 'horizontal';
+          position: number;
+          now?: Date;
+      };
 
 function touch(state: State, now: Date | undefined): State {
     return { ...state, updatedAt: now ?? new Date() };
@@ -451,6 +472,48 @@ export function reducer(state: State, action: Action): State {
                 },
                 action.now,
             );
+        }
+
+        case 'ADD_GUIDE': {
+            const { pageIndex, axis, position } = action;
+            if (pageIndex < 0 || pageIndex >= state.pages.length) return state;
+            const page = state.pages[pageIndex];
+            const existing = page.guides ?? { vertical: [], horizontal: [] };
+            // Skip exact duplicates so repeated drags onto the same value
+            // don't bloat the page state. Callers that want a "thicker" guide
+            // group should round positions before dispatching.
+            if (existing[axis].includes(position)) return state;
+            const nextGuides: PageGuides = {
+                vertical: axis === 'vertical' ? [...existing.vertical, position] : existing.vertical,
+                horizontal:
+                    axis === 'horizontal' ? [...existing.horizontal, position] : existing.horizontal,
+            };
+            const newPages = state.pages.map((p, idx) =>
+                idx === pageIndex ? { ...p, guides: nextGuides } : p,
+            );
+            return touch({ ...state, pages: newPages }, action.now);
+        }
+
+        case 'REMOVE_GUIDE': {
+            const { pageIndex, axis, position } = action;
+            if (pageIndex < 0 || pageIndex >= state.pages.length) return state;
+            const page = state.pages[pageIndex];
+            if (!page.guides) return state;
+            if (!page.guides[axis].includes(position)) return state;
+            const nextGuides: PageGuides = {
+                vertical:
+                    axis === 'vertical'
+                        ? page.guides.vertical.filter((v) => v !== position)
+                        : page.guides.vertical,
+                horizontal:
+                    axis === 'horizontal'
+                        ? page.guides.horizontal.filter((v) => v !== position)
+                        : page.guides.horizontal,
+            };
+            const newPages = state.pages.map((p, idx) =>
+                idx === pageIndex ? { ...p, guides: nextGuides } : p,
+            );
+            return touch({ ...state, pages: newPages }, action.now);
         }
     }
 }

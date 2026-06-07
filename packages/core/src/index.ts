@@ -15,6 +15,7 @@ export type {
     Page,
     PageBackground,
     PageDimensions,
+    PageGuides,
     PageOrientation,
     PageSize,
     PDFGenerationOptions,

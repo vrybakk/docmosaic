@@ -833,4 +833,118 @@ describe('reducer', () => {
         // After bringing sec-1 to front: order back→front is sec-2, sec-3, sec-1.
         expect(sorted.map((s) => s.id)).toEqual(['sec-2', 'sec-3', 'sec-1']);
     });
+
+    it('ADD_GUIDE seeds vertical and horizontal arrays and bumps updatedAt', () => {
+        const state = buildFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'ADD_GUIDE',
+            pageIndex: 0,
+            axis: 'vertical',
+            position: 100,
+            now: FIXED_NOW,
+        });
+
+        expect(next.pages[0].guides?.vertical).toEqual([100]);
+        expect(next.pages[0].guides?.horizontal).toEqual([]);
+        expect(next.updatedAt).toEqual(FIXED_NOW);
+        expect(snapshot(state)).toBe(before);
+
+        // Horizontal axis appends without disturbing the vertical array.
+        const both = reducer(next, {
+            type: 'ADD_GUIDE',
+            pageIndex: 0,
+            axis: 'horizontal',
+            position: 200,
+            now: FIXED_NOW,
+        });
+        expect(both.pages[0].guides?.vertical).toEqual([100]);
+        expect(both.pages[0].guides?.horizontal).toEqual([200]);
+    });
+
+    it('ADD_GUIDE skips exact duplicates', () => {
+        const state = buildFixture();
+        const once = reducer(state, {
+            type: 'ADD_GUIDE',
+            pageIndex: 0,
+            axis: 'vertical',
+            position: 100,
+            now: FIXED_NOW,
+        });
+        const twice = reducer(once, {
+            type: 'ADD_GUIDE',
+            pageIndex: 0,
+            axis: 'vertical',
+            position: 100,
+            now: FIXED_NOW,
+        });
+        expect(twice).toBe(once);
+        expect(twice.pages[0].guides?.vertical).toEqual([100]);
+    });
+
+    it('ADD_GUIDE is a no-op for an out-of-range pageIndex', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'ADD_GUIDE',
+            pageIndex: 99,
+            axis: 'vertical',
+            position: 50,
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
+    it('REMOVE_GUIDE deletes only the matching axis + position', () => {
+        const state = buildFixture();
+        const seeded = reducer(
+            reducer(state, {
+                type: 'ADD_GUIDE',
+                pageIndex: 0,
+                axis: 'vertical',
+                position: 100,
+                now: FIXED_NOW,
+            }),
+            {
+                type: 'ADD_GUIDE',
+                pageIndex: 0,
+                axis: 'vertical',
+                position: 200,
+                now: FIXED_NOW,
+            },
+        );
+        const removed = reducer(seeded, {
+            type: 'REMOVE_GUIDE',
+            pageIndex: 0,
+            axis: 'vertical',
+            position: 100,
+            now: FIXED_NOW,
+        });
+        expect(removed.pages[0].guides?.vertical).toEqual([200]);
+        expect(removed.updatedAt).toEqual(FIXED_NOW);
+    });
+
+    it('REMOVE_GUIDE is a no-op when the position is absent', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'REMOVE_GUIDE',
+            pageIndex: 0,
+            axis: 'vertical',
+            position: 100,
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
+    it('REMOVE_GUIDE is a no-op for an out-of-range pageIndex', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'REMOVE_GUIDE',
+            pageIndex: 99,
+            axis: 'vertical',
+            position: 50,
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
 });

@@ -301,6 +301,23 @@ export interface PageBackground {
 }
 
 /**
+ * Per-page guide lines. Coordinates are in PDF points (72 DPI) — the same
+ * frame `Section.x`/`Section.y` live in.
+ *
+ * @remarks
+ * Vertical guides carry x positions; horizontal guides carry y positions.
+ * Guides are pure on-canvas alignment helpers: they influence
+ * {@link computeSnapTargets}-style snap math in `@docmosaic/react` but are
+ * **never** drawn into the rendered PDF.
+ */
+export interface PageGuides {
+    /** X positions (PDF points) of vertical guide lines. */
+    vertical: number[];
+    /** Y positions (PDF points) of horizontal guide lines. */
+    horizontal: number[];
+}
+
+/**
  * One page of the document — its sections plus an optional background PDF
  * data URL rendered behind them.
  *
@@ -308,6 +325,10 @@ export interface PageBackground {
  * `background` (Phase 14) layers a solid color and/or an arbitrary image
  * data URL behind sections. It's independent from `backgroundPDF`, which is
  * the legacy single-PDF background used by the file-import flow.
+ *
+ * `guides` (Phase 29) carries optional ruler-dragged alignment lines. They
+ * never reach the PDF output — they exist solely for the editor's snap +
+ * visual-alignment surface.
  */
 export interface Page {
     id: string;
@@ -315,6 +336,11 @@ export interface Page {
     backgroundPDF: string | null;
     /** Optional color or image rendered behind sections. */
     background?: PageBackground;
+    /**
+     * Optional user-placed guide lines for this page. Omitted on legacy
+     * documents — readers should treat `undefined` as "no guides".
+     */
+    guides?: PageGuides;
 }
 
 /**
