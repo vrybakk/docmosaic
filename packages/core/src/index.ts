@@ -8,6 +8,7 @@
 export type {
     DragPosition,
     Document,
+    DrawingSection,
     ImageSection,
     MeasurementUnit,
     Page,
@@ -16,11 +17,13 @@ export type {
     PageOrientation,
     PageSize,
     PDFGenerationOptions,
+    Point,
     ResizeInfo,
     Section,
     SectionBase,
     ShapeKind,
     ShapeSection,
+    Stroke,
     TextSection,
 } from './types';
 export { normalizeSection } from './types';

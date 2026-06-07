@@ -18,6 +18,7 @@ import type {
     PageSize,
     Section,
     ShapeKind,
+    Stroke,
 } from './types';
 
 /**
@@ -56,7 +57,7 @@ export type Action =
            * Variant to create. Defaults to `'image'` so legacy callers
            * (which never passed a type) keep producing image sections.
            */
-          sectionType?: 'image' | 'text' | 'shape';
+          sectionType?: 'image' | 'text' | 'shape' | 'drawing';
           /**
            * Required when `sectionType === 'shape'`. Picks the primitive
            * (`'rect' | 'circle' | 'line'`). Ignored for other variants.
@@ -76,7 +77,9 @@ export type Action =
     | { type: 'BRING_TO_FRONT'; sectionId: string; now?: Date }
     | { type: 'SEND_TO_BACK'; sectionId: string; now?: Date }
     | { type: 'MOVE_FORWARD'; sectionId: string; now?: Date }
-    | { type: 'MOVE_BACKWARD'; sectionId: string; now?: Date };
+    | { type: 'MOVE_BACKWARD'; sectionId: string; now?: Date }
+    | { type: 'ADD_STROKE'; sectionId: string; stroke: Stroke; now?: Date }
+    | { type: 'CLEAR_STROKES'; sectionId: string; now?: Date };
 
 function touch(state: State, now: Date | undefined): State {
     return { ...state, updatedAt: now ?? new Date() };
@@ -348,6 +351,41 @@ export function reducer(state: State, action: Action): State {
                         if (s.id === nextLower.id) return { ...s, zIndex: target.zIndex };
                         return s;
                     }),
+                },
+                action.now,
+            );
+        }
+
+        case 'ADD_STROKE': {
+            // Strokes are append-only during a drawing session. No-op when the
+            // target id isn't a drawing section so a stray dispatch can't
+            // corrupt an image/text/shape.
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target || target.type !== 'drawing') return state;
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) =>
+                        s.id === action.sectionId && s.type === 'drawing'
+                            ? { ...s, strokes: [...s.strokes, action.stroke] }
+                            : s,
+                    ),
+                },
+                action.now,
+            );
+        }
+
+        case 'CLEAR_STROKES': {
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target || target.type !== 'drawing') return state;
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) =>
+                        s.id === action.sectionId && s.type === 'drawing'
+                            ? { ...s, strokes: [] }
+                            : s,
+                    ),
                 },
                 action.now,
             );

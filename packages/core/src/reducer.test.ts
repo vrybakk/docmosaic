@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createDocument, createPage, createSection } from './factories';
 import { reducer, type State } from './reducer';
-import type { Section } from './types';
+import type { Section, Stroke } from './types';
 
 const FIXED_NOW = new Date('2026-01-01T00:00:00.000Z');
 
@@ -506,6 +506,131 @@ describe('reducer', () => {
             type: 'UPDATE_PAGE_BACKGROUND',
             pageIndex: 99,
             background: { color: '#abc' },
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
+    it('ADD_SECTION with sectionType:"drawing" creates a DrawingSection with empty strokes', () => {
+        const state = buildFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'ADD_SECTION',
+            sectionType: 'drawing',
+            now: FIXED_NOW,
+        });
+
+        expect(next.sections).toHaveLength(state.sections.length + 1);
+        const added = next.sections[next.sections.length - 1];
+        expect(added.type).toBe('drawing');
+        if (added.type !== 'drawing') throw new Error('narrowing');
+        expect(added.strokes).toEqual([]);
+        expect(added.page).toBe(state.currentPage);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('ADD_STROKE appends a stroke to the targeted drawing section', () => {
+        const doc = createDocument();
+        const drawing = createSection({ type: 'drawing', page: 1 });
+        if (drawing.type !== 'drawing') throw new Error('drawing fixture');
+        const state: State = deepFreeze({
+            ...doc,
+            sections: [{ ...drawing, id: 'draw-1' }],
+        });
+        const before = snapshot(state);
+
+        const stroke: Stroke = {
+            points: [
+                { x: 10, y: 10 },
+                { x: 20, y: 20 },
+            ],
+            color: '#000',
+            weight: 2,
+        };
+        const next = reducer(state, {
+            type: 'ADD_STROKE',
+            sectionId: 'draw-1',
+            stroke,
+            now: FIXED_NOW,
+        });
+
+        const target = next.sections.find((s) => s.id === 'draw-1');
+        if (!target || target.type !== 'drawing') throw new Error('drawing after add');
+        expect(target.strokes).toHaveLength(1);
+        expect(target.strokes[0]).toEqual(stroke);
+        expect(next.updatedAt).toEqual(FIXED_NOW);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('ADD_STROKE appends in order across multiple dispatches', () => {
+        const doc = createDocument();
+        const drawing = createSection({ type: 'drawing', page: 1 });
+        if (drawing.type !== 'drawing') throw new Error('drawing fixture');
+        const state: State = {
+            ...doc,
+            sections: [{ ...drawing, id: 'draw-1' }],
+        };
+
+        const s1: Stroke = { points: [{ x: 0, y: 0 }], color: '#f00', weight: 1 };
+        const s2: Stroke = { points: [{ x: 5, y: 5 }], color: '#0f0', weight: 2 };
+        const afterFirst = reducer(state, { type: 'ADD_STROKE', sectionId: 'draw-1', stroke: s1 });
+        const afterSecond = reducer(afterFirst, {
+            type: 'ADD_STROKE',
+            sectionId: 'draw-1',
+            stroke: s2,
+        });
+
+        const target = afterSecond.sections.find((s) => s.id === 'draw-1');
+        if (!target || target.type !== 'drawing') throw new Error('narrowing');
+        expect(target.strokes).toEqual([s1, s2]);
+    });
+
+    it('ADD_STROKE is a no-op when the target section is not a drawing', () => {
+        const state = buildFixture();
+        const stroke: Stroke = { points: [{ x: 0, y: 0 }], color: '#000', weight: 1 };
+        const next = reducer(state, {
+            type: 'ADD_STROKE',
+            sectionId: 'sec-1',
+            stroke,
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
+    it('CLEAR_STROKES empties the target drawing section', () => {
+        const doc = createDocument();
+        const drawing = createSection({ type: 'drawing', page: 1 });
+        if (drawing.type !== 'drawing') throw new Error('drawing fixture');
+        const seeded: Section = {
+            ...drawing,
+            id: 'draw-1',
+            strokes: [
+                { points: [{ x: 1, y: 1 }], color: '#000', weight: 1 },
+                { points: [{ x: 2, y: 2 }], color: '#000', weight: 1 },
+            ],
+        };
+        const state: State = deepFreeze({ ...doc, sections: [seeded] });
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'CLEAR_STROKES',
+            sectionId: 'draw-1',
+            now: FIXED_NOW,
+        });
+
+        const target = next.sections.find((s) => s.id === 'draw-1');
+        if (!target || target.type !== 'drawing') throw new Error('drawing after clear');
+        expect(target.strokes).toEqual([]);
+        expect(next.updatedAt).toEqual(FIXED_NOW);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('CLEAR_STROKES is a no-op when the target section is not a drawing', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'CLEAR_STROKES',
+            sectionId: 'sec-1',
             now: FIXED_NOW,
         });
         expect(next).toBe(state);

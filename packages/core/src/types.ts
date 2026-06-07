@@ -159,6 +159,47 @@ export interface ShapeSection extends SectionBase {
 }
 
 /**
+ * A single 2D point in PDF points (72 DPI). Used by {@link Stroke} to model
+ * the polyline geometry of a freehand drawing.
+ */
+export interface Point {
+    x: number;
+    y: number;
+}
+
+/**
+ * One freehand stroke — an ordered polyline plus the ink that drew it. Stored
+ * inside {@link DrawingSection.strokes}; the PDF generator replays each stroke
+ * as a connected sequence of line segments.
+ *
+ * @remarks
+ * Coordinates are PDF points (72 DPI), relative to the page (the same frame
+ * the section's own `x`/`y`/`width`/`height` live in). `weight` is a stroke
+ * width in PDF points; `color` accepts any CSS color string jspdf understands.
+ */
+export interface Stroke {
+    points: Point[];
+    color: string;
+    weight: number;
+}
+
+/**
+ * Freehand-drawing section. Holds an append-only list of {@link Stroke}s
+ * captured while the editor is in drawing mode. The section's bounding box
+ * frames the drawing surface; the strokes themselves carry the actual geometry.
+ *
+ * @remarks
+ * `type: 'drawing'` is the discriminator that distinguishes this from the
+ * other section variants. Strokes are append-only inside a drawing session;
+ * the editor's `clearStrokes` action empties the array (an "eraser" of sorts)
+ * but there's no per-stroke removal yet.
+ */
+export interface DrawingSection extends SectionBase {
+    type: 'drawing';
+    strokes: Stroke[];
+}
+
+/**
  * Discriminated union over the supported section variants. Use the `type`
  * field to narrow — for example:
  *
@@ -167,12 +208,14 @@ export interface ShapeSection extends SectionBase {
  *   section.text; // string
  * } else if (section.type === 'shape') {
  *   section.shape; // ShapeKind
+ * } else if (section.type === 'drawing') {
+ *   section.strokes; // Stroke[]
  * } else {
  *   section.imageUrl; // string | undefined
  * }
  * ```
  */
-export type Section = ImageSection | TextSection | ShapeSection;
+export type Section = ImageSection | TextSection | ShapeSection | DrawingSection;
 
 /**
  * Normalize a possibly-legacy section value. Sections persisted before the

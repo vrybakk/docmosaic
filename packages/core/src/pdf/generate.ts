@@ -12,6 +12,7 @@
 import { jsPDF } from 'jspdf';
 import { CUSTOM_PAGE_SIZES } from '../page-sizes';
 import type {
+    DrawingSection,
     ImageSection,
     PDFGenerationOptions,
     Section,
@@ -224,6 +225,8 @@ export async function generatePDF(
                     drawTextSection(doc, section);
                 } else if (section.type === 'shape') {
                     drawShapeSection(doc, section);
+                } else if (section.type === 'drawing') {
+                    drawDrawingSection(doc, section);
                 }
             }
 
@@ -388,5 +391,31 @@ function drawShapeSection(doc: jsPDF, section: ShapeSection): void {
         }
     } catch (error) {
         console.error('Error adding shape:', error);
+    }
+}
+
+/**
+ * Render a {@link DrawingSection} into the active jsPDF document. Each stroke
+ * is drawn as a sequence of connected line segments via {@link jsPDF.line},
+ * using the stroke's own color and weight. Coordinates are page-relative — the
+ * section's bounding box is only used for editor UI, not the geometry itself.
+ *
+ * Strokes with fewer than two points are skipped (nothing to connect).
+ * Errors are caught so a malformed drawing can't abort generation.
+ */
+function drawDrawingSection(doc: jsPDF, section: DrawingSection): void {
+    try {
+        for (const stroke of section.strokes) {
+            if (stroke.points.length < 2) continue;
+            doc.setDrawColor(stroke.color);
+            doc.setLineWidth(stroke.weight);
+            for (let i = 1; i < stroke.points.length; i++) {
+                const a = stroke.points[i - 1];
+                const b = stroke.points[i];
+                doc.line(a.x, a.y, b.x, b.y);
+            }
+        }
+    } catch (error) {
+        console.error('Error adding drawing:', error);
     }
 }
