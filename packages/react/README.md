@@ -746,6 +746,77 @@ actions.setLocked(sectionId, true);
 
 Drag a row by its grip handle past another row's midpoint to reorder. The panel rewrites every page-1 section's `zIndex` in one atomic pass so the canvas and the PDF mirror the new list order. Reorder + the hide/lock toggles are suppressed in `readOnly` mode; rows still render so viewers can see the stack.
 
+### `Editor.ContextMenu`
+
+Phase 28 wires a right-click context menu around any wrapped element — most commonly `Editor.Canvas`. The menu auto-discriminates on the right-click target:
+
+- **Section menu** (right-click landed inside `[data-section="true"]`): Copy, Duplicate, Delete · Bring to front, Send to back, Move forward, Move backward · Hide/Show, Lock/Unlock.
+- **Canvas menu** (anywhere else): Paste, Select all, Deselect.
+
+```tsx
+<Editor.Root>
+    <Editor.Toolbar />
+    <Editor.ContextMenu>
+        <Editor.Canvas><Editor.Section /></Editor.Canvas>
+    </Editor.ContextMenu>
+</Editor.Root>
+```
+
+Every mutating item dispatches through `useEditor()` actions (`duplicateSection`, `deleteSection`, `bringToFront`, …) so a `readOnly` `Editor.Root` greys out every editing item — Copy stays enabled (the section is read into the in-memory clipboard, no document mutation). Inline shortcut chips read from the active keymap (defaults to `DEFAULT_KEYMAP`); pass `keymap` to override.
+
+Right-clicking an unselected section silently replaces the selection with it — matches Figma / VS Code's explorer convention so subsequent menu items operate on the row you targeted.
+
+Copy/paste use a module-scoped in-memory clipboard so the same value survives across menu re-opens (and across other `Editor.ContextMenu` mounts in the tree). Paste re-uses the existing `duplicateSection` path, so the pasted section lands with the same +20pt offset duplicates get from the toolbar.
+
+### `Editor.Toaster`
+
+Phase 28 also adds a unified toaster surface backed by `react-hot-toast`. Drop one inside `Editor.Root` (or at the app root) and fire toasts with the re-exported `toast` helper:
+
+```tsx
+import { Editor, toast } from '@docmosaic/react';
+
+<Editor.Root>
+    <Editor.Toolbar />
+    <Editor.Canvas><Editor.Section /></Editor.Canvas>
+    <Editor.Toaster />
+</Editor.Root>;
+
+toast.success('PDF downloaded');
+toast.error('Upload failed');
+toast.loading('Generating PDF…');
+```
+
+The bundled style maps the toast container to semantic tokens (`rgb(var(--card))`, `rgb(var(--card-foreground))`, `rgb(var(--border))`), so dark mode flips automatically. Override any field via `toastOptions` — the props deep-merge with the bundled defaults.
+
+`position` defaults to `bottom-right` and accepts every value from `react-hot-toast` (`top-center`, `top-right`, `bottom-left`, etc.). The full `ToasterProps` surface from `react-hot-toast` is forwarded.
+
+#### Auto-fired toasts
+
+A successful PDF download fires `toast.success('PDF downloaded')` and a generation failure fires `toast.error(message)` from the bundled `usePdfGeneration` hook. The image upload pipeline already fires `toast.error(...)` on invalid type / too-large / unexpected errors. If no `Editor.Toaster` is mounted, the toasts silently drop — `react-hot-toast` is a no-op without a container, so the wiring is opt-in.
+
+#### Wiring toasts to your own action handlers
+
+```tsx
+import { toast, useEditor } from '@docmosaic/react';
+
+function DeleteWithToast() {
+    const { ui, actions } = useEditor();
+    return (
+        <button
+            onClick={() => {
+                if (!ui.selectedSectionId) return;
+                actions.deleteSection(ui.selectedSectionId);
+                toast.success('Section deleted');
+            }}
+        >
+            Delete
+        </button>
+    );
+}
+```
+
+The `toast` re-export is also available as `import { toast } from '@docmosaic/react'` for callers that prefer the flat path over the namespace.
+
 ## Multi-select + snap
 
 The editor supports multi-section selection out of the box. The selection lives on the editor's UI state as `ui.selectedSectionIds: Set<string>` — `Editor.Canvas` reacts to three input patterns:
@@ -833,11 +904,11 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 
 Every export is documented inline with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The public surface is:
 
--   `Editor` namespace — `Root`, `Properties`, `Toolbar`, `Pages`, `Canvas`, `StaticCanvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, `PageBackground`, `FileSizeBadge`, `GenerationProgress`, `Zoom`, `KeybindingHelp`, and their child buttons/selects (including `AddImageButton`, `DrawButton`). Flat `EditorXxx` exports mirror the namespace for tree-shake-friendly imports. Back-compat: `Editor.Inspector` (= `Properties`), `Editor.PageBackgroundPicker` (= `PageBackground`), `Editor.EstimatedSize` (= `FileSizeBadge`), `Editor.ProgressOverlay` (= `GenerationProgress`), `Editor.AddSectionButton` (= `AddImageButton`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
+-   `Editor` namespace — `Root`, `Properties`, `Toolbar`, `Pages`, `Canvas`, `StaticCanvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, `PageBackground`, `FileSizeBadge`, `GenerationProgress`, `Zoom`, `KeybindingHelp`, `LayerList`, `ContextMenu`, `Toaster`, and their child buttons/selects (including `AddImageButton`, `DrawButton`). Flat `EditorXxx` exports mirror the namespace for tree-shake-friendly imports. Back-compat: `Editor.Inspector` (= `Properties`), `Editor.PageBackgroundPicker` (= `PageBackground`), `Editor.EstimatedSize` (= `FileSizeBadge`), `Editor.ProgressOverlay` (= `GenerationProgress`), `Editor.AddSectionButton` (= `AddImageButton`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
 -   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `useEditorZoom`, `usePdfGeneration`.
 -   Providers — `EditorProvider`, `EditorConfigProvider`, `EditorConfigContext`.
--   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`.
--   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorKeybinding`, `EditorKeymap`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `TemplateGalleryItem`, `TemplateGalleryProps`, `UseEditorSectionResult`, `UseEditorZoomResult`, `EditorZoomProps`, `EditorKeybindingHelpProps`.
+-   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`, `toast` (re-exported from `react-hot-toast`).
+-   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorKeybinding`, `EditorKeymap`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `TemplateGalleryItem`, `TemplateGalleryProps`, `UseEditorSectionResult`, `UseEditorZoomResult`, `EditorZoomProps`, `EditorKeybindingHelpProps`, `EditorContextMenuProps`, `EditorToasterProps`.
 
 ## Compatibility
 

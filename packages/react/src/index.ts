@@ -55,6 +55,8 @@ import { TemplateGallery } from './primitives/template-gallery';
 import { Zoom } from './primitives/zoom';
 import { KeybindingHelp } from './primitives/keybinding-help';
 import { LayerList } from './primitives/layer-list';
+import { ContextMenu } from './primitives/context-menu';
+import { Toaster } from './primitives/toaster';
 
 /**
  * Compound primitive namespace for the DocMosaic editor.
@@ -82,6 +84,10 @@ import { LayerList } from './primitives/layer-list';
  *   contextual right-side panel that reflects the selected section(s).
  * - `LayerList` (+ `Row`) — Figma/Photoshop-style outliner listing every
  *   section on the current page with hide/lock toggles and drag-reorder.
+ * - `ContextMenu` — right-click menu wrapper that auto-discriminates between
+ *   the section menu (copy / duplicate / delete / layer order / hide / lock)
+ *   and the canvas menu (paste / select all / deselect).
+ * - `Toaster` — `react-hot-toast` toaster styled with semantic tokens.
  * - `Preview` — full-document preview dialog.
  *
  * @example
@@ -143,6 +149,8 @@ export const Editor = {
     Zoom,
     KeybindingHelp,
     LayerList,
+    ContextMenu,
+    Toaster,
     /** @deprecated Use `Editor.Properties` instead. Removed in next major. */
     Inspector: Properties,
     /** @deprecated Use `Editor.PageBackground` instead. Removed in next major. */
@@ -218,6 +226,19 @@ export {
 } from './primitives/layer-list';
 export { LayerRow as EditorLayerRow } from './primitives/layer-list/layer-row';
 export type { LayerRowProps as EditorLayerRowProps } from './primitives/layer-list/layer-row';
+export {
+    ContextMenu as EditorContextMenu,
+    type ContextMenuProps as EditorContextMenuProps,
+} from './primitives/context-menu';
+export {
+    Toaster as EditorToaster,
+    type ToasterProps as EditorToasterProps,
+} from './primitives/toaster';
+/**
+ * Re-export of `react-hot-toast`'s `toast` helper. Fire toasts from anywhere
+ * — they only render when an `Editor.Toaster` is mounted in the tree.
+ */
+export { toast } from 'react-hot-toast';
 
 export type { TemplateGalleryItem, TemplateGalleryProps } from './primitives/template-gallery';
 

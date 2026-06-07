@@ -52,6 +52,7 @@ export function ShapeSectionView() {
         <div
             {...(readOnly ? {} : bindDrag())}
             data-section="true"
+            data-section-id={section.id}
             data-section-type="shape"
             data-section-shape={section.shape}
             className={cn(

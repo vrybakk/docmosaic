@@ -145,6 +145,7 @@ export function ImageSectionView() {
         <div
             {...(readOnly ? {} : bindDrag())}
             data-section="true"
+            data-section-id={section.id}
             className={cn(
                 'absolute p-1',
                 'border-2 border-dashed border-gray-300 hover:border-editor-accent/50',

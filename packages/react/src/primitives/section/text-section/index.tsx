@@ -83,6 +83,7 @@ export function TextSectionView() {
         <div
             {...(isEditing || readOnly ? {} : bindDrag())}
             data-section="true"
+            data-section-id={section.id}
             data-section-type="text"
             className={cn(
                 'absolute p-1',

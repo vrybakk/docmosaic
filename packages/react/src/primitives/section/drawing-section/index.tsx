@@ -53,6 +53,7 @@ export function DrawingSectionView() {
         <div
             {...(ui.drawingMode || readOnly ? {} : bindDrag())}
             data-section="true"
+            data-section-id={section.id}
             data-section-type="drawing"
             className={cn(
                 'absolute p-1',

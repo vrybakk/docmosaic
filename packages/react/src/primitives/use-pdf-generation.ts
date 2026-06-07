@@ -7,6 +7,7 @@ import {
     type Document as DocmosaicDocument,
 } from '@docmosaic/core';
 import { useCallback, useRef, useState } from 'react';
+import { toast } from 'react-hot-toast';
 import type { EditorPdfBackend } from '../context/editor';
 import { trackEvent } from '../internal/analytics';
 import { getDownloadFileName } from '../internal/download';
@@ -140,15 +141,19 @@ export function usePdfGeneration({
             onSizeKnown?.(blob.size);
 
             setState({ isGenerating: false });
+            // No-op if `Editor.Toaster` isn't mounted — react-hot-toast queues
+            // but silently drops when no container exists.
+            toast.success('PDF downloaded');
         } catch (error) {
             console.error('Error generating PDF:', error);
-            setState({
-                isGenerating: false,
-                error:
-                    (error as Error).message === 'PDF generation cancelled'
-                        ? 'PDF generation cancelled.'
-                        : 'Failed to generate PDF. Please try again.',
-            });
+            const message =
+                (error as Error).message === 'PDF generation cancelled'
+                    ? 'PDF generation cancelled.'
+                    : 'Failed to generate PDF. Please try again.';
+            setState({ isGenerating: false, error: message });
+            if ((error as Error).message !== 'PDF generation cancelled') {
+                toast.error(message);
+            }
         } finally {
             abortControllerRef.current = null;
         }
