@@ -138,16 +138,32 @@ import Image from 'next/image';
 
 ## Theming
 
-The editor reads CSS custom properties for every accent color, radius, and shadow. The stylesheet ships in two layers so you can keep the structural defaults and swap only the brand colors:
+The editor reads CSS custom properties for every accent color, radius, and shadow. The stylesheet ships in layers so you can keep the structural defaults and swap only the brand colors:
 
 -   `styles/base.css` — brand-agnostic structural tokens (`--editor-radius-section`, `--editor-shadow-section`).
--   `styles/themes/docmosaic.css` — the DocMosaic brand colors (`--editor-color-*` triplets).
--   `styles.css` — convenience bundle that imports both.
+-   `styles/themes/docmosaic.css` — the DocMosaic brand colors (`--editor-color-*` triplets). **Default.**
+-   `styles/themes/minimal-dark.css` — shadcn-inspired neutral grays on a dark surface.
+-   `styles/themes/minimal-light.css` — shadcn-inspired neutral grays on a white surface.
+-   `styles.css` — convenience bundle that imports `base` + the DocMosaic brand theme.
 
 ### Default DocMosaic look
 
 ```ts
 import '@docmosaic/react/styles.css';
+```
+
+### Minimal dark (shadcn-inspired)
+
+```ts
+import '@docmosaic/react/styles/base.css';
+import '@docmosaic/react/styles/themes/minimal-dark.css';
+```
+
+### Minimal light (shadcn-inspired)
+
+```ts
+import '@docmosaic/react/styles/base.css';
+import '@docmosaic/react/styles/themes/minimal-light.css';
 ```
 
 ### Custom theme on the shared base
@@ -199,7 +215,7 @@ Structural tokens:
 
 | Token                     | Purpose                          | Default                       |
 | ------------------------- | -------------------------------- | ----------------------------- |
-| `--editor-radius-section` | Border radius for image sections | `4px`                         |
+| `--editor-radius-section` | Border radius for image sections | `6px`                         |
 | `--editor-shadow-section` | Shadow for image sections        | `0 1px 3px rgba(0, 0, 0, 0.1)`|
 
 ## Keybindings

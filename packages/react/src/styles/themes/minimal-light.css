@@ -1,0 +1,21 @@
+/*
+ * Minimal light theme — shadcn-inspired neutral grays on a white surface.
+ * Pair with @docmosaic/react/styles/base.css.
+ *
+ * Brand-agnostic counterpart to minimal-dark — same restrained palette,
+ * inverted for a light editor surface.
+ */
+
+:root {
+    --editor-color-accent: 9 9 11; /* zinc-950 — near-black primary on light */
+    --editor-color-accent-soft: 244 244 245; /* zinc-100 — soft accent */
+    --editor-color-success: 22 163 74; /* green-600 */
+    --editor-color-warning: 202 138 4; /* yellow-600 */
+    --editor-color-warning-soft: 254 249 195; /* yellow-100 */
+    --editor-color-surface: 255 255 255; /* white */
+    --editor-color-text: 24 24 27; /* zinc-900 */
+
+    /* Tighter, more shadcn-y structural tokens. */
+    --editor-radius-section: 6px;
+    --editor-shadow-section: 0 1px 2px rgba(0, 0, 0, 0.08);
+}

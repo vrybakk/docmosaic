@@ -1,0 +1,21 @@
+/*
+ * Minimal dark theme — shadcn-inspired neutral grays + subtle borders.
+ * Pair with @docmosaic/react/styles/base.css.
+ *
+ * Color triplets are space-separated to compose with the modern
+ * `rgb(R G B / <alpha-value>)` syntax used by the editor's Tailwind utilities.
+ */
+
+:root {
+    --editor-color-accent: 250 250 250; /* zinc-50 — near-white primary on dark */
+    --editor-color-accent-soft: 38 38 38; /* zinc-800 — soft accent on dark */
+    --editor-color-success: 134 239 172; /* green-300 */
+    --editor-color-warning: 253 224 71; /* yellow-300 */
+    --editor-color-warning-soft: 67 56 0; /* yellow-800 */
+    --editor-color-surface: 9 9 11; /* zinc-950 — base surface */
+    --editor-color-text: 250 250 250; /* zinc-50 */
+
+    /* Tighter, more shadcn-y structural tokens. */
+    --editor-radius-section: 6px;
+    --editor-shadow-section: 0 1px 2px rgba(0, 0, 0, 0.4);
+}

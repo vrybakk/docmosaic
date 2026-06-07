@@ -6,6 +6,8 @@
  * Storybook-only overrides. The base + DocMosaic theme are imported in
  * preview.tsx; the theme switcher just toggles a body class. The "minimal"
  * mode strips the brand color tokens so primitives fall back to bare base.
+ * The "minimal-dark" mode mirrors `styles/themes/minimal-dark.css` so the
+ * theme switcher dropdown lines up with the published exports.
  */
 
 .theme-minimal {
@@ -16,6 +18,27 @@
     --editor-color-warning-soft: 252 165 165;
     --editor-color-surface: 255 255 255;
     --editor-color-text: 17 24 39;
+}
+
+.theme-minimal-dark {
+    --editor-color-accent: 250 250 250;
+    --editor-color-accent-soft: 38 38 38;
+    --editor-color-success: 134 239 172;
+    --editor-color-warning: 253 224 71;
+    --editor-color-warning-soft: 67 56 0;
+    --editor-color-surface: 9 9 11;
+    --editor-color-text: 250 250 250;
+
+    --editor-radius-section: 6px;
+    --editor-shadow-section: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/*
+ * Match the story-surface background to the active theme so the editor's
+ * surface and the surrounding chrome read as one cohesive canvas.
+ */
+.theme-minimal-dark .docmosaic-story-surface {
+    background-color: #09090b;
 }
 
 /*

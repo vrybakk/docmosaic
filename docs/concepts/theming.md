@@ -4,13 +4,15 @@
 
 ## Mental model
 
-The package ships its styles split into two layers so you can swap brand colors without reinventing the structural defaults:
+The package ships its styles split into layers so you can swap brand colors without reinventing the structural defaults:
 
 - **`styles/base.css`** — brand-agnostic structural tokens. Section radius, section shadow. Lives at the bottom of every theme stack.
-- **`styles/themes/docmosaic.css`** — the DocMosaic brand colors. Defines every `--editor-color-*` triplet.
-- **`styles.css`** — convenience bundle that imports both, in order.
+- **`styles/themes/docmosaic.css`** — the DocMosaic brand colors. Defines every `--editor-color-*` triplet. **Default.**
+- **`styles/themes/minimal-dark.css`** — shadcn-inspired neutral grays on a dark surface.
+- **`styles/themes/minimal-light.css`** — shadcn-inspired neutral grays on a white surface.
+- **`styles.css`** — convenience bundle that imports `base` + the DocMosaic brand theme.
 
-You pick one of three layering patterns at import time:
+You pick one of these layering patterns at import time:
 
 ```text
 1. Default DocMosaic look      →  import '@docmosaic/react/styles.css';
@@ -18,9 +20,23 @@ You pick one of three layering patterns at import time:
                                   import './my-theme.css';
 3. Explicit DocMosaic theme    →  import '@docmosaic/react/styles/base.css';
                                   import '@docmosaic/react/styles/themes/docmosaic.css';
+4. Minimal dark (shadcn-ish)   →  import '@docmosaic/react/styles/base.css';
+                                  import '@docmosaic/react/styles/themes/minimal-dark.css';
+5. Minimal light (shadcn-ish)  →  import '@docmosaic/react/styles/base.css';
+                                  import '@docmosaic/react/styles/themes/minimal-light.css';
 ```
 
 Pattern 3 is functionally identical to pattern 1 — it exists for cases where you want to opt the brand theme in or out conditionally (per-route, per-tenant, per-experiment).
+
+## Available themes
+
+| Theme           | Surface | Accent              | Import path                                                |
+| --------------- | ------- | ------------------- | ---------------------------------------------------------- |
+| DocMosaic       | white   | deep aubergine      | `@docmosaic/react/styles/themes/docmosaic.css` *(default)* |
+| Minimal Dark    | zinc-950| near-white          | `@docmosaic/react/styles/themes/minimal-dark.css`          |
+| Minimal Light   | white   | near-black          | `@docmosaic/react/styles/themes/minimal-light.css`         |
+
+The DocMosaic theme stays the default — it's the brand. The minimal variants are opt-in and exist to make the editor blend into existing shadcn-ish app surfaces without a full custom theme.
 
 ## Token reference
 
@@ -40,7 +56,7 @@ Structural tokens carry full CSS values (length, shorthand) — not triplets —
 
 | Token                     | Purpose                          | Default                         |
 | ------------------------- | -------------------------------- | ------------------------------- |
-| `--editor-radius-section` | Border radius for image sections | `4px`                           |
+| `--editor-radius-section` | Border radius for image sections | `6px`                           |
 | `--editor-shadow-section` | Shadow for image sections        | `0 1px 3px rgba(0, 0, 0, 0.1)`  |
 
 Anything not listed here is intentional — there is no `--editor-color-border`, no `--editor-spacing-*`. Add them upstream when a real consumer needs them.

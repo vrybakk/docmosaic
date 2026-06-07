@@ -33,10 +33,11 @@ const preview: Preview = {
     decorators: [
         withThemeByClassName({
             themes: {
-                docmosaic: 'theme-docmosaic',
-                minimal: 'theme-minimal',
+                DocMosaic: 'theme-docmosaic',
+                'Minimal Dark': 'theme-minimal-dark',
+                Minimal: 'theme-minimal',
             },
-            defaultTheme: 'docmosaic',
+            defaultTheme: 'DocMosaic',
         }),
         (Story) => (
             <DndProvider backend={HTML5Backend}>
