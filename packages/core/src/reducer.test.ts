@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createDocument, createPage, createSection } from './factories';
-import { reducer, type Action, type State } from './reducer';
+import { reducer, type State } from './reducer';
 import type { Section } from './types';
 
 const FIXED_NOW = new Date('2026-01-01T00:00:00.000Z');

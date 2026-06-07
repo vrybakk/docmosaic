@@ -63,7 +63,6 @@ export const defaultImageRenderer: ImageRenderer = forwardRef<HTMLImageElement, 
         // `fill` is intentionally dropped; parent layout already sizes the image.
         // Section images are base64 data URLs, so `next/image` optimization is a no-op here.
         return (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
                 ref={ref}
                 src={src}
