@@ -86,6 +86,15 @@
 }
 
 /*
+ * DocMosaic Dark — the brand dark theme. `.dark` is added alongside
+ * `.theme-docmosaic` by the toolbar toggle so the published `.dark` scope in
+ * `themes/docmosaic.css` flips every semantic token to its dark value.
+ */
+.dark .docmosaic-story-surface {
+    background-color: #0d080b;
+}
+
+/*
  * Storybook frames render with constrained heights; some Editor primitives
  * use `h-screen`. Cap that to the canvas height to keep stories visible.
  */

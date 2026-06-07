@@ -1,4 +1,10 @@
 /*
+ * @deprecated since v0.2 — use `themes/docmosaic.css` and toggle the `.dark`
+ * class on a parent (typically `<html>`) via a runtime theme switcher such as
+ * `next-themes`. The brand theme now ships its own dark scope and the legacy
+ * `--editor-color-*` aliases cascade through automatically. This file is kept
+ * for the next major to avoid breaking consumers that import it directly.
+ *
  * Minimal dark theme — shadcn-inspired neutral grays + subtle borders.
  * Pair with @docmosaic/react/styles/base.css.
  *

@@ -196,21 +196,77 @@ Don't reach for hex values directly inside the editor's classes — use the toke
 
 ## Dark mode
 
-Scope the overrides under your dark-mode selector — `prefers-color-scheme`, a `data-theme` attribute, a `.dark` class — and the editor inherits the new values automatically:
+The bundled DocMosaic theme ships a `.dark` scope out of the box. Toggle the
+class on `<html>` (or any ancestor of the editor) and every semantic token —
+plus the legacy `--editor-color-*` aliases that reference them — flips to its
+dark value. The aliases use `var(--primary)` style references, so they cascade
+through automatically with no per-alias dark overrides needed.
+
+### With `next-themes`
+
+The recommended pattern. `attribute="class"` toggles `.dark` on `<html>`, which
+Tailwind's `darkMode: ['class']` and the DocMosaic theme's `.dark` scope both
+read:
+
+```tsx
+// app/layout.tsx
+import { ThemeProvider } from 'next-themes';
+import '@docmosaic/react/styles.css';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <body>
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    {children}
+                </ThemeProvider>
+            </body>
+        </html>
+    );
+}
+```
+
+```tsx
+// theme-toggle.tsx
+'use client';
+import { useTheme } from 'next-themes';
+
+export function ThemeToggle() {
+    const { resolvedTheme, setTheme } = useTheme();
+    return (
+        <button onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+            Toggle
+        </button>
+    );
+}
+```
+
+### Custom selector
+
+Prefer `prefers-color-scheme` or a `data-theme` attribute? Mirror the brand
+dark palette under your selector. The token names are identical to the `.dark`
+scope shipped by `themes/docmosaic.css` — copy them in, or override only the
+ones you want to change.
 
 ```css
 @media (prefers-color-scheme: dark) {
     :root {
-        --background: 9 9 11;
-        --foreground: 250 250 250;
-        --primary: 250 250 250;
-        --primary-foreground: 9 9 11;
+        --background: 13 8 11;
+        --foreground: 252 222 156;
         /* ... */
     }
 }
 ```
 
 No JS toggle needed. The editor reads the variables on every paint.
+
+### `themes/minimal-dark.css` is deprecated
+
+The standalone `minimal-dark.css` import survives for back-compat but is
+**soft-deprecated since v0.2**. New code should use `styles.css` plus the
+`.dark` class toggle — the brand theme keeps its identity in dark mode (cream
+foreground, purple accents) instead of falling back to the shadcn-neutral
+grays of `minimal-dark.css`.
 
 ## See also
 

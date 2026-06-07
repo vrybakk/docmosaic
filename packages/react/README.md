@@ -248,6 +248,40 @@ import '@docmosaic/react/styles/themes/minimal-dark.css';
 import '@docmosaic/react/styles/themes/minimal-light.css';
 ```
 
+> `themes/minimal-dark.css` is **soft-deprecated** since v0.2 — prefer the
+> `Dark mode` pattern below (`styles.css` plus a `.dark` class on `<html>`).
+> The brand theme now ships its own dark scope so the cream / purple identity
+> is preserved when the editor flips into dark mode.
+
+### Dark mode
+
+The bundled DocMosaic theme ships a `.dark` scope. Toggle the class on `<html>`
+and every semantic token (and the legacy `--editor-color-*` aliases that
+reference it) flips together. Pair with [`next-themes`](https://github.com/pacocoursey/next-themes)
+for a 4-line wiring:
+
+```tsx
+// app/layout.tsx
+import { ThemeProvider } from 'next-themes';
+import '@docmosaic/react/styles.css';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <body>
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    {children}
+                </ThemeProvider>
+            </body>
+        </html>
+    );
+}
+```
+
+`@docmosaic/react` itself stays pure-CSS — no JS theme provider, no runtime
+config. The package only exposes the `.dark` selector; the consumer app picks
+when to apply it.
+
 ### Explicit DocMosaic theme on the base
 
 Same as `styles.css` but spelled out — useful when you want to layer the brand theme conditionally:
