@@ -30,6 +30,10 @@ export function Section() {
         onImageUpload,
         onDuplicate,
         onDelete,
+        onBringToFront,
+        onSendToBack,
+        onMoveForward,
+        onMoveBackward,
     } = useEditorSection();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
@@ -105,6 +109,10 @@ export function Section() {
                 top: section.y,
                 width: section.width,
                 height: section.height,
+                // Mirror the PDF render order on-canvas so the editor preview
+                // matches export. Selected sections jump on top via the +1000
+                // offset so resize handles and the toolbar remain interactable.
+                zIndex: (section.zIndex ?? 0) + (isSelected ? 1000 : 0),
                 cursor: isDragging ? 'grabbing' : 'grab',
             }}
             onClick={handleClick}
@@ -126,6 +134,10 @@ export function Section() {
                 onResizeToProportion={handleResizeToProportion}
                 onDuplicate={onDuplicate}
                 onDelete={onDelete}
+                onBringToFront={onBringToFront}
+                onSendToBack={onSendToBack}
+                onMoveForward={onMoveForward}
+                onMoveBackward={onMoveBackward}
             />
 
             <div className="relative w-full h-full group pointer-events-none">

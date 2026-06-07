@@ -42,11 +42,12 @@ interface UseDocumentStateArgs {
  * - `document` — current {@link Document} state (the reducer's `present`).
  * - `formattedDate` — locale-formatted `updatedAt` string (empty on SSR).
  * - `canUndo` / `canRedo` — booleans driven by the history timeline.
- * - `actions` — stable 14-action surface mirroring {@link EditorActions}
+ * - `actions` — stable 18-action surface mirroring {@link EditorActions}
  *   (`undo`, `redo`, `addSection`, `updateSection`, `deleteSection`,
  *   `duplicateSection`, `addPage`, `deletePage`, `changePage`,
  *   `updatePageSize`, `updateOrientation`, `updateName`, `reorderPages`,
- *   `updateEstimatedSize`).
+ *   `updateEstimatedSize`, `bringToFront`, `sendToBack`, `moveForward`,
+ *   `moveBackward`).
  *
  * @example
  * ```tsx
@@ -135,6 +136,14 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
                 dispatch({ type: 'REORDER_PAGES', fromIndex, toIndex }),
             updateEstimatedSize: (size: number) =>
                 dispatch({ type: 'UPDATE_ESTIMATED_SIZE', size }),
+            bringToFront: (sectionId: string) =>
+                dispatch({ type: 'BRING_TO_FRONT', sectionId }),
+            sendToBack: (sectionId: string) =>
+                dispatch({ type: 'SEND_TO_BACK', sectionId }),
+            moveForward: (sectionId: string) =>
+                dispatch({ type: 'MOVE_FORWARD', sectionId }),
+            moveBackward: (sectionId: string) =>
+                dispatch({ type: 'MOVE_BACKWARD', sectionId }),
         }),
         [],
     );

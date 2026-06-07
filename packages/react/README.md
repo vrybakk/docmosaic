@@ -190,6 +190,35 @@ The headless hook is also exported for "BYO-UI" trees that mount their own provi
 import { useEditorKeybindings, DEFAULT_KEYMAP } from '@docmosaic/react';
 ```
 
+## Layers
+
+Every `Section` carries a `zIndex` (default `0`). The PDF generator and the on-canvas preview render sections in `(zIndex asc, array index asc)` order — lower draws first, higher draws on top. Ties fall back to insertion order so legacy documents (where every section sits at `zIndex: 0`) render exactly as before.
+
+The `Editor.Section` toolbar exposes four icon buttons grouped with duplicate/delete:
+
+| Button         | Icon          | Action                                                          |
+| -------------- | ------------- | --------------------------------------------------------------- |
+| Bring to front | `ChevronsUp`  | `zIndex` becomes `max(zIndex) + 1` on the same page             |
+| Move forward   | `ChevronUp`   | Swap `zIndex` with the next-higher peer on the same page        |
+| Move backward  | `ChevronDown` | Swap `zIndex` with the next-lower peer on the same page         |
+| Send to back   | `ChevronsDown`| `zIndex` becomes `min(zIndex) - 1` on the same page             |
+
+Layer operations are scoped per page — sections on other pages never influence the result. `MOVE_FORWARD` / `MOVE_BACKWARD` are no-ops when the target is already on top / at the bottom of its page.
+
+`EditorActions` (and the per-section `useEditorSection()` result) exposes the same four operations programmatically:
+
+```tsx
+const { actions } = useEditor();
+actions.bringToFront(sectionId);
+actions.sendToBack(sectionId);
+actions.moveForward(sectionId);
+actions.moveBackward(sectionId);
+```
+
+The same actions are available as dispatchable reducer actions — `BRING_TO_FRONT`, `SEND_TO_BACK`, `MOVE_FORWARD`, `MOVE_BACKWARD` — from `@docmosaic/core` for callers driving the reducer directly.
+
+> **Future scope:** a dedicated `Editor.LayerList` primitive (an outliner-style stack panel) is intentionally not shipped in this version — the per-section toolbar buttons cover the v1 use case. Track it as a follow-up if you need bulk layer reordering or a sidebar UI.
+
 ## Analytics callback
 
 `@docmosaic/react` ships a no-op analytics tracker. Install your provider once at boot — Vercel `track`, PostHog `capture`, anything matching the `(event, payload)` signature. Events fire only when `process.env.NODE_ENV === 'production'`.
@@ -214,7 +243,7 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 });
 ```
 
-`actions` is a stable 14-method surface (`undo`, `redo`, `addSection`, `updateSection`, `deleteSection`, `duplicateSection`, `addPage`, `deletePage`, `changePage`, `updatePageSize`, `updateOrientation`, `updateName`, `reorderPages`, `updateEstimatedSize`). See the [JSDoc on `useDocumentState`](src/hooks/use-document-state.ts) for parameter details.
+`actions` is a stable 18-method surface (`undo`, `redo`, `addSection`, `updateSection`, `deleteSection`, `duplicateSection`, `addPage`, `deletePage`, `changePage`, `updatePageSize`, `updateOrientation`, `updateName`, `reorderPages`, `updateEstimatedSize`, `bringToFront`, `sendToBack`, `moveForward`, `moveBackward`). See the [JSDoc on `useDocumentState`](src/hooks/use-document-state.ts) for parameter details.
 
 ## Full API reference
 

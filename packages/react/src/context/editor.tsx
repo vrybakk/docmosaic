@@ -47,7 +47,7 @@ export interface EditorPdfBackend {
 /**
  * Action surface exposed by the editor context.
  *
- * Mirrors the 14-action surface returned from {@link useDocumentState}, so
+ * Mirrors the 18-action surface returned from {@link useDocumentState}, so
  * primitives that want to mutate the document can call the same names whether
  * the root is controlled or uncontrolled.
  */
@@ -66,6 +66,14 @@ export interface EditorActions {
     updateName: (name: string) => void;
     reorderPages: (fromIndex: number, toIndex: number) => void;
     updateEstimatedSize: (size: number) => void;
+    /** Raise the section above every other section on the same page. */
+    bringToFront: (sectionId: string) => void;
+    /** Lower the section behind every other section on the same page. */
+    sendToBack: (sectionId: string) => void;
+    /** Swap zIndex with the next-higher section on the same page (no-op if already on top). */
+    moveForward: (sectionId: string) => void;
+    /** Swap zIndex with the next-lower section on the same page (no-op if already at the bottom). */
+    moveBackward: (sectionId: string) => void;
 }
 
 /**
@@ -226,6 +234,10 @@ export interface UseEditorSectionResult {
     onImageUpload: (sectionId: string, imageUrl: string) => void;
     onDuplicate: (section: Section) => void;
     onDelete: (sectionId: string) => void;
+    onBringToFront: (sectionId: string) => void;
+    onSendToBack: (sectionId: string) => void;
+    onMoveForward: (sectionId: string) => void;
+    onMoveBackward: (sectionId: string) => void;
 }
 
 /**
@@ -285,6 +297,10 @@ export function useEditorSection(): UseEditorSectionResult {
         onImageUpload,
         onDuplicate: actions.duplicateSection,
         onDelete: actions.deleteSection,
+        onBringToFront: actions.bringToFront,
+        onSendToBack: actions.sendToBack,
+        onMoveForward: actions.moveForward,
+        onMoveBackward: actions.moveBackward,
     };
 }
 

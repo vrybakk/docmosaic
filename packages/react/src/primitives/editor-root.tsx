@@ -252,6 +252,74 @@ function buildControlledActions(
         },
         updateEstimatedSize: (size: number) =>
             onDocumentChange(touch({ ...document, estimatedSize: size })),
+        bringToFront: (sectionId: string) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target) return;
+            const peers = document.sections.filter((s) => s.page === target.page);
+            const maxZ = peers.reduce((m, s) => (s.zIndex > m ? s.zIndex : m), -Infinity);
+            if (target.zIndex === maxZ && peers.length === 1) return;
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) =>
+                        s.id === sectionId ? { ...s, zIndex: maxZ + 1 } : s,
+                    ),
+                }),
+            );
+        },
+        sendToBack: (sectionId: string) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target) return;
+            const peers = document.sections.filter((s) => s.page === target.page);
+            const minZ = peers.reduce((m, s) => (s.zIndex < m ? s.zIndex : m), Infinity);
+            if (target.zIndex === minZ && peers.length === 1) return;
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) =>
+                        s.id === sectionId ? { ...s, zIndex: minZ - 1 } : s,
+                    ),
+                }),
+            );
+        },
+        moveForward: (sectionId: string) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target) return;
+            const higher = document.sections.filter(
+                (s) => s.page === target.page && s.id !== target.id && s.zIndex > target.zIndex,
+            );
+            if (higher.length === 0) return;
+            const next = higher.reduce((best, s) => (s.zIndex < best.zIndex ? s : best));
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) => {
+                        if (s.id === target.id) return { ...s, zIndex: next.zIndex };
+                        if (s.id === next.id) return { ...s, zIndex: target.zIndex };
+                        return s;
+                    }),
+                }),
+            );
+        },
+        moveBackward: (sectionId: string) => {
+            const target = document.sections.find((s) => s.id === sectionId);
+            if (!target) return;
+            const lower = document.sections.filter(
+                (s) => s.page === target.page && s.id !== target.id && s.zIndex < target.zIndex,
+            );
+            if (lower.length === 0) return;
+            const next = lower.reduce((best, s) => (s.zIndex > best.zIndex ? s : best));
+            onDocumentChange(
+                touch({
+                    ...document,
+                    sections: document.sections.map((s) => {
+                        if (s.id === target.id) return { ...s, zIndex: next.zIndex };
+                        if (s.id === next.id) return { ...s, zIndex: target.zIndex };
+                        return s;
+                    }),
+                }),
+            );
+        },
     };
 }
 
