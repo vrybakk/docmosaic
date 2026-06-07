@@ -136,15 +136,58 @@ import Image from 'next/image';
 </EditorConfigProvider>;
 ```
 
+## Properties panel
+
+`Editor.PropertiesPanel` is the contextual right-side panel that reflects and edits the properties of the currently selected section(s). Drop it into any layout around `Editor.Root` — it doesn't claim a fixed position itself.
+
+```tsx
+<Editor.Root>
+    <Editor.Inspector />
+    <Editor.Toolbar />
+    <div className="flex flex-1">
+        <Editor.Pages />
+        <Editor.Canvas>
+            <Editor.Section />
+        </Editor.Canvas>
+        <Editor.PropertiesPanel className="w-72 border-l" />
+    </div>
+</Editor.Root>;
+```
+
+The panel composes four sub-sections, each surfaced as a compound member so you can reorder or swap them:
+
+-   `Editor.PropertiesPanel.Layout` — `x`, `y`, `width`, `height` (every section type).
+-   `Editor.PropertiesPanel.Text` — font family / size / weight / style / color / alignment. Visible only when every selected section is a text section.
+-   `Editor.PropertiesPanel.Shape` — fill, stroke, stroke width, opacity. Visible only when every selected section is a shape section.
+-   `Editor.PropertiesPanel.Layer` — `bringToFront` / `moveForward` / `moveBackward` / `sendToBack`. Hidden during multi-select.
+
+Pass children to override the default arrangement entirely:
+
+```tsx
+<Editor.PropertiesPanel>
+    <Editor.PropertiesPanel.Layer />
+    <Editor.PropertiesPanel.Layout />
+</Editor.PropertiesPanel>;
+```
+
+When the selection is empty the panel renders `Editor.PropertiesPanel.EmptyState` — a thin placeholder you can also use standalone if you prefer to hide the panel and re-mount it on selection.
+
 ## Theming
 
-The editor reads CSS custom properties for every accent color, radius, and shadow. The stylesheet ships in layers so you can keep the structural defaults and swap only the brand colors:
+The editor reads CSS custom properties for every accent color, radius, and shadow. Two token surfaces are exposed:
 
--   `styles/base.css` — brand-agnostic structural tokens (`--editor-radius-section`, `--editor-shadow-section`).
--   `styles/themes/docmosaic.css` — the DocMosaic brand colors (`--editor-color-*` triplets). **Default.**
+1. **shadcn-aligned semantic tokens** (recommended) — `--background`, `--foreground`, `--primary`, `--secondary`, `--muted`, `--accent`, `--destructive`, `--border`, `--input`, `--ring`, `--radius`. The same names every shadcn-based app already uses, so rebranding the editor is a one-variable change.
+2. **legacy `--editor-color-*` aliases** (back-compat) — `--editor-color-accent`, `--editor-color-accent-soft`, `--editor-color-success`, `--editor-color-warning`, `--editor-color-warning-soft`, `--editor-color-surface`, `--editor-color-text`. Soft-deprecated; resolve to the semantic surface by default.
+
+The stylesheet ships in layers so you can keep the structural defaults and swap only the colors:
+
+-   `styles/base.css` — brand-agnostic structural tokens (`--editor-radius-section`, `--editor-shadow-section`, `--radius`) and the cascade-layer order.
+-   `styles/themes/docmosaic.css` — the DocMosaic brand colors as shadcn semantic tokens (+ legacy aliases). **Default.**
 -   `styles/themes/minimal-dark.css` — shadcn-inspired neutral grays on a dark surface.
 -   `styles/themes/minimal-light.css` — shadcn-inspired neutral grays on a white surface.
 -   `styles.css` — convenience bundle that imports `base` + the DocMosaic brand theme.
+
+All token values land in a `@layer docmosaic` cascade layer. The layer order declared in `base.css` is `docmosaic, base, components, utilities` — so any consumer that defines the same token in `@layer base` (the usual home of a shadcn `:root` block) wins automatically. No overrides, no source-order gotchas.
 
 ### Default DocMosaic look
 
@@ -152,23 +195,20 @@ The editor reads CSS custom properties for every accent color, radius, and shado
 import '@docmosaic/react/styles.css';
 ```
 
-### Minimal dark (shadcn-inspired)
+### Rebrand with one variable
 
-```ts
-import '@docmosaic/react/styles/base.css';
-import '@docmosaic/react/styles/themes/minimal-dark.css';
+Override `--primary` (and optionally `--primary-foreground`) anywhere downstream — the editor's accent, focus ring, and selected-section border all flip together:
+
+```css
+:root {
+    --primary: 79 70 229; /* indigo-600 */
+    --primary-foreground: 255 255 255;
+}
 ```
 
-### Minimal light (shadcn-inspired)
+### Full custom theme on the shared base
 
-```ts
-import '@docmosaic/react/styles/base.css';
-import '@docmosaic/react/styles/themes/minimal-light.css';
-```
-
-### Custom theme on the shared base
-
-Supply your own `--editor-color-*` values in a stylesheet next to your app code, then import the base first so structural defaults come along:
+Supply the whole semantic surface for an app-wide rebrand:
 
 ```ts
 import '@docmosaic/react/styles/base.css';

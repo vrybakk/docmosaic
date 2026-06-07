@@ -49,6 +49,7 @@ import { DocumentName } from './primitives/inspector/document-name';
 import { PageSizeSelect } from './primitives/inspector/page-size-select';
 import { OrientationSelect } from './primitives/inspector/orientation-select';
 import { Preview } from './primitives/preview';
+import { PropertiesPanel } from './primitives/properties-panel';
 import { TemplateGallery } from './primitives/template-gallery';
 
 /**
@@ -72,6 +73,8 @@ import { TemplateGallery } from './primitives/template-gallery';
  * - `Pages` (+ `PageThumbnail`) — left sidebar of page thumbnails.
  * - `PageBackgroundPicker` — color + image picker for `Page.background`.
  * - `Canvas` (+ `CanvasControls`, `Section`) — interactive workspace.
+ * - `PropertiesPanel` (+ `Layout`, `Text`, `Shape`, `Layer`, `EmptyState`) —
+ *   contextual right-side panel that reflects the selected section(s).
  * - `Preview` — full-document preview dialog.
  *
  * @example
@@ -127,6 +130,7 @@ export const Editor = {
     PageSizeSelect,
     OrientationSelect,
     Preview,
+    PropertiesPanel,
     TemplateGallery,
     /** @deprecated Use `Editor.Inspector` instead. Removed in next major. */
     Header: Inspector,
