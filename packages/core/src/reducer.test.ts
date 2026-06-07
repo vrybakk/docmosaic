@@ -416,6 +416,101 @@ describe('reducer', () => {
         expect(snapshot(state)).toBe(before);
     });
 
+    it('ADD_SECTION with sectionType:"shape" creates a ShapeSection carrying defaults', () => {
+        const state = buildFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'ADD_SECTION',
+            sectionType: 'shape',
+            shape: 'circle',
+            now: FIXED_NOW,
+        });
+
+        expect(next.sections).toHaveLength(state.sections.length + 1);
+        const added = next.sections[next.sections.length - 1];
+        expect(added.type).toBe('shape');
+        if (added.type !== 'shape') throw new Error('narrowing');
+        expect(added.shape).toBe('circle');
+        expect(added.stroke).toBe('#000');
+        expect(added.strokeWidth).toBe(1);
+        expect(added.fill).toBe('transparent');
+        expect(added.opacity).toBe(1);
+        expect(added.page).toBe(state.currentPage);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('ADD_SECTION shape defaults to rect when no shape is provided', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'ADD_SECTION',
+            sectionType: 'shape',
+            now: FIXED_NOW,
+        });
+        const added = next.sections[next.sections.length - 1];
+        if (added.type !== 'shape') throw new Error('narrowing');
+        expect(added.shape).toBe('rect');
+    });
+
+    it('UPDATE_PAGE_BACKGROUND sets the background on the targeted page', () => {
+        const state = buildFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'UPDATE_PAGE_BACKGROUND',
+            pageIndex: 1,
+            background: { color: 'rgb(240,240,240)' },
+            now: FIXED_NOW,
+        });
+
+        expect(next.pages[0].background).toBeUndefined();
+        expect(next.pages[1].background).toEqual({ color: 'rgb(240,240,240)' });
+        expect(next.updatedAt).toEqual(FIXED_NOW);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('UPDATE_PAGE_BACKGROUND accepts an image data URL alongside color', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'UPDATE_PAGE_BACKGROUND',
+            pageIndex: 0,
+            background: { color: '#fff', image: 'data:image/png;base64,AAA' },
+            now: FIXED_NOW,
+        });
+        expect(next.pages[0].background).toEqual({
+            color: '#fff',
+            image: 'data:image/png;base64,AAA',
+        });
+    });
+
+    it('UPDATE_PAGE_BACKGROUND can clear an existing background by passing undefined', () => {
+        const state = buildFixture();
+        const seeded = reducer(state, {
+            type: 'UPDATE_PAGE_BACKGROUND',
+            pageIndex: 0,
+            background: { color: '#abc' },
+            now: FIXED_NOW,
+        });
+        const cleared = reducer(seeded, {
+            type: 'UPDATE_PAGE_BACKGROUND',
+            pageIndex: 0,
+            background: undefined,
+            now: FIXED_NOW,
+        });
+        expect(cleared.pages[0].background).toBeUndefined();
+    });
+
+    it('UPDATE_PAGE_BACKGROUND is a no-op for out-of-range pageIndex', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'UPDATE_PAGE_BACKGROUND',
+            pageIndex: 99,
+            background: { color: '#abc' },
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
     /**
      * Mirrors the sort the PDF generator uses: zIndex asc, array index asc.
      * Confirms the action+sort pair produces the expected back-to-front order.

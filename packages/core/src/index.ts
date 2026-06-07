@@ -11,6 +11,7 @@ export type {
     ImageSection,
     MeasurementUnit,
     Page,
+    PageBackground,
     PageDimensions,
     PageOrientation,
     PageSize,
@@ -18,6 +19,8 @@ export type {
     ResizeInfo,
     Section,
     SectionBase,
+    ShapeKind,
+    ShapeSection,
     TextSection,
 } from './types';
 export { normalizeSection } from './types';

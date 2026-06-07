@@ -121,18 +121,58 @@ export interface TextSection extends SectionBase {
 }
 
 /**
+ * Supported shape variants for {@link ShapeSection}.
+ *
+ * - `rect` — axis-aligned rectangle filling the section box.
+ * - `circle` — ellipse inscribed in the section box.
+ * - `line` — diagonal stroke from the top-left to the bottom-right corner.
+ */
+export type ShapeKind = 'rect' | 'circle' | 'line';
+
+/**
+ * Shape-bearing section. Renders a primitive vector shape (rect/circle/line)
+ * inside the section box. Stroke and fill mirror the SVG/PDF model.
+ *
+ * @remarks
+ * Visual properties have no inline defaults so they can fall back to sensible
+ * render-time defaults (transparent fill, 1pt black stroke, full opacity). See
+ * {@link createSection} for the factory defaults.
+ */
+export interface ShapeSection extends SectionBase {
+    type: 'shape';
+    /** Which primitive to render. */
+    shape: ShapeKind;
+    /**
+     * Fill color — any CSS color string (`rgb()`, `#rrggbb`, named) or
+     * `'transparent'` to draw stroke-only. Defaults to `'transparent'`.
+     */
+    fill?: string;
+    /** Stroke color. Defaults to `'#000'`. */
+    stroke?: string;
+    /** Stroke width in PDF points. Defaults to `1`. */
+    strokeWidth?: number;
+    /**
+     * Opacity multiplier `0`–`1` applied to both fill and stroke. Defaults
+     * to `1`.
+     */
+    opacity?: number;
+}
+
+/**
  * Discriminated union over the supported section variants. Use the `type`
  * field to narrow — for example:
  *
  * ```ts
  * if (section.type === 'text') {
  *   section.text; // string
+ * } else if (section.type === 'shape') {
+ *   section.shape; // ShapeKind
  * } else {
  *   section.imageUrl; // string | undefined
  * }
  * ```
  */
-export type Section = ImageSection | TextSection;
+export type Section = ImageSection | TextSection | ShapeSection;
 
 /**
  * Normalize a possibly-legacy section value. Sections persisted before the
@@ -158,13 +198,32 @@ export function normalizeSection(section: Section): Section {
 }
 
 /**
+ * Per-page background. Either a solid color (`color`) or an image data URL
+ * (`image`); the two are independent. When both are set the color paints first
+ * and the image is layered on top.
+ */
+export interface PageBackground {
+    /** CSS color string — `rgb()`, `#rrggbb`, or any value jspdf accepts. */
+    color?: string;
+    /** Data URL (JPEG/PNG/etc.) painted to fill the page bounds. */
+    image?: string;
+}
+
+/**
  * One page of the document — its sections plus an optional background PDF
  * data URL rendered behind them.
+ *
+ * @remarks
+ * `background` (Phase 14) layers a solid color and/or an arbitrary image
+ * data URL behind sections. It's independent from `backgroundPDF`, which is
+ * the legacy single-PDF background used by the file-import flow.
  */
 export interface Page {
     id: string;
     sections: Section[];
     backgroundPDF: string | null;
+    /** Optional color or image rendered behind sections. */
+    background?: PageBackground;
 }
 
 /**

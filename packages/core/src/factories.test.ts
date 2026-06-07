@@ -41,4 +41,22 @@ describe('createSection', () => {
         expect(section.color).toBe('rgb(0,0,0)');
         expect(section.align).toBe('left');
     });
+
+    it('returns a shape section with stroke/fill defaults when type is "shape"', () => {
+        const section = createSection({ type: 'shape', shape: 'rect', page: 1 });
+
+        expect(section.type).toBe('shape');
+        if (section.type !== 'shape') throw new Error('narrowing');
+        expect(section.shape).toBe('rect');
+        expect(section.stroke).toBe('#000');
+        expect(section.strokeWidth).toBe(1);
+        expect(section.fill).toBe('transparent');
+        expect(section.opacity).toBe(1);
+    });
+
+    it('shape section defaults to rect when no shape is provided', () => {
+        const section = createSection({ type: 'shape', page: 1 });
+        if (section.type !== 'shape') throw new Error('narrowing');
+        expect(section.shape).toBe('rect');
+    });
 });

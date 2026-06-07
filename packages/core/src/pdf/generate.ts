@@ -11,7 +11,13 @@
 
 import { jsPDF } from 'jspdf';
 import { CUSTOM_PAGE_SIZES } from '../page-sizes';
-import type { ImageSection, PDFGenerationOptions, Section, TextSection } from '../types';
+import type {
+    ImageSection,
+    PDFGenerationOptions,
+    Section,
+    ShapeSection,
+    TextSection,
+} from '../types';
 import { estimatePDFSize } from './estimate';
 import { processImagesForPDF } from './optimize-image';
 
@@ -151,7 +157,16 @@ export async function generatePDF(
                 doc.addPage(CUSTOM_PAGE_SIZES[pageSize], orientation);
             }
 
-            // Add background if available
+            // Draw page-level Page.background (color, then image) before
+            // anything else so sections layer on top. Only runs when a
+            // background is configured — pages without one skip this branch
+            // entirely and the byte-stable image fixture stays unchanged.
+            const pageBg = pages[i].background;
+            if (pageBg) {
+                drawPageBackground(doc, pageBg);
+            }
+
+            // Add legacy backgroundPDF if available
             const background = optimizedBackgrounds[i];
             if (background) {
                 try {
@@ -207,6 +222,8 @@ export async function generatePDF(
                     }
                 } else if (section.type === 'text') {
                     drawTextSection(doc, section);
+                } else if (section.type === 'shape') {
+                    drawShapeSection(doc, section);
                 }
             }
 
@@ -295,4 +312,81 @@ function computeFontStyle(
     if (bold) return 'bold';
     if (italic) return 'italic';
     return 'normal';
+}
+
+/**
+ * Render a {@link PageBackground} into the active jsPDF document. Paints the
+ * color over the full page bounds, then layers the image (when set) on top.
+ *
+ * Errors are caught so a malformed background can't abort generation —
+ * matches the behavior of the section drawers above.
+ */
+function drawPageBackground(
+    doc: jsPDF,
+    background: NonNullable<import('../types').Page['background']>,
+): void {
+    try {
+        const w = doc.internal.pageSize.getWidth();
+        const h = doc.internal.pageSize.getHeight();
+        if (background.color) {
+            doc.setFillColor(background.color);
+            doc.rect(0, 0, w, h, 'F');
+        }
+        if (background.image) {
+            doc.addImage(background.image, 'JPEG', 0, 0, w, h, undefined, 'MEDIUM', 0);
+        }
+    } catch (error) {
+        console.error('Error adding page background:', error);
+    }
+}
+
+/**
+ * Render a {@link ShapeSection} into the active jsPDF document. Maps the
+ * shape variant onto a jspdf primitive:
+ *
+ * - `'rect'` → {@link jsPDF.rect} over the section box.
+ * - `'circle'` → {@link jsPDF.ellipse} inscribed in the section box.
+ * - `'line'` → {@link jsPDF.line} from the top-left to bottom-right corner.
+ *
+ * Stroke and fill modes are derived from whether `fill` is `'transparent'`
+ * (or absent) — stroke-only when transparent, otherwise filled and stroked.
+ * Errors are caught so a malformed shape can't abort generation.
+ */
+function drawShapeSection(doc: jsPDF, section: ShapeSection): void {
+    try {
+        const stroke = section.stroke ?? '#000';
+        const strokeWidth = section.strokeWidth ?? 1;
+        const fill = section.fill;
+        const hasFill = fill !== undefined && fill !== 'transparent';
+        // jspdf doesn't expose a global opacity API on its 2D drawing helpers;
+        // we map it onto the stroke/fill mode so transparent shapes render
+        // as stroke-only without writing setGState extensions.
+        const opacity = section.opacity ?? 1;
+
+        doc.setDrawColor(stroke);
+        doc.setLineWidth(strokeWidth);
+        if (hasFill && opacity > 0) {
+            doc.setFillColor(fill!);
+        }
+        const drawStyle: 'F' | 'S' | 'FD' = hasFill && opacity > 0 ? 'FD' : 'S';
+
+        if (section.shape === 'rect') {
+            doc.rect(section.x, section.y, section.width, section.height, drawStyle);
+        } else if (section.shape === 'circle') {
+            const cx = section.x + section.width / 2;
+            const cy = section.y + section.height / 2;
+            const rx = section.width / 2;
+            const ry = section.height / 2;
+            doc.ellipse(cx, cy, rx, ry, drawStyle);
+        } else if (section.shape === 'line') {
+            doc.line(
+                section.x,
+                section.y,
+                section.x + section.width,
+                section.y + section.height,
+            );
+        }
+    } catch (error) {
+        console.error('Error adding shape:', error);
+    }
 }

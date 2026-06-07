@@ -8,7 +8,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { normalizeSection } from './types';
-import type { Document, Page, Section } from './types';
+import type { Document, Page, Section, ShapeKind } from './types';
 
 /**
  * Create a new empty document with default settings.
@@ -72,7 +72,12 @@ export function createPage(): Page {
  */
 export interface CreateSectionOptions {
     /** Variant discriminator. Defaults to `'image'`. */
-    type?: 'image' | 'text';
+    type?: 'image' | 'text' | 'shape';
+    /**
+     * Required when `type === 'shape'`. Picks the primitive — rectangle,
+     * ellipse, or diagonal line.
+     */
+    shape?: ShapeKind;
     /** Initial X coordinate in CSS pixels. Default `50`. */
     x?: number;
     /** Initial Y coordinate in CSS pixels. Default `50`. */
@@ -95,6 +100,9 @@ export interface CreateSectionOptions {
  * - `'image'` (default) — empty image slot (`imageUrl` left unset).
  * - `'text'` — empty `text` body, `fontSize: 16`, `color: 'rgb(0,0,0)'`,
  *   `align: 'left'`.
+ * - `'shape'` — vector primitive picked via `opts.shape` (`'rect'`,
+ *   `'circle'`, `'line'`). Defaults: `fill: 'transparent'`, `stroke: '#000'`,
+ *   `strokeWidth: 1`, `opacity: 1`.
  *
  * @param opts - Variant + initial position. See {@link CreateSectionOptions}.
  * @returns A freshly created {@link Section} sized 200×200 points.
@@ -108,6 +116,10 @@ export interface CreateSectionOptions {
  * const text = createSection({ type: 'text', page: 1 });
  * text.text; // ''
  * text.fontSize; // 16
+ *
+ * // Shape section
+ * const circle = createSection({ type: 'shape', shape: 'circle', page: 1 });
+ * circle.stroke; // '#000'
  * ```
  */
 export function createSection(opts: CreateSectionOptions = {}): Section {
@@ -131,6 +143,17 @@ export function createSection(opts: CreateSectionOptions = {}): Section {
             fontSize: 16,
             color: 'rgb(0,0,0)',
             align: 'left',
+        };
+    }
+    if (type === 'shape') {
+        return {
+            ...base,
+            type: 'shape',
+            shape: opts.shape ?? 'rect',
+            fill: 'transparent',
+            stroke: '#000',
+            strokeWidth: 1,
+            opacity: 1,
         };
     }
     return { ...base, type: 'image' };

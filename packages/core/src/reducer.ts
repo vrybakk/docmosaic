@@ -11,7 +11,14 @@
  */
 
 import { createPage, createSection } from './factories';
-import type { Document, PageOrientation, PageSize, Section } from './types';
+import type {
+    Document,
+    PageBackground,
+    PageOrientation,
+    PageSize,
+    Section,
+    ShapeKind,
+} from './types';
 
 /**
  * Document state managed by {@link reducer}. Alias for {@link Document} kept
@@ -49,10 +56,21 @@ export type Action =
            * Variant to create. Defaults to `'image'` so legacy callers
            * (which never passed a type) keep producing image sections.
            */
-          sectionType?: 'image' | 'text';
+          sectionType?: 'image' | 'text' | 'shape';
+          /**
+           * Required when `sectionType === 'shape'`. Picks the primitive
+           * (`'rect' | 'circle' | 'line'`). Ignored for other variants.
+           */
+          shape?: ShapeKind;
           now?: Date;
       }
     | { type: 'UPDATE_SECTION'; section: Section; now?: Date }
+    | {
+          type: 'UPDATE_PAGE_BACKGROUND';
+          pageIndex: number;
+          background: PageBackground | undefined;
+          now?: Date;
+      }
     | { type: 'DELETE_SECTION'; sectionId: string; now?: Date }
     | { type: 'DUPLICATE_SECTION'; section: Section; now?: Date }
     | { type: 'BRING_TO_FRONT'; sectionId: string; now?: Date }
@@ -187,6 +205,7 @@ export function reducer(state: State, action: Action): State {
         case 'ADD_SECTION': {
             const newSection = createSection({
                 type: action.sectionType ?? 'image',
+                shape: action.shape,
                 x: action.x ?? 5,
                 y: action.y ?? 5,
                 page: state.currentPage,
@@ -198,6 +217,17 @@ export function reducer(state: State, action: Action): State {
                 },
                 action.now,
             );
+        }
+
+        case 'UPDATE_PAGE_BACKGROUND': {
+            const { pageIndex, background } = action;
+            if (pageIndex < 0 || pageIndex >= state.pages.length) {
+                return state;
+            }
+            const newPages = state.pages.map((page, idx) =>
+                idx === pageIndex ? { ...page, background } : page,
+            );
+            return touch({ ...state, pages: newPages }, action.now);
         }
 
         case 'UPDATE_SECTION':
