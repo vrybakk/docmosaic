@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Editor } from '@docmosaic/react';
 
 import {
+    documentWithCroppedImage,
     documentWithDrawingSection,
     documentWithSections,
     documentWithShapeSection,
@@ -258,6 +259,23 @@ export const ShapeLine: Story = {
 export const DrawingWithStrokes: Story = {
     render: () => (
         <Editor.Root defaultDocument={documentWithDrawingSection()}>
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/**
+ * Image section with a non-destructive crop applied. The visible region of
+ * the source image is constrained to `crop` — double-click the section in a
+ * live editor to enter crop mode and edit the window.
+ */
+export const ImageCropped: Story = {
+    render: () => (
+        <Editor.Root defaultDocument={documentWithCroppedImage()}>
             <div style={{ height: '600px', display: 'flex' }}>
                 <Editor.Canvas>
                     <Editor.Section />

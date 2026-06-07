@@ -65,10 +65,10 @@ const [doc, setDoc] = useState(createDocument());
 
 ## Custom PDF backend
 
-Swap the bundled `jspdf` pipeline for your own — e.g. a Worker, `pdf-lib`, or a server endpoint. Either `generate` or `estimate` (or both) can be overridden.
+Swap the bundled `jspdf` pipeline for your own — e.g. a Worker, `pdf-lib`, or a server endpoint. `generate`, `estimate`, and `generatePNGs` can each be overridden; missing entries fall back to the `@docmosaic/core` defaults.
 
 ```tsx
-import type { generatePDF, estimatePDFSize } from '@docmosaic/core';
+import type { estimatePDFSize, generatePDF, generatePNGs } from '@docmosaic/core';
 
 const generate: typeof generatePDF = async (sections, options, onProgress) =>
     myCustomRenderer(sections, options, onProgress);
@@ -76,8 +76,52 @@ const generate: typeof generatePDF = async (sections, options, onProgress) =>
 const estimate: typeof estimatePDFSize = (sections, backgrounds) =>
     mySizeHeuristic(sections, backgrounds);
 
-<Editor.Root pdf={{ generate, estimate }}>{/* … */}</Editor.Root>;
+const generatePNGsImpl: typeof generatePNGs = async (sections, options, onProgress) =>
+    myCustomPngRenderer(sections, options, onProgress);
+
+<Editor.Root pdf={{ generate, estimate, generatePNGs: generatePNGsImpl }}>{/* … */}</Editor.Root>;
 ```
+
+## PNG export
+
+`Editor.DownloadButton` now ships as a split button: the primary click runs the PDF pipeline; the dropdown caret reveals **Download PNG (per page)**. The PNG path renders one file per page through a 2D canvas (offscreen when available, fallback to a hidden `<canvas>` element). The PDF and PNG outputs share layout but aren't expected to be pixel-identical — they go through different rasterizers.
+
+You can also reach the underlying handler from the editor context:
+
+```tsx
+function CustomDownload() {
+    const { pdfApi } = useEditor();
+    return <button onClick={() => pdfApi.downloadPNGs()}>Export PNGs</button>;
+}
+```
+
+## Templates
+
+`Editor.TemplateGallery` renders a clickable grid of document snapshots. Selecting a card dispatches `actions.loadDocument` so the load goes through the history timeline — in uncontrolled mode, undo restores the previous document.
+
+```tsx
+import { Editor, type TemplateGalleryItem } from '@docmosaic/react';
+import { createDocument } from '@docmosaic/core';
+
+const templates: TemplateGalleryItem[] = [
+    { id: 'blank', name: 'Blank', document: createDocument() },
+    {
+        id: 'invoice',
+        name: 'Invoice',
+        thumbnail: '/templates/invoice.png',
+        document: invoiceDocument,
+    },
+];
+
+<Editor.Root>
+    <Editor.TemplateGallery templates={templates} onTemplateSelected={(t) => console.log(t.name)} />
+    <Editor.Canvas>
+        <Editor.Section />
+    </Editor.Canvas>
+</Editor.Root>;
+```
+
+Persist templates as JSON via `@docmosaic/core`'s `exportTemplate` / `importTemplate` — they're stable-order so the output diffs cleanly in version control.
 
 ## Custom image renderer
 
@@ -251,10 +295,11 @@ actions.setPageBackground(0, undefined); // clear
 
 Image sections fill their box with a base64 data URL. Drag-and-drop or the inline file picker writes the URL into the section.
 
-| Field      | Type      | Notes                                       |
-| ---------- | --------- | ------------------------------------------- |
-| `type`     | `'image'` | Discriminator.                              |
-| `imageUrl` | `string?` | Base64 data URL. Empty box when unset.      |
+| Field      | Type         | Notes                                              |
+| ---------- | ------------ | -------------------------------------------------- |
+| `type`     | `'image'`    | Discriminator.                                     |
+| `imageUrl` | `string?`    | Base64 data URL. Empty box when unset.             |
+| `crop`     | `ImageCrop?` | Optional non-destructive crop region (PDF points). |
 
 ```tsx
 import type { ImageSection } from '@docmosaic/core';
@@ -269,6 +314,19 @@ const section: ImageSection = {
     page: 1,
     zIndex: 0,
     imageUrl: 'data:image/png;base64,...',
+};
+```
+
+#### Crop
+
+Double-click an image section in the editor to enter crop mode. The overlay dims the area outside the crop window and exposes 8 resize handles; confirm with the check button or press the close button to discard. The crop is stored as `{ x, y, width, height }` in PDF points (relative to the section's bounding box) — the original `imageUrl` is preserved, so the operation is fully non-destructive.
+
+The PDF and PNG generators both honor the crop. When the crop equals the full section box it's stored as `undefined`, so documents that never touched the feature emit byte-identical PDFs to pre-crop releases.
+
+```tsx
+const cropped: ImageSection = {
+    ...section,
+    crop: { x: 25, y: 20, width: 100, height: 80 },
 };
 ```
 
@@ -496,11 +554,11 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 
 Every export is documented inline with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The public surface is:
 
--   `Editor` namespace — `Root`, `Header`, `Toolbar`, `PageList`, `Canvas`, `Section`, `Preview`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, and their child buttons/selects (including `DrawButton`).
+-   `Editor` namespace — `Root`, `Header`, `Toolbar`, `PageList`, `Canvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, and their child buttons/selects (including `DrawButton`).
 -   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `usePdfGeneration`.
 -   Providers — `EditorProvider`, `EditorConfigProvider`, `EditorConfigContext`.
 -   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`.
--   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorKeybinding`, `EditorKeymap`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `UseEditorSectionResult`.
+-   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorKeybinding`, `EditorKeymap`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `TemplateGalleryItem`, `TemplateGalleryProps`, `UseEditorSectionResult`.
 
 ## Compatibility
 

@@ -1,16 +1,18 @@
 'use client';
 
-import type { ImageSection as ImageSectionData } from '@docmosaic/core';
+import type { ImageSection as ImageSectionData, Section } from '@docmosaic/core';
 import { useCallback, useRef, useState } from 'react';
-import { useEditorSection } from '../../../context/editor';
+import { useEditor, useEditorSection } from '../../../context/editor';
 import { cn } from '../../../internal/utils';
 import { SectionResizeHandles } from '../hooks/section-resize-handles';
 import { useSectionDrag } from '../hooks/use-section-drag';
 import { useSectionResize } from '../hooks/use-section-resize';
+import { SectionCropOverlay } from './section-crop-overlay';
 import { SectionEmptyState } from './section-empty-state';
 import { SectionImage } from './section-image';
 import { SectionToolbar } from './section-toolbar';
 import { SectionUploadProgress } from './section-upload-progress';
+import { useImageCrop } from './use-image-crop';
 import { useImageUpload } from './use-image-upload';
 
 /**
@@ -21,6 +23,7 @@ import { useImageUpload } from './use-image-upload';
 export function ImageSectionView() {
     const editor = useEditorSection();
     const section = editor.section as ImageSectionData;
+    const rawSection = editor.rawSection as ImageSectionData;
     const {
         isSelected,
         onClick,
@@ -33,6 +36,7 @@ export function ImageSectionView() {
         onMoveForward,
         onMoveBackward,
         groupDrag,
+        finalScale,
     } = editor;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
@@ -54,10 +58,41 @@ export function ImageSectionView() {
         onUpdate,
         onImageUpload,
     });
+    // Crop edits use raw (un-scaled) section coords directly — the standard
+    // `onUpdate` wrapper divides geometry by `finalScale`, which would corrupt
+    // a fresh crop update that was already authored in raw points. Route the
+    // crop write through `actions.updateSection` to skip that conversion.
+    const { actions } = useEditor();
+    const onCropUpdate = useCallback(
+        (next: Section) => actions.updateSection(next),
+        [actions],
+    );
+    const {
+        isCropping,
+        draft,
+        enterCropMode,
+        confirmCrop,
+        cancelCrop,
+        startMove: startCropMove,
+        startResize: startCropResize,
+    } = useImageCrop({
+        section: rawSection,
+        onUpdate: onCropUpdate,
+        scale: finalScale,
+    });
 
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         onClick(e);
+    };
+
+    const handleDoubleClick = (e: React.MouseEvent) => {
+        // Double-click on an image with content enters crop mode; on an empty
+        // section it falls through (no-op) so the placeholder's upload prompt
+        // stays primary.
+        if (!rawSection.imageUrl) return;
+        e.stopPropagation();
+        if (!isCropping) enterCropMode();
     };
 
     const handleDragOver = (e: React.DragEvent) => {
@@ -120,11 +155,12 @@ export function ImageSectionView() {
                 cursor: isDragging ? 'grabbing' : 'grab',
             }}
             onClick={handleClick}
+            onDoubleClick={handleDoubleClick}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={onFileDrop}
         >
-            {isSelected && !isResizing && (
+            {isSelected && !isResizing && !isCropping && (
                 <SectionResizeHandles onResizeStart={handleResizeStart} />
             )}
 
@@ -172,6 +208,19 @@ export function ImageSectionView() {
             />
 
             {uploadProgress && <SectionUploadProgress progress={uploadProgress} />}
+
+            {isCropping && draft && (
+                <SectionCropOverlay
+                    sectionWidth={rawSection.width}
+                    sectionHeight={rawSection.height}
+                    crop={draft}
+                    scale={finalScale}
+                    onStartMove={startCropMove}
+                    onStartResize={startCropResize}
+                    onConfirm={confirmCrop}
+                    onCancel={cancelCrop}
+                />
+            )}
         </div>
     );
 }

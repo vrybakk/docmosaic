@@ -161,6 +161,8 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
                 dispatch({ type: 'MOVE_FORWARD', sectionId }),
             moveBackward: (sectionId: string) =>
                 dispatch({ type: 'MOVE_BACKWARD', sectionId }),
+            loadDocument: (next: Document) =>
+                dispatch({ type: 'UPDATE_DOCUMENT', updates: next }),
         }),
         [],
     );

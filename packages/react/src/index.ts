@@ -49,6 +49,7 @@ import { DocumentName } from './primitives/header/document-name';
 import { PageSizeSelect } from './primitives/header/page-size-select';
 import { OrientationSelect } from './primitives/header/orientation-select';
 import { Preview } from './primitives/preview';
+import { TemplateGallery } from './primitives/template-gallery';
 
 /**
  * Compound primitive namespace for the DocMosaic editor.
@@ -125,7 +126,10 @@ export const Editor = {
     PageSizeSelect,
     OrientationSelect,
     Preview,
+    TemplateGallery,
 } as const;
+
+export type { TemplateGalleryItem, TemplateGalleryProps } from './primitives/template-gallery';
 
 export type { EditorRootProps } from './primitives/editor-root';
 

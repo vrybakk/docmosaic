@@ -3,6 +3,7 @@
 import {
     estimatePDFSize as defaultEstimatePDFSize,
     generatePDF as defaultGeneratePDF,
+    generatePNGs as defaultGeneratePNGs,
     type Document as DocmosaicDocument,
 } from '@docmosaic/core';
 import { useCallback, useRef, useState } from 'react';
@@ -41,6 +42,7 @@ interface UsePdfGenerationArgs {
 interface UsePdfGenerationResult {
     state: GenerationState;
     download: () => Promise<void>;
+    downloadPNGs: () => Promise<void>;
     print: () => Promise<void>;
     abort: () => void;
     dismissError: () => void;
@@ -92,6 +94,7 @@ export function usePdfGeneration({
 }: UsePdfGenerationArgs): UsePdfGenerationResult {
     const generate = backend?.generate ?? defaultGeneratePDF;
     const estimate = backend?.estimate ?? defaultEstimatePDFSize;
+    const generatePNGs = backend?.generatePNGs ?? defaultGeneratePNGs;
 
     const [state, setState] = useState<GenerationState>({ isGenerating: false });
     const abortControllerRef = useRef<AbortController | null>(null);
@@ -185,5 +188,55 @@ export function usePdfGeneration({
         }
     }, [document, generate, estimate]);
 
-    return { state, download, print, abort, dismissError };
+    const downloadPNGs = useCallback(async () => {
+        try {
+            abortControllerRef.current = new AbortController();
+
+            setState({ isGenerating: true, stage: 'generating', progress: 0 });
+
+            const blobs = await generatePNGs(
+                document.sections,
+                {
+                    pageSize: document.pageSize,
+                    orientation: document.orientation,
+                    pages: document.pages,
+                    signal: abortControllerRef.current.signal,
+                },
+                (progress) => setState((prev) => ({ ...prev, ...progress })),
+            );
+
+            // One save per page — keeps the API simple and avoids depending on
+            // a zipping library inside @docmosaic/core. Consumers who want a
+            // single bundle can override `pdf.generatePNGs` and a custom save
+            // path.
+            const baseName = document.name.trim() || 'Untitled Document';
+            for (let i = 0; i < blobs.length; i++) {
+                const blob = blobs[i];
+                const url = URL.createObjectURL(blob);
+                const link = globalThis.document.createElement('a');
+                link.href = url;
+                const pageSuffix = blobs.length > 1 ? `-page-${i + 1}` : '';
+                link.download = getDownloadFileName(`${baseName}${pageSuffix}`, 'png');
+                globalThis.document.body.appendChild(link);
+                link.click();
+                globalThis.document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+
+            setState({ isGenerating: false });
+        } catch (error) {
+            console.error('Error generating PNGs:', error);
+            setState({
+                isGenerating: false,
+                error:
+                    (error as Error).message === 'PNG generation cancelled'
+                        ? 'PNG generation cancelled.'
+                        : 'Failed to generate PNGs. Please try again.',
+            });
+        } finally {
+            abortControllerRef.current = null;
+        }
+    }, [document, generatePNGs]);
+
+    return { state, download, downloadPNGs, print, abort, dismissError };
 }

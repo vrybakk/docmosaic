@@ -5,6 +5,7 @@ import {
     createSection,
     estimatePDFSize as defaultEstimatePDFSize,
     generatePDF as defaultGeneratePDF,
+    generatePNGs as defaultGeneratePNGs,
     type Document,
     type PageBackground,
     type PageOrientation,
@@ -368,6 +369,7 @@ function buildControlledActions(
                 }),
             );
         },
+        loadDocument: (next: Document) => onDocumentChange(touch(next)),
     };
 }
 
@@ -633,8 +635,9 @@ export function Root(props: EditorRootProps) {
         () => ({
             generate: props.pdf?.generate ?? defaultGeneratePDF,
             estimate: props.pdf?.estimate ?? defaultEstimatePDFSize,
+            generatePNGs: props.pdf?.generatePNGs ?? defaultGeneratePNGs,
         }),
-        [props.pdf?.generate, props.pdf?.estimate],
+        [props.pdf?.generate, props.pdf?.estimate, props.pdf?.generatePNGs],
     );
 
     const keybindingsEnabled = props.keybindings !== false;

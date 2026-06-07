@@ -28,6 +28,7 @@ import {
     type Stroke,
     type estimatePDFSize,
     type generatePDF,
+    type generatePNGs,
 } from '@docmosaic/core';
 import {
     createContext,
@@ -58,6 +59,12 @@ import type { GenerationState } from '../primitives/use-pdf-generation';
 export interface EditorPdfBackend {
     generate: typeof generatePDF;
     estimate: typeof estimatePDFSize;
+    /**
+     * PNG export pipeline — one Blob per page. Defaults to the bundled
+     * {@link generatePNGs}; overridable alongside `generate` and `estimate`
+     * via the `pdf` prop on `Editor.Root`.
+     */
+    generatePNGs: typeof generatePNGs;
 }
 
 /**
@@ -117,6 +124,12 @@ export interface EditorActions {
     moveForward: (sectionId: string) => void;
     /** Swap zIndex with the next-lower section on the same page (no-op if already at the bottom). */
     moveBackward: (sectionId: string) => void;
+    /**
+     * Replace the entire document with the given snapshot. Used by
+     * `Editor.TemplateGallery` to load a template; in uncontrolled mode the
+     * swap goes through the history timeline as a single undoable step.
+     */
+    loadDocument: (next: Document) => void;
 }
 
 /**
@@ -128,6 +141,13 @@ export interface EditorActions {
 export interface EditorPdfApi {
     state: GenerationState;
     download: () => Promise<void>;
+    /**
+     * Generate one PNG Blob per page and download a zip-less direct dump —
+     * the bundled implementation triggers a sequential save per page.
+     * Custom implementations supplied through `Editor.Root` `pdf.generatePNGs`
+     * can change that policy (e.g. write a single multi-page TIFF, zip, etc.).
+     */
+    downloadPNGs: () => Promise<void>;
     print: () => Promise<void>;
     abort: () => void;
     dismissError: () => void;

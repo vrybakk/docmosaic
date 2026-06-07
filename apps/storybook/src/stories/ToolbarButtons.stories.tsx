@@ -44,9 +44,24 @@ export const PrintButton: Story = {
     render: () => <Editor.PrintButton />,
 };
 
-/** `Editor.DownloadButton` — downloads the generated PDF blob. */
+/**
+ * `Editor.DownloadButton` — split button with PDF primary and a PNG-per-page
+ * option in the dropdown. Click the caret to reveal the format menu.
+ */
 export const DownloadButton: Story = {
     render: () => <Editor.DownloadButton />,
+};
+
+/**
+ * Same primitive — rendered with a wider canvas so the dropdown is unclipped
+ * for documentation captures.
+ */
+export const DownloadButtonWithFormatMenu: Story = {
+    render: () => (
+        <div className="pt-10 pb-32">
+            <Editor.DownloadButton />
+        </div>
+    ),
 };
 
 /** `Editor.AddSectionButton` — appends a new image section to the current page. */

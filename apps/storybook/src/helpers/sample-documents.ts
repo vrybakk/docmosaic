@@ -164,3 +164,25 @@ export function documentWithPageBackground(color = '#fff7e6'): Document {
         sections: [{ ...section, width: 220, height: 160 }],
     };
 }
+
+/**
+ * Document with one cropped image section — exercises the
+ * `ImageCrop` render path in both the editor preview and the PDF/PNG
+ * pipelines.
+ */
+export function documentWithCroppedImage(): Document {
+    const base = createDocument();
+    const section = createSection({ x: 60, y: 60, page: 1 }) as ImageSection;
+    return {
+        ...base,
+        sections: [
+            {
+                ...section,
+                imageUrl: PLACEHOLDER_PNG,
+                width: 320,
+                height: 220,
+                crop: { x: 60, y: 40, width: 200, height: 160 },
+            },
+        ],
+    };
+}

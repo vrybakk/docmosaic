@@ -41,6 +41,11 @@ export interface ImageRendererProps {
     className?: string;
     fill?: boolean;
     draggable?: boolean;
+    /**
+     * Optional inline style — used by the crop preview to scale + translate
+     * the image so only the cropped region shows inside the section box.
+     */
+    style?: React.CSSProperties;
 }
 
 /**
@@ -59,7 +64,7 @@ export type ImageRenderer = ComponentType<ImageRendererProps & { ref?: Ref<HTMLI
  * element is functionally equivalent and removes the Next.js coupling.
  */
 export const defaultImageRenderer: ImageRenderer = forwardRef<HTMLImageElement, ImageRendererProps>(
-    function DefaultImageRenderer({ src, alt, className, draggable }, ref) {
+    function DefaultImageRenderer({ src, alt, className, draggable, style }, ref) {
         // `fill` is intentionally dropped; parent layout already sizes the image.
         // Section images are base64 data URLs, so `next/image` optimization is a no-op here.
         return (
@@ -69,6 +74,7 @@ export const defaultImageRenderer: ImageRenderer = forwardRef<HTMLImageElement, 
                 alt={alt}
                 className={className}
                 draggable={draggable}
+                style={style}
             />
         );
     },
