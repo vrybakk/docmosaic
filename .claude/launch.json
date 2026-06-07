@@ -6,6 +6,12 @@
       "runtimeExecutable": "bun",
       "runtimeArgs": ["dev"],
       "port": 4001
+    },
+    {
+      "name": "Storybook",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["run", "storybook"],
+      "port": 6006
     }
   ]
 }

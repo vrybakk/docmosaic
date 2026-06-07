@@ -1,0 +1,56 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/Theming" />
+
+# Theming
+
+`@docmosaic/react` ships two stylesheet entry points:
+
+- `@docmosaic/react/styles/base.css` — structural baseline. Brand-agnostic.
+- `@docmosaic/react/styles/themes/docmosaic.css` — DocMosaic brand theme.
+- `@docmosaic/react/styles.css` — both bundled (the default).
+
+Use the bundled stylesheet for the default look, or pair the base with
+your own theme for a custom brand.
+
+## Theme tokens
+
+The brand theme just sets a handful of CSS variables on `:root`:
+
+```css
+:root {
+    --editor-color-accent: 56 29 42;          /* #381D2A */
+    --editor-color-accent-soft: 252 222 156;  /* #FCDE9C */
+    --editor-color-success: 196 214 176;      /* #C4D6B0 */
+    --editor-color-warning: 186 86 36;        /* #BA5624 */
+    --editor-color-warning-soft: 255 165 82;  /* #FFA552 */
+    --editor-color-surface: 255 255 255;      /* #FFFFFF */
+    --editor-color-text: 56 29 42;            /* #381D2A */
+}
+```
+
+Triplets are space-separated to support the modern
+`rgb(R G B / <alpha-value>)` syntax used by the Tailwind utilities the
+package ships with.
+
+## Writing your own theme
+
+```css
+@import '@docmosaic/react/styles/base.css';
+
+:root {
+    --editor-color-accent: 17 24 39;        /* slate-900 */
+    --editor-color-accent-soft: 229 231 235;
+    --editor-color-success: 16 185 129;
+    --editor-color-warning: 220 38 38;
+    --editor-color-warning-soft: 252 165 165;
+    --editor-color-surface: 255 255 255;
+    --editor-color-text: 17 24 39;
+}
+```
+
+## Try it
+
+Use the **Theme switcher** in the Storybook toolbar to flip between the
+bundled `docmosaic` theme and the bare `minimal` theme used in this
+Storybook.

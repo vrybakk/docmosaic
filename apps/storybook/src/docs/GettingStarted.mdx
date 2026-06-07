@@ -1,0 +1,54 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/Getting Started" />
+
+# Getting Started
+
+`@docmosaic/react` ships compound primitives for the DocMosaic editor.
+Compose them under a single `Editor.Root` and drop your own wrapper layout
+around the bundled pieces.
+
+## Installation
+
+```sh
+bun add @docmosaic/react @docmosaic/core
+```
+
+The package has zero runtime dependencies you didn't already pull in
+yourself — `react`, `react-dom`, `react-dnd`, and the DocMosaic core are
+the only peers.
+
+## A minimal editor
+
+```tsx
+import { Editor } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+export function MyEditor() {
+    return (
+        <Editor.Root>
+            <Editor.Header />
+            <Editor.Toolbar />
+            <Editor.PageList />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
+}
+```
+
+That's it. Drop the markup in any React 19 tree and the editor takes care
+of state, DnD, PDF generation, and the keyboard shortcuts.
+
+## Where to go next
+
+- **Theming** — swap brand colors via CSS variables, or import only the
+  base stylesheet and write your own theme.
+- **Custom PDF backend** — pass a `pdf={{ generate, estimate }}` prop to
+  swap jsPDF for a different renderer or run generation in a Worker.
+- **Custom image renderer** — wrap `Editor.Root` in
+  `<EditorConfigProvider>` to control how the section's image is rendered.
+- **Recipes** — common compositions: read-only mode, controlled state,
+  per-section overrides, and more.

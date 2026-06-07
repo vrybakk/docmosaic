@@ -14,6 +14,7 @@
         "lint": "turbo run lint",
         "test": "turbo run test",
         "test:run": "turbo run test:run",
+        "storybook": "turbo run dev --filter=@docmosaic/storybook",
         "changeset": "changeset",
         "version-packages": "changeset version",
         "release": "turbo run build && changeset publish",

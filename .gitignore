@@ -46,5 +46,8 @@ yarn-error.log*
 # turborepo
 .turbo
 
+# storybook
+storybook-static
+
 # changesets
 .changeset/.cache

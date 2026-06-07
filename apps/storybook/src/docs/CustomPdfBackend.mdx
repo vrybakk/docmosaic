@@ -1,0 +1,54 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/Custom PDF Backend" />
+
+# Custom PDF Backend
+
+`Editor.Root` accepts an optional `pdf` prop that overrides one or both
+sides of the PDF pipeline.
+
+```ts
+type EditorPdfBackend = {
+    generate: typeof import('@docmosaic/core').generatePDF;
+    estimate: typeof import('@docmosaic/core').estimatePDFSize;
+};
+```
+
+Anything you omit falls back to the bundled `@docmosaic/core`
+implementation. The split lets you swap just the heavy `generate` path
+(e.g. delegate to a Worker) without rewriting the cheap size heuristic.
+
+## Move generation to a Web Worker
+
+```tsx
+const generate: EditorPdfBackend['generate'] = async (
+    sections,
+    options,
+    onProgress,
+) => {
+    const blob = await runInWorker({ sections, options, onProgress });
+    return blob;
+};
+
+<Editor.Root pdf={{ generate }}>...</Editor.Root>
+```
+
+## Mock in tests
+
+```tsx
+const mockBackend: EditorPdfBackend = {
+    generate: async () => new Blob(['%PDF-1.4 mock'], { type: 'application/pdf' }),
+    estimate: () => 1024,
+};
+
+<Editor.Root pdf={mockBackend}>...</Editor.Root>
+```
+
+This is exactly what the Storybook stories do under the hood — the
+mocked backend means the preview iframe never actually invokes jsPDF.
+
+## Honoring `AbortController`
+
+Long-running custom backends should listen for `options.signal` and
+throw `new Error('PDF generation cancelled')` when it aborts. The editor
+keeps the abort wired up to the toolbar's cancel button.

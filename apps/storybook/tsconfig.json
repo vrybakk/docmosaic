@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "jsx": "react-jsx",
+        "types": ["node"],
+        "noEmit": true,
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    },
+    "include": [".storybook/**/*", "src/**/*"],
+    "exclude": ["node_modules", "storybook-static"]
+}

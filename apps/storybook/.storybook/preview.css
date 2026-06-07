@@ -1,0 +1,24 @@
+/*
+ * Storybook-only overrides. The base + DocMosaic theme are imported in
+ * preview.tsx; the theme switcher just toggles a body class. The "minimal"
+ * mode strips the brand color tokens so primitives fall back to bare base.
+ */
+
+.theme-minimal {
+    --editor-color-accent: 17 24 39;
+    --editor-color-accent-soft: 229 231 235;
+    --editor-color-success: 16 185 129;
+    --editor-color-warning: 220 38 38;
+    --editor-color-warning-soft: 252 165 165;
+    --editor-color-surface: 255 255 255;
+    --editor-color-text: 17 24 39;
+}
+
+/*
+ * Storybook frames render with constrained heights; some Editor primitives
+ * use `h-screen`. Cap that to the canvas height to keep stories visible.
+ */
+.sb-show-main .h-screen {
+    height: 100% !important;
+    min-height: 600px;
+}
