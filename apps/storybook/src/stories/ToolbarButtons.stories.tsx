@@ -99,7 +99,23 @@ export const EstimatedSize: Story = {
     render: () => <Editor.EstimatedSize />,
 };
 
-/** `Editor.CanvasControls` — zoom in/out/reset, surfaced as a single primitive. */
+/**
+ * `Editor.CanvasControls` — zoom in/out/reset, surfaced as a single primitive.
+ * Reads zoom state from {@link useEditorCanvas}, so it must live inside
+ * `Editor.Canvas`. Rendered here over a sized canvas frame so the floating
+ * controls have something to anchor against.
+ */
 export const CanvasControls: Story = {
+    decorators: [
+        (Story) => (
+            <Editor.Root defaultDocument={documentWithSections()}>
+                <div style={{ height: '500px', width: '100%', display: 'flex' }}>
+                    <Editor.Canvas>
+                        <Story />
+                    </Editor.Canvas>
+                </div>
+            </Editor.Root>
+        ),
+    ],
     render: () => <Editor.CanvasControls />,
 };
