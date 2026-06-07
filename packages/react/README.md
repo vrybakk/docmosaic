@@ -4,6 +4,16 @@ React UI primitives for the DocMosaic editor — a fully client-side, drag-and-d
 
 See [`apps/web/public/showcases/hero.png`](../../apps/web/public/showcases/hero.png) for a screenshot of the default shell in the reference app.
 
+## Concepts
+
+Conceptual walk-throughs of how the editor is put together. Start here if you're new to the package, or jump straight to the API section below.
+
+-   [Designer](../../docs/concepts/designer.md) — the `Editor.Root` + `Canvas` + `Section` composition and selection model
+-   [Theming](../../docs/concepts/theming.md) — the `--editor-*` CSS-variable surface and the base / brand-theme split
+-   [Unit system](../../docs/concepts/unit-system.md) — why geometry lives in PDF points and how to convert
+-   [Keybindings](../../docs/concepts/keybindings.md) — default keymap, overrides, and standalone usage
+-   [Layers](../../docs/concepts/layers.md) — the `zIndex` model and the four reorder actions
+
 ## Install
 
 ```bash

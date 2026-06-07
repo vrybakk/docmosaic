@@ -68,7 +68,7 @@ The most common consumer is a UI layer:
 
 Every export is documented with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The package's public surface:
 
--   Types — `Document`, `Page`, `Section`, `PageSize`, `PageOrientation`, `PageDimensions`, `MeasurementUnit`, `DragPosition`, `ResizeInfo`, `PDFGenerationOptions`.
+-   Types — `Document`, `Page`, `Section`, `PageSize`, `PageOrientation`, `PageDimensions`, `MeasurementUnit`, `DragPosition`, `ResizeInfo`, `PDFGenerationOptions`. See [the Unit system concept doc](../../docs/concepts/unit-system.md) for why geometry is in points and how to convert.
 -   Page-size data — `CUSTOM_PAGE_SIZES`, `PAGE_SIZE_LABELS`, `getPageDimensions`, `getPageDimensionsWithOrientation`.
 -   Dimension helpers — `convertDimensions`, `formatDimensions`, `mmToPt`, `ptToMm`.
 -   PDF — `generatePDF`, `estimatePDFSize`, `optimizeImageForPDF`, `processImagesForPDF`, types `GenerationOptions` / `GenerationProgress`.

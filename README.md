@@ -65,6 +65,18 @@ After a manual change, walk through [`docs/SMOKE.md`](docs/SMOKE.md) — a 90-se
 -   **Conventional Commits**, enforced by commitlint via Husky.
 -   Husky hooks: `pre-commit` runs typecheck + lint, `pre-push` runs the full build.
 
+## Documentation
+
+Conceptual walk-throughs of how the editor is put together live in [`docs/concepts/`](docs/concepts):
+
+-   [Designer](docs/concepts/designer.md) — the `Editor.Root` composition and selection model
+-   [Theming](docs/concepts/theming.md) — the `--editor-*` CSS-variable surface
+-   [Unit system](docs/concepts/unit-system.md) — why geometry lives in PDF points
+-   [Keybindings](docs/concepts/keybindings.md) — default keymap and overrides
+-   [Layers](docs/concepts/layers.md) — `zIndex` model and reorder actions
+
+Per-package API references live in [`packages/core/README.md`](packages/core/README.md) and [`packages/react/README.md`](packages/react/README.md). The manual smoke checklist is [`docs/SMOKE.md`](docs/SMOKE.md).
+
 ## Contributing
 
 We welcome bug fixes, new features, and documentation improvements. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow, commit conventions, and Changeset instructions.
