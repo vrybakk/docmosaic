@@ -52,6 +52,8 @@ import { OrientationSelect } from './primitives/properties/orientation-select';
 import { Preview } from './primitives/preview';
 import { PropertiesPanel } from './primitives/properties-panel';
 import { TemplateGallery } from './primitives/template-gallery';
+import { Zoom } from './primitives/zoom';
+import { KeybindingHelp } from './primitives/keybinding-help';
 
 /**
  * Compound primitive namespace for the DocMosaic editor.
@@ -135,6 +137,8 @@ export const Editor = {
     Preview,
     PropertiesPanel,
     TemplateGallery,
+    Zoom,
+    KeybindingHelp,
     /** @deprecated Use `Editor.Properties` instead. Removed in next major. */
     Inspector: Properties,
     /** @deprecated Use `Editor.PageBackground` instead. Removed in next major. */
@@ -199,6 +203,11 @@ export { OrientationSelect as EditorOrientationSelect } from './primitives/prope
 export { Preview as EditorPreview } from './primitives/preview';
 export { PropertiesPanel as EditorPropertiesPanel } from './primitives/properties-panel';
 export { TemplateGallery as EditorTemplateGallery } from './primitives/template-gallery';
+export { Zoom as EditorZoom, type ZoomProps as EditorZoomProps } from './primitives/zoom';
+export {
+    KeybindingHelp as EditorKeybindingHelp,
+    type KeybindingHelpProps as EditorKeybindingHelpProps,
+} from './primitives/keybinding-help';
 
 export type { TemplateGalleryItem, TemplateGalleryProps } from './primitives/template-gallery';
 
@@ -259,6 +268,9 @@ export {
     useEditorKeybindings,
 } from './hooks/use-editor-keybindings';
 export type { EditorKeybinding, EditorKeymap } from './hooks/use-editor-keybindings';
+
+export { useEditorZoom } from './hooks/use-editor-zoom';
+export type { UseEditorZoomResult } from './hooks/use-editor-zoom';
 
 export { setReactPackageTracker } from './internal/analytics';
 export type { AnalyticsTracker } from './internal/analytics';

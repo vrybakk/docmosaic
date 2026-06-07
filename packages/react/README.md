@@ -400,6 +400,7 @@ Default keymap (`mod` = Cmd on macOS, Ctrl elsewhere):
 | Deselect          | `Escape`                         |
 | Nudge by 1pt      | `ArrowUp/Down/Left/Right`        |
 | Nudge by 10pt     | `Shift+ArrowUp/Down/Left/Right`  |
+| Show shortcuts    | `mod+/` (handled by `Editor.KeybindingHelp`) |
 
 ### Override individual bindings
 
@@ -426,6 +427,64 @@ The headless hook is also exported for "BYO-UI" trees that mount their own provi
 
 ```tsx
 import { useEditorKeybindings, DEFAULT_KEYMAP } from '@docmosaic/react';
+```
+
+### Show the active keymap
+
+`Editor.KeybindingHelp` is a Radix dialog that lists every active keybinding, grouped by category and rendered as `<kbd>` chips. It mounts its own listener for the `showHelp` chord (default `Cmd+/`), so dropping it inside `Editor.Root` is the whole wiring step:
+
+```tsx
+<Editor.Root>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.Canvas><Editor.Section /></Editor.Canvas>
+    <Editor.KeybindingHelp />
+</Editor.Root>
+```
+
+If you override any bindings via `Editor.Root` `keybindings`, pass the **same** partial map to `Editor.KeybindingHelp` so the chips match the active runtime:
+
+```tsx
+const myKeymap = { redo: 'mod+r' };
+
+<Editor.Root keybindings={myKeymap}>
+    <Editor.KeybindingHelp keymap={myKeymap} />
+</Editor.Root>
+```
+
+The dialog also accepts a controlled `open` / `onOpenChange` pair when you want to drive it from a custom trigger (e.g. a "?" button in your toolbar).
+
+## Zoom
+
+`Editor.Zoom` is the public zoom widget — a five-button strip (zoom out, percentage label, zoom in, fit-to-screen, explicit 100%) styled with semantic tokens so it follows the active theme. Drop it inside `Editor.Canvas` and it picks up scale + actions from the canvas viewport context:
+
+```tsx
+<Editor.Root>
+    <Editor.Canvas>
+        <Editor.Section />
+        <Editor.Zoom />
+    </Editor.Canvas>
+</Editor.Root>
+```
+
+`Editor.Zoom` opts into the Canvas overlay slot via the `__editorCanvasOverlay` marker, so it renders once (anchored to the canvas viewport) instead of competing with the section template. Anything inside `Editor.Canvas` without that marker is still treated as the section template — this keeps single-child `Editor.Canvas` users on the old contract.
+
+Pair it with the new public hook when you want to build your own widget:
+
+```tsx
+import { useEditorZoom } from '@docmosaic/react';
+
+function MiniZoom() {
+    const { scale, zoomIn, zoomOut, reset } = useEditorZoom();
+    return (
+        <div>
+            <button onClick={zoomOut}>-</button>
+            <span>{Math.round(scale * 100)}%</span>
+            <button onClick={zoomIn}>+</button>
+            <button onClick={reset}>100%</button>
+        </div>
+    );
+}
 ```
 
 ## Section types
@@ -738,11 +797,11 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 
 Every export is documented inline with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The public surface is:
 
--   `Editor` namespace — `Root`, `Properties`, `Toolbar`, `Pages`, `Canvas`, `StaticCanvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, `PageBackground`, `FileSizeBadge`, `GenerationProgress`, and their child buttons/selects (including `AddImageButton`, `DrawButton`). Flat `EditorXxx` exports mirror the namespace for tree-shake-friendly imports. Back-compat: `Editor.Inspector` (= `Properties`), `Editor.PageBackgroundPicker` (= `PageBackground`), `Editor.EstimatedSize` (= `FileSizeBadge`), `Editor.ProgressOverlay` (= `GenerationProgress`), `Editor.AddSectionButton` (= `AddImageButton`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
--   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `usePdfGeneration`.
+-   `Editor` namespace — `Root`, `Properties`, `Toolbar`, `Pages`, `Canvas`, `StaticCanvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, `PageBackground`, `FileSizeBadge`, `GenerationProgress`, `Zoom`, `KeybindingHelp`, and their child buttons/selects (including `AddImageButton`, `DrawButton`). Flat `EditorXxx` exports mirror the namespace for tree-shake-friendly imports. Back-compat: `Editor.Inspector` (= `Properties`), `Editor.PageBackgroundPicker` (= `PageBackground`), `Editor.EstimatedSize` (= `FileSizeBadge`), `Editor.ProgressOverlay` (= `GenerationProgress`), `Editor.AddSectionButton` (= `AddImageButton`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
+-   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `useEditorZoom`, `usePdfGeneration`.
 -   Providers — `EditorProvider`, `EditorConfigProvider`, `EditorConfigContext`.
 -   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`.
--   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorKeybinding`, `EditorKeymap`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `TemplateGalleryItem`, `TemplateGalleryProps`, `UseEditorSectionResult`.
+-   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorKeybinding`, `EditorKeymap`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `TemplateGalleryItem`, `TemplateGalleryProps`, `UseEditorSectionResult`, `UseEditorZoomResult`, `EditorZoomProps`, `EditorKeybindingHelpProps`.
 
 ## Compatibility
 

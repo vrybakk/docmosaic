@@ -5,7 +5,16 @@ import {
     type Section as SectionData,
     type Stroke,
 } from '@docmosaic/core';
-import { Children, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import {
+    Children,
+    isValidElement,
+    type ReactElement,
+    type ReactNode,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
 import {
     EditorCanvasProvider,
@@ -23,10 +32,17 @@ import { useCanvasZoom } from './use-canvas-zoom';
 
 export interface CanvasProps {
     /**
-     * Optional children rendered once per section as a template. Pass
-     * `<Editor.Section />` (or a custom section component that consumes
-     * {@link useEditorSection}) to control how each section is rendered.
-     * Defaults to the built-in `<Section />` when omitted.
+     * Two kinds of children are supported:
+     *
+     * 1. **Section template** — a single non-overlay child rendered once per
+     *    section. Pass `<Editor.Section />` (or a custom section component
+     *    that consumes {@link useEditorSection}) to control how each section
+     *    is rendered. Defaults to the bundled `<Section />` when omitted.
+     * 2. **Canvas overlays** — primitives that opt in via the
+     *    `__editorCanvasOverlay` marker (e.g. {@link Editor.Zoom}). These are
+     *    rendered once, anchored to the canvas viewport, and have access to
+     *    {@link useEditorCanvas} via context. Any number can be supplied
+     *    alongside the section template.
      */
     children?: ReactNode;
     /**
@@ -343,9 +359,30 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
         );
     }
 
-    // Children is treated as a per-section template. If callers pass nothing
-    // (or more than one child), fall back to the default Section primitive.
-    const hasSingleChild = children !== undefined && Children.count(children) === 1;
+    // Children are split into two buckets:
+    //   - Overlay children (`Editor.Zoom` and any future canvas-bound widget
+    //     that opts in via `__editorCanvasOverlay`) render once, anchored to
+    //     the canvas viewport.
+    //   - Everything else is treated as the per-section template — exactly one
+    //     non-overlay child wins; pass none or multiple to fall back to the
+    //     bundled `<Section />` primitive.
+    const overlayChildren: ReactNode[] = [];
+    const sectionTemplates: ReactNode[] = [];
+    Children.forEach(children, (child) => {
+        if (
+            isValidElement(child) &&
+            typeof child.type === 'function' &&
+            (child.type as { __editorCanvasOverlay?: boolean }).__editorCanvasOverlay === true
+        ) {
+            overlayChildren.push(child);
+            return;
+        }
+        sectionTemplates.push(child);
+    });
+    const sectionTemplate: ReactElement | null =
+        sectionTemplates.length === 1 && isValidElement(sectionTemplates[0])
+            ? (sectionTemplates[0] as ReactElement)
+            : null;
 
     return (
         <EditorCanvasProvider
@@ -453,7 +490,7 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
                                                 readOnly,
                                             }}
                                         >
-                                            {hasSingleChild ? children : <Section />}
+                                            {sectionTemplate ?? <Section />}
                                         </EditorSectionProvider>
                                     );
                                 })}
@@ -491,6 +528,14 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
                 )}
 
                 {!isLoading && <CanvasControls />}
+                {!isLoading && overlayChildren.length > 0 && (
+                    <div
+                        data-canvas-overlay-slot="true"
+                        className="absolute inset-x-0 bottom-4 flex justify-center pointer-events-none z-10"
+                    >
+                        <div className="pointer-events-auto">{overlayChildren}</div>
+                    </div>
+                )}
             </div>
         </EditorCanvasProvider>
     );

@@ -13,6 +13,7 @@
 
 import { useEffect } from 'react';
 import { useEditor } from '../context/editor';
+import { isMacPlatform } from '../internal/platform';
 
 /**
  * A single keybinding string (e.g. `'mod+z'`) or an array of strings any of
@@ -63,6 +64,13 @@ export interface EditorKeymap {
     nudgeLeftLarge?: EditorKeybinding;
     /** Nudge the selected section right by 10pt. */
     nudgeRightLarge?: EditorKeybinding;
+    /**
+     * Toggle the {@link Editor.KeybindingHelp} dialog. Defaults to `mod+/` —
+     * the same chord used by Notion, GitHub, Slack, and most other web apps
+     * with a built-in keymap viewer. Read-only safe (the dialog is a passive
+     * viewer).
+     */
+    showHelp?: EditorKeybinding;
 }
 
 /**
@@ -92,6 +100,7 @@ export const DEFAULT_KEYMAP: Required<EditorKeymap> = {
     nudgeDownLarge: 'shift+ArrowDown',
     nudgeLeftLarge: 'shift+ArrowLeft',
     nudgeRightLarge: 'shift+ArrowRight',
+    showHelp: 'mod+/',
 };
 
 const ACTIONS: ReadonlyArray<keyof EditorKeymap> = [
@@ -137,14 +146,6 @@ function parseBinding(binding: string): ParsedBinding {
         else out.key = token;
     }
     return out;
-}
-
-function isMacPlatform(): boolean {
-    if (typeof navigator === 'undefined') return false;
-    const platform =
-        (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData
-            ?.platform ?? navigator.platform;
-    return /mac|iphone|ipad|ipod/i.test(platform ?? '');
 }
 
 function eventMatchesBinding(e: KeyboardEvent, parsed: ParsedBinding, isMac: boolean): boolean {
@@ -294,6 +295,11 @@ function dispatchAction(
             return nudgeAll(state.sections, selectedIds, -10, 0, actions.updateSection);
         case 'nudgeRightLarge':
             return nudgeAll(state.sections, selectedIds, 10, 0, actions.updateSection);
+        case 'showHelp':
+            // The dialog mounts its own listener so it can manage `open` state
+            // locally — the main dispatcher has no action to run here. Leave
+            // the event unhandled so the dialog's listener still fires.
+            return false;
     }
 }
 

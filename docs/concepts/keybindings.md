@@ -14,8 +14,34 @@
 | Deselect        | `Escape`                         |
 | Nudge by 1pt    | `ArrowUp/Down/Left/Right`        |
 | Nudge by 10pt   | `Shift+ArrowUp/Down/Left/Right`  |
+| Show shortcuts  | `mod+/`                          |
 
 Nudge values are in points — see [Unit system](./unit-system.md) for why.
+
+## Show the active keymap with `Editor.KeybindingHelp`
+
+Drop `Editor.KeybindingHelp` anywhere inside `Editor.Root` and `mod+/` opens a Radix dialog listing every active binding, grouped by category (Edit, Selection, Movement, View) and rendered as `<kbd>` chips. The chips are platform-aware — `⌘` on macOS, `Ctrl` elsewhere.
+
+```tsx
+<Editor.Root>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.Canvas><Editor.Section /></Editor.Canvas>
+    <Editor.KeybindingHelp />
+</Editor.Root>
+```
+
+If you customise the keymap via `Editor.Root` `keybindings`, pass the same partial map to `Editor.KeybindingHelp` so the chips match the active runtime:
+
+```tsx
+const myKeymap = { redo: 'mod+r' };
+
+<Editor.Root keybindings={myKeymap}>
+    <Editor.KeybindingHelp keymap={myKeymap} />
+</Editor.Root>
+```
+
+The dialog also accepts a controlled `open` / `onOpenChange` pair so you can hook it up to a custom trigger (e.g. a "?" button in your toolbar). The `showHelp` listener is mounted by the dialog itself (not by the main `useEditorKeybindings` dispatcher), so the chord still works regardless of the `Editor.Root` `keybindings` prop — drop the dialog or skip rendering it entirely when you want the help layer off.
 
 ## Override individual bindings
 
