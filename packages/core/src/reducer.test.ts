@@ -12,9 +12,9 @@ const FIXED_NOW = new Date('2026-01-01T00:00:00.000Z');
 function buildFixture(): State {
     const doc = createDocument();
     const page2 = createPage();
-    const s1 = { ...createSection(10, 10, 1), id: 'sec-1' };
-    const s2 = { ...createSection(20, 20, 1), id: 'sec-2' };
-    const s3 = { ...createSection(30, 30, 2), id: 'sec-3' };
+    const s1 = { ...createSection({ x: 10, y: 10, page: 1 }), id: 'sec-1' };
+    const s2 = { ...createSection({ x: 20, y: 20, page: 1 }), id: 'sec-2' };
+    const s3 = { ...createSection({ x: 30, y: 30, page: 2 }), id: 'sec-3' };
 
     const state: State = {
         ...doc,
@@ -243,9 +243,9 @@ describe('reducer', () => {
      */
     function buildLayeredFixture(): State {
         const doc = createDocument();
-        const s1 = { ...createSection(10, 10, 1), id: 'sec-1', zIndex: 0 };
-        const s2 = { ...createSection(20, 20, 1), id: 'sec-2', zIndex: 1 };
-        const s3 = { ...createSection(30, 30, 1), id: 'sec-3', zIndex: 2 };
+        const s1 = { ...createSection({ x: 10, y: 10, page: 1 }), id: 'sec-1', zIndex: 0 };
+        const s2 = { ...createSection({ x: 20, y: 20, page: 1 }), id: 'sec-2', zIndex: 1 };
+        const s3 = { ...createSection({ x: 30, y: 30, page: 1 }), id: 'sec-3', zIndex: 2 };
 
         return deepFreeze({
             ...doc,
@@ -350,9 +350,9 @@ describe('reducer', () => {
         // BRING_TO_FRONT result on page 1.
         const state = (() => {
             const doc = createDocument();
-            const s1 = { ...createSection(10, 10, 1), id: 'sec-1', zIndex: 0 };
-            const s2 = { ...createSection(20, 20, 1), id: 'sec-2', zIndex: 1 };
-            const sx = { ...createSection(30, 30, 2), id: 'sec-x', zIndex: 100 };
+            const s1 = { ...createSection({ x: 10, y: 10, page: 1 }), id: 'sec-1', zIndex: 0 };
+            const s2 = { ...createSection({ x: 20, y: 20, page: 1 }), id: 'sec-2', zIndex: 1 };
+            const sx = { ...createSection({ x: 30, y: 30, page: 2 }), id: 'sec-x', zIndex: 100 };
             return deepFreeze({
                 ...doc,
                 pages: [...doc.pages, createPage()],
@@ -372,6 +372,48 @@ describe('reducer', () => {
         // Page-1 max was 1, so sec-1 becomes 2 (NOT 101).
         expect(byId('sec-1').zIndex).toBe(2);
         expect(byId('sec-x').zIndex).toBe(100);
+    });
+
+    it('ADD_SECTION with sectionType:"text" creates a TextSection carrying defaults', () => {
+        const state = buildFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, { type: 'ADD_SECTION', sectionType: 'text', now: FIXED_NOW });
+
+        expect(next.sections).toHaveLength(state.sections.length + 1);
+        const added = next.sections[next.sections.length - 1];
+        expect(added.type).toBe('text');
+        if (added.type !== 'text') throw new Error('narrowing');
+        expect(added.text).toBe('');
+        expect(added.fontSize).toBe(16);
+        expect(added.align).toBe('left');
+        expect(added.color).toBe('rgb(0,0,0)');
+        expect(added.page).toBe(state.currentPage);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('UPDATE_SECTION on a text section replaces only the specified fields', () => {
+        const doc = createDocument();
+        const text = createSection({ type: 'text', x: 10, y: 10, page: 1 });
+        const state: State = deepFreeze({
+            ...doc,
+            sections: [{ ...text, id: 'text-1' }],
+        });
+        const before = snapshot(state);
+
+        const original = state.sections[0];
+        if (original.type !== 'text') throw new Error('text fixture');
+        const updated: Section = { ...original, text: 'Hello', fontSize: 24 };
+        const next = reducer(state, { type: 'UPDATE_SECTION', section: updated, now: FIXED_NOW });
+
+        const found = next.sections.find((s) => s.id === 'text-1');
+        if (!found || found.type !== 'text') throw new Error('text after update');
+        expect(found.text).toBe('Hello');
+        expect(found.fontSize).toBe(24);
+        // Untouched fields remain.
+        expect(found.color).toBe('rgb(0,0,0)');
+        expect(found.align).toBe('left');
+        expect(snapshot(state)).toBe(before);
     });
 
     /**

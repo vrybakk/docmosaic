@@ -8,6 +8,7 @@
 export type {
     DragPosition,
     Document,
+    ImageSection,
     MeasurementUnit,
     Page,
     PageDimensions,
@@ -16,7 +17,10 @@ export type {
     PDFGenerationOptions,
     ResizeInfo,
     Section,
+    SectionBase,
+    TextSection,
 } from './types';
+export { normalizeSection } from './types';
 
 // Page sizes
 export { CUSTOM_PAGE_SIZES, getPageDimensionsWithOrientation } from './page-sizes';
@@ -39,6 +43,7 @@ export { optimizeImageForPDF, processImagesForPDF } from './pdf/optimize-image';
 
 // Factories
 export { createDocument, createPage, createSection } from './factories';
+export type { CreateSectionOptions } from './factories';
 
 // Reducer + history
 export type { Action, State } from './reducer';

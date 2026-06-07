@@ -7,6 +7,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
+import { normalizeSection } from './types';
 import type { Document, Page, Section } from './types';
 
 /**
@@ -23,9 +24,9 @@ import type { Document, Page, Section } from './types';
  * doc.pages.length; // 1
  * ```
  */
-export function createDocument(): Document {
+export function createDocument(seed?: Partial<Document>): Document {
     const INITIAL_DATE = new Date();
-    return {
+    const base: Document = {
         id: uuidv4(),
         name: 'Untitled Document',
         sections: [],
@@ -39,6 +40,11 @@ export function createDocument(): Document {
         orientation: 'portrait',
         pages: [{ id: uuidv4(), sections: [], backgroundPDF: null }],
     };
+    if (!seed) return base;
+    // Normalize any legacy sections (no `type` field) when loading a seed so
+    // the rest of the editor can rely on the discriminated union.
+    const sections = seed.sections ? seed.sections.map(normalizeSection) : base.sections;
+    return { ...base, ...seed, sections };
 }
 
 /**
@@ -62,31 +68,53 @@ export function createPage(): Page {
 }
 
 /**
- * Create a new image section with default position and size.
+ * Options accepted by {@link createSection}.
+ */
+export interface CreateSectionOptions {
+    /** Variant discriminator. Defaults to `'image'`. */
+    type?: 'image' | 'text';
+    /** Initial X coordinate in CSS pixels. Default `50`. */
+    x?: number;
+    /** Initial Y coordinate in CSS pixels. Default `50`. */
+    y?: number;
+    /** 1-based page index the section belongs to. Default `1`. */
+    page?: number;
+}
+
+/**
+ * Create a new section with default position and size.
  *
  * @remarks
  * Input `x` and `y` are interpreted as CSS pixels (96 DPI) and converted to
  * PDF points (72 DPI) for storage so that section geometry matches the units
  * used by the PDF generator.
  *
- * @param x - Initial X coordinate in CSS pixels (default `50`).
- * @param y - Initial Y coordinate in CSS pixels (default `50`).
- * @param page - 1-based page index the section belongs to (default `1`).
+ * The returned section is sized 200×200 points and carries the variant
+ * defaults dictated by `type`:
+ *
+ * - `'image'` (default) — empty image slot (`imageUrl` left unset).
+ * - `'text'` — empty `text` body, `fontSize: 16`, `color: 'rgb(0,0,0)'`,
+ *   `align: 'left'`.
+ *
+ * @param opts - Variant + initial position. See {@link CreateSectionOptions}.
  * @returns A freshly created {@link Section} sized 200×200 points.
  *
  * @example
  * ```ts
- * // 96px → 72pt at 72 DPI
- * const section = createSection(96, 192, 2);
- * section.x; // 72
- * section.y; // 144
- * section.page; // 2
+ * // Image section (legacy default) — 96px → 72pt at 72 DPI
+ * const image = createSection({ x: 96, y: 192, page: 2 });
+ *
+ * // Text section
+ * const text = createSection({ type: 'text', page: 1 });
+ * text.text; // ''
+ * text.fontSize; // 16
  * ```
  */
-export function createSection(x: number = 50, y: number = 50, page: number = 1): Section {
+export function createSection(opts: CreateSectionOptions = {}): Section {
+    const { type = 'image', x = 50, y = 50, page = 1 } = opts;
     // Convert input pixels to points (72 DPI)
     const pxToPoints = (px: number) => px * (72 / 96);
-    return {
+    const base = {
         id: uuidv4(),
         x: pxToPoints(x),
         y: pxToPoints(y),
@@ -95,4 +123,15 @@ export function createSection(x: number = 50, y: number = 50, page: number = 1):
         page,
         zIndex: 0,
     };
+    if (type === 'text') {
+        return {
+            ...base,
+            type: 'text',
+            text: '',
+            fontSize: 16,
+            color: 'rgb(0,0,0)',
+            align: 'left',
+        };
+    }
+    return { ...base, type: 'image' };
 }

@@ -129,13 +129,15 @@ export async function processImagesForPDF(
         throw new Error(BROWSER_ONLY_ERROR);
     }
 
-    const sectionsWithImages = sections.filter((section) => section.imageUrl);
+    const sectionsWithImages = sections.filter(
+        (section) => section.type === 'image' && section.imageUrl,
+    );
     const totalImages = sectionsWithImages.length;
     let processedImages = 0;
 
     const processedSections = await Promise.all(
         sections.map(async (section) => {
-            if (!section.imageUrl) return section;
+            if (section.type !== 'image' || !section.imageUrl) return section;
 
             try {
                 const optimizedImageUrl = await optimizeImageForPDF(section.imageUrl, {

@@ -30,10 +30,15 @@ export function estimatePDFSize(sections: Section[], backgrounds: (string | null
     let estimatedSize = 5 * 1024; // 5KB base size
 
     sections.forEach((section) => {
-        if (section.imageUrl) {
+        if (section.type === 'image' && section.imageUrl) {
             const base64Length = section.imageUrl.split(',')[1]?.length || 0;
             const imageSize = Math.ceil(((base64Length * 3) / 4) * 0.7); // 0.7 for JPEG compression
             estimatedSize += imageSize;
+        } else if (section.type === 'text') {
+            // Rough heuristic — UTF-8 text doesn't compress as aggressively as
+            // re-encoded JPEG, but per-character cost stays small. Counts only
+            // the body bytes plus a small per-section overhead.
+            estimatedSize += (section.text?.length ?? 0) + 64;
         }
     });
 

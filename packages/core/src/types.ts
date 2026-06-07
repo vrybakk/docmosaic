@@ -57,17 +57,17 @@ export interface PageDimensions {
 }
 
 /**
- * A single image-bearing rectangle on a page. Coordinates and size are in
- * PDF points (72 DPI). `imageUrl`, when present, is a base64 data URL.
+ * Geometry + identity shared by every section variant. Coordinates and size
+ * are in PDF points (72 DPI). The {@link Section} discriminated union extends
+ * this with a `type` tag and per-variant payload.
  */
-export interface Section {
+export interface SectionBase {
     id: string;
     x: number;
     y: number;
     width: number;
     height: number;
     page: number;
-    imageUrl?: string;
     /**
      * Render order. Higher values render on top. Ties resolved by array order.
      *
@@ -77,6 +77,84 @@ export interface Section {
      * insertion order wins via the array-index tiebreaker.
      */
     zIndex: number;
+}
+
+/**
+ * Image-bearing section. `imageUrl`, when present, is a base64 data URL.
+ *
+ * @remarks
+ * `type: 'image'` is the discriminator that distinguishes this from
+ * {@link TextSection}. Legacy documents without a `type` field are treated
+ * as image sections — see {@link normalizeSection}.
+ */
+export interface ImageSection extends SectionBase {
+    type: 'image';
+    imageUrl?: string;
+}
+
+/**
+ * Text-bearing section. The body lives in `text`; visual presentation comes
+ * from the optional typography fields.
+ *
+ * @remarks
+ * Fields with no inline default are left unset so they can fall back to
+ * sensible PDF / canvas defaults at render time (system font, black ink, etc.).
+ */
+export interface TextSection extends SectionBase {
+    type: 'text';
+    /** Raw text content. Multi-line strings are wrapped to `width` at render time. */
+    text: string;
+    /** CSS / PDF font family. Falls back to `helvetica` when unset. */
+    fontFamily?: string;
+    /** Font size in PDF points. */
+    fontSize: number;
+    /** Bold or normal weight. Defaults to `'normal'`. */
+    fontWeight?: 'normal' | 'bold';
+    /** Italic or normal slant. Defaults to `'normal'`. */
+    fontStyle?: 'normal' | 'italic';
+    /** Ink color — any CSS color string. Defaults to `'rgb(0,0,0)'`. */
+    color?: string;
+    /** Horizontal alignment within the section box. Defaults to `'left'`. */
+    align?: 'left' | 'center' | 'right';
+    /** Line height multiplier. Defaults to jspdf's built-in spacing when unset. */
+    lineHeight?: number;
+}
+
+/**
+ * Discriminated union over the supported section variants. Use the `type`
+ * field to narrow — for example:
+ *
+ * ```ts
+ * if (section.type === 'text') {
+ *   section.text; // string
+ * } else {
+ *   section.imageUrl; // string | undefined
+ * }
+ * ```
+ */
+export type Section = ImageSection | TextSection;
+
+/**
+ * Normalize a possibly-legacy section value. Sections persisted before the
+ * discriminated-union refactor have no `type` field — they're all image
+ * sections, so this helper stamps `type: 'image'` when missing.
+ *
+ * @remarks
+ * Pure and idempotent. Safe to run on every load; sections that already
+ * carry a `type` are returned untouched.
+ *
+ * @example
+ * ```ts
+ * const legacy = { id: 'a', x: 0, y: 0, width: 100, height: 100, page: 1, zIndex: 0 };
+ * normalizeSection(legacy as Section); // → { ..., type: 'image' }
+ * ```
+ */
+export function normalizeSection(section: Section): Section {
+    // Treat the lack of a discriminator as the legacy image default.
+    if ((section as { type?: string }).type === undefined) {
+        return { ...(section as ImageSection), type: 'image' };
+    }
+    return section;
 }
 
 /**

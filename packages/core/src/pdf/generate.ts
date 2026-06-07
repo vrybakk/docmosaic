@@ -11,7 +11,7 @@
 
 import { jsPDF } from 'jspdf';
 import { CUSTOM_PAGE_SIZES } from '../page-sizes';
-import type { PDFGenerationOptions, Section } from '../types';
+import type { ImageSection, PDFGenerationOptions, Section, TextSection } from '../types';
 import { estimatePDFSize } from './estimate';
 import { processImagesForPDF } from './optimize-image';
 
@@ -93,19 +93,19 @@ export async function generatePDF(
                 if (signal?.aborted) throw new Error('PDF generation cancelled');
 
                 try {
+                    const bgSection: ImageSection = {
+                        id: `bg-${index}`,
+                        type: 'image',
+                        imageUrl: page.backgroundPDF,
+                        x: 0,
+                        y: 0,
+                        width: CUSTOM_PAGE_SIZES[pageSize][0],
+                        height: CUSTOM_PAGE_SIZES[pageSize][1],
+                        page: index + 1,
+                        zIndex: 0,
+                    };
                     const optimizedBg = await processImagesForPDF(
-                        [
-                            {
-                                id: `bg-${index}`,
-                                imageUrl: page.backgroundPDF,
-                                x: 0,
-                                y: 0,
-                                width: CUSTOM_PAGE_SIZES[pageSize][0],
-                                height: CUSTOM_PAGE_SIZES[pageSize][1],
-                                page: index + 1,
-                                zIndex: 0,
-                            },
-                        ],
+                        [bgSection],
                         (progress) => {
                             onProgress?.({
                                 stage: 'optimizing',
@@ -113,7 +113,8 @@ export async function generatePDF(
                             });
                         },
                     );
-                    return optimizedBg[0].imageUrl || null;
+                    const first = optimizedBg[0] as ImageSection | undefined;
+                    return first?.imageUrl || null;
                 } catch (error) {
                     console.error('Error optimizing background:', error);
                     return page.backgroundPDF;
@@ -186,22 +187,26 @@ export async function generatePDF(
             for (const section of pageSections) {
                 if (signal?.aborted) throw new Error('PDF generation cancelled');
 
-                if (section.imageUrl) {
-                    try {
-                        doc.addImage(
-                            section.imageUrl,
-                            'JPEG',
-                            section.x,
-                            section.y,
-                            section.width,
-                            section.height,
-                            `img-${section.id}`,
-                            'SLOW',
-                        );
-                    } catch (error) {
-                        console.error('Error adding image:', error);
-                        continue;
+                if (section.type === 'image') {
+                    if (section.imageUrl) {
+                        try {
+                            doc.addImage(
+                                section.imageUrl,
+                                'JPEG',
+                                section.x,
+                                section.y,
+                                section.width,
+                                section.height,
+                                `img-${section.id}`,
+                                'SLOW',
+                            );
+                        } catch (error) {
+                            console.error('Error adding image:', error);
+                            continue;
+                        }
                     }
+                } else if (section.type === 'text') {
+                    drawTextSection(doc, section);
                 }
             }
 
@@ -226,4 +231,68 @@ export async function generatePDF(
         }
         throw error;
     }
+}
+
+/**
+ * Renders a {@link TextSection} into the active jsPDF document.
+ *
+ * @remarks
+ * - Font family / weight / style are applied via `setFont`. Unknown fonts
+ *   fall back to jspdf's `helvetica` family.
+ * - `text` is wrapped to the section width via `splitTextToSize` so multi-line
+ *   bodies don't overflow.
+ * - Alignment uses jspdf's anchor model: `left` anchors at `x`, `center` at
+ *   the midline, `right` at the trailing edge.
+ *
+ * Errors are caught and logged so a malformed text section can't abort the
+ * whole document — matches the behaviour of the image path above.
+ */
+function drawTextSection(doc: jsPDF, section: TextSection): void {
+    try {
+        const fontFamily = section.fontFamily || 'helvetica';
+        const fontStyle = computeFontStyle(section.fontWeight, section.fontStyle);
+        doc.setFont(fontFamily, fontStyle);
+        doc.setFontSize(section.fontSize);
+        if (section.color) {
+            doc.setTextColor(section.color);
+        }
+
+        const lines = doc.splitTextToSize(section.text ?? '', section.width);
+
+        const align: 'left' | 'center' | 'right' = section.align ?? 'left';
+        const textX =
+            align === 'center'
+                ? section.x + section.width / 2
+                : align === 'right'
+                  ? section.x + section.width
+                  : section.x;
+        // jspdf draws text from the baseline; offset by one line-height so the
+        // first line lands inside the section box rather than above it.
+        const lineHeight = section.lineHeight ?? 1.15;
+        const baselineY = section.y + section.fontSize * lineHeight;
+
+        doc.text(lines, textX, baselineY, {
+            align,
+            lineHeightFactor: lineHeight,
+            maxWidth: section.width,
+        });
+    } catch (error) {
+        console.error('Error adding text:', error);
+    }
+}
+
+/**
+ * Convert the (weight, style) pair into the jspdf font-style string.
+ * jspdf accepts `'normal' | 'bold' | 'italic' | 'bolditalic'`.
+ */
+function computeFontStyle(
+    weight: 'normal' | 'bold' | undefined,
+    style: 'normal' | 'italic' | undefined,
+): string {
+    const bold = weight === 'bold';
+    const italic = style === 'italic';
+    if (bold && italic) return 'bolditalic';
+    if (bold) return 'bold';
+    if (italic) return 'italic';
+    return 'normal';
 }

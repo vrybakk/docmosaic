@@ -36,6 +36,7 @@ export const sampleDoc: Document = {
     sections: [
         {
             id: 'fixture-section-1',
+            type: 'image',
             x: 36,
             y: 36,
             width: 200,
@@ -46,6 +47,7 @@ export const sampleDoc: Document = {
         },
         {
             id: 'fixture-section-2',
+            type: 'image',
             x: 260,
             y: 220,
             width: 180,
@@ -55,6 +57,7 @@ export const sampleDoc: Document = {
         },
         {
             id: 'fixture-section-3',
+            type: 'image',
             x: 72,
             y: 100,
             width: 300,

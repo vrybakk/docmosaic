@@ -41,7 +41,17 @@ export type Action =
     | { type: 'ADD_PAGE'; now?: Date }
     | { type: 'DELETE_PAGE'; pageIndex: number; now?: Date }
     | { type: 'REORDER_PAGES'; fromIndex: number; toIndex: number; now?: Date }
-    | { type: 'ADD_SECTION'; x?: number; y?: number; now?: Date }
+    | {
+          type: 'ADD_SECTION';
+          x?: number;
+          y?: number;
+          /**
+           * Variant to create. Defaults to `'image'` so legacy callers
+           * (which never passed a type) keep producing image sections.
+           */
+          sectionType?: 'image' | 'text';
+          now?: Date;
+      }
     | { type: 'UPDATE_SECTION'; section: Section; now?: Date }
     | { type: 'DELETE_SECTION'; sectionId: string; now?: Date }
     | { type: 'DUPLICATE_SECTION'; section: Section; now?: Date }
@@ -175,7 +185,12 @@ export function reducer(state: State, action: Action): State {
         }
 
         case 'ADD_SECTION': {
-            const newSection = createSection(action.x ?? 5, action.y ?? 5, state.currentPage);
+            const newSection = createSection({
+                type: action.sectionType ?? 'image',
+                x: action.x ?? 5,
+                y: action.y ?? 5,
+                page: state.currentPage,
+            });
             return touch(
                 {
                     ...state,
@@ -207,7 +222,7 @@ export function reducer(state: State, action: Action): State {
 
         case 'DUPLICATE_SECTION': {
             const source = action.section;
-            const clone = createSection(0, 0, source.page);
+            const clone = createSection({ x: 0, y: 0, page: source.page });
             const duplicated: Section = {
                 ...source,
                 id: clone.id,

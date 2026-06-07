@@ -17,16 +17,28 @@ describe('createDocument', () => {
 });
 
 describe('createSection', () => {
-    it('converts pixel coordinates to PDF points (72 DPI)', () => {
-        const section = createSection(96, 192, 2);
+    it('converts pixel coordinates to PDF points (72 DPI) and defaults to an image section', () => {
+        const section = createSection({ x: 96, y: 192, page: 2 });
 
         // px * (72 / 96) — 96px == 72pt, 192px == 144pt
         expect(section.x).toBeCloseTo(72, 5);
         expect(section.y).toBeCloseTo(144, 5);
         expect(section.page).toBe(2);
+        expect(section.type).toBe('image');
         expect(typeof section.id).toBe('string');
         expect(section.id.length).toBeGreaterThan(0);
         expect(section.width).toBeGreaterThan(0);
         expect(section.height).toBeGreaterThan(0);
+    });
+
+    it('returns a text section with sensible defaults when type is "text"', () => {
+        const section = createSection({ type: 'text', page: 1 });
+
+        expect(section.type).toBe('text');
+        if (section.type !== 'text') throw new Error('narrowing');
+        expect(section.text).toBe('');
+        expect(section.fontSize).toBe(16);
+        expect(section.color).toBe('rgb(0,0,0)');
+        expect(section.align).toBe('left');
     });
 });

@@ -21,12 +21,14 @@ describe('estimatePDFSize', () => {
         const base64Payload = 'A'.repeat(100);
         const section: Section = {
             id: 'test-section',
+            type: 'image',
             imageUrl: `data:image/jpeg;base64,${base64Payload}`,
             x: 0,
             y: 0,
             width: 100,
             height: 100,
             page: 1,
+            zIndex: 0,
         };
 
         const withImage = estimatePDFSize([section], []);
