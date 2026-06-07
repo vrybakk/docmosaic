@@ -29,6 +29,9 @@ import { SelectionBounds } from './selection-bounds';
 import { SnapGuides } from './snap-guides';
 import { bboxesIntersect } from './snap';
 import { useCanvasZoom } from './use-canvas-zoom';
+import { Guides } from '../guides';
+import { Minimap } from '../minimap';
+import { Ruler, RULER_THICKNESS } from '../ruler';
 
 export interface CanvasProps {
     /**
@@ -72,8 +75,9 @@ export interface CanvasProps {
  */
 export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps = {}) {
     const editor = useEditor();
-    const { state, ui, actions } = editor;
+    const { state, ui, actions, display } = editor;
     const readOnly = editor.readOnly || readOnlyProp;
+    const rulerGutter = display.showRuler ? RULER_THICKNESS : 0;
     const { pageSize, orientation, sections, currentPage } = state;
     const page = state.pages[currentPage - 1];
     const containerRef = useRef<HTMLDivElement>(null);
@@ -366,23 +370,32 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
         );
     }
 
-    // Children are split into two buckets:
-    //   - Overlay children (`Editor.Zoom` and any future canvas-bound widget
-    //     that opts in via `__editorCanvasOverlay`) render once, anchored to
-    //     the canvas viewport.
+    // Children are split into three buckets:
+    //   - Centered overlays (`Editor.Zoom`) tagged with
+    //     `__editorCanvasOverlay`. Rendered once in the bottom-centered slot.
+    //   - Full-viewport overlays (`Editor.Ruler`, `Editor.Guides`,
+    //     `Editor.Minimap`) tagged with `__editorCanvasOverlayFull`. Each
+    //     positions itself absolutely against the canvas viewport.
     //   - Everything else is treated as the per-section template — exactly one
     //     non-overlay child wins; pass none or multiple to fall back to the
     //     bundled `<Section />` primitive.
     const overlayChildren: ReactNode[] = [];
+    const fullOverlayChildren: ReactNode[] = [];
     const sectionTemplates: ReactNode[] = [];
     Children.forEach(children, (child) => {
-        if (
-            isValidElement(child) &&
-            typeof child.type === 'function' &&
-            (child.type as { __editorCanvasOverlay?: boolean }).__editorCanvasOverlay === true
-        ) {
-            overlayChildren.push(child);
-            return;
+        if (isValidElement(child) && typeof child.type === 'function') {
+            const tags = child.type as {
+                __editorCanvasOverlay?: boolean;
+                __editorCanvasOverlayFull?: boolean;
+            };
+            if (tags.__editorCanvasOverlayFull === true) {
+                fullOverlayChildren.push(child);
+                return;
+            }
+            if (tags.__editorCanvasOverlay === true) {
+                overlayChildren.push(child);
+                return;
+            }
         }
         sectionTemplates.push(child);
     });
@@ -390,6 +403,28 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
         sectionTemplates.length === 1 && isValidElement(sectionTemplates[0])
             ? (sectionTemplates[0] as ReactElement)
             : null;
+
+    // Auto-mount opt-in polish overlays when the corresponding `Editor.Root`
+    // flag is on. Manual renders still win — the check below only injects a
+    // primitive when the consumer didn't already supply one.
+    const hasRulerChild = fullOverlayChildren.some(
+        (c) => isValidElement(c) && c.type === Ruler,
+    );
+    const hasGuidesChild = fullOverlayChildren.some(
+        (c) => isValidElement(c) && c.type === Guides,
+    );
+    const hasMinimapChild = fullOverlayChildren.some(
+        (c) => isValidElement(c) && c.type === Minimap,
+    );
+    if (display.showRuler && !hasRulerChild) {
+        fullOverlayChildren.push(<Ruler key="__auto-ruler" />);
+    }
+    if (display.showRuler && !hasGuidesChild) {
+        fullOverlayChildren.push(<Guides key="__auto-guides" />);
+    }
+    if (display.showMinimap && !hasMinimapChild) {
+        fullOverlayChildren.push(<Minimap key="__auto-minimap" />);
+    }
 
     return (
         <EditorCanvasProvider
@@ -431,7 +466,10 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
                 {isLoading ? (
                     <Loader />
                 ) : (
-                    <div className="flex items-center justify-center min-h-full">
+                    <div
+                        className="flex items-center justify-center min-h-full"
+                        style={{ paddingLeft: rulerGutter, paddingTop: rulerGutter }}
+                    >
                         <div
                             ref={combinedRef}
                             data-page-container="true"
@@ -535,6 +573,14 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
                 )}
 
                 {!isLoading && <CanvasControls />}
+                {!isLoading && fullOverlayChildren.length > 0 && (
+                    <div
+                        data-canvas-overlay-layer="true"
+                        className="absolute inset-0 pointer-events-none z-10"
+                    >
+                        {fullOverlayChildren}
+                    </div>
+                )}
                 {!isLoading && overlayChildren.length > 0 && (
                     <div
                         data-canvas-overlay-slot="true"

@@ -120,6 +120,9 @@ This is a no-op. jsPDF is configured with `unit: 'pt'`, so the document's stored
 ## See also
 
 - [Designer](./designer.md) — how the canvas scales points into CSS pixels
+- [Guides and snap](./guides-and-snap.md) — `Editor.Ruler` is the unit-aware primitive that surfaces points/mm/in directly on the canvas
 - [`@docmosaic/core` README — Public surface](../../packages/core/README.md#public-surface) — every dimension helper export
 - [`packages/core/src/dimensions.ts`](../../packages/core/src/dimensions.ts) — source with JSDoc
 - [`packages/core/src/page-sizes.ts`](../../packages/core/src/page-sizes.ts) — points table for every supported paper size
+
+`Editor.Ruler` (Phase 29) consumes these helpers directly — pick the unit via `rulerUnit` on `Editor.Root` (`'pt'` / `'mm'` / `'in'`) and the major-tick labels run through `ptToMm` (and a 25.4 divider for inches) so the on-canvas measurements stay byte-identical to the rest of the document model.

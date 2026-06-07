@@ -57,6 +57,9 @@ import { KeybindingHelp } from './primitives/keybinding-help';
 import { LayerList } from './primitives/layer-list';
 import { ContextMenu } from './primitives/context-menu';
 import { Toaster } from './primitives/toaster';
+import { Ruler } from './primitives/ruler';
+import { Guides } from './primitives/guides';
+import { Minimap } from './primitives/minimap';
 
 /**
  * Compound primitive namespace for the DocMosaic editor.
@@ -88,6 +91,8 @@ import { Toaster } from './primitives/toaster';
  *   the section menu (copy / duplicate / delete / layer order / hide / lock)
  *   and the canvas menu (paste / select all / deselect).
  * - `Toaster` — `react-hot-toast` toaster styled with semantic tokens.
+ * - `Ruler` / `Guides` / `Minimap` — Phase 29 print-tool polish trio. Auto-mounted
+ *   by `Editor.Root` via `showRuler` / `showMinimap` props.
  * - `Preview` — full-document preview dialog.
  *
  * @example
@@ -151,6 +156,9 @@ export const Editor = {
     LayerList,
     ContextMenu,
     Toaster,
+    Ruler,
+    Guides,
+    Minimap,
     /** @deprecated Use `Editor.Properties` instead. Removed in next major. */
     Inspector: Properties,
     /** @deprecated Use `Editor.PageBackground` instead. Removed in next major. */
@@ -234,6 +242,20 @@ export {
     Toaster as EditorToaster,
     type ToasterProps as EditorToasterProps,
 } from './primitives/toaster';
+export {
+    Ruler as EditorRuler,
+    type RulerProps as EditorRulerProps,
+    type RulerUnit as EditorRulerUnit,
+    RULER_THICKNESS,
+} from './primitives/ruler';
+export {
+    Guides as EditorGuides,
+    type GuidesProps as EditorGuidesProps,
+} from './primitives/guides';
+export {
+    Minimap as EditorMinimap,
+    type MinimapProps as EditorMinimapProps,
+} from './primitives/minimap';
 /**
  * Re-export of `react-hot-toast`'s `toast` helper. Fire toasts from anywhere
  * — they only render when an `Editor.Toaster` is mounted in the tree.

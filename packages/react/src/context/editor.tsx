@@ -144,6 +144,23 @@ export interface EditorActions {
      * swap goes through the history timeline as a single undoable step.
      */
     loadDocument: (next: Document) => void;
+    /**
+     * Add a guide line on a page. `axis: 'vertical'` carries an x position;
+     * `axis: 'horizontal'` carries a y position. Both in PDF points. Exact
+     * duplicates are skipped so repeated drags onto the same value don't grow
+     * the underlying array.
+     */
+    addGuide: (
+        pageIndex: number,
+        axis: 'vertical' | 'horizontal',
+        position: number,
+    ) => void;
+    /** Remove a previously-placed guide line. No-op when absent. */
+    removeGuide: (
+        pageIndex: number,
+        axis: 'vertical' | 'horizontal',
+        position: number,
+    ) => void;
 }
 
 /**
@@ -277,6 +294,33 @@ export interface EditorContextValue {
      * even when the root isn't).
      */
     readOnly: boolean;
+    /**
+     * Display flags forwarded from `Editor.Root` to the Canvas so it can
+     * decide whether to auto-mount the Phase 29 polish overlays (rulers,
+     * minimap). Independent from the actual primitives — consumers can still
+     * render `Editor.Ruler` / `Editor.Minimap` manually instead of flipping
+     * these flags.
+     */
+    display: {
+        /**
+         * Reserve viewport gutters for `Editor.Ruler` and auto-mount it as a
+         * canvas overlay. Off by default; flip on through the `showRuler`
+         * prop on `Editor.Root`.
+         */
+        showRuler: boolean;
+        /**
+         * Auto-mount `Editor.Minimap` in the bottom-right of the canvas
+         * viewport. Off by default; flip on through the `showMinimap` prop
+         * on `Editor.Root`.
+         */
+        showMinimap: boolean;
+        /**
+         * Display unit used by `Editor.Ruler` tick labels. Points are the
+         * canonical storage unit; mm/in are converted from points at paint
+         * time. Defaults to `'pt'`.
+         */
+        rulerUnit: 'pt' | 'mm' | 'in';
+    };
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
@@ -485,6 +529,10 @@ export function useEditorSection(): UseEditorSectionResult {
     const orientation = state.orientation;
     const sectionsRef = useRef(state.sections);
     sectionsRef.current = state.sections;
+    // Mirror sections — page guides participate in snap math so group drag
+    // sticks to ruler-dragged lines just like it does to page mid-lines.
+    const pagesRef = useRef(state.pages);
+    pagesRef.current = state.pages;
     const setActiveSnapGuides = ui.setActiveSnapGuides;
 
     const groupDrag = useMemo<UseEditorSectionGroupDrag>(() => {
@@ -503,10 +551,12 @@ export function useEditorSection(): UseEditorSectionResult {
                 ]),
             );
             const pageDims = getPageDimensionsWithOrientation(pageSize, orientation);
+            const pageGuides = pagesRef.current[currentPage - 1]?.guides;
             const targets = computeSnapTargets(
                 sectionsRef.current.filter((s) => s.page === currentPage),
                 selectedSectionIds,
                 pageDims ?? { width: 0, height: 0 },
+                pageGuides,
             );
             groupDragSnapshot.current = { positions, bbox, targets };
         };

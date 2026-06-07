@@ -143,6 +143,25 @@ export type EditorRootProps = {
      * ```
      */
     readOnly?: boolean;
+    /**
+     * Render `Editor.Ruler` along the top and left edges of the canvas
+     * viewport. Defaults to `false`. When `true`, the canvas reserves a
+     * 24px gutter on each axis so the rulers sit flush with the page edge
+     * without occluding section geometry.
+     */
+    showRuler?: boolean;
+    /**
+     * Render `Editor.Minimap` anchored to the bottom-right of the canvas
+     * viewport — a thumbnail of the current page plus a viewport rectangle
+     * that pans the main canvas. Defaults to `false`.
+     */
+    showMinimap?: boolean;
+    /**
+     * Unit used by `Editor.Ruler` tick labels. Defaults to `'pt'` so the
+     * tick values match the document's storage unit one-to-one. Set to
+     * `'mm'` or `'in'` to surface a human-facing measurement instead.
+     */
+    rulerUnit?: 'pt' | 'mm' | 'in';
 } & (
     | {
           /** Controlled: caller owns the document. */
@@ -451,6 +470,60 @@ function buildControlledActions(
             );
         },
         loadDocument: (next: Document) => onDocumentChange(touch(next)),
+        addGuide: (
+            pageIndex: number,
+            axis: 'vertical' | 'horizontal',
+            position: number,
+        ) => {
+            if (pageIndex < 0 || pageIndex >= document.pages.length) return;
+            const page = document.pages[pageIndex];
+            const existing = page.guides ?? { vertical: [], horizontal: [] };
+            if (existing[axis].includes(position)) return;
+            const nextGuides = {
+                vertical:
+                    axis === 'vertical' ? [...existing.vertical, position] : existing.vertical,
+                horizontal:
+                    axis === 'horizontal'
+                        ? [...existing.horizontal, position]
+                        : existing.horizontal,
+            };
+            onDocumentChange(
+                touch({
+                    ...document,
+                    pages: document.pages.map((p, i) =>
+                        i === pageIndex ? { ...p, guides: nextGuides } : p,
+                    ),
+                }),
+            );
+        },
+        removeGuide: (
+            pageIndex: number,
+            axis: 'vertical' | 'horizontal',
+            position: number,
+        ) => {
+            if (pageIndex < 0 || pageIndex >= document.pages.length) return;
+            const page = document.pages[pageIndex];
+            if (!page.guides) return;
+            if (!page.guides[axis].includes(position)) return;
+            const nextGuides = {
+                vertical:
+                    axis === 'vertical'
+                        ? page.guides.vertical.filter((v) => v !== position)
+                        : page.guides.vertical,
+                horizontal:
+                    axis === 'horizontal'
+                        ? page.guides.horizontal.filter((v) => v !== position)
+                        : page.guides.horizontal,
+            };
+            onDocumentChange(
+                touch({
+                    ...document,
+                    pages: document.pages.map((p, i) =>
+                        i === pageIndex ? { ...p, guides: nextGuides } : p,
+                    ),
+                }),
+            );
+        },
     };
 }
 
@@ -462,12 +535,14 @@ function ControlledRoot({
     onDocumentChange,
     pdfBackend,
     readOnly,
+    display,
     children,
 }: {
     document: Document;
     onDocumentChange: (next: Document) => void;
     pdfBackend: EditorPdfBackend;
     readOnly: boolean;
+    display: EditorContextValue['display'];
     children: ReactNode;
 }) {
     const formattedDate = useFormattedDate(document.updatedAt);
@@ -527,6 +602,7 @@ function ControlledRoot({
         pdfBackend,
         ui,
         readOnly,
+        display,
     };
 
     return <EditorProvider value={value}>{children}</EditorProvider>;
@@ -542,11 +618,13 @@ function UncontrolledRoot({
     defaultDocument,
     pdfBackend,
     readOnly,
+    display,
     children,
 }: {
     defaultDocument?: Document;
     pdfBackend: EditorPdfBackend;
     readOnly: boolean;
+    display: EditorContextValue['display'];
     children: ReactNode;
 }) {
     const { document, formattedDate, canUndo, canRedo, actions } = useDocumentState({
@@ -616,6 +694,7 @@ function UncontrolledRoot({
         pdfBackend,
         ui,
         readOnly,
+        display,
     };
 
     return <EditorProvider value={value}>{children}</EditorProvider>;
@@ -730,6 +809,14 @@ export function Root(props: EditorRootProps) {
     const keybindingsEnabled = props.keybindings !== false;
     const keymap: Partial<EditorKeymap> = props.keybindings ? props.keybindings : {};
     const readOnly = props.readOnly === true;
+    const display = useMemo<EditorContextValue['display']>(
+        () => ({
+            showRuler: props.showRuler === true,
+            showMinimap: props.showMinimap === true,
+            rulerUnit: props.rulerUnit ?? 'pt',
+        }),
+        [props.showRuler, props.showMinimap, props.rulerUnit],
+    );
 
     const layout = (
         <div className="flex flex-col h-screen bg-gray-50">
@@ -747,6 +834,7 @@ export function Root(props: EditorRootProps) {
                         onDocumentChange={props.onDocumentChange!}
                         pdfBackend={pdfBackend}
                         readOnly={readOnly}
+                        display={display}
                     >
                         {layout}
                     </ControlledRoot>
@@ -755,6 +843,7 @@ export function Root(props: EditorRootProps) {
                         defaultDocument={props.defaultDocument}
                         pdfBackend={pdfBackend}
                         readOnly={readOnly}
+                        display={display}
                     >
                         {layout}
                     </UncontrolledRoot>

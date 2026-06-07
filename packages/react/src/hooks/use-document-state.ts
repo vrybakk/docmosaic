@@ -171,6 +171,16 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
                 dispatch({ type: 'SET_LOCKED', sectionId, locked }),
             loadDocument: (next: Document) =>
                 dispatch({ type: 'UPDATE_DOCUMENT', updates: next }),
+            addGuide: (
+                pageIndex: number,
+                axis: 'vertical' | 'horizontal',
+                position: number,
+            ) => dispatch({ type: 'ADD_GUIDE', pageIndex, axis, position }),
+            removeGuide: (
+                pageIndex: number,
+                axis: 'vertical' | 'horizontal',
+                position: number,
+            ) => dispatch({ type: 'REMOVE_GUIDE', pageIndex, axis, position }),
         }),
         [],
     );

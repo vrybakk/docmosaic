@@ -35,26 +35,59 @@ export interface VerticalSnapTarget {
     orientation: 'vertical';
     position: number;
     /** Where this candidate came from — useful for stories / debugging. */
-    source: 'section-left' | 'section-right' | 'section-center' | 'page-left' | 'page-right' | 'page-center';
+    source:
+        | 'section-left'
+        | 'section-right'
+        | 'section-center'
+        | 'page-left'
+        | 'page-right'
+        | 'page-center'
+        | 'guide';
 }
 
 /** Horizontal snap target (y position). */
 export interface HorizontalSnapTarget {
     orientation: 'horizontal';
     position: number;
-    source: 'section-top' | 'section-bottom' | 'section-middle' | 'page-top' | 'page-bottom' | 'page-middle';
+    source:
+        | 'section-top'
+        | 'section-bottom'
+        | 'section-middle'
+        | 'page-top'
+        | 'page-bottom'
+        | 'page-middle'
+        | 'guide';
 }
 
 export type SnapTarget = VerticalSnapTarget | HorizontalSnapTarget;
 
 /**
+ * User-placed page guides that participate in snap math alongside section
+ * edges + page margins. Both arrays are in PDF points.
+ *
+ * @remarks
+ * Mirrors `PageGuides` from `@docmosaic/core` but kept structurally local so
+ * the helper stays framework-agnostic — callers pass the page's `guides`
+ * field straight through.
+ */
+export interface PageGuidesSnap {
+    vertical: ReadonlyArray<number>;
+    horizontal: ReadonlyArray<number>;
+}
+
+/**
  * Collect snap candidates for a page. The selected (dragging) ids are skipped
  * because we never want the group to snap to itself.
+ *
+ * @param guides - Optional user-placed page guides. Each vertical entry adds
+ * a `vertical` snap target with `source: 'guide'`; each horizontal entry adds
+ * a `horizontal` snap target. Omitted on legacy pages with no guides.
  */
 export function computeSnapTargets(
     sections: ReadonlyArray<Section>,
     selectedIds: ReadonlySet<string>,
     page: { width: number; height: number },
+    guides?: PageGuidesSnap,
 ): SnapTarget[] {
     const targets: SnapTarget[] = [
         { orientation: 'vertical', position: 0, source: 'page-left' },
@@ -83,6 +116,15 @@ export function computeSnapTargets(
                 source: 'section-middle',
             },
         );
+    }
+
+    if (guides) {
+        for (const pos of guides.vertical) {
+            targets.push({ orientation: 'vertical', position: pos, source: 'guide' });
+        }
+        for (const pos of guides.horizontal) {
+            targets.push({ orientation: 'horizontal', position: pos, source: 'guide' });
+        }
     }
 
     return targets;

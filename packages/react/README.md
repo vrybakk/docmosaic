@@ -14,6 +14,7 @@ Conceptual walk-throughs of how the editor is put together. Start here if you're
 -   [Keybindings](../../docs/concepts/keybindings.md) — default keymap, overrides, and standalone usage
 -   [Layers](../../docs/concepts/layers.md) — the `zIndex` model and the four reorder actions
 -   [Read-only mode](../../docs/concepts/recipes/read-only.md) — `Editor.Root readOnly` + `Editor.StaticCanvas`
+-   [Guides and snap](../../docs/concepts/guides-and-snap.md) — `Editor.Ruler` + `Editor.Guides` and how `Page.guides` participate in snap math
 
 ## Install
 
@@ -817,6 +818,48 @@ function DeleteWithToast() {
 
 The `toast` re-export is also available as `import { toast } from '@docmosaic/react'` for callers that prefer the flat path over the namespace.
 
+### `Editor.Ruler`
+
+Phase 29 adds top + left edge rulers — tick marks every 10pt with labels every 50pt, scaled live with the canvas zoom. Opt in by flipping `showRuler` on `Editor.Root`; the canvas reserves a 24px gutter on each axis and auto-mounts the primitive (plus `Editor.Guides`) so you don't have to thread anything through the tree.
+
+```tsx
+<Editor.Root showRuler>
+    <Editor.Toolbar />
+    <Editor.Canvas><Editor.Section /></Editor.Canvas>
+</Editor.Root>
+```
+
+Tick labels default to PDF points so the values match the document's storage unit one-to-one. Pass `rulerUnit="mm"` (or `"in"`) on `Editor.Root` to surface a human-facing measurement instead — the conversion routes through `mmToPt` / `ptToMm` from `@docmosaic/core`, the same helpers documented in [`docs/concepts/unit-system.md`](../../docs/concepts/unit-system.md).
+
+Auto-injection is opt-in: render `<Editor.Ruler />` (or `<Editor.Guides />`) yourself inside `Editor.Canvas` when you want fine-grained control over the placement and the auto-mount step skips it.
+
+### `Editor.Guides`
+
+Drag a vertical line down from the top ruler band, or a horizontal line right from the left ruler band, to drop a guide on the current page. Sections snap to existing guides (within the same 5pt `SNAP_THRESHOLD` the multi-select group drag uses). A small × badge on each guide deletes it.
+
+Guides persist on `Page.guides` (PDF points) — see the new field on `Page` in `@docmosaic/core` — and round-trip through the controlled-mode `document` prop. They are **never** drawn into the PDF output: the renderer ignores `Page.guides`, and the `generate.guides.test.ts` byte-diff gate locks that contract in.
+
+```tsx
+const { actions } = useEditor();
+actions.addGuide(0 /* pageIndex */, 'vertical', 120);
+actions.removeGuide(0, 'vertical', 120);
+```
+
+The same writes are available as reducer actions — `ADD_GUIDE` / `REMOVE_GUIDE` — for callers driving `@docmosaic/core/reducer` directly.
+
+### `Editor.Minimap`
+
+Phase 29 adds a 200×scaled-to-aspect thumbnail anchored to the bottom-right of the canvas viewport. Sections render as colored rectangles by type (image / text / shape / drawing all carry distinct fills) and a red rectangle tracks the visible canvas region. Drag the rectangle to pan the main canvas.
+
+```tsx
+<Editor.Root showMinimap>
+    <Editor.Toolbar />
+    <Editor.Canvas><Editor.Section /></Editor.Canvas>
+</Editor.Root>
+```
+
+Like the ruler/guides pair, the primitive auto-mounts when `showMinimap` is set on `Editor.Root`. Render `<Editor.Minimap />` manually to pick a different corner; pass `maxSize` to override the default thumbnail bound.
+
 ## Multi-select + snap
 
 The editor supports multi-section selection out of the box. The selection lives on the editor's UI state as `ui.selectedSectionIds: Set<string>` — `Editor.Canvas` reacts to three input patterns:
@@ -839,6 +882,8 @@ While a multi-select group is being dragged, the editor compares each group edge
 - the edges + center / middle of every non-selected section on the same page
 
 Any candidate within `SNAP_THRESHOLD` (5px) wins — the group snaps to it and `Editor.SnapGuides` paints a thin accent-colored line spanning the page so the alignment is visible. Guides clear automatically on pointer release.
+
+Phase 29 grows the candidate list with **user-placed `Page.guides`** dropped via `Editor.Guides`. Each vertical guide becomes a `source: 'guide'` snap target on the vertical axis and each horizontal one shows up on the horizontal axis — see [`docs/concepts/guides-and-snap.md`](../../docs/concepts/guides-and-snap.md) for the full pipeline.
 
 ```tsx
 import { Editor, useEditor } from '@docmosaic/react';
@@ -904,11 +949,11 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 
 Every export is documented inline with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The public surface is:
 
--   `Editor` namespace — `Root`, `Properties`, `Toolbar`, `Pages`, `Canvas`, `StaticCanvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, `PageBackground`, `FileSizeBadge`, `GenerationProgress`, `Zoom`, `KeybindingHelp`, `LayerList`, `ContextMenu`, `Toaster`, and their child buttons/selects (including `AddImageButton`, `DrawButton`). Flat `EditorXxx` exports mirror the namespace for tree-shake-friendly imports. Back-compat: `Editor.Inspector` (= `Properties`), `Editor.PageBackgroundPicker` (= `PageBackground`), `Editor.EstimatedSize` (= `FileSizeBadge`), `Editor.ProgressOverlay` (= `GenerationProgress`), `Editor.AddSectionButton` (= `AddImageButton`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
+-   `Editor` namespace — `Root`, `Properties`, `Toolbar`, `Pages`, `Canvas`, `StaticCanvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, `PageBackground`, `FileSizeBadge`, `GenerationProgress`, `Zoom`, `KeybindingHelp`, `LayerList`, `ContextMenu`, `Toaster`, `Ruler`, `Guides`, `Minimap`, and their child buttons/selects (including `AddImageButton`, `DrawButton`). Flat `EditorXxx` exports mirror the namespace for tree-shake-friendly imports. Back-compat: `Editor.Inspector` (= `Properties`), `Editor.PageBackgroundPicker` (= `PageBackground`), `Editor.EstimatedSize` (= `FileSizeBadge`), `Editor.ProgressOverlay` (= `GenerationProgress`), `Editor.AddSectionButton` (= `AddImageButton`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
 -   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `useEditorZoom`, `usePdfGeneration`.
 -   Providers — `EditorProvider`, `EditorConfigProvider`, `EditorConfigContext`.
 -   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`, `toast` (re-exported from `react-hot-toast`).
--   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorKeybinding`, `EditorKeymap`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `TemplateGalleryItem`, `TemplateGalleryProps`, `UseEditorSectionResult`, `UseEditorZoomResult`, `EditorZoomProps`, `EditorKeybindingHelpProps`, `EditorContextMenuProps`, `EditorToasterProps`.
+-   Types — `EditorRootProps`, `EditorActions`, `EditorContextValue`, `EditorPdfApi`, `EditorPdfBackend`, `EditorUiState`, `EditorKeybinding`, `EditorKeymap`, `EditorConfig`, `ImageRenderer`, `ImageRendererProps`, `GenerationState`, `AnalyticsTracker`, `TemplateGalleryItem`, `TemplateGalleryProps`, `UseEditorSectionResult`, `UseEditorZoomResult`, `EditorZoomProps`, `EditorKeybindingHelpProps`, `EditorContextMenuProps`, `EditorToasterProps`, `EditorRulerProps`, `EditorRulerUnit`, `EditorGuidesProps`, `EditorMinimapProps`.
 
 ## Compatibility
 
