@@ -1,8 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Editor } from '@docmosaic/react';
 
-import { documentWithSections, emptyDocument } from '../helpers/sample-documents';
-import { createSection, type Document } from '@docmosaic/core';
+import {
+    documentWithSections,
+    documentWithTextSection,
+    emptyDocument,
+} from '../helpers/sample-documents';
+import {
+    createSection,
+    type Document,
+    type TextSection as TextSectionData,
+} from '@docmosaic/core';
 
 /**
  * `Editor.Section` is the per-section primitive: empty placeholder, image,
@@ -25,7 +33,7 @@ type Story = StoryObj<typeof Editor.Section>;
 export const EmptyPlaceholder: Story = {
     render: () => {
         const base = emptyDocument();
-        const placeholder = createSection(40, 40, 1);
+        const placeholder = createSection({ x: 40, y: 40, page: 1 });
         const doc: Document = { ...base, sections: [placeholder] };
         return (
             <Editor.Root defaultDocument={doc}>
@@ -76,6 +84,67 @@ export const Selected: Story = {
 export const Dragging: Story = {
     render: () => (
         <Editor.Root defaultDocument={documentWithSections()}>
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Empty text section — shows the "Double-click to edit" hint. */
+export const TextPlaceholder: Story = {
+    render: () => {
+        const base = emptyDocument();
+        const placeholder = createSection({ type: 'text', x: 60, y: 60, page: 1 }) as TextSectionData;
+        const doc: Document = {
+            ...base,
+            sections: [{ ...placeholder, width: 320, height: 80 }],
+        };
+        return (
+            <Editor.Root defaultDocument={doc}>
+                <div style={{ height: '600px', display: 'flex' }}>
+                    <Editor.Canvas>
+                        <Editor.Section />
+                    </Editor.Canvas>
+                </div>
+            </Editor.Root>
+        );
+    },
+};
+
+/** Text section seeded with body copy. */
+export const TextWithContent: Story = {
+    render: () => (
+        <Editor.Root defaultDocument={documentWithTextSection('Hello DocMosaic')}>
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Selected text section — the typography toolbar (alignment, bold, italic,
+ * font size) is visible. */
+export const TextSelected: Story = {
+    render: () => (
+        <Editor.Root defaultDocument={documentWithTextSection('Selected text')}>
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Text section in editing mode (double-click the section to type inline). */
+export const TextEditing: Story = {
+    render: () => (
+        <Editor.Root defaultDocument={documentWithTextSection('Double-click to edit me')}>
             <div style={{ height: '600px', display: 'flex' }}>
                 <Editor.Canvas>
                     <Editor.Section />

@@ -200,6 +200,93 @@ The headless hook is also exported for "BYO-UI" trees that mount their own provi
 import { useEditorKeybindings, DEFAULT_KEYMAP } from '@docmosaic/react';
 ```
 
+## Section types
+
+A `Section` is a discriminated union on the `type` field. Two variants ship today:
+
+| Variant | Discriminator   | Renders                            |
+| ------- | --------------- | ---------------------------------- |
+| Image   | `type: 'image'` | `Editor.Section` → `ImageSectionView` |
+| Text    | `type: 'text'`  | `Editor.Section` → `TextSectionView`  |
+
+`Editor.Section` is a dispatcher — it reads `section.type` from `useEditorSection()` and renders the matching view. Both variants share the same drag + resize + selection shell. Legacy documents without a `type` field are normalized to `'image'` via `normalizeSection`.
+
+Add a new section of either variant from the toolbar:
+
+```tsx
+<Editor.AddSectionButton /> {/* Image */}
+<Editor.AddTextButton />    {/* Text */}
+```
+
+Programmatically:
+
+```tsx
+const { actions } = useEditor();
+actions.addSection({ type: 'image' });
+actions.addSection({ type: 'text' });
+```
+
+### Image section
+
+Image sections fill their box with a base64 data URL. Drag-and-drop or the inline file picker writes the URL into the section.
+
+| Field      | Type      | Notes                                       |
+| ---------- | --------- | ------------------------------------------- |
+| `type`     | `'image'` | Discriminator.                              |
+| `imageUrl` | `string?` | Base64 data URL. Empty box when unset.      |
+
+```tsx
+import type { ImageSection } from '@docmosaic/core';
+
+const section: ImageSection = {
+    id: 'a',
+    type: 'image',
+    x: 36,
+    y: 36,
+    width: 200,
+    height: 150,
+    page: 1,
+    zIndex: 0,
+    imageUrl: 'data:image/png;base64,...',
+};
+```
+
+### Text section
+
+Text sections render their body with the bundled typography props. Click the section to select, then click again (or double-click) to edit inline; blur to exit. The floating toolbar exposes alignment, bold, italic, and font-size +/-.
+
+| Field        | Type                              | Default       |
+| ------------ | --------------------------------- | ------------- |
+| `type`       | `'text'`                          | —             |
+| `text`       | `string`                          | `''`          |
+| `fontFamily` | `string?`                         | `'helvetica'` |
+| `fontSize`   | `number` (points)                 | `16`          |
+| `fontWeight` | `'normal' \| 'bold'?`             | `'normal'`    |
+| `fontStyle`  | `'normal' \| 'italic'?`           | `'normal'`    |
+| `color`      | `string?` (any CSS color)         | `'rgb(0,0,0)'`|
+| `align`      | `'left' \| 'center' \| 'right'?`  | `'left'`      |
+| `lineHeight` | `number?` (multiplier)            | `1.15`        |
+
+```tsx
+import type { TextSection } from '@docmosaic/core';
+
+const section: TextSection = {
+    id: 'b',
+    type: 'text',
+    x: 72,
+    y: 72,
+    width: 400,
+    height: 80,
+    page: 1,
+    zIndex: 0,
+    text: 'Hello DocMosaic',
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'rgb(0,0,0)',
+    align: 'left',
+};
+```
+
 ## Layers
 
 Every `Section` carries a `zIndex` (default `0`). The PDF generator and the on-canvas preview render sections in `(zIndex asc, array index asc)` order — lower draws first, higher draws on top. Ties fall back to insertion order so legacy documents (where every section sits at `zIndex: 0`) render exactly as before.

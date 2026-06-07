@@ -132,7 +132,8 @@ export function useSectionResize({
     const resizeStart = useRef<ResizeStart | null>(null);
 
     const handleResizeToProportion = useCallback(() => {
-        if (!section.imageUrl || !imageRef.current) return;
+        // Only image sections have a natural aspect ratio to snap to.
+        if (section.type !== 'image' || !section.imageUrl || !imageRef.current) return;
 
         const img = imageRef.current;
         const aspectRatio = img.naturalWidth / img.naturalHeight;
@@ -178,7 +179,11 @@ export function useSectionResize({
             height: section.height,
             left: section.x,
             top: section.y,
-            aspectRatio: section.imageUrl ? section.width / section.height : undefined,
+            // Lock aspect ratio only for image sections with a loaded image.
+            aspectRatio:
+                section.type === 'image' && section.imageUrl
+                    ? section.width / section.height
+                    : undefined,
         };
         resizeStart.current = startData;
 

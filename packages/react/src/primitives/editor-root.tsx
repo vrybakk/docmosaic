@@ -163,8 +163,13 @@ function buildControlledActions(
     return {
         undo: () => {},
         redo: () => {},
-        addSection: () => {
-            const newSection = createSection(5, 5, document.currentPage);
+        addSection: (opts?: { type?: 'image' | 'text' }) => {
+            const newSection = createSection({
+                type: opts?.type ?? 'image',
+                x: 5,
+                y: 5,
+                page: document.currentPage,
+            });
             onDocumentChange(touch({ ...document, sections: [...document.sections, newSection] }));
             return newSection;
         },
@@ -183,7 +188,7 @@ function buildControlledActions(
                 }),
             ),
         duplicateSection: (section: Section) => {
-            const clone = createSection(0, 0, section.page);
+            const clone = createSection({ x: 0, y: 0, page: section.page });
             const duplicated: Section = {
                 ...section,
                 id: clone.id,
@@ -348,9 +353,9 @@ function ControlledRoot({
     const wrappedActions = useMemo<EditorActions>(
         () => ({
             ...actions,
-            addSection: () => {
+            addSection: (opts?: { type?: 'image' | 'text' }) => {
                 trackEvent.addSection();
-                const section = actions.addSection();
+                const section = actions.addSection(opts);
                 ui.setSelectedSectionId(section.id);
                 return section;
             },
@@ -442,9 +447,9 @@ function UncontrolledRoot({
                 trackEvent.redo();
                 actions.redo();
             },
-            addSection: () => {
+            addSection: (opts?: { type?: 'image' | 'text' }) => {
                 trackEvent.addSection();
-                const section = actions.addSection();
+                const section = actions.addSection(opts);
                 ui.setSelectedSectionId(section.id);
                 return section;
             },

@@ -4,7 +4,7 @@
  */
 
 import { createDocument, createPage, createSection } from '@docmosaic/core';
-import type { Document } from '@docmosaic/core';
+import type { Document, ImageSection, TextSection } from '@docmosaic/core';
 
 /**
  * Tiny transparent PNG used to fill section.imageData in demo documents.
@@ -21,14 +21,24 @@ export function emptyDocument(): Document {
 /** Document with two image sections placed on page 1. */
 export function documentWithSections(): Document {
     const base = createDocument();
-    const sectionA = createSection(40, 40, 1);
-    const sectionB = createSection(220, 320, 1);
+    const sectionA = createSection({ x: 40, y: 40, page: 1 }) as ImageSection;
+    const sectionB = createSection({ x: 220, y: 320, page: 1 }) as ImageSection;
     return {
         ...base,
         sections: [
             { ...sectionA, imageUrl: PLACEHOLDER_PNG, width: 220, height: 160 },
             { ...sectionB, imageUrl: PLACEHOLDER_PNG, width: 180, height: 220 },
         ],
+    };
+}
+
+/** Document with a single text section on page 1. */
+export function documentWithTextSection(text = 'Hello DocMosaic'): Document {
+    const base = createDocument();
+    const section = createSection({ type: 'text', x: 60, y: 60, page: 1 }) as TextSection;
+    return {
+        ...base,
+        sections: [{ ...section, text, width: 320, height: 80, fontSize: 24 }],
     };
 }
 

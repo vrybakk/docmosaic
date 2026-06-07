@@ -23,7 +23,7 @@
 import { Root } from './primitives/editor-root';
 import { Canvas } from './primitives/canvas';
 import { CanvasControls } from './primitives/canvas/canvas-controls';
-import { Section } from './primitives/image-section';
+import { Section } from './primitives/section';
 import { PageList } from './primitives/page-list';
 import { PageThumb } from './primitives/page-list/page-thumb';
 import { Toolbar } from './primitives/toolbar';
@@ -33,6 +33,7 @@ import { PreviewButton } from './primitives/toolbar/preview-button';
 import { PrintButton } from './primitives/toolbar/print-button';
 import { DownloadButton } from './primitives/toolbar/download-button';
 import { AddSectionButton } from './primitives/toolbar/add-section-button';
+import { AddTextButton } from './primitives/toolbar/add-text-button';
 import { EstimatedSize } from './primitives/toolbar/estimated-size';
 import { ProgressOverlay } from './primitives/toolbar/progress-overlay';
 import { Header } from './primitives/header';
@@ -96,6 +97,7 @@ export const Editor = {
     PrintButton,
     DownloadButton,
     AddSectionButton,
+    AddTextButton,
     EstimatedSize,
     ProgressOverlay,
     Header,

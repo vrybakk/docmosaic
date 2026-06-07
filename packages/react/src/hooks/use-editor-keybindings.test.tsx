@@ -17,7 +17,7 @@ import { Editor } from '../index';
 function setupWithSelectedSection(
     rootProps: Partial<Parameters<typeof Editor.Root>[0]> = {},
 ) {
-    const section: Section = { ...createSection(0, 0, 1), x: 100, y: 100 };
+    const section: Section = { ...createSection({ x: 0, y: 0, page: 1 }), x: 100, y: 100 };
     const seed: Document = {
         ...createDocument(),
         sections: [section],
@@ -207,7 +207,7 @@ describe('useEditorKeybindings — undo / redo', () => {
 
 describe('useEditorKeybindings — controlled mode', () => {
     it('forwards mutations through onDocumentChange', () => {
-        const section: Section = { ...createSection(0, 0, 1), x: 50, y: 50 };
+        const section: Section = { ...createSection({ x: 0, y: 0, page: 1 }), x: 50, y: 50 };
         const seed: Document = { ...createDocument(), sections: [section] };
         const onDocumentChange = vi.fn<(next: Document) => void>();
 

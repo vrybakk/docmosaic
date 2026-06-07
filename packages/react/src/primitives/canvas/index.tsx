@@ -10,7 +10,7 @@ import {
 } from '../../context/editor';
 import { trackEvent } from '../../internal/analytics';
 import Loader from '../../ui/loader';
-import { Section } from '../image-section';
+import { Section } from '../section';
 import { CanvasControls } from './canvas-controls';
 import { useCanvasZoom } from './use-canvas-zoom';
 

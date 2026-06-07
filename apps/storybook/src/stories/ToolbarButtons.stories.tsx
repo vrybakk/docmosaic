@@ -54,6 +54,11 @@ export const AddSectionButton: Story = {
     render: () => <Editor.AddSectionButton />,
 };
 
+/** `Editor.AddTextButton` — appends a new text section to the current page. */
+export const AddTextButton: Story = {
+    render: () => <Editor.AddTextButton />,
+};
+
 /** `Editor.EstimatedSize` — projected file size of the current document. */
 export const EstimatedSize: Story = {
     render: () => <Editor.EstimatedSize />,

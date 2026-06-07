@@ -1,7 +1,7 @@
 'use client';
 
 import { ImageIcon } from 'lucide-react';
-import { cn } from '../../internal/utils';
+import { cn } from '../../../internal/utils';
 
 interface SectionEmptyStateProps {
     isDroppingFile: boolean;

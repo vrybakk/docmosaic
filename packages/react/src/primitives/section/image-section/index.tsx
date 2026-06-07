@@ -1,29 +1,27 @@
 'use client';
 
+import type { ImageSection as ImageSectionData } from '@docmosaic/core';
 import { useCallback, useRef, useState } from 'react';
-import { useEditorSection } from '../../context/editor';
-import { cn } from '../../internal/utils';
+import { useEditorSection } from '../../../context/editor';
+import { cn } from '../../../internal/utils';
+import { SectionResizeHandles } from '../hooks/section-resize-handles';
+import { useSectionDrag } from '../hooks/use-section-drag';
+import { useSectionResize } from '../hooks/use-section-resize';
 import { SectionEmptyState } from './section-empty-state';
 import { SectionImage } from './section-image';
-import { SectionResizeHandles } from './section-resize-handles';
 import { SectionToolbar } from './section-toolbar';
 import { SectionUploadProgress } from './section-upload-progress';
 import { useImageUpload } from './use-image-upload';
-import { useSectionDrag } from './use-section-drag';
-import { useSectionResize } from './use-section-resize';
 
 /**
- * Section primitive. Reads its data + handlers from
- * {@link useEditorSection}, which must be invoked inside the per-section
- * provider that `Editor.Canvas` sets up.
- *
- * Visual state (drag, resize, file-drop hover, upload progress) lives in
- * the section's own hooks; the canvas-aware handlers (selection, geometry
- * descaling, image upload routing) come from context.
+ * Image-variant section view. Rendered by the {@link Section} dispatcher
+ * when `section.type === 'image'`. Owns its own drag/resize/upload hooks
+ * and reads the section + handlers from {@link useEditorSection}.
  */
-export function Section() {
+export function ImageSectionView() {
+    const editor = useEditorSection();
+    const section = editor.section as ImageSectionData;
     const {
-        section,
         isSelected,
         onClick,
         onUpdate,
@@ -34,7 +32,7 @@ export function Section() {
         onSendToBack,
         onMoveForward,
         onMoveBackward,
-    } = useEditorSection();
+    } = editor;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
     const [isDroppingFile, setIsDroppingFile] = useState(false);

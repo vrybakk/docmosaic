@@ -55,7 +55,9 @@ function fireDocumentGeneratedEvent(
         document.sections,
         document.pages.map((page) => page.backgroundPDF),
     );
-    const imageCount = document.sections.filter((section) => section.imageUrl).length;
+    const imageCount = document.sections.filter(
+        (section) => section.type === 'image' && section.imageUrl,
+    ).length;
     trackEvent.documentGenerated({
         totalPages: document.pages.length,
         totalImages: imageCount,

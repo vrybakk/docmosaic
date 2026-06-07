@@ -140,13 +140,21 @@ export function PageThumb({
                                         height: section.height,
                                     }}
                                 >
-                                    {section.imageUrl && (
+                                    {section.type === 'image' && section.imageUrl && (
                                         <Image
                                             src={section.imageUrl}
                                             alt=""
                                             fill
                                             className="object-contain"
                                         />
+                                    )}
+                                    {section.type === 'text' && (
+                                        <div
+                                            className="w-full h-full overflow-hidden text-[6px] leading-tight"
+                                            style={{ color: section.color ?? 'rgb(0,0,0)' }}
+                                        >
+                                            {section.text}
+                                        </div>
                                     )}
                                 </div>
                             ))}

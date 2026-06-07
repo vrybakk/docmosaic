@@ -102,9 +102,14 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
         () => ({
             undo: () => dispatch({ type: 'UNDO' }),
             redo: () => dispatch({ type: 'REDO' }),
-            addSection: () => {
+            addSection: (opts?: { type?: 'image' | 'text' }) => {
                 const current = stateRef.current.present;
-                const newSection = createSection(5, 5, current.currentPage);
+                const newSection = createSection({
+                    type: opts?.type ?? 'image',
+                    x: 5,
+                    y: 5,
+                    page: current.currentPage,
+                });
                 dispatch({
                     type: 'UPDATE_DOCUMENT',
                     updates: { sections: [...current.sections, newSection] },

@@ -54,7 +54,13 @@ export interface EditorPdfBackend {
 export interface EditorActions {
     undo: () => void;
     redo: () => void;
-    addSection: () => Section;
+    /**
+     * Append a new section to the current page.
+     *
+     * @param opts.type - Variant to create. Defaults to `'image'` so existing
+     * callers (the bundled `AddSectionButton`) keep producing image sections.
+     */
+    addSection: (opts?: { type?: 'image' | 'text' }) => Section;
     updateSection: (section: Section) => void;
     deleteSection: (sectionId: string) => void;
     duplicateSection: (section: Section) => void;
@@ -275,6 +281,9 @@ export function useEditorSection(): UseEditorSectionResult {
         (_sectionId: string, imageUrl: string) => {
             // Read from rawSection so we don't accidentally pollute geometry
             // with the scaled values from the wrapping section context.
+            // Only image sections carry imageUrl — guard the narrow path
+            // explicitly rather than coercing types at the call site.
+            if (rawSection.type !== 'image') return;
             actions.updateSection({ ...rawSection, imageUrl });
         },
         [actions, rawSection],

@@ -1,6 +1,6 @@
 'use client';
 
-import type { Section } from '@docmosaic/core';
+import type { ImageSection, Section } from '@docmosaic/core';
 import {
     ChevronDown,
     ChevronUp,
@@ -10,11 +10,11 @@ import {
     Maximize2,
     Trash2,
 } from 'lucide-react';
-import { cn } from '../../internal/utils';
-import { Button } from '../../ui/button';
+import { cn } from '../../../internal/utils';
+import { Button } from '../../../ui/button';
 
 interface SectionToolbarProps {
-    section: Section;
+    section: ImageSection;
     isSelected: boolean;
     onResizeToProportion: () => void;
     onDuplicate: (section: Section) => void;
