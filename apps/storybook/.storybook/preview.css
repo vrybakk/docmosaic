@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /*
  * Storybook-only overrides. The base + DocMosaic theme are imported in
  * preview.tsx; the theme switcher just toggles a body class. The "minimal"
@@ -21,4 +25,22 @@
 .sb-show-main .h-screen {
     height: 100% !important;
     min-height: 600px;
+}
+
+/*
+ * Global wrapper for every story. Sits on a subtle gray surface so the brand
+ * cream tones in `--editor-color-surface` read as intentional, not as the
+ * page background.
+ */
+.docmosaic-story-surface {
+    min-height: 100%;
+    background-color: #f3f4f6;
+    padding: 24px;
+    color: rgb(var(--editor-color-text));
+    font-family:
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
 }
