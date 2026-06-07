@@ -2,91 +2,97 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Repo layout (post-Phase 2)
+## Repo layout
 
-This is a Bun workspaces monorepo. The Next.js app lives at [apps/web/](apps/web) and is published as `@docmosaic/web`. Shared libraries will live under [packages/](packages) as they are extracted. Root holds only repo-wide concerns: Husky hooks, commitlint, Prettier, and the workspace `package.json`. App-level scripts (`dev`, `build`, `lint`, `typecheck`, `test`, `test:run`) run from `apps/web/`; older path references elsewhere in this file may still point at the pre-move layout and will be cleaned up in later phases.
+Bun workspaces monorepo. Three workspaces:
+
+- [apps/web/](apps/web) — `@docmosaic/web`, the Next.js 15 app at [docmosaic.com](https://docmosaic.com). Hosts the marketing landing page and the `/pdf-editor` route. Imports `@docmosaic/core` + `@docmosaic/react` and provides the analytics tracker.
+- [packages/core/](packages/core) — `@docmosaic/core`, framework-agnostic document model, reducer + history, page-size math, and the `jspdf`-based PDF generation pipeline. No React.
+- [packages/react/](packages/react) — `@docmosaic/react`, compound `<Editor.*>` primitives plus the headless `useDocumentState` hook. Depends on `@docmosaic/core` as a peer.
+
+Root holds only repo-wide concerns: Husky hooks, commitlint, Prettier, Turborepo pipeline, and the workspace `package.json`.
 
 ## Commands
 
-Bun is the package manager and runtime (see global CLAUDE.md). All scripts come from [package.json](package.json):
+Bun is the package manager and runtime (see global CLAUDE.md). Scripts run via Turborepo from the repo root:
 
-- `bun dev` — Next.js dev server on **port 4000** (not 3000; README is out of date).
-- `bun run build` — production build (also run by the `pre-push` Husky hook).
-- `bun start` — serve the production build.
-- `bun lint` — `next lint` (ESLint flat config in [eslint.config.mjs](eslint.config.mjs)).
-- `bun typecheck` — `tsc --noEmit`. Run alongside lint; both gate commits via `pre-commit`.
-
-No test runner is wired up in `package.json`. [bunfig.toml](bunfig.toml) preloads `src/test/setup.ts` and [tsconfig.json](tsconfig.json) excludes `src/test/**`, but that directory does not currently exist — don't claim "tests pass" without first creating the harness. README/CONTRIBUTING references to tests are aspirational.
+- `bun dev` — runs `dev` in every workspace. `apps/web` serves on **port 4001** (`next dev -p 4001`).
+- `bun run build` — builds all three packages. `packages/core` + `packages/react` use `tsup`; `apps/web` uses `next build`. Also run by the `pre-push` Husky hook.
+- `bun run typecheck` — `tsc --noEmit` in every workspace.
+- `bun run lint` — ESLint in every workspace (`next lint` in apps/web; flat-config ESLint in core + react).
+- `bun run test` / `bun run test:run` — Vitest across all workspaces. Test files: 27 in core, 29 in react, 2 in apps/web (58 total). The PDF byte-diff guard lives at [packages/core/src/pdf/generate.test.ts](packages/core/src/pdf/generate.test.ts) — keep it green on every change to the generation pipeline.
 
 Husky hooks (`.husky/`):
-- `pre-commit` → `bun typecheck` + `bun lint`
+
+- `pre-commit` → `bun run typecheck` + `bun run lint`
 - `commit-msg` → commitlint with `@commitlint/config-conventional`
 - `pre-push` → `bun run build`
+
+Per-workspace `bunfig.toml`/test setup:
+
+- [bunfig.toml](bunfig.toml) at the root pins `linker = "hoisted"` so tools like `next lint` (spawned from inside `apps/web/`) can resolve their plugin chains.
+- Vitest configs live next to each workspace's `package.json`. `apps/web` preloads [apps/web/src/test/setup.ts](apps/web/src/test/setup.ts); `packages/react` preloads [packages/react/src/test-setup.ts](packages/react/src/test-setup.ts); `packages/core` runs in `node` env with no setup.
 
 ## Architecture
 
 DocMosaic is a **fully client-side** PDF builder. Users drop images into rectangular "sections" on a virtual page; the entire document model lives in React state and is rendered to a PDF in the browser via `jspdf`. No backend, no uploads — privacy is a product promise, not a side effect.
 
-### Routing (Next.js 15 App Router)
+### `apps/web` — the Next.js shell
 
-- [src/app/page.tsx](src/app/page.tsx) — marketing landing page composed of `components/blocks/*`.
-- [src/app/pdf-editor/page.tsx](src/app/pdf-editor/page.tsx) — the editor route. Sets metadata + JSON-LD and renders `<PDFEditor />` inside `<Suspense>`.
-- [src/app/editor/](src/app/editor) — exists but is **empty**; no route. Don't add code here without checking whether it's intentional.
-- [src/app/layout.tsx](src/app/layout.tsx) — global head, Montserrat font (`--font-montserrat`), GTM + GA + Vercel Analytics, and shared `Header`.
+- [apps/web/src/app/page.tsx](apps/web/src/app/page.tsx) — marketing landing page composed of `components/blocks/*`.
+- [apps/web/src/app/pdf-editor/page.tsx](apps/web/src/app/pdf-editor/page.tsx) — the editor route. Sets metadata + JSON-LD, then renders `<EditorMount />` inside `<Suspense>`.
+- [apps/web/src/app/pdf-editor/editor-mount.tsx](apps/web/src/app/pdf-editor/editor-mount.tsx) — client boundary that composes the `<Editor.*>` namespace exported from `@docmosaic/react`. Next.js client-reference proxies don't support property access from a Server Component, so the namespace is dereferenced here.
+- [apps/web/src/app/layout.tsx](apps/web/src/app/layout.tsx) — global head, Montserrat font (`--font-montserrat`), GTM + GA + Vercel Analytics, shared `Header`, and the `AnalyticsBridge` that wires the analytics tracker into the React package.
+- [apps/web/src/lib/analytics.ts](apps/web/src/lib/analytics.ts) — `trackEvent` namespace with an injectable tracker. Calls **only forward to the tracker when `NODE_ENV === 'production'`**, so local dev/staging never produces events. The bridge in [apps/web/src/app/analytics-bridge.tsx](apps/web/src/app/analytics-bridge.tsx) calls `setReactPackageTracker` so the React package can fire its own events through the same pipe.
 
-### Editor state — single hook owns the document
+### `@docmosaic/core` — document model + PDF generation
 
-[src/lib/pdf-editor/hooks/useDocumentState.ts](src/lib/pdf-editor/hooks/useDocumentState.ts) is the single source of truth for the `PDFDocument`. It exposes `{ document, formattedDate, canUndo, canRedo, actions }`. **Undo/redo is implemented via a `history: PDFDocument[]` array** — every mutating action calls `addToHistory` with the new snapshot. If you add a new mutator, route it through `updateDocument()` (or call `addToHistory` explicitly) or the timeline will desync.
+- [packages/core/src/types.ts](packages/core/src/types.ts) — the single source of truth for `Document`, `Page`, `Section`, `PageSize`, `PageOrientation`, `MeasurementUnit`, `DragPosition`, `ResizeInfo`, `PDFGenerationOptions`. Used by both packages and `apps/web`.
+- [packages/core/src/reducer.ts](packages/core/src/reducer.ts) — the document reducer. All mutations flow through it.
+- [packages/core/src/history.ts](packages/core/src/history.ts) — `withHistory` wraps the reducer with undo/redo via a snapshot timeline. If you add a new mutator, route it through `reducer` + `withHistory`, or the timeline will desync.
+- [packages/core/src/page-sizes.ts](packages/core/src/page-sizes.ts) — `CUSTOM_PAGE_SIZES` (points/72 DPI) and orientation-aware dimensions. This file is the **single** source — there is no longer a duplicate in `apps/web`.
+- [packages/core/src/factories.ts](packages/core/src/factories.ts) — `createDocument`, `createPage`, `createSection`. Sections persist geometry in **points**, not pixels.
+- [packages/core/src/pdf/generate.ts](packages/core/src/pdf/generate.ts) (`generatePDF`) — the only path that produces a PDF. Flow:
+  1. Optimize background PDFs and section images via `processImagesForPDF` ([packages/core/src/pdf/optimize-image.ts](packages/core/src/pdf/optimize-image.ts)) with progress reporting split 30%/70% across the "optimizing" stage.
+  2. Create a `jsPDF` doc in **points (72 DPI)** using `CUSTOM_PAGE_SIZES[pageSize]`.
+  3. For each `Page`, draw background then per-page sections.
+- Cancellation: callers pass an `AbortSignal`; the signal is checked at every awaitable step in `generatePDF`. Throwing `Error('PDF generation cancelled')` is the expected control-flow path — preserve it if refactoring.
+- [packages/core/src/pdf/estimate.ts](packages/core/src/pdf/estimate.ts) (`estimatePDFSize`) feeds the live "estimated size" pill in the toolbar.
+- [packages/core/src/pdf/generate.test.ts](packages/core/src/pdf/generate.test.ts) — **byte-diff guard**. Generates a PDF from a fixed fixture and compares the bytes to a checked-in snapshot. Treat any change here as load-bearing: if the bytes shift, the cause is either intentional (update the snapshot deliberately) or a regression in the generation pipeline.
 
-The top-level [src/components/pdf-editor/index.tsx](src/components/pdf-editor/index.tsx) (`PDFEditor`) consumes that hook and wires `Header`, `Toolbar`, `Sidebar`, `Canvas`, and `Preview`. There is **one** `<DndProvider backend={HTML5Backend}>` here — don't nest another.
+### `@docmosaic/react` — UI primitives + headless hook
 
-### PDF generation pipeline
-
-[src/lib/pdf.ts](src/lib/pdf.ts) (`generatePDF`) is the only path that produces a PDF. Flow:
-1. Optimize background PDFs and section images via `processImagesForPDF` ([src/lib/pdf-editor/utils/image.ts](src/lib/pdf-editor/utils/image.ts)) with progress reporting split 30%/70% across the "optimizing" stage.
-2. Create a `jsPDF` doc in **points (72 DPI)** using `CUSTOM_PAGE_SIZES[pageSize]`.
-3. For each `Page`, draw background then per-page sections.
-4. Track stats via `trackEvent.documentGenerated`.
-
-Cancellation: `PDFEditor` keeps an `AbortController` in a ref; the `signal` is checked at every awaitable step in `generatePDF`. Throwing `Error('PDF generation cancelled')` is the expected control-flow path — preserve it if refactoring.
-
-`estimatePDFSize` (also in `pdf.ts`) is reused live in the toolbar to show projected file size and runs from a `useEffect` on `document.sections`/`document.pages`.
+- [packages/react/src/index.ts](packages/react/src/index.ts) — public surface. Exports `Editor.*` compound namespace, `useDocumentState`, `useEditor`/`useEditorSection`/`useEditorCanvas`, `EditorConfigProvider`, `usePdfGeneration`, `setReactPackageTracker`, plus the supporting types.
+- [packages/react/src/primitives/editor-root.tsx](packages/react/src/primitives/editor-root.tsx) — `Editor.Root` orchestrator. Owns controlled/uncontrolled document state and provides the `<DndProvider backend={HTML5Backend}>` plus the editor + config contexts. There is exactly **one** DnD provider — don't nest another.
+- [packages/react/src/hooks/use-document-state.ts](packages/react/src/hooks/use-document-state.ts) — headless ("BYO-UI") state hook. Returns `{ document, formattedDate, canUndo, canRedo, actions }`. Built on top of `reducer` + `withHistory` from `@docmosaic/core`. Every mutator dispatches an action; the timeline lives inside the hook.
+- [packages/react/src/context/editor.tsx](packages/react/src/context/editor.tsx) — the `EditorProvider` + `useEditor` etc. that compound primitives read from. If you add a new primitive, consume the context here rather than prop-drilling.
+- [packages/react/src/context/editor-config.tsx](packages/react/src/context/editor-config.tsx) — `EditorConfigProvider` + `ImageRenderer` injection point. `apps/web` swaps in `next/image` here at mount time.
+- [packages/react/src/primitives/canvas/](packages/react/src/primitives/canvas) — interactive workspace, including `use-canvas-zoom` and `canvas-controls`.
+- [packages/react/src/primitives/image-section/](packages/react/src/primitives/image-section) — section drag/resize/upload primitives.
+- [packages/react/src/primitives/toolbar/](packages/react/src/primitives/toolbar) — toolbar buttons + estimated size + progress overlay.
+- [packages/react/src/primitives/header/](packages/react/src/primitives/header) — top-bar primitives (`PageSizeSelect`, `OrientationSelect`, `DocumentName`).
+- [packages/react/src/primitives/use-pdf-generation.ts](packages/react/src/primitives/use-pdf-generation.ts) — `usePdfGeneration` hook wrapping `generatePDF` with an `AbortController` for cancellation.
+- [packages/react/src/internal/options.ts](packages/react/src/internal/options.ts) — `PAGE_SIZE_OPTIONS` + `ORIENTATION_OPTIONS` consumed by the header selects.
+- [packages/react/src/internal/analytics.ts](packages/react/src/internal/analytics.ts) — `setReactPackageTracker` + `AnalyticsTracker` type. The package never imports `apps/web` directly; the host app injects a tracker at boot.
 
 ### Coordinates and units
 
-All section geometry (`x`, `y`, `width`, `height`) is stored in **PDF points (72 DPI)**, not CSS pixels. `createNewImageSection` ([src/lib/pdf-editor/utils/document.ts](src/lib/pdf-editor/utils/document.ts)) converts the px input via `px * 72/96` before persisting. The canvas applies its own `scale`/`zoom` for display. If you compute geometry, stay in points or convert explicitly — mixing is the #1 source of subtle layout bugs here.
-
-### Type duplication (intentional friction point)
-
-There are **two parallel domain-type files**:
-
-- [src/lib/pdf-editor/types/index.ts](src/lib/pdf-editor/types/index.ts) — uses `ImageSection`. Imported by everything under `src/lib/pdf-editor/**` and `src/components/pdf-editor/**`.
-- [src/lib/types.ts](src/lib/types.ts) — uses `Section` (same shape, different name) plus `PDFGenerationOptions`, `DragPosition`, `ResizeInfo`. Imported by [src/lib/pdf.ts](src/lib/pdf.ts) and [src/lib/analytics.ts](src/lib/analytics.ts).
-
-The shapes are structurally compatible so TypeScript lets them flow into each other, but **when editing one, check whether the other needs the same change**. Don't unify them in passing — that's a real refactor with cross-file blast radius.
-
-`CUSTOM_PAGE_SIZES` is also duplicated between [src/lib/pdf.ts](src/lib/pdf.ts) and [src/lib/pdf-editor/utils/page-sizes.ts](src/lib/pdf-editor/utils/page-sizes.ts). Same caveat.
-
-### Mobile
-
-`isMobile()` from [src/lib/mobile/detection.ts](src/lib/mobile/detection.ts) gates a parallel UX path (haptics + custom gesture manager in [src/lib/mobile/gestures.ts](src/lib/mobile/gestures.ts), pinch/swipe/long-press on the canvas, a `<Sheet>`-based sidebar). Always guard with `typeof window !== 'undefined' && isMobile()` before calling haptics — the editor is rendered inside `<Suspense>` but components run on the client.
+All section geometry (`x`, `y`, `width`, `height`) is stored in **PDF points (72 DPI)**, not CSS pixels. `createSection` ([packages/core/src/factories.ts](packages/core/src/factories.ts)) converts the px input via `px * 72/96` before persisting. The canvas applies its own `scale`/`zoom` for display. If you compute geometry, stay in points or convert explicitly — mixing is the #1 source of subtle layout bugs here.
 
 ### Design tokens
 
-[src/lib/pdf-editor/constants/theme.ts](src/lib/pdf-editor/constants/theme.ts) defines the `DOCMOSAIC_COLORS` palette (`cream`, `caramel`, `orange`, `purple`, `sage`, `white`, `black`). [tailwind.config.ts](tailwind.config.ts) imports this directly and exposes it under `docmosaic.*` (e.g. `text-docmosaic-orange`, `bg-docmosaic-cream`). **Use these tokens, not raw hex values** — that's how the brand palette stays in sync between code and Tailwind classes.
+[apps/web/src/lib/pdf-editor/constants/theme.ts](apps/web/src/lib/pdf-editor/constants/theme.ts) defines the `DOCMOSAIC_COLORS` palette (`cream`, `caramel`, `orange`, `purple`, `sage`, `white`, `black`). [apps/web/tailwind.config.ts](apps/web/tailwind.config.ts) imports this directly and exposes it under `docmosaic.*` (e.g. `text-docmosaic-orange`, `bg-docmosaic-cream`). The Tailwind `content` glob also scans `../../packages/react/src/**/*.{ts,tsx}` so primitive classes get included in the app build. **Use these tokens, not raw hex values** — that's how the brand palette stays in sync between code and Tailwind classes.
 
-Shadcn primitives live under `src/components/ui/{core,form,data-display,navigation}/` — reuse before adding new ones.
-
-### Analytics
-
-[src/lib/analytics.ts](src/lib/analytics.ts) exposes a `trackEvent` namespace wrapping Vercel `track()`. Calls **only fire when `NODE_ENV === 'production'`**, so local dev/staging never produces events — don't chase "missing events" in dev.
+Shadcn primitives live under `apps/web/src/components/ui/{core,form,data-display,navigation}/` — reuse before adding new ones.
 
 ### Path alias
 
-`@/*` → `./src/*` (see [tsconfig.json](tsconfig.json)). Prefer this over relative climbs.
+`@/*` → `./src/*` in `apps/web` (see [apps/web/tsconfig.json](apps/web/tsconfig.json)). Prefer this over relative climbs inside the app. The packages don't use a path alias — they ship as published artifacts and use relative imports internally.
 
 ## Conventions specific to this repo
 
-- Prettier config (4-space indent, single quotes, semicolons, 100-col, trailing commas) is enforced — match it. ESLint disables `jsx-a11y/alt-text` only for `src/components/pdf-editor/PDFDocument.tsx`.
-- Commit messages use Conventional Commits and are validated by commitlint. Recent log uses bare types (`refactor:`, not `refactor(header):`) — match that style.
-- The dev server port is **4000**. Any docs/scripts that say "localhost:3000" are stale.
+- Prettier config (4-space indent, single quotes, semicolons, 100-col, trailing commas) is enforced — match it.
+- Commit messages use Conventional Commits and are validated by commitlint. Recent log uses bare types (`refactor:`, not `refactor(header):`) — match that style. Subject only; no body unless the change really needs context.
+- The dev server port is **4001**. Any docs/scripts that say "localhost:3000" or "localhost:4000" are stale.
+- ESLint runs separately per workspace; rules don't bleed between them. Touch the package-specific `eslint.config.mjs` (or `apps/web/eslint.config.mjs`) when you need a rule change.
+- Publish hygiene: `bunx --bun publint <package>` and `bunx --bun -p @arethetypeswrong/cli attw --pack .` should stay clean for both published packages before bumping a release.
