@@ -79,7 +79,11 @@ export type Action =
     | { type: 'MOVE_FORWARD'; sectionId: string; now?: Date }
     | { type: 'MOVE_BACKWARD'; sectionId: string; now?: Date }
     | { type: 'ADD_STROKE'; sectionId: string; stroke: Stroke; now?: Date }
-    | { type: 'CLEAR_STROKES'; sectionId: string; now?: Date };
+    | { type: 'CLEAR_STROKES'; sectionId: string; now?: Date }
+    | { type: 'TOGGLE_HIDDEN'; sectionId: string; now?: Date }
+    | { type: 'TOGGLE_LOCKED'; sectionId: string; now?: Date }
+    | { type: 'SET_HIDDEN'; sectionId: string; hidden: boolean; now?: Date }
+    | { type: 'SET_LOCKED'; sectionId: string; locked: boolean; now?: Date };
 
 function touch(state: State, now: Date | undefined): State {
     return { ...state, updatedAt: now ?? new Date() };
@@ -385,6 +389,64 @@ export function reducer(state: State, action: Action): State {
                         s.id === action.sectionId && s.type === 'drawing'
                             ? { ...s, strokes: [] }
                             : s,
+                    ),
+                },
+                action.now,
+            );
+        }
+
+        case 'TOGGLE_HIDDEN': {
+            // No-op when the target id doesn't exist so a stray dispatch
+            // can't fabricate a hidden flag on a phantom section.
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target) return state;
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) =>
+                        s.id === action.sectionId ? { ...s, hidden: !s.hidden } : s,
+                    ),
+                },
+                action.now,
+            );
+        }
+
+        case 'TOGGLE_LOCKED': {
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target) return state;
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) =>
+                        s.id === action.sectionId ? { ...s, locked: !s.locked } : s,
+                    ),
+                },
+                action.now,
+            );
+        }
+
+        case 'SET_HIDDEN': {
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target) return state;
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) =>
+                        s.id === action.sectionId ? { ...s, hidden: action.hidden } : s,
+                    ),
+                },
+                action.now,
+            );
+        }
+
+        case 'SET_LOCKED': {
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target) return state;
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) =>
+                        s.id === action.sectionId ? { ...s, locked: action.locked } : s,
                     ),
                 },
                 action.now,

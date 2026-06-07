@@ -192,9 +192,14 @@ export async function generatePDF(
             // the original array order so legacy documents — where every
             // section's zIndex defaults to 0 — keep their insertion-order
             // rendering and the byte-diff fixture stays stable.
+            //
+            // Hidden sections (`section.hidden === true`) are filtered out
+            // entirely so they neither contribute to the PDF nor influence
+            // the visible stacking order. Fixtures pre-Phase-25 never set
+            // `hidden`, so the byte-diff gate stays stable.
             const indexById = new Map(optimizedSections.map((s, idx) => [s.id, idx]));
             const pageSections = optimizedSections
-                .filter((section) => section.page === i + 1)
+                .filter((section) => section.page === i + 1 && !section.hidden)
                 .sort(
                     (a, b) =>
                         (a.zIndex ?? 0) - (b.zIndex ?? 0) ||

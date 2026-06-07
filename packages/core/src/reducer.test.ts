@@ -678,6 +678,144 @@ describe('reducer', () => {
         expect(next).toBe(state);
     });
 
+    it('TOGGLE_HIDDEN flips an unset hidden flag to true', () => {
+        const state = buildFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'TOGGLE_HIDDEN',
+            sectionId: 'sec-1',
+            now: FIXED_NOW,
+        });
+
+        const target = next.sections.find((s) => s.id === 'sec-1');
+        expect(target?.hidden).toBe(true);
+        expect(next.sections.find((s) => s.id === 'sec-2')?.hidden).toBeFalsy();
+        expect(next.updatedAt).toEqual(FIXED_NOW);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('TOGGLE_HIDDEN flips a true hidden flag back to false', () => {
+        const state = buildFixture();
+        const seeded = reducer(state, {
+            type: 'SET_HIDDEN',
+            sectionId: 'sec-1',
+            hidden: true,
+            now: FIXED_NOW,
+        });
+        const toggled = reducer(seeded, {
+            type: 'TOGGLE_HIDDEN',
+            sectionId: 'sec-1',
+            now: FIXED_NOW,
+        });
+        expect(toggled.sections.find((s) => s.id === 'sec-1')?.hidden).toBe(false);
+    });
+
+    it('TOGGLE_HIDDEN is a no-op for an unknown section id', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'TOGGLE_HIDDEN',
+            sectionId: 'nope',
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
+    it('TOGGLE_LOCKED flips an unset locked flag to true', () => {
+        const state = buildFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'TOGGLE_LOCKED',
+            sectionId: 'sec-2',
+            now: FIXED_NOW,
+        });
+
+        const target = next.sections.find((s) => s.id === 'sec-2');
+        expect(target?.locked).toBe(true);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('TOGGLE_LOCKED is a no-op for an unknown section id', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'TOGGLE_LOCKED',
+            sectionId: 'nope',
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
+    it('SET_HIDDEN writes the explicit hidden flag and bumps updatedAt', () => {
+        const state = buildFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'SET_HIDDEN',
+            sectionId: 'sec-3',
+            hidden: true,
+            now: FIXED_NOW,
+        });
+
+        expect(next.sections.find((s) => s.id === 'sec-3')?.hidden).toBe(true);
+        expect(next.updatedAt).toEqual(FIXED_NOW);
+
+        const cleared = reducer(next, {
+            type: 'SET_HIDDEN',
+            sectionId: 'sec-3',
+            hidden: false,
+            now: FIXED_NOW,
+        });
+        expect(cleared.sections.find((s) => s.id === 'sec-3')?.hidden).toBe(false);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('SET_HIDDEN is a no-op for an unknown section id', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'SET_HIDDEN',
+            sectionId: 'nope',
+            hidden: true,
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
+    it('SET_LOCKED writes the explicit locked flag and bumps updatedAt', () => {
+        const state = buildFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'SET_LOCKED',
+            sectionId: 'sec-1',
+            locked: true,
+            now: FIXED_NOW,
+        });
+
+        expect(next.sections.find((s) => s.id === 'sec-1')?.locked).toBe(true);
+        expect(next.updatedAt).toEqual(FIXED_NOW);
+
+        const cleared = reducer(next, {
+            type: 'SET_LOCKED',
+            sectionId: 'sec-1',
+            locked: false,
+            now: FIXED_NOW,
+        });
+        expect(cleared.sections.find((s) => s.id === 'sec-1')?.locked).toBe(false);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('SET_LOCKED is a no-op for an unknown section id', () => {
+        const state = buildFixture();
+        const next = reducer(state, {
+            type: 'SET_LOCKED',
+            sectionId: 'nope',
+            locked: true,
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
     /**
      * Mirrors the sort the PDF generator uses: zIndex asc, array index asc.
      * Confirms the action+sort pair produces the expected back-to-front order.

@@ -134,6 +134,8 @@ export function createSection(opts: CreateSectionOptions = {}): Section {
         height: 200, // Square aspect ratio initially
         page,
         zIndex: 0,
+        hidden: false,
+        locked: false,
     };
     if (type === 'text') {
         return {

@@ -77,6 +77,27 @@ export interface SectionBase {
      * insertion order wins via the array-index tiebreaker.
      */
     zIndex: number;
+    /**
+     * When `true`, the section is skipped during canvas and PDF rendering.
+     * Surfaced through `Editor.LayerList` as a per-row eye toggle.
+     *
+     * @remarks
+     * Optional + undefined-as-false so documents persisted before Phase 25
+     * keep their original rendering — only sections explicitly marked
+     * hidden disappear.
+     */
+    hidden?: boolean;
+    /**
+     * When `true`, the section refuses selection, drag, and resize. The
+     * properties panel still reads its values (so callers can inspect a
+     * locked section), but every mutating input on the canvas is suppressed.
+     *
+     * @remarks
+     * Per-section guard — independent from the global `Editor.Root`
+     * `readOnly` flag, which locks the whole editor. Optional +
+     * undefined-as-false for legacy compatibility.
+     */
+    locked?: boolean;
 }
 
 /**
