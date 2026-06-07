@@ -33,7 +33,9 @@ import { PreviewButton } from './primitives/toolbar/preview-button';
 import { PrintButton } from './primitives/toolbar/print-button';
 import { DownloadButton } from './primitives/toolbar/download-button';
 import { AddSectionButton } from './primitives/toolbar/add-section-button';
+import { AddShapeButton } from './primitives/toolbar/add-shape-button';
 import { AddTextButton } from './primitives/toolbar/add-text-button';
+import { PageBackgroundPicker } from './primitives/page-background-picker';
 import { EstimatedSize } from './primitives/toolbar/estimated-size';
 import { ProgressOverlay } from './primitives/toolbar/progress-overlay';
 import { Header } from './primitives/header';
@@ -55,8 +57,10 @@ import { Preview } from './primitives/preview';
  * - `Root` — orchestrator + default shell.
  * - `Header` (+ `DocumentName`, `PageSizeSelect`, `OrientationSelect`) — top bar.
  * - `Toolbar` (+ `UndoButton`, `RedoButton`, `PreviewButton`, `PrintButton`,
- *   `DownloadButton`, `AddSectionButton`, `EstimatedSize`, `ProgressOverlay`).
+ *   `DownloadButton`, `AddSectionButton`, `AddTextButton`, `AddShapeButton`,
+ *   `EstimatedSize`, `ProgressOverlay`).
  * - `PageList` (+ `PageThumb`) — left sidebar of page thumbnails.
+ * - `PageBackgroundPicker` — color + image picker for `Page.background`.
  * - `Canvas` (+ `CanvasControls`, `Section`) — interactive workspace.
  * - `Preview` — full-document preview dialog.
  *
@@ -98,6 +102,8 @@ export const Editor = {
     DownloadButton,
     AddSectionButton,
     AddTextButton,
+    AddShapeButton,
+    PageBackgroundPicker,
     EstimatedSize,
     ProgressOverlay,
     Header,

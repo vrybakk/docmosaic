@@ -202,20 +202,24 @@ import { useEditorKeybindings, DEFAULT_KEYMAP } from '@docmosaic/react';
 
 ## Section types
 
-A `Section` is a discriminated union on the `type` field. Two variants ship today:
+A `Section` is a discriminated union on the `type` field. Three variants ship today:
 
-| Variant | Discriminator   | Renders                            |
-| ------- | --------------- | ---------------------------------- |
-| Image   | `type: 'image'` | `Editor.Section` → `ImageSectionView` |
-| Text    | `type: 'text'`  | `Editor.Section` → `TextSectionView`  |
+| Variant | Discriminator   | Renders                                |
+| ------- | --------------- | -------------------------------------- |
+| Image   | `type: 'image'` | `Editor.Section` → `ImageSectionView`  |
+| Text    | `type: 'text'`  | `Editor.Section` → `TextSectionView`   |
+| Shape   | `type: 'shape'` | `Editor.Section` → `ShapeSectionView`  |
 
-`Editor.Section` is a dispatcher — it reads `section.type` from `useEditorSection()` and renders the matching view. Both variants share the same drag + resize + selection shell. Legacy documents without a `type` field are normalized to `'image'` via `normalizeSection`.
+`Editor.Section` is a dispatcher — it reads `section.type` from `useEditorSection()` and renders the matching view. All variants share the same drag + resize + selection shell. Legacy documents without a `type` field are normalized to `'image'` via `normalizeSection`.
 
-Add a new section of either variant from the toolbar:
+Add a new section of any variant from the toolbar:
 
 ```tsx
-<Editor.AddSectionButton /> {/* Image */}
-<Editor.AddTextButton />    {/* Text */}
+<Editor.AddSectionButton />              {/* Image */}
+<Editor.AddTextButton />                 {/* Text */}
+<Editor.AddShapeButton shape="rect" />   {/* Rectangle */}
+<Editor.AddShapeButton shape="circle" /> {/* Circle */}
+<Editor.AddShapeButton shape="line" />   {/* Line */}
 ```
 
 Programmatically:
@@ -224,6 +228,20 @@ Programmatically:
 const { actions } = useEditor();
 actions.addSection({ type: 'image' });
 actions.addSection({ type: 'text' });
+actions.addSection({ type: 'shape', shape: 'circle' });
+```
+
+### Page background
+
+Each page can carry an optional `background` (color, image, or both) layered behind sections. The bundled `Editor.PageBackgroundPicker` drives the `setPageBackground` action — drop it next to the canvas, or wire your own picker:
+
+```tsx
+<Editor.PageBackgroundPicker />              {/* targets the active page */}
+<Editor.PageBackgroundPicker pageIndex={1} />
+
+const { actions } = useEditor();
+actions.setPageBackground(0, { color: '#f5f5f5' });
+actions.setPageBackground(0, undefined); // clear
 ```
 
 ### Image section

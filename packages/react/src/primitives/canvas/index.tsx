@@ -155,6 +155,21 @@ export function Canvas({ children }: CanvasProps = {}) {
                                 transform: `translate(${pan?.x || 0}px, ${pan?.y || 0}px)`,
                             }}
                         >
+                            {/* Page.background — color first, then image — mirrors
+                                the PDF generator's draw order so the canvas
+                                preview matches export. */}
+                            {page?.background?.color && (
+                                <div
+                                    className="absolute inset-0"
+                                    style={{ backgroundColor: page.background.color }}
+                                />
+                            )}
+                            {page?.background?.image && (
+                                <div
+                                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                                    style={{ backgroundImage: `url(${page.background.image})` }}
+                                />
+                            )}
                             {page?.backgroundPDF && (
                                 <div
                                     className="absolute inset-0 bg-contain bg-center bg-no-repeat"

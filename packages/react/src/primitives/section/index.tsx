@@ -2,6 +2,7 @@
 
 import { useEditorSection } from '../../context/editor';
 import { ImageSectionView } from './image-section';
+import { ShapeSectionView } from './shape-section';
 import { TextSectionView } from './text-section';
 
 /**
@@ -10,8 +11,9 @@ import { TextSectionView } from './text-section';
  *
  * - `'image'` → {@link ImageSectionView}
  * - `'text'` → {@link TextSectionView}
+ * - `'shape'` → {@link ShapeSectionView}
  *
- * Both variants read their data + handlers from {@link useEditorSection},
+ * All variants read their data + handlers from {@link useEditorSection},
  * which must be invoked inside the per-section provider that
  * `Editor.Canvas` sets up.
  */
@@ -19,6 +21,9 @@ export function Section() {
     const { section } = useEditorSection();
     if (section.type === 'text') {
         return <TextSectionView />;
+    }
+    if (section.type === 'shape') {
+        return <ShapeSectionView />;
     }
     return <ImageSectionView />;
 }

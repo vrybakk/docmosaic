@@ -4,7 +4,13 @@
  */
 
 import { createDocument, createPage, createSection } from '@docmosaic/core';
-import type { Document, ImageSection, TextSection } from '@docmosaic/core';
+import type {
+    Document,
+    ImageSection,
+    ShapeKind,
+    ShapeSection,
+    TextSection,
+} from '@docmosaic/core';
 
 /**
  * Tiny transparent PNG used to fill section.imageData in demo documents.
@@ -50,5 +56,44 @@ export function documentWithPages(count: number): Document {
         ...base,
         totalPages: 1 + extra,
         pages: [...base.pages, ...Array.from({ length: extra }, () => createPage())],
+    };
+}
+
+/**
+ * Document with a single shape section on page 1.
+ *
+ * @remarks
+ * Override stroke/fill/width via the partial — defaults match the factory
+ * (`fill: 'transparent'`, `stroke: '#000'`, `strokeWidth: 1`).
+ */
+export function documentWithShapeSection(
+    shape: ShapeKind,
+    overrides: Partial<ShapeSection> = {},
+): Document {
+    const base = createDocument();
+    const section = createSection({ type: 'shape', shape, x: 60, y: 60, page: 1 }) as ShapeSection;
+    return {
+        ...base,
+        sections: [
+            {
+                ...section,
+                width: 260,
+                height: 180,
+                ...overrides,
+            },
+        ],
+    };
+}
+
+/** Document with a colored page background and a single image section. */
+export function documentWithPageBackground(color = '#fff7e6'): Document {
+    const base = createDocument();
+    const section = createSection({ x: 60, y: 60, page: 1 }) as ImageSection;
+    return {
+        ...base,
+        pages: base.pages.map((p, i) =>
+            i === 0 ? { ...p, background: { color } } : p,
+        ),
+        sections: [{ ...section, width: 220, height: 160 }],
     };
 }

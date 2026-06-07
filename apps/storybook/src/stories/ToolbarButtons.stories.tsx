@@ -59,6 +59,21 @@ export const AddTextButton: Story = {
     render: () => <Editor.AddTextButton />,
 };
 
+/** `Editor.AddShapeButton` (rect) — appends a new rectangle. */
+export const AddRectangleButton: Story = {
+    render: () => <Editor.AddShapeButton shape="rect" />,
+};
+
+/** `Editor.AddShapeButton` (circle) — appends a new circle. */
+export const AddCircleButton: Story = {
+    render: () => <Editor.AddShapeButton shape="circle" />,
+};
+
+/** `Editor.AddShapeButton` (line) — appends a new diagonal line. */
+export const AddLineButton: Story = {
+    render: () => <Editor.AddShapeButton shape="line" />,
+};
+
 /** `Editor.EstimatedSize` — projected file size of the current document. */
 export const EstimatedSize: Story = {
     render: () => <Editor.EstimatedSize />,

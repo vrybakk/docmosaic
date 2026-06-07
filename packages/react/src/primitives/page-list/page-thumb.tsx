@@ -109,6 +109,19 @@ export function PageThumb({
                 onClick={onSelect}
             >
                 <div className="absolute inset-0">
+                    {/* Page.background — color first, then image. */}
+                    {page.background?.color && (
+                        <div
+                            className="absolute inset-0"
+                            style={{ backgroundColor: page.background.color }}
+                        />
+                    )}
+                    {page.background?.image && (
+                        <div
+                            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                            style={{ backgroundImage: `url(${page.background.image})` }}
+                        />
+                    )}
                     {/* Background PDF if available */}
                     {page.backgroundPDF && (
                         <div
@@ -155,6 +168,58 @@ export function PageThumb({
                                         >
                                             {section.text}
                                         </div>
+                                    )}
+                                    {section.type === 'shape' && (
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="100%"
+                                            height="100%"
+                                            viewBox={`0 0 ${section.width} ${section.height}`}
+                                            preserveAspectRatio="none"
+                                            style={{ opacity: section.opacity ?? 1 }}
+                                            aria-hidden="true"
+                                        >
+                                            {section.shape === 'rect' && (
+                                                <rect
+                                                    x={0}
+                                                    y={0}
+                                                    width={section.width}
+                                                    height={section.height}
+                                                    fill={
+                                                        section.fill === 'transparent'
+                                                            ? 'none'
+                                                            : section.fill ?? 'none'
+                                                    }
+                                                    stroke={section.stroke ?? '#000'}
+                                                    strokeWidth={section.strokeWidth ?? 1}
+                                                />
+                                            )}
+                                            {section.shape === 'circle' && (
+                                                <ellipse
+                                                    cx={section.width / 2}
+                                                    cy={section.height / 2}
+                                                    rx={section.width / 2}
+                                                    ry={section.height / 2}
+                                                    fill={
+                                                        section.fill === 'transparent'
+                                                            ? 'none'
+                                                            : section.fill ?? 'none'
+                                                    }
+                                                    stroke={section.stroke ?? '#000'}
+                                                    strokeWidth={section.strokeWidth ?? 1}
+                                                />
+                                            )}
+                                            {section.shape === 'line' && (
+                                                <line
+                                                    x1={0}
+                                                    y1={0}
+                                                    x2={section.width}
+                                                    y2={section.height}
+                                                    stroke={section.stroke ?? '#000'}
+                                                    strokeWidth={section.strokeWidth ?? 1}
+                                                />
+                                            )}
+                                        </svg>
                                     )}
                                 </div>
                             ))}

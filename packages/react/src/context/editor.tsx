@@ -20,7 +20,13 @@
  * ```
  */
 
-import type { Document, Section, estimatePDFSize, generatePDF } from '@docmosaic/core';
+import type {
+    Document,
+    PageBackground,
+    Section,
+    estimatePDFSize,
+    generatePDF,
+} from '@docmosaic/core';
 import {
     createContext,
     type ReactNode,
@@ -59,8 +65,13 @@ export interface EditorActions {
      *
      * @param opts.type - Variant to create. Defaults to `'image'` so existing
      * callers (the bundled `AddSectionButton`) keep producing image sections.
+     * @param opts.shape - Picks the primitive when `type === 'shape'`. Ignored
+     * for other variants.
      */
-    addSection: (opts?: { type?: 'image' | 'text' }) => Section;
+    addSection: (opts?: {
+        type?: 'image' | 'text' | 'shape';
+        shape?: 'rect' | 'circle' | 'line';
+    }) => Section;
     updateSection: (section: Section) => void;
     deleteSection: (sectionId: string) => void;
     duplicateSection: (section: Section) => void;
@@ -72,6 +83,12 @@ export interface EditorActions {
     updateName: (name: string) => void;
     reorderPages: (fromIndex: number, toIndex: number) => void;
     updateEstimatedSize: (size: number) => void;
+    /**
+     * Set (or clear, when `background` is `undefined`) the background for a
+     * given page. The background is layered behind sections — color paints
+     * first, image on top.
+     */
+    setPageBackground: (pageIndex: number, background: PageBackground | undefined) => void;
     /** Raise the section above every other section on the same page. */
     bringToFront: (sectionId: string) => void;
     /** Lower the section behind every other section on the same page. */

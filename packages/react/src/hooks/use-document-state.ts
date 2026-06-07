@@ -2,6 +2,7 @@ import {
     Action,
     Document,
     HistoryState,
+    PageBackground,
     PageOrientation,
     PageSize,
     Section,
@@ -102,10 +103,14 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
         () => ({
             undo: () => dispatch({ type: 'UNDO' }),
             redo: () => dispatch({ type: 'REDO' }),
-            addSection: (opts?: { type?: 'image' | 'text' }) => {
+            addSection: (opts?: {
+                type?: 'image' | 'text' | 'shape';
+                shape?: 'rect' | 'circle' | 'line';
+            }) => {
                 const current = stateRef.current.present;
                 const newSection = createSection({
                     type: opts?.type ?? 'image',
+                    shape: opts?.shape,
                     x: 5,
                     y: 5,
                     page: current.currentPage,
@@ -141,6 +146,8 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
                 dispatch({ type: 'REORDER_PAGES', fromIndex, toIndex }),
             updateEstimatedSize: (size: number) =>
                 dispatch({ type: 'UPDATE_ESTIMATED_SIZE', size }),
+            setPageBackground: (pageIndex: number, background: PageBackground | undefined) =>
+                dispatch({ type: 'UPDATE_PAGE_BACKGROUND', pageIndex, background }),
             bringToFront: (sectionId: string) =>
                 dispatch({ type: 'BRING_TO_FRONT', sectionId }),
             sendToBack: (sectionId: string) =>

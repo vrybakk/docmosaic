@@ -3,6 +3,7 @@ import { Editor } from '@docmosaic/react';
 
 import {
     documentWithSections,
+    documentWithShapeSection,
     documentWithTextSection,
     emptyDocument,
 } from '../helpers/sample-documents';
@@ -145,6 +146,104 @@ export const TextSelected: Story = {
 export const TextEditing: Story = {
     render: () => (
         <Editor.Root defaultDocument={documentWithTextSection('Double-click to edit me')}>
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Rectangle shape — stroke-only by default. */
+export const ShapeRectangle: Story = {
+    render: () => (
+        <Editor.Root
+            defaultDocument={documentWithShapeSection('rect', {
+                stroke: '#c97b22',
+                strokeWidth: 2,
+            })}
+        >
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Rectangle with a filled body. */
+export const ShapeRectangleFilled: Story = {
+    render: () => (
+        <Editor.Root
+            defaultDocument={documentWithShapeSection('rect', {
+                fill: '#fff7e6',
+                stroke: '#c97b22',
+                strokeWidth: 2,
+            })}
+        >
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Circle (ellipse inscribed in the section box). */
+export const ShapeCircle: Story = {
+    render: () => (
+        <Editor.Root
+            defaultDocument={documentWithShapeSection('circle', {
+                stroke: '#3b6e3b',
+                strokeWidth: 3,
+                width: 200,
+                height: 200,
+            })}
+        >
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Circle with a tinted fill. */
+export const ShapeCircleFilled: Story = {
+    render: () => (
+        <Editor.Root
+            defaultDocument={documentWithShapeSection('circle', {
+                fill: '#e6f4e6',
+                stroke: '#3b6e3b',
+                strokeWidth: 2,
+                width: 200,
+                height: 200,
+            })}
+        >
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Diagonal line from top-left to bottom-right of the section box. */
+export const ShapeLine: Story = {
+    render: () => (
+        <Editor.Root
+            defaultDocument={documentWithShapeSection('line', {
+                stroke: '#222',
+                strokeWidth: 2,
+                width: 320,
+                height: 4,
+            })}
+        >
             <div style={{ height: '600px', display: 'flex' }}>
                 <Editor.Canvas>
                     <Editor.Section />

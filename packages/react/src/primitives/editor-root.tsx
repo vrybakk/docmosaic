@@ -6,9 +6,10 @@ import {
     estimatePDFSize as defaultEstimatePDFSize,
     generatePDF as defaultGeneratePDF,
     type Document,
-    type Section,
+    type PageBackground,
     type PageOrientation,
     type PageSize,
+    type Section,
 } from '@docmosaic/core';
 import { Children, isValidElement, type ReactNode, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
@@ -163,9 +164,13 @@ function buildControlledActions(
     return {
         undo: () => {},
         redo: () => {},
-        addSection: (opts?: { type?: 'image' | 'text' }) => {
+        addSection: (opts?: {
+            type?: 'image' | 'text' | 'shape';
+            shape?: 'rect' | 'circle' | 'line';
+        }) => {
             const newSection = createSection({
                 type: opts?.type ?? 'image',
+                shape: opts?.shape,
                 x: 5,
                 y: 5,
                 page: document.currentPage,
@@ -257,6 +262,17 @@ function buildControlledActions(
         },
         updateEstimatedSize: (size: number) =>
             onDocumentChange(touch({ ...document, estimatedSize: size })),
+        setPageBackground: (pageIndex: number, background: PageBackground | undefined) => {
+            if (pageIndex < 0 || pageIndex >= document.pages.length) return;
+            onDocumentChange(
+                touch({
+                    ...document,
+                    pages: document.pages.map((p, i) =>
+                        i === pageIndex ? { ...p, background } : p,
+                    ),
+                }),
+            );
+        },
         bringToFront: (sectionId: string) => {
             const target = document.sections.find((s) => s.id === sectionId);
             if (!target) return;
@@ -353,7 +369,10 @@ function ControlledRoot({
     const wrappedActions = useMemo<EditorActions>(
         () => ({
             ...actions,
-            addSection: (opts?: { type?: 'image' | 'text' }) => {
+            addSection: (opts?: {
+                type?: 'image' | 'text' | 'shape';
+                shape?: 'rect' | 'circle' | 'line';
+            }) => {
                 trackEvent.addSection();
                 const section = actions.addSection(opts);
                 ui.setSelectedSectionId(section.id);
@@ -447,7 +466,10 @@ function UncontrolledRoot({
                 trackEvent.redo();
                 actions.redo();
             },
-            addSection: (opts?: { type?: 'image' | 'text' }) => {
+            addSection: (opts?: {
+                type?: 'image' | 'text' | 'shape';
+                shape?: 'rect' | 'circle' | 'line';
+            }) => {
                 trackEvent.addSection();
                 const section = actions.addSection(opts);
                 ui.setSelectedSectionId(section.id);
