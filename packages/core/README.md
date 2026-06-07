@@ -68,12 +68,64 @@ The most common consumer is a UI layer:
 
 Every export is documented with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The package's public surface:
 
--   Types — `Document`, `Page`, `PageBackground`, `Section`, `ImageSection`, `TextSection`, `ShapeSection`, `ShapeKind`, `DrawingSection`, `Stroke`, `Point`, `PageSize`, `PageOrientation`, `PageDimensions`, `MeasurementUnit`, `DragPosition`, `ResizeInfo`, `PDFGenerationOptions`. See [the Unit system concept doc](../../docs/concepts/unit-system.md) for why geometry is in points and how to convert.
+-   Types — `Document`, `Page`, `PageBackground`, `Section`, `ImageSection`, `ImageCrop`, `TextSection`, `ShapeSection`, `ShapeKind`, `DrawingSection`, `Stroke`, `Point`, `PageSize`, `PageOrientation`, `PageDimensions`, `MeasurementUnit`, `DragPosition`, `ResizeInfo`, `PDFGenerationOptions`. See [the Unit system concept doc](../../docs/concepts/unit-system.md) for why geometry is in points and how to convert.
 -   Page-size data — `CUSTOM_PAGE_SIZES`, `PAGE_SIZE_LABELS`, `getPageDimensions`, `getPageDimensionsWithOrientation`.
 -   Dimension helpers — `convertDimensions`, `formatDimensions`, `mmToPt`, `ptToMm`.
 -   PDF — `generatePDF`, `estimatePDFSize`, `optimizeImageForPDF`, `processImagesForPDF`, types `GenerationOptions` / `GenerationProgress`.
+-   PNG — `generatePNGs`, types `PNGGenerationOptions` / `PNGGenerationProgress`.
+-   Templates — `exportTemplate`, `importTemplate`, type `DocumentTemplate`.
 -   Factories — `createDocument`, `createPage`, `createSection`.
 -   State — `reducer`, `withHistory`, types `Action`, `State`, `HistoryAction`, `HistoryState`.
+
+## Image crop
+
+`ImageSection` carries an optional `crop` field — a rectangle in PDF points relative to the section's bounding box. When set, only that region of the source image is rendered inside the section; the original `imageUrl` is preserved, so the operation is fully non-destructive.
+
+```ts
+import type { ImageSection } from '@docmosaic/core';
+
+const section: ImageSection = {
+    id: 'photo',
+    type: 'image',
+    x: 40,
+    y: 40,
+    width: 200,
+    height: 150,
+    page: 1,
+    zIndex: 0,
+    imageUrl: 'data:image/png;base64,...',
+    crop: { x: 25, y: 20, width: 100, height: 80 },
+};
+```
+
+Documents authored before this field existed still load — `crop` is optional, and omitting it takes the original byte-stable `addImage` path through jsPDF.
+
+## Templates
+
+A template is a `Document` snapshot. Use `exportTemplate` to serialize one to a JSON string (stable key order for diff-friendly output) and `importTemplate` to load it back with rehydrated `createdAt` / `updatedAt` dates.
+
+```ts
+import { exportTemplate, importTemplate } from '@docmosaic/core';
+
+const json = exportTemplate(doc);
+// Persist `json` anywhere — local storage, a file, a URL hash.
+const restored = importTemplate(json); // throws on shape mismatch
+```
+
+## PNG export
+
+`generatePNGs` renders one PNG `Blob` per page via a 2D canvas pipeline (mirrors the PDF layer order). Use it alongside `generatePDF` when you want per-page raster output. The PNG and PDF pipelines aren't expected to be pixel-identical — they share layout but go through different rasterizers.
+
+```ts
+import { generatePNGs } from '@docmosaic/core';
+
+const pngs = await generatePNGs(doc.sections, {
+    pageSize: doc.pageSize,
+    orientation: doc.orientation,
+    pages: doc.pages,
+    scale: 2, // 144 DPI; default is 2
+});
+```
 
 ## License
 

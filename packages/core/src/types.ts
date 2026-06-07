@@ -80,16 +80,43 @@ export interface SectionBase {
 }
 
 /**
+ * Crop region applied to an {@link ImageSection}. Stored in PDF points,
+ * inside the section's bounding box: `x`/`y` are the top-left of the visible
+ * crop window relative to the section box; `width`/`height` size that window.
+ *
+ * @remarks
+ * When omitted, the full section box renders the image. When present, the
+ * renderer "zooms in" on the cropped region by drawing a larger virtual image
+ * such that only the crop window lands inside the section bounds — the crop
+ * is non-destructive and the original `imageUrl` is preserved.
+ */
+export interface ImageCrop {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+/**
  * Image-bearing section. `imageUrl`, when present, is a base64 data URL.
  *
  * @remarks
  * `type: 'image'` is the discriminator that distinguishes this from
  * {@link TextSection}. Legacy documents without a `type` field are treated
  * as image sections — see {@link normalizeSection}.
+ *
+ * `crop` is optional: when set, only the cropped region of the source image
+ * is rendered inside the section bounds. The crop coordinates are in PDF
+ * points relative to the section box.
  */
 export interface ImageSection extends SectionBase {
     type: 'image';
     imageUrl?: string;
+    /**
+     * Non-destructive crop region applied at render time. Omit for full image.
+     * See {@link ImageCrop} for the coordinate model.
+     */
+    crop?: ImageCrop;
 }
 
 /**

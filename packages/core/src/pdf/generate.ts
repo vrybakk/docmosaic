@@ -206,16 +206,7 @@ export async function generatePDF(
                 if (section.type === 'image') {
                     if (section.imageUrl) {
                         try {
-                            doc.addImage(
-                                section.imageUrl,
-                                'JPEG',
-                                section.x,
-                                section.y,
-                                section.width,
-                                section.height,
-                                `img-${section.id}`,
-                                'SLOW',
-                            );
+                            drawImageSection(doc, section);
                         } catch (error) {
                             console.error('Error adding image:', error);
                             continue;
@@ -251,6 +242,64 @@ export async function generatePDF(
         }
         throw error;
     }
+}
+
+/**
+ * Renders an {@link ImageSection} into the active jsPDF document. When the
+ * section carries a {@link ImageCrop}, the crop region (in PDF points, relative
+ * to the section box) is mapped onto the section bounds by:
+ *
+ * 1. Pushing a clip path over the section box so anything outside is discarded.
+ * 2. Scaling the source image up so that the crop window maps 1:1 onto the
+ *    section, then offsetting it so the crop's top-left aligns with the
+ *    section's top-left.
+ * 3. Popping the graphics state to restore the previous clip stack.
+ *
+ * When `crop` is omitted, the section is rendered exactly as the legacy
+ * `addImage` call — this preserves the byte-stable image fixture.
+ */
+function drawImageSection(doc: jsPDF, section: ImageSection): void {
+    if (!section.imageUrl) return;
+    const { crop } = section;
+    if (!crop) {
+        // Legacy path: byte-stable with the pre-Phase-17 generator.
+        doc.addImage(
+            section.imageUrl,
+            'JPEG',
+            section.x,
+            section.y,
+            section.width,
+            section.height,
+            `img-${section.id}`,
+            'SLOW',
+        );
+        return;
+    }
+
+    // Crop path. Scale the source image so its crop window fits the section
+    // bounds 1:1, then offset the image so the crop's origin lands on the
+    // section's origin. Clip to the section box so the parts outside aren't
+    // rendered.
+    const scaleX = section.width / crop.width;
+    const scaleY = section.height / crop.height;
+    const drawWidth = section.width * (section.width / crop.width);
+    const drawHeight = section.height * (section.height / crop.height);
+    const drawX = section.x - crop.x * scaleX;
+    const drawY = section.y - crop.y * scaleY;
+
+    doc.saveGraphicsState();
+    doc.rect(section.x, section.y, section.width, section.height).clip().discardPath();
+    doc.addImage(
+        section.imageUrl,
+        'JPEG',
+        drawX,
+        drawY,
+        drawWidth,
+        drawHeight,
+        `img-${section.id}`,
+        'SLOW',
+    );
+    doc.restoreGraphicsState();
 }
 
 /**

@@ -9,6 +9,7 @@ export type {
     DragPosition,
     Document,
     DrawingSection,
+    ImageCrop,
     ImageSection,
     MeasurementUnit,
     Page,
@@ -46,6 +47,12 @@ export { estimatePDFSize } from './pdf/estimate';
 export type { GenerationOptions, GenerationProgress } from './pdf/generate';
 export { generatePDF } from './pdf/generate';
 export { optimizeImageForPDF, processImagesForPDF } from './pdf/optimize-image';
+export type { PNGGenerationOptions, PNGGenerationProgress } from './pdf/png';
+export { generatePNGs } from './pdf/png';
+
+// Templates
+export type { DocumentTemplate } from './templates';
+export { exportTemplate, importTemplate } from './templates';
 
 // Factories
 export { createDocument, createPage, createSection } from './factories';

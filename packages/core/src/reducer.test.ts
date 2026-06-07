@@ -392,6 +392,48 @@ describe('reducer', () => {
         expect(snapshot(state)).toBe(before);
     });
 
+    it('UPDATE_SECTION can set a crop on an image section', () => {
+        const doc = createDocument();
+        const image = createSection({ x: 10, y: 10, page: 1 });
+        const state: State = deepFreeze({
+            ...doc,
+            sections: [{ ...image, id: 'img-1' }],
+        });
+        const before = snapshot(state);
+
+        const original = state.sections[0];
+        if (original.type !== 'image') throw new Error('image fixture');
+        const updated: Section = {
+            ...original,
+            crop: { x: 10, y: 20, width: 100, height: 80 },
+        };
+        const next = reducer(state, { type: 'UPDATE_SECTION', section: updated, now: FIXED_NOW });
+
+        const found = next.sections.find((s) => s.id === 'img-1');
+        if (!found || found.type !== 'image') throw new Error('image after update');
+        expect(found.crop).toEqual({ x: 10, y: 20, width: 100, height: 80 });
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('UPDATE_SECTION can clear a crop by omitting it', () => {
+        const doc = createDocument();
+        const image = createSection({ x: 10, y: 10, page: 1 });
+        const cropped: Section = {
+            ...image,
+            id: 'img-1',
+            type: 'image',
+            crop: { x: 5, y: 5, width: 50, height: 50 },
+        };
+        const state: State = deepFreeze({ ...doc, sections: [cropped] });
+
+        const updated: Section = { ...image, id: 'img-1', type: 'image' };
+        const next = reducer(state, { type: 'UPDATE_SECTION', section: updated, now: FIXED_NOW });
+
+        const found = next.sections.find((s) => s.id === 'img-1');
+        if (!found || found.type !== 'image') throw new Error('image after update');
+        expect(found.crop).toBeUndefined();
+    });
+
     it('UPDATE_SECTION on a text section replaces only the specified fields', () => {
         const doc = createDocument();
         const text = createSection({ type: 'text', x: 10, y: 10, page: 1 });
