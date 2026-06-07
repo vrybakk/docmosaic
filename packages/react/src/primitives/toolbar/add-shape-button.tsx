@@ -30,8 +30,10 @@ const DEFAULTS: Record<ShapeKind, { label: string; Icon: typeof Square }> = {
  * variants; `label` to override the copy.
  */
 export function AddShapeButton({ shape = 'rect', label }: AddShapeButtonProps = {}) {
-    const { actions } = useEditor();
+    const { actions, readOnly } = useEditor();
     const { label: defaultLabel, Icon } = DEFAULTS[shape];
+
+    if (readOnly) return null;
 
     return (
         <Button

@@ -21,7 +21,7 @@ import { SnapGuides } from './snap-guides';
 import { bboxesIntersect } from './snap';
 import { useCanvasZoom } from './use-canvas-zoom';
 
-interface CanvasProps {
+export interface CanvasProps {
     /**
      * Optional children rendered once per section as a template. Pass
      * `<Editor.Section />` (or a custom section component that consumes
@@ -29,6 +29,15 @@ interface CanvasProps {
      * Defaults to the built-in `<Section />` when omitted.
      */
     children?: ReactNode;
+    /**
+     * Force the canvas into read-only mode regardless of the root's
+     * `readOnly` flag. Defaults to `false`. The effective read-only state is
+     * `root.readOnly || canvas.readOnly` — either one is enough to suppress
+     * drag, resize, drop, file upload, and section-toolbar buttons.
+     *
+     * Set automatically by {@link Editor.StaticCanvas}.
+     */
+    readOnly?: boolean;
 }
 
 /**
@@ -39,10 +48,16 @@ interface CanvasProps {
  * Reads everything from {@link useEditor} — no state-related props. Each
  * section iteration wraps the children in {@link EditorSectionProvider}, so
  * the rendered child can call {@link useEditorSection} without an id.
+ *
+ * @param props.readOnly - When `true`, the canvas suppresses every mutating
+ *   interaction (drag, resize, drop, file upload) even when the surrounding
+ *   `Editor.Root` is editable. Selection and zoom stay live. Used by
+ *   {@link Editor.StaticCanvas}.
  */
-export function Canvas({ children }: CanvasProps = {}) {
+export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps = {}) {
     const editor = useEditor();
     const { state, ui, actions } = editor;
+    const readOnly = editor.readOnly || readOnlyProp;
     const { pageSize, orientation, sections, currentPage } = state;
     const page = state.pages[currentPage - 1];
     const containerRef = useRef<HTMLDivElement>(null);
@@ -95,7 +110,11 @@ export function Canvas({ children }: CanvasProps = {}) {
     const [, dropRef] = useDrop(
         () => ({
             accept: 'IMAGE_SECTION',
+            // In read-only mode the drop is a no-op so a stray drop event
+            // never mutates the document.
+            canDrop: () => !readOnly,
             drop: (item: { id: string; type: string }, monitor: DropTargetMonitor) => {
+                if (readOnly) return;
                 const delta = monitor.getDifferenceFromInitialOffset();
                 if (!delta) return;
 
@@ -110,7 +129,7 @@ export function Canvas({ children }: CanvasProps = {}) {
                 }
             },
         }),
-        [sections, finalScale, actions],
+        [sections, finalScale, actions, readOnly],
     );
 
     const pageRef = useRef<HTMLDivElement | null>(null);
@@ -240,6 +259,7 @@ export function Canvas({ children }: CanvasProps = {}) {
     };
 
     const handlePagePointerDown = (e: React.PointerEvent) => {
+        if (readOnly) return;
         if (!ui.drawingMode) return;
         // Only react to clicks landing on the page surface itself — don't
         // hijack pointer events targeted at an existing section.
@@ -262,6 +282,7 @@ export function Canvas({ children }: CanvasProps = {}) {
     };
 
     const handlePagePointerMove = (e: React.PointerEvent) => {
+        if (readOnly) return;
         if (!ui.drawingMode) return;
         const drag = drawingDragRef.current;
         if (!drag) return;
@@ -275,6 +296,7 @@ export function Canvas({ children }: CanvasProps = {}) {
     };
 
     const handlePagePointerUp = (e: React.PointerEvent) => {
+        if (readOnly) return;
         if (!ui.drawingMode) return;
         const drag = drawingDragRef.current;
         if (!drag) return;
@@ -428,6 +450,7 @@ export function Canvas({ children }: CanvasProps = {}) {
                                                     section.id,
                                                 ),
                                                 finalScale,
+                                                readOnly,
                                             }}
                                         >
                                             {hasSingleChild ? children : <Section />}

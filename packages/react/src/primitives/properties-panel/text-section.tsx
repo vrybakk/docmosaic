@@ -41,7 +41,7 @@ interface TextSectionPropertiesProps {
  * multi-select case. Commit updates apply to every selected text section.
  */
 export function TextSectionProperties({ className }: TextSectionPropertiesProps = {}) {
-    const { state, ui, actions } = useEditor();
+    const { state, ui, actions, readOnly } = useEditor();
     const selectedIds = ui.selectedSectionIds;
 
     const textSections = useMemo<TextSection[]>(() => {
@@ -56,6 +56,7 @@ export function TextSectionProperties({ className }: TextSectionPropertiesProps 
     const primary = textSections[0];
 
     const applyUpdate = (patch: Partial<TextSection>) => {
+        if (readOnly) return;
         for (const section of textSections) {
             actions.updateSection({ ...section, ...patch });
         }
@@ -66,10 +67,12 @@ export function TextSectionProperties({ className }: TextSectionPropertiesProps 
             <FontFamilyField
                 value={primary.fontFamily ?? 'helvetica'}
                 onChange={(fontFamily) => applyUpdate({ fontFamily })}
+                disabled={readOnly}
             />
             <FontSizeField
                 value={primary.fontSize}
                 onCommit={(fontSize) => applyUpdate({ fontSize })}
+                disabled={readOnly}
             />
             <div className="grid grid-cols-2 gap-2">
                 <StyleToggle
@@ -81,6 +84,7 @@ export function TextSectionProperties({ className }: TextSectionPropertiesProps 
                             fontWeight: primary.fontWeight === 'bold' ? 'normal' : 'bold',
                         })
                     }
+                    disabled={readOnly}
                 />
                 <StyleToggle
                     label="Italic"
@@ -91,17 +95,20 @@ export function TextSectionProperties({ className }: TextSectionPropertiesProps 
                             fontStyle: primary.fontStyle === 'italic' ? 'normal' : 'italic',
                         })
                     }
+                    disabled={readOnly}
                 />
             </div>
             <AlignField
                 value={primary.align ?? 'left'}
                 onChange={(align) => applyUpdate({ align })}
+                disabled={readOnly}
             />
             <div className="space-y-1">
                 <FieldLabel>Color</FieldLabel>
                 <ColorPicker
                     value={primary.color ?? '#000000'}
                     onChange={(color) => applyUpdate({ color })}
+                    disabled={readOnly}
                 />
             </div>
         </SectionShell>
@@ -111,13 +118,14 @@ export function TextSectionProperties({ className }: TextSectionPropertiesProps 
 interface FontFamilyFieldProps {
     value: string;
     onChange: (value: string) => void;
+    disabled?: boolean;
 }
 
-function FontFamilyField({ value, onChange }: FontFamilyFieldProps) {
+function FontFamilyField({ value, onChange, disabled }: FontFamilyFieldProps) {
     return (
         <div className="space-y-1">
             <FieldLabel htmlFor="properties-font-family">Font</FieldLabel>
-            <Select value={value} onValueChange={onChange}>
+            <Select value={value} onValueChange={onChange} disabled={disabled}>
                 <SelectTrigger id="properties-font-family" className="h-7 text-xs">
                     <SelectValue placeholder="Font" />
                 </SelectTrigger>
@@ -136,9 +144,10 @@ function FontFamilyField({ value, onChange }: FontFamilyFieldProps) {
 interface FontSizeFieldProps {
     value: number;
     onCommit: (value: number) => void;
+    disabled?: boolean;
 }
 
-function FontSizeField({ value, onCommit }: FontSizeFieldProps) {
+function FontSizeField({ value, onCommit, disabled }: FontSizeFieldProps) {
     const [draft, setDraft] = useState<string>(String(value));
 
     useEffect(() => {
@@ -157,6 +166,8 @@ function FontSizeField({ value, onCommit }: FontSizeFieldProps) {
                 aria-label="Font size"
                 min={1}
                 value={draft}
+                disabled={disabled}
+                readOnly={disabled}
                 onChange={(e) => setDraft(e.target.value)}
                 onBlur={() => {
                     const parsed = Number(draft);
@@ -176,14 +187,16 @@ interface StyleToggleProps {
     icon: React.ReactNode;
     pressed: boolean;
     onToggle: () => void;
+    disabled?: boolean;
 }
 
-function StyleToggle({ label, icon, pressed, onToggle }: StyleToggleProps) {
+function StyleToggle({ label, icon, pressed, onToggle, disabled }: StyleToggleProps) {
     return (
         <button
             type="button"
             aria-label={label}
             aria-pressed={pressed}
+            disabled={disabled}
             onClick={onToggle}
             className={cn(
                 'h-7 inline-flex items-center justify-center rounded-md border',
@@ -191,6 +204,7 @@ function StyleToggle({ label, icon, pressed, onToggle }: StyleToggleProps) {
                 pressed
                     ? 'border-editor-accent bg-editor-accent-soft text-editor-text'
                     : 'border-editor-accent/15 bg-editor-surface text-editor-text hover:bg-editor-accent-soft',
+                disabled && 'opacity-50 cursor-not-allowed',
             )}
         >
             {icon}
@@ -201,9 +215,10 @@ function StyleToggle({ label, icon, pressed, onToggle }: StyleToggleProps) {
 interface AlignFieldProps {
     value: 'left' | 'center' | 'right';
     onChange: (value: 'left' | 'center' | 'right') => void;
+    disabled?: boolean;
 }
 
-function AlignField({ value, onChange }: AlignFieldProps) {
+function AlignField({ value, onChange, disabled }: AlignFieldProps) {
     const options: Array<{ value: 'left' | 'center' | 'right'; icon: React.ReactNode; label: string }> = [
         { value: 'left', icon: <AlignLeft className="h-3.5 w-3.5" />, label: 'Align left' },
         { value: 'center', icon: <AlignCenter className="h-3.5 w-3.5" />, label: 'Align center' },
@@ -221,6 +236,7 @@ function AlignField({ value, onChange }: AlignFieldProps) {
                             type="button"
                             aria-label={option.label}
                             aria-pressed={pressed}
+                            disabled={disabled}
                             onClick={() => onChange(option.value)}
                             className={cn(
                                 'h-7 inline-flex items-center justify-center rounded-md border',
@@ -228,6 +244,7 @@ function AlignField({ value, onChange }: AlignFieldProps) {
                                 pressed
                                     ? 'border-editor-accent bg-editor-accent-soft text-editor-text'
                                     : 'border-editor-accent/15 bg-editor-surface text-editor-text hover:bg-editor-accent-soft',
+                                disabled && 'opacity-50 cursor-not-allowed',
                             )}
                         >
                             {option.icon}

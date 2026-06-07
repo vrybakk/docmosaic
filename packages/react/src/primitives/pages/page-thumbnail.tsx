@@ -40,6 +40,12 @@ interface PageThumbnailProps {
         isDragOver: boolean;
         dropPosition: 'top' | 'bottom' | null;
     };
+    /**
+     * When `true`, the per-page delete button is hidden and the thumbnail
+     * is not `draggable` (so it cannot be reordered). The thumbnail still
+     * stays selectable. Defaults to `false`.
+     */
+    readOnly?: boolean;
 }
 
 /**
@@ -78,6 +84,7 @@ export function PageThumbnail({
     onDelete,
     dragHandlers,
     dropIndicators,
+    readOnly = false,
 }: PageThumbnailProps) {
     const { imageRenderer: Image } = useEditorConfig();
     const pageDimensions = getPageDimensionsWithOrientation(pageSize, orientation);
@@ -86,7 +93,7 @@ export function PageThumbnail({
     return (
         <div
             className="relative group"
-            draggable
+            draggable={!readOnly}
             onDragStart={dragHandlers.onDragStart}
             onDragEnd={dragHandlers.onDragEnd}
             onDragOver={dragHandlers.onDragOver}
@@ -231,23 +238,25 @@ export function PageThumbnail({
                 </div>
             </div>
 
-            <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete();
-                }}
-                className={cn(
-                    'absolute top-2 right-2 h-6 w-6',
-                    'opacity-0 group-hover:opacity-100 transition-opacity',
-                    'bg-white hover:bg-red-50 text-red-600',
-                    'shadow-sm rounded-full',
-                )}
-            >
-                <Trash2 className="h-3 w-3" />
-                <span className="sr-only">Delete page {index + 1}</span>
-            </Button>
+            {!readOnly && (
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete();
+                    }}
+                    className={cn(
+                        'absolute top-2 right-2 h-6 w-6',
+                        'opacity-0 group-hover:opacity-100 transition-opacity',
+                        'bg-white hover:bg-red-50 text-red-600',
+                        'shadow-sm rounded-full',
+                    )}
+                >
+                    <Trash2 className="h-3 w-3" />
+                    <span className="sr-only">Delete page {index + 1}</span>
+                </Button>
+            )}
         </div>
     );
 }

@@ -11,7 +11,9 @@ import { Button } from '../../ui/button';
  * analytics event.
  */
 export function AddImageButton() {
-    const { actions } = useEditor();
+    const { actions, readOnly } = useEditor();
+
+    if (readOnly) return null;
 
     return (
         <Button

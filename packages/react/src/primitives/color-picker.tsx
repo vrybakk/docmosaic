@@ -34,6 +34,12 @@ export interface ColorPickerProps {
      */
     presets?: readonly string[];
     className?: string;
+    /**
+     * When `true`, the swatches and custom-color trigger become non-interactive
+     * and visually dim. The current `value` still shows so the swatch remains
+     * a label for the actively-selected color.
+     */
+    disabled?: boolean;
 }
 
 /**
@@ -55,11 +61,20 @@ export function ColorPicker({
     onChange,
     presets = DEFAULT_COLOR_PRESETS,
     className,
+    disabled = false,
 }: ColorPickerProps) {
     const customInputRef = useRef<HTMLInputElement>(null);
 
     return (
-        <div className={cn('flex items-center gap-2', className)} data-color-picker="true">
+        <div
+            className={cn(
+                'flex items-center gap-2',
+                disabled && 'opacity-60',
+                className,
+            )}
+            data-color-picker="true"
+            aria-disabled={disabled || undefined}
+        >
             <div className="grid grid-cols-6 gap-1.5">
                 {presets.map((preset) => {
                     const isActive = preset.toLowerCase() === value.toLowerCase();
@@ -69,6 +84,7 @@ export function ColorPicker({
                             type="button"
                             aria-label={`Pick color ${preset}`}
                             aria-pressed={isActive}
+                            disabled={disabled}
                             onClick={() => onChange(preset)}
                             className={cn(
                                 'h-6 w-6 rounded-md border transition-shadow',
@@ -76,6 +92,7 @@ export function ColorPicker({
                                 isActive
                                     ? 'border-editor-accent ring-2 ring-editor-accent'
                                     : 'border-gray-300 hover:border-gray-500',
+                                disabled && 'cursor-not-allowed',
                             )}
                             style={{ backgroundColor: preset }}
                         />
@@ -86,12 +103,14 @@ export function ColorPicker({
                 <button
                     type="button"
                     aria-label="Pick custom color"
+                    disabled={disabled}
                     onClick={() => customInputRef.current?.click()}
                     className={cn(
                         'h-6 w-6 rounded-md border border-dashed border-gray-400',
                         'bg-white hover:border-gray-600',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-editor-accent',
                         'flex items-center justify-center text-xs text-gray-500',
+                        disabled && 'cursor-not-allowed',
                     )}
                     title="Custom color"
                 >
@@ -104,6 +123,7 @@ export function ColorPicker({
                     data-custom-color-input="true"
                     className="sr-only"
                     value={value}
+                    disabled={disabled}
                     onChange={(e) => onChange(e.target.value)}
                 />
             </div>

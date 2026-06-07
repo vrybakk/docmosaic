@@ -22,10 +22,14 @@ interface PageSizeSelectProps {
  * Reads `state.pageSize` and dispatches through `actions.updatePageSize`.
  */
 export function PageSizeSelect({ fullWidth = false }: PageSizeSelectProps = {}) {
-    const { state, actions } = useEditor();
+    const { state, actions, readOnly } = useEditor();
 
     return (
-        <Select value={state.pageSize} onValueChange={actions.updatePageSize}>
+        <Select
+            value={state.pageSize}
+            onValueChange={actions.updatePageSize}
+            disabled={readOnly}
+        >
             <SelectTrigger
                 className={
                     fullWidth

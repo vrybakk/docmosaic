@@ -15,7 +15,7 @@ import { PageThumbnail } from './page-thumbnail';
  * and handles drag-reorder locally.
  */
 export function Pages() {
-    const { state, actions, ui } = useEditor();
+    const { state, actions, ui, readOnly } = useEditor();
     const { pages, sections, currentPage, pageSize, orientation } = state;
     const { formattedDate } = ui;
 
@@ -29,12 +29,16 @@ export function Pages() {
         dropPosition: null,
     });
 
+    const noop = () => {};
+
     const handleDragStart = (e: React.DragEvent, index: number) => {
+        if (readOnly) return;
         e.dataTransfer.effectAllowed = 'move';
         setDragState({ draggedIndex: index, dropTarget: null, dropPosition: null });
     };
 
     const handleDragOver = (e: React.DragEvent, index: number) => {
+        if (readOnly) return;
         e.preventDefault();
         e.stopPropagation();
 
@@ -50,6 +54,7 @@ export function Pages() {
     };
 
     const handleDragEnd = () => {
+        if (readOnly) return;
         if (
             dragState.draggedIndex !== null &&
             dragState.dropTarget !== null &&
@@ -71,31 +76,33 @@ export function Pages() {
 
     return (
         <div className="w-64 border-r bg-gray-50/50 flex flex-col">
-            <div className="p-4 border-b bg-white">
-                <div className="space-y-2">
-                    <Button
-                        variant="caramel"
-                        onClick={() => {
-                            actions.addSection();
-                        }}
-                        className={cn('w-full', 'add-image-button-click-trigger')}
-                        icon={<ImageIcon className="h-4 w-4" />}
-                    >
-                        Add Image
-                    </Button>
-                    <Button
-                        variant="white"
-                        onClick={() => {
-                            trackEvent.addPage();
-                            actions.addPage();
-                        }}
-                        className={cn('w-full', 'add-page-button-click-trigger')}
-                        icon={<Plus className="h-4 w-4" />}
-                    >
-                        Add Page
-                    </Button>
+            {!readOnly && (
+                <div className="p-4 border-b bg-white">
+                    <div className="space-y-2">
+                        <Button
+                            variant="caramel"
+                            onClick={() => {
+                                actions.addSection();
+                            }}
+                            className={cn('w-full', 'add-image-button-click-trigger')}
+                            icon={<ImageIcon className="h-4 w-4" />}
+                        >
+                            Add Image
+                        </Button>
+                        <Button
+                            variant="white"
+                            onClick={() => {
+                                trackEvent.addPage();
+                                actions.addPage();
+                            }}
+                            className={cn('w-full', 'add-page-button-click-trigger')}
+                            icon={<Plus className="h-4 w-4" />}
+                        >
+                            Add Page
+                        </Button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div className="flex-1 flex flex-col min-h-0">
                 <div className="p-4 pb-2">
@@ -115,10 +122,15 @@ export function Pages() {
                                     orientation={orientation}
                                     onSelect={() => actions.changePage(index + 1)}
                                     onDelete={() => actions.deletePage(index)}
+                                    readOnly={readOnly}
                                     dragHandlers={{
-                                        onDragStart: (e) => handleDragStart(e, index),
-                                        onDragEnd: handleDragEnd,
-                                        onDragOver: (e) => handleDragOver(e, index),
+                                        onDragStart: readOnly
+                                            ? noop
+                                            : (e) => handleDragStart(e, index),
+                                        onDragEnd: readOnly ? noop : handleDragEnd,
+                                        onDragOver: readOnly
+                                            ? noop
+                                            : (e) => handleDragOver(e, index),
                                     }}
                                     dropIndicators={
                                         dragState.dropTarget === index

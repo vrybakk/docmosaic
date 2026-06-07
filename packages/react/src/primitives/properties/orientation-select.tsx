@@ -21,10 +21,14 @@ interface OrientationSelectProps {
  * `state.orientation` and dispatches through `actions.updateOrientation`.
  */
 export function OrientationSelect({ fullWidth = false }: OrientationSelectProps = {}) {
-    const { state, actions } = useEditor();
+    const { state, actions, readOnly } = useEditor();
 
     return (
-        <Select value={state.orientation} onValueChange={actions.updateOrientation}>
+        <Select
+            value={state.orientation}
+            onValueChange={actions.updateOrientation}
+            disabled={readOnly}
+        >
             <SelectTrigger
                 className={
                     fullWidth

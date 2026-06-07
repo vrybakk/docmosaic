@@ -11,7 +11,9 @@ import { Button } from '../../ui/button';
  * newly-created section and fires the analytics event.
  */
 export function AddTextButton() {
-    const { actions } = useEditor();
+    const { actions, readOnly } = useEditor();
+
+    if (readOnly) return null;
 
     return (
         <Button

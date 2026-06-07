@@ -14,8 +14,10 @@ import { Button } from '../../ui/button';
  * already on turns it back off — same as pressing `Escape`.
  */
 export function DrawButton() {
-    const { ui } = useEditor();
+    const { ui, readOnly } = useEditor();
     const { drawingMode, setDrawingMode } = ui;
+
+    if (readOnly) return null;
 
     return (
         <Button

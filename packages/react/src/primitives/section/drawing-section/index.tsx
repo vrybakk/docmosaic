@@ -23,7 +23,7 @@ export function DrawingSectionView() {
     const { ui } = useEditor();
     const section = editor.section as DrawingSectionData;
     const rawSection = editor.rawSection as DrawingSectionData;
-    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, finalScale, groupDrag } =
+    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, finalScale, groupDrag, readOnly } =
         editor;
     const imageRef = { current: null } as React.RefObject<HTMLImageElement | null>;
 
@@ -36,8 +36,8 @@ export function DrawingSectionView() {
         section,
         onUpdate,
         // While drawing mode is active, drag is suppressed so the canvas
-        // pointer handlers see the gesture.
-        isResizing: isResizing || ui.drawingMode,
+        // pointer handlers see the gesture. readOnly also suppresses drag.
+        isResizing: isResizing || ui.drawingMode || readOnly,
         groupDrag,
     });
 
@@ -45,13 +45,13 @@ export function DrawingSectionView() {
         e.stopPropagation();
         // In drawing mode the canvas owns pointer events; surface clicks here
         // shouldn't toggle selection.
-        if (ui.drawingMode) return;
+        if (ui.drawingMode && !readOnly) return;
         onClick(e);
     };
 
     return (
         <div
-            {...(ui.drawingMode ? {} : bindDrag())}
+            {...(ui.drawingMode || readOnly ? {} : bindDrag())}
             data-section="true"
             data-section-type="drawing"
             className={cn(
@@ -68,11 +68,17 @@ export function DrawingSectionView() {
                 width: section.width,
                 height: section.height,
                 zIndex: (section.zIndex ?? 0) + (isSelected ? 1000 : 0),
-                cursor: ui.drawingMode ? 'crosshair' : isDragging ? 'grabbing' : 'grab',
+                cursor: readOnly
+                    ? 'default'
+                    : ui.drawingMode
+                      ? 'crosshair'
+                      : isDragging
+                        ? 'grabbing'
+                        : 'grab',
             }}
             onClick={handleClick}
         >
-            {isSelected && !isResizing && !ui.drawingMode && (
+            {isSelected && !isResizing && !ui.drawingMode && !readOnly && (
                 <SectionResizeHandles onResizeStart={handleResizeStart} />
             )}
 
@@ -85,27 +91,32 @@ export function DrawingSectionView() {
             </div>
 
             {/* Hidden action shortcuts — duplicate/delete remain reachable
-                through the keyboard layer like the other variants. */}
-            <button
-                type="button"
-                aria-label="duplicate"
-                tabIndex={-1}
-                className="sr-only"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onDuplicate(section);
-                }}
-            />
-            <button
-                type="button"
-                aria-label="delete"
-                tabIndex={-1}
-                className="sr-only"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(section.id);
-                }}
-            />
+                through the keyboard layer like the other variants. Hidden in
+                readOnly mode since nothing should mutate. */}
+            {!readOnly && (
+                <>
+                    <button
+                        type="button"
+                        aria-label="duplicate"
+                        tabIndex={-1}
+                        className="sr-only"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDuplicate(section);
+                        }}
+                    />
+                    <button
+                        type="button"
+                        aria-label="delete"
+                        tabIndex={-1}
+                        className="sr-only"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(section.id);
+                        }}
+                    />
+                </>
+            )}
         </div>
     );
 }

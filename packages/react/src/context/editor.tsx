@@ -251,6 +251,18 @@ export interface EditorContextValue {
      */
     pdfBackend: EditorPdfBackend;
     ui: EditorUiState;
+    /**
+     * When `true`, the editor renders as a viewer — every mutating interaction
+     * (drag, resize, drop, file upload, page add/delete/reorder, undo/redo,
+     * keyboard nudge/delete, drawing-mode strokes) is suppressed and the
+     * mutating toolbar buttons hide themselves. Selection, marquee selection,
+     * zoom, preview, print, and download stay live.
+     *
+     * Set by `Editor.Root` `readOnly` prop, and also locally by
+     * `Editor.StaticCanvas` (which forces the canvas it wraps into read-only
+     * even when the root isn't).
+     */
+    readOnly: boolean;
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
@@ -325,6 +337,12 @@ interface EditorSectionContextValue {
     isSelected: boolean;
     /** Current canvas display scale (`pageScale * zoom`). */
     finalScale: number;
+    /**
+     * Whether the wrapping canvas is in read-only mode. The Canvas folds the
+     * root's `readOnly` with its own override so a single boolean reaches
+     * each section view.
+     */
+    readOnly: boolean;
 }
 
 const EditorSectionContext = createContext<EditorSectionContextValue | null>(null);
@@ -381,6 +399,12 @@ export interface UseEditorSectionResult {
     rawSection: Section;
     isSelected: boolean;
     finalScale: number;
+    /**
+     * Mirror of {@link EditorContextValue.readOnly} folded with the canvas-
+     * level override. Sections use this to suppress drag, resize, file drop,
+     * and to hide the floating toolbar.
+     */
+    readOnly: boolean;
     onClick: (e: React.MouseEvent) => void;
     onUpdate: (next: Section) => void;
     onImageUpload: (sectionId: string, imageUrl: string) => void;
@@ -413,7 +437,7 @@ export function useEditorSection(): UseEditorSectionResult {
     if (!ctx) {
         throw new Error('useEditorSection must be used inside <Editor.Canvas>');
     }
-    const { section, rawSection, isSelected, finalScale } = ctx;
+    const { section, rawSection, isSelected, finalScale, readOnly } = ctx;
     const { actions, ui, state } = editor;
 
     const onUpdate = useCallback(
@@ -547,6 +571,7 @@ export function useEditorSection(): UseEditorSectionResult {
         rawSection,
         isSelected,
         finalScale,
+        readOnly,
         onClick,
         onUpdate,
         onImageUpload,

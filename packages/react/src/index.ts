@@ -26,6 +26,7 @@ import { Canvas } from './primitives/canvas';
 import { CanvasControls } from './primitives/canvas/canvas-controls';
 import { SelectionBounds } from './primitives/canvas/selection-bounds';
 import { SnapGuides } from './primitives/canvas/snap-guides';
+import { StaticCanvas } from './primitives/canvas/static-canvas';
 import { ColorPicker } from './primitives/color-picker';
 import { DrawingControls } from './primitives/drawing-controls';
 import { Section } from './primitives/section';
@@ -73,6 +74,7 @@ import { TemplateGallery } from './primitives/template-gallery';
  * - `Pages` (+ `PageThumbnail`) — left sidebar of page thumbnails.
  * - `PageBackground` — color + image picker for `Page.background`.
  * - `Canvas` (+ `CanvasControls`, `Section`) — interactive workspace.
+ * - `StaticCanvas` — read-only canvas variant; equivalent to `Canvas readOnly`.
  * - `PropertiesPanel` (+ `Layout`, `Text`, `Shape`, `Layer`, `EmptyState`) —
  *   contextual right-side panel that reflects the selected section(s).
  * - `Preview` — full-document preview dialog.
@@ -103,6 +105,7 @@ import { TemplateGallery } from './primitives/template-gallery';
 export const Editor = {
     Root,
     Canvas,
+    StaticCanvas,
     CanvasControls,
     SelectionBounds,
     SnapGuides,
@@ -165,7 +168,8 @@ export const Editor = {
  * ```
  */
 export { Root as EditorRoot } from './primitives/editor-root';
-export { Canvas as EditorCanvas } from './primitives/canvas';
+export { Canvas as EditorCanvas, type CanvasProps as EditorCanvasProps } from './primitives/canvas';
+export { StaticCanvas as EditorStaticCanvas } from './primitives/canvas/static-canvas';
 export { CanvasControls as EditorCanvasControls } from './primitives/canvas/canvas-controls';
 export { SelectionBounds as EditorSelectionBounds } from './primitives/canvas/selection-bounds';
 export { SnapGuides as EditorSnapGuides } from './primitives/canvas/snap-guides';

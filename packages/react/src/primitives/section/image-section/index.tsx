@@ -37,6 +37,7 @@ export function ImageSectionView() {
         onMoveBackward,
         groupDrag,
         finalScale,
+        readOnly,
     } = editor;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
@@ -50,7 +51,10 @@ export function ImageSectionView() {
     const { bindDrag, isDragging } = useSectionDrag({
         section,
         onUpdate,
-        isResizing,
+        // While readOnly, treat the section as "resizing" — the drag hook
+        // short-circuits and never fires `onUpdate`. Resize handles are not
+        // rendered, so the resize hook itself is never armed.
+        isResizing: isResizing || readOnly,
         groupDrag,
     });
     const { handleFileDrop, handleImageUpload, uploadProgress } = useImageUpload({
@@ -96,6 +100,7 @@ export function ImageSectionView() {
     };
 
     const handleDragOver = (e: React.DragEvent) => {
+        if (readOnly) return;
         e.preventDefault();
         e.stopPropagation();
         if (e.dataTransfer?.types.includes('Files')) {
@@ -104,12 +109,14 @@ export function ImageSectionView() {
     };
 
     const handleDragLeave = (e: React.DragEvent) => {
+        if (readOnly) return;
         e.preventDefault();
         e.stopPropagation();
         setIsDroppingFile(false);
     };
 
     const onFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        if (readOnly) return;
         e.preventDefault();
         e.stopPropagation();
         setIsDroppingFile(false);
@@ -124,15 +131,19 @@ export function ImageSectionView() {
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
-    const openFilePicker = useCallback((e: React.MouseEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-        fileInputRef.current?.click();
-    }, []);
+    const openFilePicker = useCallback(
+        (e: React.MouseEvent) => {
+            if (readOnly) return;
+            e.stopPropagation();
+            e.preventDefault();
+            fileInputRef.current?.click();
+        },
+        [readOnly],
+    );
 
     return (
         <div
-            {...bindDrag()}
+            {...(readOnly ? {} : bindDrag())}
             data-section="true"
             className={cn(
                 'absolute p-1',
@@ -152,15 +163,15 @@ export function ImageSectionView() {
                 // matches export. Selected sections jump on top via the +1000
                 // offset so resize handles and the toolbar remain interactable.
                 zIndex: (section.zIndex ?? 0) + (isSelected ? 1000 : 0),
-                cursor: isDragging ? 'grabbing' : 'grab',
+                cursor: readOnly ? 'default' : isDragging ? 'grabbing' : 'grab',
             }}
             onClick={handleClick}
-            onDoubleClick={handleDoubleClick}
+            onDoubleClick={readOnly ? undefined : handleDoubleClick}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={onFileDrop}
         >
-            {isSelected && !isResizing && !isCropping && (
+            {isSelected && !isResizing && !isCropping && !readOnly && (
                 <SectionResizeHandles onResizeStart={handleResizeStart} />
             )}
 
@@ -168,17 +179,19 @@ export function ImageSectionView() {
                 <div className="absolute inset-0 border-2 border-editor-accent border-dashed pointer-events-none z-5" />
             )}
 
-            <SectionToolbar
-                section={section}
-                isSelected={isSelected}
-                onResizeToProportion={handleResizeToProportion}
-                onDuplicate={onDuplicate}
-                onDelete={onDelete}
-                onBringToFront={onBringToFront}
-                onSendToBack={onSendToBack}
-                onMoveForward={onMoveForward}
-                onMoveBackward={onMoveBackward}
-            />
+            {!readOnly && (
+                <SectionToolbar
+                    section={section}
+                    isSelected={isSelected}
+                    onResizeToProportion={handleResizeToProportion}
+                    onDuplicate={onDuplicate}
+                    onDelete={onDelete}
+                    onBringToFront={onBringToFront}
+                    onSendToBack={onSendToBack}
+                    onMoveForward={onMoveForward}
+                    onMoveBackward={onMoveBackward}
+                />
+            )}
 
             <div className="relative w-full h-full group pointer-events-none">
                 {section.imageUrl ? (
@@ -209,7 +222,7 @@ export function ImageSectionView() {
 
             {uploadProgress && <SectionUploadProgress progress={uploadProgress} />}
 
-            {isCropping && draft && (
+            {isCropping && draft && !readOnly && (
                 <SectionCropOverlay
                     sectionWidth={rawSection.width}
                     sectionHeight={rawSection.height}

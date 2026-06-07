@@ -29,6 +29,7 @@ export function TextSectionView() {
         onDuplicate,
         onDelete,
         groupDrag,
+        readOnly,
     } = editor;
     const imageRef = { current: null } as React.RefObject<HTMLImageElement | null>;
 
@@ -42,12 +43,16 @@ export function TextSectionView() {
     const { bindDrag, isDragging } = useSectionDrag({
         section,
         onUpdate,
-        isResizing: isResizing || isEditing,
+        isResizing: isResizing || isEditing || readOnly,
         groupDrag,
     });
 
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
+        if (readOnly) {
+            onClick(e);
+            return;
+        }
         if (isSelected) {
             // Click while selected → enter editing mode.
             setIsEditing(true);
@@ -76,7 +81,7 @@ export function TextSectionView() {
 
     return (
         <div
-            {...(isEditing ? {} : bindDrag())}
+            {...(isEditing || readOnly ? {} : bindDrag())}
             data-section="true"
             data-section-type="text"
             className={cn(
@@ -93,11 +98,17 @@ export function TextSectionView() {
                 width: section.width,
                 height: section.height,
                 zIndex: (section.zIndex ?? 0) + (isSelected ? 1000 : 0),
-                cursor: isEditing ? 'text' : isDragging ? 'grabbing' : 'grab',
+                cursor: readOnly
+                    ? 'default'
+                    : isEditing
+                      ? 'text'
+                      : isDragging
+                        ? 'grabbing'
+                        : 'grab',
             }}
             onClick={handleClick}
         >
-            {isSelected && !isResizing && !isEditing && (
+            {isSelected && !isResizing && !isEditing && !readOnly && (
                 <SectionResizeHandles onResizeStart={handleResizeStart} />
             )}
 
@@ -105,21 +116,23 @@ export function TextSectionView() {
                 <div className="absolute inset-0 border-2 border-editor-accent border-dashed pointer-events-none z-5" />
             )}
 
-            <TextToolbar
-                section={section}
-                isSelected={isSelected}
-                onUpdate={handlePropChange}
-            />
+            {!readOnly && (
+                <TextToolbar
+                    section={section}
+                    isSelected={isSelected}
+                    onUpdate={handlePropChange}
+                />
+            )}
 
             <div className="relative w-full h-full">
                 <TextEditor
                     section={section}
-                    isEditing={isEditing}
+                    isEditing={isEditing && !readOnly}
                     onTextChange={handleTextChange}
-                    onEditStart={() => setIsEditing(true)}
+                    onEditStart={() => !readOnly && setIsEditing(true)}
                     onEditEnd={handleEditEnd}
                 />
-                {!section.text && !isEditing && (
+                {!section.text && !isEditing && !readOnly && (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm pointer-events-none">
                         Double-click to edit
                     </div>
@@ -128,27 +141,32 @@ export function TextSectionView() {
 
             {/* Hidden action shortcuts so the dispatcher exposes a uniform
                 contextual surface — keeps duplicate/delete reachable via
-                useEditorSection callers and the keyboard layer. */}
-            <button
-                type="button"
-                aria-label="duplicate"
-                tabIndex={-1}
-                className="sr-only"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onDuplicate(section);
-                }}
-            />
-            <button
-                type="button"
-                aria-label="delete"
-                tabIndex={-1}
-                className="sr-only"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(section.id);
-                }}
-            />
+                useEditorSection callers and the keyboard layer. Hidden in
+                readOnly mode since nothing should mutate. */}
+            {!readOnly && (
+                <>
+                    <button
+                        type="button"
+                        aria-label="duplicate"
+                        tabIndex={-1}
+                        className="sr-only"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDuplicate(section);
+                        }}
+                    />
+                    <button
+                        type="button"
+                        aria-label="delete"
+                        tabIndex={-1}
+                        className="sr-only"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(section.id);
+                        }}
+                    />
+                </>
+            )}
         </div>
     );
 }

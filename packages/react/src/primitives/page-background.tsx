@@ -33,8 +33,10 @@ interface PageBackgroundProps {
  * ```
  */
 export function PageBackground({ pageIndex, className }: PageBackgroundProps = {}) {
-    const { state, actions } = useEditor();
+    const { state, actions, readOnly } = useEditor();
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    if (readOnly) return null;
 
     const targetIndex = pageIndex ?? state.currentPage - 1;
     const page = state.pages[targetIndex];

@@ -251,8 +251,12 @@ function dispatchAction(
     action: keyof EditorKeymap,
     editor: ReturnType<typeof useEditor>,
 ): boolean {
-    const { state, actions, ui, canUndo, canRedo } = editor;
+    const { state, actions, ui, canUndo, canRedo, readOnly } = editor;
     const selectedIds = ui.selectedSectionIds;
+
+    // In read-only mode, only the deselect binding survives — everything
+    // else mutates the document and would defeat the read-only contract.
+    if (readOnly && action !== 'deselect') return false;
 
     switch (action) {
         case 'undo':

@@ -13,6 +13,7 @@ Conceptual walk-throughs of how the editor is put together. Start here if you're
 -   [Unit system](../../docs/concepts/unit-system.md) — why geometry lives in PDF points and how to convert
 -   [Keybindings](../../docs/concepts/keybindings.md) — default keymap, overrides, and standalone usage
 -   [Layers](../../docs/concepts/layers.md) — the `zIndex` model and the four reorder actions
+-   [Read-only mode](../../docs/concepts/recipes/read-only.md) — `Editor.Root readOnly` + `Editor.StaticCanvas`
 
 ## Install
 
@@ -62,6 +63,53 @@ const [doc, setDoc] = useState(createDocument());
     {/* same children as above */}
 </Editor.Root>;
 ```
+
+## Read-only mode
+
+Pass `readOnly` on `Editor.Root` to render the editor as a viewer. Every mutating interaction (drag, resize, drop, file upload, page add/delete/reorder, undo/redo, keyboard nudge/delete, drawing strokes) is suppressed, and the mutating toolbar buttons (`AddImageButton`, `AddTextButton`, `AddShapeButton`, `DrawButton`, `UndoButton`, `RedoButton`) hide themselves. `PreviewButton`, `PrintButton`, and `DownloadButton` stay live — the viewer can still export PDFs and PNGs.
+
+```tsx
+<Editor.Root defaultDocument={signedContract} readOnly>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.Pages />
+    <Editor.Canvas>
+        <Editor.Section />
+    </Editor.Canvas>
+    <Editor.Preview />
+</Editor.Root>
+```
+
+Selection (click, shift-click, marquee), zoom, and pan keep working — read-only is about mutation, not navigation. The `Escape` keybinding (deselect) is preserved; every other binding becomes a no-op.
+
+Custom primitives can read the same flag from context:
+
+```tsx
+import { useEditor } from '@docmosaic/react';
+
+function CustomAddButton() {
+    const { actions, readOnly } = useEditor();
+    if (readOnly) return null;
+    return <button onClick={() => actions.addSection()}>Add</button>;
+}
+```
+
+### `Editor.StaticCanvas`
+
+A canvas-level read-only override — useful when the root is editable but a single canvas surface should refuse mutations (compare views, "current vs. reference" layouts).
+
+```tsx
+<Editor.Root defaultDocument={doc}>
+    <Editor.Toolbar />
+    <Editor.StaticCanvas>
+        <Editor.Section />
+    </Editor.StaticCanvas>
+</Editor.Root>
+```
+
+The folding rule is `effectiveReadOnly = root.readOnly || canvas.readOnly` — either flag is enough. `Editor.StaticCanvas` accepts the same `children` prop as `Editor.Canvas`.
+
+See the [read-only recipe](../../docs/concepts/recipes/read-only.md) for the full surface-by-surface behavior table.
 
 ## Custom PDF backend
 
@@ -690,7 +738,7 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 
 Every export is documented inline with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The public surface is:
 
--   `Editor` namespace — `Root`, `Properties`, `Toolbar`, `Pages`, `Canvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, `PageBackground`, `FileSizeBadge`, `GenerationProgress`, and their child buttons/selects (including `AddImageButton`, `DrawButton`). Flat `EditorXxx` exports mirror the namespace for tree-shake-friendly imports. Back-compat: `Editor.Inspector` (= `Properties`), `Editor.PageBackgroundPicker` (= `PageBackground`), `Editor.EstimatedSize` (= `FileSizeBadge`), `Editor.ProgressOverlay` (= `GenerationProgress`), `Editor.AddSectionButton` (= `AddImageButton`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
+-   `Editor` namespace — `Root`, `Properties`, `Toolbar`, `Pages`, `Canvas`, `StaticCanvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, `PageBackground`, `FileSizeBadge`, `GenerationProgress`, and their child buttons/selects (including `AddImageButton`, `DrawButton`). Flat `EditorXxx` exports mirror the namespace for tree-shake-friendly imports. Back-compat: `Editor.Inspector` (= `Properties`), `Editor.PageBackgroundPicker` (= `PageBackground`), `Editor.EstimatedSize` (= `FileSizeBadge`), `Editor.ProgressOverlay` (= `GenerationProgress`), `Editor.AddSectionButton` (= `AddImageButton`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
 -   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `usePdfGeneration`.
 -   Providers — `EditorProvider`, `EditorConfigProvider`, `EditorConfigContext`.
 -   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`.

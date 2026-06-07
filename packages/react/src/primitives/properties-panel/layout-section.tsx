@@ -23,7 +23,7 @@ interface LayoutSectionProps {
  * selection is empty.
  */
 export function LayoutSection({ className }: LayoutSectionProps = {}) {
-    const { state, ui, actions } = useEditor();
+    const { state, ui, actions, readOnly } = useEditor();
     const selectedIds = ui.selectedSectionIds;
 
     const selectedSections = useMemo<Section[]>(
@@ -54,12 +54,14 @@ export function LayoutSection({ className }: LayoutSectionProps = {}) {
                     value={primary.x}
                     onCommit={(v) => onCommit('x', v)}
                     ariaLabel="Position X"
+                    disabled={readOnly}
                 />
                 <NumberField
                     label="Y"
                     value={primary.y}
                     onCommit={(v) => onCommit('y', v)}
                     ariaLabel="Position Y"
+                    disabled={readOnly}
                 />
                 <NumberField
                     label="W"
@@ -67,6 +69,7 @@ export function LayoutSection({ className }: LayoutSectionProps = {}) {
                     onCommit={(v) => onCommit('width', v)}
                     ariaLabel="Width"
                     min={1}
+                    disabled={readOnly}
                 />
                 <NumberField
                     label="H"
@@ -74,6 +77,7 @@ export function LayoutSection({ className }: LayoutSectionProps = {}) {
                     onCommit={(v) => onCommit('height', v)}
                     ariaLabel="Height"
                     min={1}
+                    disabled={readOnly}
                 />
             </div>
         </SectionShell>
@@ -87,6 +91,7 @@ interface NumberFieldProps {
     ariaLabel: string;
     min?: number;
     className?: string;
+    disabled?: boolean;
 }
 
 /**
@@ -95,7 +100,15 @@ interface NumberFieldProps {
  * (e.g. an empty field while editing) — the commit fires on blur and on Enter
  * so the document only updates on intentional submission, not per-keystroke.
  */
-function NumberField({ label, value, onCommit, ariaLabel, min, className }: NumberFieldProps) {
+function NumberField({
+    label,
+    value,
+    onCommit,
+    ariaLabel,
+    min,
+    className,
+    disabled,
+}: NumberFieldProps) {
     const [draft, setDraft] = useState<string>(String(Math.round(value)));
 
     // Keep the visible value in sync when the underlying section changes
@@ -116,6 +129,8 @@ function NumberField({ label, value, onCommit, ariaLabel, min, className }: Numb
                 aria-label={ariaLabel}
                 min={min}
                 value={draft}
+                disabled={disabled}
+                readOnly={disabled}
                 onChange={(e) => setDraft(e.target.value)}
                 onBlur={() => onCommit(draft)}
                 onKeyDown={(e) => {

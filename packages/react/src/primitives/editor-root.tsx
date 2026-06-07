@@ -110,6 +110,39 @@ export type EditorRootProps = {
      * ```
      */
     keybindings?: Partial<EditorKeymap> | false;
+    /**
+     * Render the editor in read-only / viewer mode. Defaults to `false`.
+     *
+     * When `true`:
+     * - Section drag, resize, drop, and file upload are suppressed.
+     * - Section floating toolbars (delete, duplicate, layer buttons) hide.
+     * - The properties bar (document name, page size, orientation) becomes
+     *   read-only.
+     * - The page list hides Add Image / Add Page / per-page delete and
+     *   ignores reorder gestures.
+     * - The `PropertiesPanel` renders its number/text inputs disabled and
+     *   hides the Layer buttons.
+     * - The toolbar's `AddImageButton`, `AddTextButton`, `AddShapeButton`,
+     *   `DrawButton`, `UndoButton`, and `RedoButton` hide themselves.
+     * - Keybindings skip every mutating action (`undo`, `redo`,
+     *   `deleteSection`, `nudge*`); `deselect` (Esc) still works.
+     * - Drawing-mode pointer captures are ignored.
+     *
+     * What still works:
+     * - Selection (click, shift-click, marquee).
+     * - Zoom, pan, preview dialog, print, PDF/PNG download.
+     *
+     * @example
+     * ```tsx
+     * <Editor.Root defaultDocument={signedContract} readOnly>
+     *   <Editor.Properties />
+     *   <Editor.Toolbar />
+     *   <Editor.Canvas />
+     *   <Editor.Preview />
+     * </Editor.Root>
+     * ```
+     */
+    readOnly?: boolean;
 } & (
     | {
           /** Controlled: caller owns the document. */
@@ -380,11 +413,13 @@ function ControlledRoot({
     document,
     onDocumentChange,
     pdfBackend,
+    readOnly,
     children,
 }: {
     document: Document;
     onDocumentChange: (next: Document) => void;
     pdfBackend: EditorPdfBackend;
+    readOnly: boolean;
     children: ReactNode;
 }) {
     const formattedDate = useFormattedDate(document.updatedAt);
@@ -443,6 +478,7 @@ function ControlledRoot({
         pdfApi,
         pdfBackend,
         ui,
+        readOnly,
     };
 
     return <EditorProvider value={value}>{children}</EditorProvider>;
@@ -457,10 +493,12 @@ function ControlledRoot({
 function UncontrolledRoot({
     defaultDocument,
     pdfBackend,
+    readOnly,
     children,
 }: {
     defaultDocument?: Document;
     pdfBackend: EditorPdfBackend;
+    readOnly: boolean;
     children: ReactNode;
 }) {
     const { document, formattedDate, canUndo, canRedo, actions } = useDocumentState({
@@ -529,6 +567,7 @@ function UncontrolledRoot({
         pdfApi,
         pdfBackend,
         ui,
+        readOnly,
     };
 
     return <EditorProvider value={value}>{children}</EditorProvider>;
@@ -642,6 +681,7 @@ export function Root(props: EditorRootProps) {
 
     const keybindingsEnabled = props.keybindings !== false;
     const keymap: Partial<EditorKeymap> = props.keybindings ? props.keybindings : {};
+    const readOnly = props.readOnly === true;
 
     const layout = (
         <div className="flex flex-col h-screen bg-gray-50">
@@ -658,6 +698,7 @@ export function Root(props: EditorRootProps) {
                         document={props.document!}
                         onDocumentChange={props.onDocumentChange!}
                         pdfBackend={pdfBackend}
+                        readOnly={readOnly}
                     >
                         {layout}
                     </ControlledRoot>
@@ -665,6 +706,7 @@ export function Root(props: EditorRootProps) {
                     <UncontrolledRoot
                         defaultDocument={props.defaultDocument}
                         pdfBackend={pdfBackend}
+                        readOnly={readOnly}
                     >
                         {layout}
                     </UncontrolledRoot>

@@ -20,7 +20,7 @@ interface LayerSectionProps {
  * time.
  */
 export function LayerSection({ className }: LayerSectionProps = {}) {
-    const { state, ui, actions } = useEditor();
+    const { state, ui, actions, readOnly } = useEditor();
     const selectedIds = ui.selectedSectionIds;
 
     const section = useMemo(() => {
@@ -31,6 +31,8 @@ export function LayerSection({ className }: LayerSectionProps = {}) {
     }, [state.sections, selectedIds, ui.selectedSectionId]);
 
     if (!section) return null;
+    // Reorder is a mutation; the whole panel hides in readOnly mode.
+    if (readOnly) return null;
 
     // Show the section's current position within its page so the user has a
     // sense of where on the stack they are operating. 1-indexed because the

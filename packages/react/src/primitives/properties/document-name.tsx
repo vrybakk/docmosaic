@@ -10,13 +10,15 @@ import { Input } from '../../ui/input';
  * renames through `actions.updateName` on the editor context.
  */
 export function DocumentName() {
-    const { state, actions } = useEditor();
+    const { state, actions, readOnly } = useEditor();
 
     return (
         <div className="relative">
             <Input
                 type="text"
                 value={state.name}
+                readOnly={readOnly}
+                disabled={readOnly}
                 onChange={(e) => actions.updateName(e.target.value)}
                 className={cn(
                     'w-full max-w-[300px] bg-transparent border-none',
@@ -25,7 +27,9 @@ export function DocumentName() {
                 )}
                 placeholder="Untitled Document"
             />
-            <Pen className="h-4 w-4 text-editor-accent absolute right-2.5 top-0 bottom-0 my-auto" />
+            {!readOnly && (
+                <Pen className="h-4 w-4 text-editor-accent absolute right-2.5 top-0 bottom-0 my-auto" />
+            )}
         </div>
     );
 }

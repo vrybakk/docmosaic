@@ -3,6 +3,7 @@
 import type { ShapeSection } from '@docmosaic/core';
 import { useMemo } from 'react';
 import { useEditor } from '../../context/editor';
+import { cn } from '../../internal/utils';
 import { ColorPicker } from '../color-picker';
 import { FieldLabel, SectionShell } from './section-shell';
 
@@ -20,7 +21,7 @@ interface ShapeSectionPropertiesProps {
  * multi-select case. Commit updates apply to every selected shape section.
  */
 export function ShapeSectionProperties({ className }: ShapeSectionPropertiesProps = {}) {
-    const { state, ui, actions } = useEditor();
+    const { state, ui, actions, readOnly } = useEditor();
     const selectedIds = ui.selectedSectionIds;
 
     const shapeSections = useMemo<ShapeSection[]>(() => {
@@ -35,6 +36,7 @@ export function ShapeSectionProperties({ className }: ShapeSectionPropertiesProp
     const primary = shapeSections[0];
 
     const applyUpdate = (patch: Partial<ShapeSection>) => {
+        if (readOnly) return;
         for (const section of shapeSections) {
             actions.updateSection({ ...section, ...patch });
         }
@@ -47,6 +49,7 @@ export function ShapeSectionProperties({ className }: ShapeSectionPropertiesProp
                 <ColorPicker
                     value={primary.fill === 'transparent' ? '#ffffff' : primary.fill ?? '#ffffff'}
                     onChange={(fill) => applyUpdate({ fill })}
+                    disabled={readOnly}
                 />
             </div>
             <div className="space-y-1">
@@ -54,6 +57,7 @@ export function ShapeSectionProperties({ className }: ShapeSectionPropertiesProp
                 <ColorPicker
                     value={primary.stroke ?? '#000000'}
                     onChange={(stroke) => applyUpdate({ stroke })}
+                    disabled={readOnly}
                 />
             </div>
             <SliderField
@@ -65,6 +69,7 @@ export function ShapeSectionProperties({ className }: ShapeSectionPropertiesProp
                 value={primary.strokeWidth ?? 1}
                 onChange={(v) => applyUpdate({ strokeWidth: v })}
                 displayValue={String(primary.strokeWidth ?? 1)}
+                disabled={readOnly}
             />
             <SliderField
                 label="Opacity"
@@ -75,6 +80,7 @@ export function ShapeSectionProperties({ className }: ShapeSectionPropertiesProp
                 value={Math.round((primary.opacity ?? 1) * 100)}
                 onChange={(v) => applyUpdate({ opacity: v / 100 })}
                 displayValue={`${Math.round((primary.opacity ?? 1) * 100)}%`}
+                disabled={readOnly}
             />
         </SectionShell>
     );
@@ -89,6 +95,7 @@ interface SliderFieldProps {
     value: number;
     onChange: (value: number) => void;
     displayValue: string;
+    disabled?: boolean;
 }
 
 function SliderField({
@@ -100,6 +107,7 @@ function SliderField({
     value,
     onChange,
     displayValue,
+    disabled,
 }: SliderFieldProps) {
     return (
         <div className="space-y-1">
@@ -114,8 +122,12 @@ function SliderField({
                 max={max}
                 step={step}
                 value={value}
+                disabled={disabled}
                 onChange={(e) => onChange(Number(e.target.value))}
-                className="h-2 w-full cursor-pointer accent-editor-accent"
+                className={cn(
+                    'h-2 w-full cursor-pointer accent-editor-accent',
+                    disabled && 'opacity-50 cursor-not-allowed',
+                )}
             />
         </div>
     );

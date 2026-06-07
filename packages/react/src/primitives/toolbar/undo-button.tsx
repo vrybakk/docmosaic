@@ -8,9 +8,14 @@ import { Button } from '../../ui/button';
 /**
  * Undo action button. Reads `canUndo` and the `undo` action from the
  * editor context — no props.
+ *
+ * Hidden in read-only mode — there is nothing to undo when mutations are
+ * suppressed.
  */
 export function UndoButton() {
-    const { canUndo, actions } = useEditor();
+    const { canUndo, actions, readOnly } = useEditor();
+
+    if (readOnly) return null;
 
     return (
         <Button

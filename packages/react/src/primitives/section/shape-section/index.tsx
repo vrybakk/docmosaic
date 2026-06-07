@@ -19,7 +19,7 @@ import { SectionShapeToolbar } from './section-shape-toolbar';
 export function ShapeSectionView() {
     const editor = useEditorSection();
     const section = editor.section as ShapeSectionData;
-    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, groupDrag } = editor;
+    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, groupDrag, readOnly } = editor;
     // No image element for shape; provide a stable empty ref so the resize
     // hook can keep its narrow signature.
     const imageRef = { current: null } as React.RefObject<HTMLImageElement | null>;
@@ -32,7 +32,7 @@ export function ShapeSectionView() {
     const { bindDrag, isDragging } = useSectionDrag({
         section,
         onUpdate,
-        isResizing,
+        isResizing: isResizing || readOnly,
         groupDrag,
     });
 
@@ -50,7 +50,7 @@ export function ShapeSectionView() {
 
     return (
         <div
-            {...bindDrag()}
+            {...(readOnly ? {} : bindDrag())}
             data-section="true"
             data-section-type="shape"
             data-section-shape={section.shape}
@@ -68,11 +68,11 @@ export function ShapeSectionView() {
                 width: section.width,
                 height: section.height,
                 zIndex: (section.zIndex ?? 0) + (isSelected ? 1000 : 0),
-                cursor: isDragging ? 'grabbing' : 'grab',
+                cursor: readOnly ? 'default' : isDragging ? 'grabbing' : 'grab',
             }}
             onClick={handleClick}
         >
-            {isSelected && !isResizing && (
+            {isSelected && !isResizing && !readOnly && (
                 <SectionResizeHandles onResizeStart={handleResizeStart} />
             )}
 
@@ -80,38 +80,44 @@ export function ShapeSectionView() {
                 <div className="absolute inset-0 border-2 border-editor-accent border-dashed pointer-events-none z-5" />
             )}
 
-            <SectionShapeToolbar
-                section={section}
-                isSelected={isSelected}
-                onUpdate={handlePropChange}
-            />
+            {!readOnly && (
+                <SectionShapeToolbar
+                    section={section}
+                    isSelected={isSelected}
+                    onUpdate={handlePropChange}
+                />
+            )}
 
             <div className="relative w-full h-full pointer-events-none">
                 <SectionShape section={section} />
             </div>
 
             {/* Hidden shortcuts so duplicate/delete stay reachable through the
-                same surface as image/text variants. */}
-            <button
-                type="button"
-                aria-label="duplicate"
-                tabIndex={-1}
-                className="sr-only"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onDuplicate(section);
-                }}
-            />
-            <button
-                type="button"
-                aria-label="delete"
-                tabIndex={-1}
-                className="sr-only"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(section.id);
-                }}
-            />
+                same surface as image/text variants. Hidden in readOnly. */}
+            {!readOnly && (
+                <>
+                    <button
+                        type="button"
+                        aria-label="duplicate"
+                        tabIndex={-1}
+                        className="sr-only"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDuplicate(section);
+                        }}
+                    />
+                    <button
+                        type="button"
+                        aria-label="delete"
+                        tabIndex={-1}
+                        className="sr-only"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(section.id);
+                        }}
+                    />
+                </>
+            )}
         </div>
     );
 }

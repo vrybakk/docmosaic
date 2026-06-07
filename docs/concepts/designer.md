@@ -114,11 +114,27 @@ const [doc, setDoc] = useState(createDocument());
 
 Don't mix modes mid-render — the root warns in development if you do.
 
+## Read-only mode
+
+`Editor.Root` accepts a `readOnly` boolean that flips the editor into viewer mode. Every mutating interaction (drag, resize, drop, file upload, page add/delete/reorder, undo/redo, keyboard nudge/delete, drawing-mode strokes) is suppressed. Mutating toolbar buttons (`Add*`, `Draw`, `Undo`, `Redo`) hide themselves; `Preview`, `Print`, and `Download` stay live so the viewer can still export.
+
+```tsx
+<Editor.Root defaultDocument={signedContract} readOnly>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.Canvas />
+    <Editor.Preview />
+</Editor.Root>
+```
+
+Selection (click, marquee), zoom, and pan all keep working — read-only is about mutation, not navigation. For a canvas-level override (read-only canvas inside an editable root), use `Editor.StaticCanvas`. See the [read-only recipe](./recipes/read-only.md) for the full surface table.
+
 ## See also
 
 - [Unit System](./unit-system.md) — why geometry is stored in points and how to convert
 - [Theming](./theming.md) — the `--editor-*` CSS-variable surface
 - [Keybindings](./keybindings.md) — default shortcuts and how to override
 - [Layers](./layers.md) — z-index actions for overlapping sections
+- [Read-only recipe](./recipes/read-only.md) — `Editor.Root readOnly` + `Editor.StaticCanvas`
 - [`@docmosaic/react` API reference](../../packages/react/README.md) — every export with JSDoc
 - [`@docmosaic/core` API reference](../../packages/core/README.md) — the framework-agnostic core
