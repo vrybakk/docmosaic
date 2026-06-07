@@ -103,6 +103,7 @@ export async function generatePDF(
                                 width: CUSTOM_PAGE_SIZES[pageSize][0],
                                 height: CUSTOM_PAGE_SIZES[pageSize][1],
                                 page: index + 1,
+                                zIndex: 0,
                             },
                         ],
                         (progress) => {
@@ -169,8 +170,19 @@ export async function generatePDF(
                 }
             }
 
-            // Add sections for current page
-            const pageSections = optimizedSections.filter((section) => section.page === i + 1);
+            // Add sections for current page, sorted by (zIndex asc, array
+            // index asc). Lower zIndex draws first (back); ties fall back to
+            // the original array order so legacy documents — where every
+            // section's zIndex defaults to 0 — keep their insertion-order
+            // rendering and the byte-diff fixture stays stable.
+            const indexById = new Map(optimizedSections.map((s, idx) => [s.id, idx]));
+            const pageSections = optimizedSections
+                .filter((section) => section.page === i + 1)
+                .sort(
+                    (a, b) =>
+                        (a.zIndex ?? 0) - (b.zIndex ?? 0) ||
+                        (indexById.get(a.id) ?? 0) - (indexById.get(b.id) ?? 0),
+                );
             for (const section of pageSections) {
                 if (signal?.aborted) throw new Error('PDF generation cancelled');
 

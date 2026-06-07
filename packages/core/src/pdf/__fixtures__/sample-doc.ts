@@ -42,6 +42,7 @@ export const sampleDoc: Document = {
             height: 150,
             page: 1,
             imageUrl: TINY_PNG,
+            zIndex: 0,
         },
         {
             id: 'fixture-section-2',
@@ -50,6 +51,7 @@ export const sampleDoc: Document = {
             width: 180,
             height: 240,
             page: 1,
+            zIndex: 0,
         },
         {
             id: 'fixture-section-3',
@@ -58,6 +60,7 @@ export const sampleDoc: Document = {
             width: 300,
             height: 200,
             page: 2,
+            zIndex: 0,
         },
     ],
 };

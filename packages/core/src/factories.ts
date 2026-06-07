@@ -93,5 +93,6 @@ export function createSection(x: number = 50, y: number = 50, page: number = 1):
         width: 200, // Larger initial size (about 1/3 of A4 width)
         height: 200, // Square aspect ratio initially
         page,
+        zIndex: 0,
     };
 }

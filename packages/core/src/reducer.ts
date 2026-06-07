@@ -44,7 +44,11 @@ export type Action =
     | { type: 'ADD_SECTION'; x?: number; y?: number; now?: Date }
     | { type: 'UPDATE_SECTION'; section: Section; now?: Date }
     | { type: 'DELETE_SECTION'; sectionId: string; now?: Date }
-    | { type: 'DUPLICATE_SECTION'; section: Section; now?: Date };
+    | { type: 'DUPLICATE_SECTION'; section: Section; now?: Date }
+    | { type: 'BRING_TO_FRONT'; sectionId: string; now?: Date }
+    | { type: 'SEND_TO_BACK'; sectionId: string; now?: Date }
+    | { type: 'MOVE_FORWARD'; sectionId: string; now?: Date }
+    | { type: 'MOVE_BACKWARD'; sectionId: string; now?: Date };
 
 function touch(state: State, now: Date | undefined): State {
     return { ...state, updatedAt: now ?? new Date() };
@@ -214,6 +218,91 @@ export function reducer(state: State, action: Action): State {
                 {
                     ...state,
                     sections: [...state.sections, duplicated],
+                },
+                action.now,
+            );
+        }
+
+        case 'BRING_TO_FRONT': {
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target) return state;
+            const pageSections = state.sections.filter((s) => s.page === target.page);
+            const maxZ = pageSections.reduce((m, s) => (s.zIndex > m ? s.zIndex : m), -Infinity);
+            if (target.zIndex === maxZ && pageSections.length === 1) return state;
+            const nextZ = maxZ + 1;
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) =>
+                        s.id === action.sectionId ? { ...s, zIndex: nextZ } : s,
+                    ),
+                },
+                action.now,
+            );
+        }
+
+        case 'SEND_TO_BACK': {
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target) return state;
+            const pageSections = state.sections.filter((s) => s.page === target.page);
+            const minZ = pageSections.reduce((m, s) => (s.zIndex < m ? s.zIndex : m), Infinity);
+            if (target.zIndex === minZ && pageSections.length === 1) return state;
+            const nextZ = minZ - 1;
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) =>
+                        s.id === action.sectionId ? { ...s, zIndex: nextZ } : s,
+                    ),
+                },
+                action.now,
+            );
+        }
+
+        case 'MOVE_FORWARD': {
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target) return state;
+            // Next-higher section on the same page: the smallest zIndex strictly
+            // greater than target's. Ties resolved by array index so the swap is
+            // deterministic when multiple peers share a zIndex.
+            const higherPeers = state.sections.filter(
+                (s) => s.page === target.page && s.id !== target.id && s.zIndex > target.zIndex,
+            );
+            if (higherPeers.length === 0) return state;
+            const nextHigher = higherPeers.reduce((best, s) =>
+                s.zIndex < best.zIndex ? s : best,
+            );
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) => {
+                        if (s.id === target.id) return { ...s, zIndex: nextHigher.zIndex };
+                        if (s.id === nextHigher.id) return { ...s, zIndex: target.zIndex };
+                        return s;
+                    }),
+                },
+                action.now,
+            );
+        }
+
+        case 'MOVE_BACKWARD': {
+            const target = state.sections.find((s) => s.id === action.sectionId);
+            if (!target) return state;
+            const lowerPeers = state.sections.filter(
+                (s) => s.page === target.page && s.id !== target.id && s.zIndex < target.zIndex,
+            );
+            if (lowerPeers.length === 0) return state;
+            const nextLower = lowerPeers.reduce((best, s) =>
+                s.zIndex > best.zIndex ? s : best,
+            );
+            return touch(
+                {
+                    ...state,
+                    sections: state.sections.map((s) => {
+                        if (s.id === target.id) return { ...s, zIndex: nextLower.zIndex };
+                        if (s.id === nextLower.id) return { ...s, zIndex: target.zIndex };
+                        return s;
+                    }),
                 },
                 action.now,
             );

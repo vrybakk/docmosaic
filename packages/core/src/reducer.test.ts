@@ -236,4 +236,159 @@ describe('reducer', () => {
         expect(clone.page).toBe(source.page);
         expect(snapshot(state)).toBe(before);
     });
+
+    /**
+     * Build a fixture with 3 sections on page 1 carrying distinct zIndex values
+     * so the layer actions have non-trivial peers to swap with.
+     */
+    function buildLayeredFixture(): State {
+        const doc = createDocument();
+        const s1 = { ...createSection(10, 10, 1), id: 'sec-1', zIndex: 0 };
+        const s2 = { ...createSection(20, 20, 1), id: 'sec-2', zIndex: 1 };
+        const s3 = { ...createSection(30, 30, 1), id: 'sec-3', zIndex: 2 };
+
+        return deepFreeze({
+            ...doc,
+            sections: [s1, s2, s3],
+            totalPages: 1,
+            currentPage: 1,
+        });
+    }
+
+    it('BRING_TO_FRONT sets the section zIndex to max + 1 on the same page', () => {
+        const state = buildLayeredFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'BRING_TO_FRONT',
+            sectionId: 'sec-1',
+            now: FIXED_NOW,
+        });
+
+        const byId = (id: string) => next.sections.find((s) => s.id === id)!;
+        expect(byId('sec-1').zIndex).toBe(3);
+        expect(byId('sec-2').zIndex).toBe(1);
+        expect(byId('sec-3').zIndex).toBe(2);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('SEND_TO_BACK sets the section zIndex to min - 1 on the same page', () => {
+        const state = buildLayeredFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'SEND_TO_BACK',
+            sectionId: 'sec-3',
+            now: FIXED_NOW,
+        });
+
+        const byId = (id: string) => next.sections.find((s) => s.id === id)!;
+        expect(byId('sec-3').zIndex).toBe(-1);
+        expect(byId('sec-1').zIndex).toBe(0);
+        expect(byId('sec-2').zIndex).toBe(1);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('MOVE_FORWARD swaps zIndex with the next-higher peer on the same page', () => {
+        const state = buildLayeredFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'MOVE_FORWARD',
+            sectionId: 'sec-1',
+            now: FIXED_NOW,
+        });
+
+        const byId = (id: string) => next.sections.find((s) => s.id === id)!;
+        // sec-1 (z=0) swaps with sec-2 (z=1, the next higher peer).
+        expect(byId('sec-1').zIndex).toBe(1);
+        expect(byId('sec-2').zIndex).toBe(0);
+        expect(byId('sec-3').zIndex).toBe(2);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('MOVE_FORWARD is a no-op when the section is already on top', () => {
+        const state = buildLayeredFixture();
+        const next = reducer(state, {
+            type: 'MOVE_FORWARD',
+            sectionId: 'sec-3',
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
+    it('MOVE_BACKWARD swaps zIndex with the next-lower peer on the same page', () => {
+        const state = buildLayeredFixture();
+        const before = snapshot(state);
+
+        const next = reducer(state, {
+            type: 'MOVE_BACKWARD',
+            sectionId: 'sec-3',
+            now: FIXED_NOW,
+        });
+
+        const byId = (id: string) => next.sections.find((s) => s.id === id)!;
+        // sec-3 (z=2) swaps with sec-2 (z=1, the next lower peer).
+        expect(byId('sec-3').zIndex).toBe(1);
+        expect(byId('sec-2').zIndex).toBe(2);
+        expect(byId('sec-1').zIndex).toBe(0);
+        expect(snapshot(state)).toBe(before);
+    });
+
+    it('MOVE_BACKWARD is a no-op when the section is already at the bottom', () => {
+        const state = buildLayeredFixture();
+        const next = reducer(state, {
+            type: 'MOVE_BACKWARD',
+            sectionId: 'sec-1',
+            now: FIXED_NOW,
+        });
+        expect(next).toBe(state);
+    });
+
+    it('layer actions only consider sections on the same page', () => {
+        // sec-x is on page 2 with zIndex 100; should not influence the
+        // BRING_TO_FRONT result on page 1.
+        const state = (() => {
+            const doc = createDocument();
+            const s1 = { ...createSection(10, 10, 1), id: 'sec-1', zIndex: 0 };
+            const s2 = { ...createSection(20, 20, 1), id: 'sec-2', zIndex: 1 };
+            const sx = { ...createSection(30, 30, 2), id: 'sec-x', zIndex: 100 };
+            return deepFreeze({
+                ...doc,
+                pages: [...doc.pages, createPage()],
+                sections: [s1, s2, sx],
+                totalPages: 2,
+                currentPage: 1,
+            });
+        })();
+
+        const next = reducer(state, {
+            type: 'BRING_TO_FRONT',
+            sectionId: 'sec-1',
+            now: FIXED_NOW,
+        });
+
+        const byId = (id: string) => next.sections.find((s) => s.id === id)!;
+        // Page-1 max was 1, so sec-1 becomes 2 (NOT 101).
+        expect(byId('sec-1').zIndex).toBe(2);
+        expect(byId('sec-x').zIndex).toBe(100);
+    });
+
+    /**
+     * Mirrors the sort the PDF generator uses: zIndex asc, array index asc.
+     * Confirms the action+sort pair produces the expected back-to-front order.
+     */
+    it('sort by (zIndex asc, array index asc) reflects layer actions', () => {
+        const initial = buildLayeredFixture();
+        const next = reducer(initial, {
+            type: 'BRING_TO_FRONT',
+            sectionId: 'sec-1',
+        });
+        const indexById = new Map(next.sections.map((s, i) => [s.id, i]));
+        const sorted = [...next.sections].sort(
+            (a, b) => a.zIndex - b.zIndex || indexById.get(a.id)! - indexById.get(b.id)!,
+        );
+        // After bringing sec-1 to front: order back→front is sec-2, sec-3, sec-1.
+        expect(sorted.map((s) => s.id)).toEqual(['sec-2', 'sec-3', 'sec-1']);
+    });
 });

@@ -68,6 +68,15 @@ export interface Section {
     height: number;
     page: number;
     imageUrl?: string;
+    /**
+     * Render order. Higher values render on top. Ties resolved by array order.
+     *
+     * @remarks
+     * Defaults to `0` so documents authored before this field existed behave
+     * identically — they all share the same layer and the original
+     * insertion order wins via the array-index tiebreaker.
+     */
+    zIndex: number;
 }
 
 /**
