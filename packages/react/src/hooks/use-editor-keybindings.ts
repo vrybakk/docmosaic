@@ -208,7 +208,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
  *
  * <Editor.Root>
  *   <MyEditor />
- *   <Editor.Header />
+ *   <Editor.Inspector />
  *   <Editor.Canvas><Editor.Section /></Editor.Canvas>
  * </Editor.Root>
  * ```

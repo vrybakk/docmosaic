@@ -7,14 +7,14 @@ import { trackEvent } from '../../internal/analytics';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 import { ScrollArea } from '../../ui/scroll-area';
-import { PageThumb } from './page-thumb';
+import { PageThumbnail } from './page-thumbnail';
 
 /**
  * Page list sidebar for the PDF editor. Reads pages, sections, and current
- * page from {@link useEditor}; renders one {@link PageThumb} per page and
- * handles drag-reorder locally.
+ * page from {@link useEditor}; renders one {@link PageThumbnail} per page
+ * and handles drag-reorder locally.
  */
-export function PageList() {
+export function Pages() {
     const { state, actions, ui } = useEditor();
     const { pages, sections, currentPage, pageSize, orientation } = state;
     const { formattedDate } = ui;
@@ -105,7 +105,7 @@ export function PageList() {
                     <div className="p-4 pt-2">
                         <div className="space-y-4">
                             {pages.map((page, index) => (
-                                <PageThumb
+                                <PageThumbnail
                                     key={page.id}
                                     page={page}
                                     index={index}

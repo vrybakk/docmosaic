@@ -12,15 +12,15 @@ Think of the editor as three concentric layers:
 
 ```text
 Editor.Root                        ← owns Document + history + DnD provider
- ├─ Editor.Header                  ← document name, page size, orientation
+ ├─ Editor.Inspector               ← document name, page size, orientation
  ├─ Editor.Toolbar                 ← undo/redo, preview, download, add-section
- ├─ Editor.PageList                ← left rail of page thumbnails
+ ├─ Editor.Pages                   ← left rail of page thumbnails
  ├─ Editor.Canvas                  ← interactive workspace (drag, resize, zoom)
  │   └─ Editor.Section             ← one image rectangle on the canvas
  └─ Editor.Preview                 ← full-document preview dialog
 ```
 
-`Editor.Root` arranges its children into the default shell automatically — `PageList` is forced to the left of `Canvas` regardless of source order — so the flat composition above works out of the box.
+`Editor.Root` arranges its children into the default shell automatically — `Pages` is forced to the left of `Canvas` regardless of source order — so the flat composition above works out of the box.
 
 ## Composition
 
@@ -31,9 +31,9 @@ import '@docmosaic/react/styles.css';
 export function MyEditor() {
     return (
         <Editor.Root>
-            <Editor.Header />
+            <Editor.Inspector />
             <Editor.Toolbar />
-            <Editor.PageList />
+            <Editor.Pages />
             <Editor.Canvas>
                 <Editor.Section />
             </Editor.Canvas>

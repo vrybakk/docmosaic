@@ -13,14 +13,14 @@ import { Editor } from '@docmosaic/react';
  *
  * The composition below is the canonical compound tree advertised in the
  * package docs: pass the named buttons/selects as children and the
- * Header/Toolbar primitives fall back to their default layouts.
+ * Inspector/Toolbar primitives fall back to their default layouts.
  */
 export function EditorMount() {
     return (
         <Editor.Root>
-            <Editor.Header />
+            <Editor.Inspector />
             <Editor.Toolbar />
-            <Editor.PageList />
+            <Editor.Pages />
             <Editor.Canvas>
                 <Editor.Section />
             </Editor.Canvas>

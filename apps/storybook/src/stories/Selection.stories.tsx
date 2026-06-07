@@ -90,9 +90,9 @@ export const SnapGuides: Story = {
 export const MultiSelectInteraction: Story = {
     render: () => (
         <Editor.Root defaultDocument={documentWithThreeSections()}>
-            <Editor.Header />
+            <Editor.Inspector />
             <Editor.Toolbar />
-            <Editor.PageList />
+            <Editor.Pages />
             <Editor.Canvas>
                 <Editor.Section />
             </Editor.Canvas>

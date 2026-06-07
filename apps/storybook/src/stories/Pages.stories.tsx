@@ -4,13 +4,13 @@ import { Editor } from '@docmosaic/react';
 import { documentWithPages } from '../helpers/sample-documents';
 
 /**
- * `Editor.PageList` is the left sidebar. Shows one `PageThumb` per page and
- * supports drag-reorder via native HTML5 drag-and-drop. Reads state from
- * `useEditor`.
+ * `Editor.Pages` is the left sidebar. Shows one `PageThumbnail` per page
+ * and supports drag-reorder via native HTML5 drag-and-drop. Reads state
+ * from `useEditor`.
  */
-const meta: Meta<typeof Editor.PageList> = {
-    title: 'Editor/PageList',
-    component: Editor.PageList,
+const meta: Meta<typeof Editor.Pages> = {
+    title: 'Editor/Pages',
+    component: Editor.Pages,
     tags: ['autodocs'],
     parameters: {
         layout: 'fullscreen',
@@ -30,7 +30,7 @@ const meta: Meta<typeof Editor.PageList> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Editor.PageList>;
+type Story = StoryObj<typeof Editor.Pages>;
 
 /** Single page. */
 export const OnePage: Story = {
@@ -43,8 +43,9 @@ export const FivePages: Story = {
 };
 
 /**
- * Reorder interaction — drag a page thumb up or down to reorder. Stories
- * with `tags: ['interaction']` can be played from the Interactions panel.
+ * Reorder interaction — drag a page thumbnail up or down to reorder.
+ * Stories with `tags: ['interaction']` can be played from the Interactions
+ * panel.
  */
 export const ReorderInteraction: Story = {
     parameters: { doc: documentWithPages(3) },

@@ -15,9 +15,9 @@ this mode.
 const [doc, setDoc] = useState(createDocument());
 
 <Editor.Root document={doc} onDocumentChange={setDoc}>
-    <Editor.Header />
+    <Editor.Inspector />
     <Editor.Toolbar />
-    <Editor.PageList />
+    <Editor.Pages />
     <Editor.Canvas>
         <Editor.Section />
     </Editor.Canvas>

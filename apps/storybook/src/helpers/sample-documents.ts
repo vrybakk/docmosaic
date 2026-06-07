@@ -50,7 +50,7 @@ export function documentWithTextSection(text = 'Hello DocMosaic'): Document {
     };
 }
 
-/** Document with N pages. Useful for `Editor.PageList` stories. */
+/** Document with N pages. Useful for `Editor.Pages` stories. */
 export function documentWithPages(count: number): Document {
     const base = createDocument();
     const extra = Math.max(0, count - 1);

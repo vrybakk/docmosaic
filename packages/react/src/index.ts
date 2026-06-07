@@ -11,10 +11,10 @@
  * import { Editor } from '@docmosaic/react';
  *
  * <Editor.Root>
- *   <Editor.Header />
+ *   <Editor.Inspector />
  *   <Editor.Toolbar />
  *   <Editor.Canvas><Editor.Section /></Editor.Canvas>
- *   <Editor.PageList />
+ *   <Editor.Pages />
  *   <Editor.Preview />
  * </Editor.Root>
  * ```
@@ -29,8 +29,8 @@ import { SnapGuides } from './primitives/canvas/snap-guides';
 import { ColorPicker } from './primitives/color-picker';
 import { DrawingControls } from './primitives/drawing-controls';
 import { Section } from './primitives/section';
-import { PageList } from './primitives/page-list';
-import { PageThumb } from './primitives/page-list/page-thumb';
+import { Pages } from './primitives/pages';
+import { PageThumbnail } from './primitives/pages/page-thumbnail';
 import { Toolbar } from './primitives/toolbar';
 import { UndoButton } from './primitives/toolbar/undo-button';
 import { RedoButton } from './primitives/toolbar/redo-button';
@@ -44,10 +44,10 @@ import { DrawButton } from './primitives/toolbar/draw-button';
 import { PageBackgroundPicker } from './primitives/page-background-picker';
 import { EstimatedSize } from './primitives/toolbar/estimated-size';
 import { ProgressOverlay } from './primitives/toolbar/progress-overlay';
-import { Header } from './primitives/header';
-import { DocumentName } from './primitives/header/document-name';
-import { PageSizeSelect } from './primitives/header/page-size-select';
-import { OrientationSelect } from './primitives/header/orientation-select';
+import { Inspector } from './primitives/inspector';
+import { DocumentName } from './primitives/inspector/document-name';
+import { PageSizeSelect } from './primitives/inspector/page-size-select';
+import { OrientationSelect } from './primitives/inspector/orientation-select';
 import { Preview } from './primitives/preview';
 import { TemplateGallery } from './primitives/template-gallery';
 
@@ -62,13 +62,14 @@ import { TemplateGallery } from './primitives/template-gallery';
  * @remarks
  * Members:
  * - `Root` — orchestrator + default shell.
- * - `Header` (+ `DocumentName`, `PageSizeSelect`, `OrientationSelect`) — top bar.
+ * - `Inspector` (+ `DocumentName`, `PageSizeSelect`, `OrientationSelect`) —
+ *   document-properties bar at the top.
  * - `Toolbar` (+ `UndoButton`, `RedoButton`, `PreviewButton`, `PrintButton`,
  *   `DownloadButton`, `AddSectionButton`, `AddTextButton`, `AddShapeButton`,
  *   `DrawButton`, `EstimatedSize`, `ProgressOverlay`).
  * - `DrawingControls` (+ `ColorPicker`, `BrushWeightSlider`) — drawing-mode
  *   side panel.
- * - `PageList` (+ `PageThumb`) — left sidebar of page thumbnails.
+ * - `Pages` (+ `PageThumbnail`) — left sidebar of page thumbnails.
  * - `PageBackgroundPicker` — color + image picker for `Page.background`.
  * - `Canvas` (+ `CanvasControls`, `Section`) — interactive workspace.
  * - `Preview` — full-document preview dialog.
@@ -81,9 +82,9 @@ import { TemplateGallery } from './primitives/template-gallery';
  * export function MyEditor() {
  *   return (
  *     <Editor.Root>
- *       <Editor.Header />
+ *       <Editor.Inspector />
  *       <Editor.Toolbar />
- *       <Editor.PageList />
+ *       <Editor.Pages />
  *       <Editor.Canvas>
  *         <Editor.Section />
  *       </Editor.Canvas>
@@ -103,8 +104,8 @@ export const Editor = {
     SelectionBounds,
     SnapGuides,
     Section,
-    PageList,
-    PageThumb,
+    Pages,
+    PageThumbnail,
     Toolbar,
     UndoButton,
     RedoButton,
@@ -121,12 +122,18 @@ export const Editor = {
     PageBackgroundPicker,
     EstimatedSize,
     ProgressOverlay,
-    Header,
+    Inspector,
     DocumentName,
     PageSizeSelect,
     OrientationSelect,
     Preview,
     TemplateGallery,
+    /** @deprecated Use `Editor.Inspector` instead. Removed in next major. */
+    Header: Inspector,
+    /** @deprecated Use `Editor.Pages` instead. Removed in next major. */
+    PageList: Pages,
+    /** @deprecated Use `Editor.PageThumbnail` instead. Removed in next major. */
+    PageThumb: PageThumbnail,
 } as const;
 
 export type { TemplateGalleryItem, TemplateGalleryProps } from './primitives/template-gallery';

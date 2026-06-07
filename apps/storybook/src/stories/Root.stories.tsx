@@ -13,7 +13,7 @@ import {
 /**
  * `Editor.Root` is the orchestrator: it owns the DnD provider, the editor
  * config (image renderer), and either internal or external document state.
- * It also arranges the bundled primitives (`Header`, `Toolbar`, `PageList`,
+ * It also arranges the bundled primitives (`Inspector`, `Toolbar`, `Pages`,
  * `Canvas`, `Preview`) into the editor's default shell.
  */
 const meta: Meta<typeof Editor.Root> = {
@@ -53,9 +53,9 @@ export const Default: Story = {
     args: {
         children: (
             <>
-                <Editor.Header />
+                <Editor.Inspector />
                 <Editor.Toolbar />
-                <Editor.PageList />
+                <Editor.Pages />
                 <Editor.Canvas />
                 <Editor.Preview />
             </>
@@ -69,9 +69,9 @@ export const WithSections: Story = {
         defaultDocument: documentWithSections(),
         children: (
             <>
-                <Editor.Header />
+                <Editor.Inspector />
                 <Editor.Toolbar />
-                <Editor.PageList />
+                <Editor.Pages />
                 <Editor.Canvas />
                 <Editor.Preview />
             </>
@@ -86,9 +86,9 @@ export const Controlled: Story = {
             const [doc, setDoc] = useState<Document>(emptyDocument());
             return (
                 <Editor.Root document={doc} onDocumentChange={setDoc}>
-                    <Editor.Header />
+                    <Editor.Inspector />
                     <Editor.Toolbar />
-                    <Editor.PageList />
+                    <Editor.Pages />
                     <Editor.Canvas />
                     <Editor.Preview />
                 </Editor.Root>
@@ -104,9 +104,9 @@ export const CustomPdfBackend: Story = {
         pdf: createMockPdfBackend(),
         children: (
             <>
-                <Editor.Header />
+                <Editor.Inspector />
                 <Editor.Toolbar />
-                <Editor.PageList />
+                <Editor.Pages />
                 <Editor.Canvas />
                 <Editor.Preview />
             </>
@@ -120,9 +120,9 @@ export const MinimalTheme: Story = {
         defaultDocument: documentWithSections(),
         children: (
             <>
-                <Editor.Header />
+                <Editor.Inspector />
                 <Editor.Toolbar />
-                <Editor.PageList />
+                <Editor.Pages />
                 <Editor.Canvas />
                 <Editor.Preview />
             </>
@@ -142,7 +142,7 @@ export const DrawingMode: Story = {
     render: function DrawingModeStory() {
         return (
             <Editor.Root defaultDocument={documentWithDrawingSection([])}>
-                <Editor.Header />
+                <Editor.Inspector />
                 <Editor.Toolbar>
                     <div className="flex items-center gap-2">
                         <Editor.UndoButton />
@@ -167,9 +167,9 @@ export const KeybindingsDisabled: Story = {
         keybindings: false,
         children: (
             <>
-                <Editor.Header />
+                <Editor.Inspector />
                 <Editor.Toolbar />
-                <Editor.PageList />
+                <Editor.Pages />
                 <Editor.Canvas />
                 <Editor.Preview />
             </>

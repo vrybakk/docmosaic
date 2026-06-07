@@ -31,8 +31,8 @@ import {
 } from '../hooks/use-editor-keybindings';
 import { trackEvent } from '../internal/analytics';
 import { Canvas } from './canvas';
-import { Header } from './header';
-import { PageList } from './page-list';
+import { Inspector } from './inspector';
+import { Pages } from './pages';
 import { Toolbar } from './toolbar';
 import { usePdfGeneration } from './use-pdf-generation';
 
@@ -537,9 +537,9 @@ function UncontrolledRoot({
 /**
  * Arrange children into the editor's default shell:
  *
- * 1. `Editor.Header` (or any non-workspace, non-preview child up top)
+ * 1. `Editor.Inspector` (or any non-workspace, non-preview child up top)
  * 2. `Editor.Toolbar`
- * 3. Flex-row workspace containing `Editor.PageList` + `Editor.Canvas` —
+ * 3. Flex-row workspace containing `Editor.Pages` + `Editor.Canvas` —
  *    regardless of the source order, the sidebar is forced to the left.
  * 4. Any remaining children (e.g. `Editor.Preview`)
  *
@@ -549,7 +549,7 @@ function UncontrolledRoot({
 function arrangeChildren(children: ReactNode): ReactNode {
     const top: ReactNode[] = [];
     let toolbar: ReactNode | null = null;
-    let pageList: ReactNode | null = null;
+    let pages: ReactNode | null = null;
     let canvas: ReactNode | null = null;
     const trailing: ReactNode[] = [];
 
@@ -558,7 +558,7 @@ function arrangeChildren(children: ReactNode): ReactNode {
             trailing.push(child);
             return;
         }
-        if (child.type === Header) {
+        if (child.type === Inspector) {
             top.push(child);
             return;
         }
@@ -566,8 +566,8 @@ function arrangeChildren(children: ReactNode): ReactNode {
             toolbar = child;
             return;
         }
-        if (child.type === PageList) {
-            pageList = child;
+        if (child.type === Pages) {
+            pages = child;
             return;
         }
         if (child.type === Canvas) {
@@ -581,9 +581,9 @@ function arrangeChildren(children: ReactNode): ReactNode {
         <>
             {top}
             {toolbar}
-            {(pageList || canvas) && (
+            {(pages || canvas) && (
                 <div className="flex-1 flex min-h-0">
-                    {pageList}
+                    {pages}
                     {canvas}
                 </div>
             )}
@@ -604,9 +604,9 @@ function arrangeChildren(children: ReactNode): ReactNode {
  * @example Uncontrolled (default)
  * ```tsx
  * <Editor.Root>
- *   <Editor.Header />
+ *   <Editor.Inspector />
  *   <Editor.Toolbar />
- *   <Editor.PageList />
+ *   <Editor.Pages />
  *   <Editor.Canvas><Editor.Section /></Editor.Canvas>
  *   <Editor.Preview />
  * </Editor.Root>

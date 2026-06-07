@@ -35,9 +35,9 @@ import '@docmosaic/react/styles.css';
 export function MyEditor() {
     return (
         <Editor.Root>
-            <Editor.Header />
+            <Editor.Inspector />
             <Editor.Toolbar />
-            <Editor.PageList />
+            <Editor.Pages />
             <Editor.Canvas>
                 <Editor.Section />
             </Editor.Canvas>
@@ -554,7 +554,7 @@ const { document, canUndo, canRedo, actions } = useDocumentState({
 
 Every export is documented inline with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The public surface is:
 
--   `Editor` namespace — `Root`, `Header`, `Toolbar`, `PageList`, `Canvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, and their child buttons/selects (including `DrawButton`).
+-   `Editor` namespace — `Root`, `Inspector`, `Toolbar`, `Pages`, `Canvas`, `Section`, `Preview`, `TemplateGallery`, `DrawingControls`, `ColorPicker`, `BrushWeightSlider`, and their child buttons/selects (including `DrawButton`). Back-compat: `Editor.Header` (= `Inspector`), `Editor.PageList` (= `Pages`), and `Editor.PageThumb` (= `PageThumbnail`) are kept as `@deprecated` aliases for the next major.
 -   Hooks — `useDocumentState`, `useEditor`, `useEditorCanvas`, `useEditorSection`, `useEditorKeybindings`, `usePdfGeneration`.
 -   Providers — `EditorProvider`, `EditorConfigProvider`, `EditorConfigContext`.
 -   Helpers — `defaultImageRenderer`, `setReactPackageTracker`, `EditorLayout`, `DEFAULT_KEYMAP`.

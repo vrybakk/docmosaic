@@ -83,7 +83,7 @@ function MyShortcuts() {
 
 <Editor.Root>
     <MyShortcuts />
-    <Editor.Header />
+    <Editor.Inspector />
     <Editor.Canvas>
         <Editor.Section />
     </Editor.Canvas>

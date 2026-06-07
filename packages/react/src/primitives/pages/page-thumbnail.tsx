@@ -12,7 +12,7 @@ import { useEditorConfig } from '../../context/editor-config';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
 
-interface PageThumbProps {
+interface PageThumbnailProps {
     /** The page data */
     page: Page;
     /** The page index */
@@ -43,10 +43,10 @@ interface PageThumbProps {
 }
 
 /**
- * Single-page thumbnail rendered inside `Editor.PageList`.
+ * Single-page thumbnail rendered inside `Editor.Pages`.
  *
  * @remarks
- * Mostly used internally by the bundled `PageList`. Exposed so consumers
+ * Mostly used internally by the bundled `Pages`. Exposed so consumers
  * who build their own sidebar (or render thumbnails outside the editor —
  * e.g. an export preview) can reuse the visuals. Unlike most primitives
  * this one takes explicit props instead of reading from {@link useEditor}
@@ -54,7 +54,7 @@ interface PageThumbProps {
  *
  * @example
  * ```tsx
- * <Editor.PageThumb
+ * <Editor.PageThumbnail
  *   page={document.pages[0]}
  *   index={0}
  *   isSelected
@@ -67,7 +67,7 @@ interface PageThumbProps {
  * />
  * ```
  */
-export function PageThumb({
+export function PageThumbnail({
     page,
     index,
     isSelected,
@@ -78,7 +78,7 @@ export function PageThumb({
     onDelete,
     dragHandlers,
     dropIndicators,
-}: PageThumbProps) {
+}: PageThumbnailProps) {
     const { imageRenderer: Image } = useEditorConfig();
     const pageDimensions = getPageDimensionsWithOrientation(pageSize, orientation);
     const scale = Math.min(220 / pageDimensions.width, 310 / pageDimensions.height);

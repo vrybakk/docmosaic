@@ -14,9 +14,9 @@ import { DocumentName } from './document-name';
 import { OrientationSelect } from './orientation-select';
 import { PageSizeSelect } from './page-size-select';
 
-interface HeaderProps {
+interface InspectorProps {
     /**
-     * Optional children. When provided, the header renders an empty shell
+     * Optional children. When provided, the inspector renders an empty shell
      * with the children inside. When omitted, falls back to the bundled
      * default layout (document name + page size + orientation, plus a
      * mobile settings sheet).
@@ -25,10 +25,11 @@ interface HeaderProps {
 }
 
 /**
- * Default editor header layout. All state-reading children are
- * context-aware, so the header itself takes no state props.
+ * Default editor inspector layout — the document-properties bar at the top
+ * of the editor. All state-reading children are context-aware, so the
+ * inspector itself takes no state props.
  */
-export function Header({ children }: HeaderProps = {}) {
+export function Inspector({ children }: InspectorProps = {}) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     if (children !== undefined && Children.count(children) > 0) {
