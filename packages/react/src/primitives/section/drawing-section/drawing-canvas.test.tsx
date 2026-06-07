@@ -162,10 +162,15 @@ describe('DrawingCanvas', () => {
         const stroke = target.strokes[0];
         expect(stroke.color).toBe('#ff0000');
         expect(stroke.weight).toBe(4);
-        // Points are stored in page coords (offset by section.x/y).
+        // Points are stored in section-LOCAL PDF-point coords. The bounding
+        // rect is pinned to (0, 0)–(200, 200) and `finalScale` is `1`, so
+        // client coords map 1:1 onto local coords — independent of where
+        // the section sits on the page. The PDF and PNG renderers add
+        // (section.x, section.y) at draw time so the strokes ride along
+        // when the section is dragged.
         expect(stroke.points.length).toBe(3);
-        expect(stroke.points[0]).toEqual({ x: 10 + 30, y: 10 + 30 });
-        expect(stroke.points[2]).toEqual({ x: 30 + 30, y: 30 + 30 });
+        expect(stroke.points[0]).toEqual({ x: 10, y: 10 });
+        expect(stroke.points[2]).toEqual({ x: 30, y: 30 });
     });
 
     it('does not capture pointer events when drawing mode is off', () => {

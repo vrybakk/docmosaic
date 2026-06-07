@@ -446,8 +446,10 @@ function drawShapeSection(doc: jsPDF, section: ShapeSection): void {
 /**
  * Render a {@link DrawingSection} into the active jsPDF document. Each stroke
  * is drawn as a sequence of connected line segments via {@link jsPDF.line},
- * using the stroke's own color and weight. Coordinates are page-relative — the
- * section's bounding box is only used for editor UI, not the geometry itself.
+ * using the stroke's own color and weight. Stroke points are stored in
+ * section-local PDF-point coords, so each point is offset by the section's
+ * (x, y) to land in page space — that's what lets dragging a drawing section
+ * carry its strokes with it.
  *
  * Strokes with fewer than two points are skipped (nothing to connect).
  * Errors are caught so a malformed drawing can't abort generation.
@@ -461,7 +463,7 @@ function drawDrawingSection(doc: jsPDF, section: DrawingSection): void {
             for (let i = 1; i < stroke.points.length; i++) {
                 const a = stroke.points[i - 1];
                 const b = stroke.points[i];
-                doc.line(a.x, a.y, b.x, b.y);
+                doc.line(section.x + a.x, section.y + a.y, section.x + b.x, section.y + b.y);
             }
         }
     } catch (error) {

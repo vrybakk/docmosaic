@@ -75,16 +75,13 @@ export function DrawingCanvas({ section, finalScale }: DrawingCanvasProps) {
         (e: React.PointerEvent) => {
             if (!drawingMode || !isDrawingRef.current) return;
             isDrawingRef.current = false;
-            // Offset the section-local PDF-point coords by the section's own
-            // (x,y) so strokes live in page coords — matches what the PDF
-            // generator consumes.
-            const offsetPoints = currentPoints.map((p) => ({
-                x: p.x + section.x,
-                y: p.y + section.y,
-            }));
-            if (offsetPoints.length >= 2) {
+            // Persist points in section-local PDF-point coords. The SVG
+            // overlay rides along with the section, and the PDF/PNG
+            // renderers add (section.x, section.y) at draw time — so
+            // moving the section moves its strokes too.
+            if (currentPoints.length >= 2) {
                 const stroke: Stroke = {
-                    points: offsetPoints,
+                    points: currentPoints,
                     color: drawingColor,
                     weight: drawingWeight,
                 };
@@ -97,14 +94,8 @@ export function DrawingCanvas({ section, finalScale }: DrawingCanvasProps) {
                 // releasePointerCapture throws if capture was never set; safe to ignore.
             }
         },
-        [actions, currentPoints, drawingColor, drawingMode, drawingWeight, section.id, section.x, section.y],
+        [actions, currentPoints, drawingColor, drawingMode, drawingWeight, section.id],
     );
-
-    // Render strokes in section-local coords by subtracting (section.x, section.y).
-    const strokesLocal = section.strokes.map((s) => ({
-        ...s,
-        points: s.points.map((p) => ({ x: p.x - section.x, y: p.y - section.y })),
-    }));
 
     // Width/height in section-local PDF points; we scale via the SVG viewport.
     const widthPt = section.width;
@@ -132,7 +123,7 @@ export function DrawingCanvas({ section, finalScale }: DrawingCanvasProps) {
             onPointerUp={handlePointerUp}
             onPointerCancel={handlePointerUp}
         >
-            {strokesLocal.map((stroke, i) => (
+            {section.strokes.map((stroke, i) => (
                 <polyline
                     key={i}
                     fill="none"

@@ -339,9 +339,10 @@ function drawDrawingSection(ctx: AnyCtx, section: DrawingSection): void {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.beginPath();
-        ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+        // Stroke points are section-local; offset by (section.x, section.y).
+        ctx.moveTo(section.x + stroke.points[0].x, section.y + stroke.points[0].y);
         for (let i = 1; i < stroke.points.length; i++) {
-            ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+            ctx.lineTo(section.x + stroke.points[i].x, section.y + stroke.points[i].y);
         }
         ctx.stroke();
         ctx.restore();
