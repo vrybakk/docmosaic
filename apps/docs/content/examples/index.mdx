@@ -1,0 +1,130 @@
+---
+title: Examples
+description: 15 copy-pasteable patterns for building real things on top of DocMosaic — from a 30-line minimal editor to controlled-state persistence, custom backends, theming, and embedding.
+---
+
+DocMosaic ships as a kit, not a fixed app. These examples sell the **capabilities** of that kit — what you can build, not which primitives exist. Each page is one focused scenario with a complete, copy-pasteable snippet.
+
+Pick the closest fit, copy the code, adapt to your shell.
+
+## Starter
+
+<ExamplesGrid
+    items={[
+        {
+            slug: 'basic',
+            title: 'Basic editor',
+            description: 'The 30-line minimum — Editor.Root + Canvas + Section, nothing else.',
+            tags: ['starter', 'uncontrolled'],
+        },
+        {
+            slug: 'print-and-pdf',
+            title: 'Print and PDF',
+            description: 'A4 portrait with print + download buttons. The canonical DocMosaic shell.',
+            tags: ['pdf', 'print'],
+        },
+        {
+            slug: 'controlled-state',
+            title: 'Controlled state',
+            description: 'Lift document state out and own the source of truth — for sync, persistence, or collaboration.',
+            tags: ['controlled', 'state'],
+        },
+        {
+            slug: 'byo-ui',
+            title: 'BYO-UI (headless)',
+            description: 'Skip the compound primitives entirely and drive the reducer with your own shell.',
+            tags: ['headless', 'hook'],
+        },
+    ]}
+/>
+
+## Composition
+
+<ExamplesGrid
+    items={[
+        {
+            slug: 'multi-page',
+            title: 'Multi-page documents',
+            description: 'Pages sidebar plus drag-to-reorder. The reducer handles page math.',
+            tags: ['pages', 'reorder'],
+        },
+        {
+            slug: 'templates',
+            title: 'Template gallery',
+            description: 'A starter-templates dialog wired to localStorage for "recently used".',
+            tags: ['templates', 'localStorage'],
+        },
+        {
+            slug: 'drawing',
+            title: 'Drawing mode',
+            description: 'DrawButton + DrawingControls on a blank page — sketches alongside images.',
+            tags: ['drawing', 'sections'],
+        },
+        {
+            slug: 'read-only',
+            title: 'Read-only viewer',
+            description: 'Lock the editor for preview. Selection, zoom, and export still work.',
+            tags: ['read-only', 'viewer'],
+        },
+        {
+            slug: 'embedded-modal',
+            title: 'Embedded in a modal',
+            description: 'Drop the editor into a Radix dialog without breaking drag-and-drop.',
+            tags: ['modal', 'embedding'],
+        },
+    ]}
+/>
+
+## Customization
+
+<ExamplesGrid
+    items={[
+        {
+            slug: 'custom-pdf-backend',
+            title: 'Custom PDF backend',
+            description: 'Swap the bundled jsPDF pipeline for a mocked / Worker / pdf-lib renderer.',
+            tags: ['pdf', 'backend'],
+        },
+        {
+            slug: 'next-image',
+            title: 'next/image renderer',
+            description: 'Replace the default <img> with next/image via EditorConfigProvider.',
+            tags: ['next.js', 'images'],
+        },
+        {
+            slug: 'custom-theme',
+            title: 'Custom theme',
+            description: 'Override --primary and --secondary tokens for a third-party brand.',
+            tags: ['theming', 'css'],
+        },
+        {
+            slug: 'custom-keybindings',
+            title: 'Custom keybindings',
+            description: 'Add a "b = bring to front" shortcut on top of the default keymap.',
+            tags: ['keybindings', 'shortcuts'],
+        },
+    ]}
+/>
+
+## Integration
+
+<ExamplesGrid
+    items={[
+        {
+            slug: 'save-to-database',
+            title: 'Save to a database',
+            description: 'onDocumentChange → localStorage + simulated server sync with debounce.',
+            tags: ['persistence', 'controlled'],
+        },
+        {
+            slug: 'mobile',
+            title: 'Mobile support',
+            description: 'The current state of mobile DocMosaic — what works, what is planned for v1.1.',
+            tags: ['mobile', 'roadmap'],
+        },
+    ]}
+/>
+
+## What these examples are not
+
+They're not a tutorial. If you haven't seen the editor yet, start with [Quick start](/docs/get-started/quick-start) first — then come here to copy the shape closest to what you're building.

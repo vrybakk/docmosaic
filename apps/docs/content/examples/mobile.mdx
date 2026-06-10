@@ -1,0 +1,85 @@
+---
+title: Mobile support
+description: The current state of mobile DocMosaic — what works, what is planned for v1.1.
+tags: [mobile, roadmap, limitations]
+---
+
+DocMosaic v1.0 is a **desktop-first** editor. Most primitives render on mobile, but the interaction model — multi-handle resize, marquee selection, hover-driven floating toolbars, drag-from-page-rail — is calibrated for a mouse-and-keyboard environment. This page is honest about that gap and what's planned to close it.
+
+If your product needs a great mobile experience today, **render in read-only mode on small viewports** and let users edit on desktop. The PDF output is identical.
+
+## What works today on mobile
+
+| Surface | Status |
+| --- | --- |
+| Read-only viewer (`Editor.Root readOnly`) | Works. Selection, zoom, preview, print, download all fire from touch. |
+| `Editor.Preview` dialog | Works. Pinch-zoom on the preview image is browser-native. |
+| `Editor.DownloadButton` | Works. The PDF generator is the same code path as desktop. |
+| `Editor.PrintButton` | Works on iOS Safari + Chrome Android. |
+| `Editor.AddImageButton` (file picker) | Works. Triggers the OS file picker. |
+| Page rail (`Editor.Pages`) | Renders, but the drag-to-reorder gesture is hit-and-miss on touch. |
+
+## What's broken or unreliable on mobile
+
+| Surface | Issue |
+| --- | --- |
+| Section drag inside the canvas | `react-dnd` HTML5 backend doesn't fire touch events. |
+| Section resize handles | Too small for a fingertip; no large-target variant yet. |
+| Marquee selection | Long-press conflicts with browser context menus. |
+| Floating section toolbar | Anchored to hover state; can't be dismissed by touch-outside. |
+| `Editor.Toolbar` overflow | The toolbar row scrolls horizontally on narrow viewports but doesn't collapse into a menu. |
+| Drawing mode | Pointer capture works, but pressure / palm-rejection aren't wired. |
+
+<Callout type="warn">
+    The biggest missing piece is touch-capable DnD. Wiring `react-dnd-touch-backend` is on the v1.1 roadmap — it'd unlock section drag, page reorder, and template-gallery interactions on touch in one go.
+</Callout>
+
+## Recommended mobile pattern (today)
+
+Render the editor as a viewer below a breakpoint, and link users to the desktop URL for edits:
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import { type Document } from '@docmosaic/core';
+import '@docmosaic/react/styles.css';
+
+interface ResponsiveEditorProps {
+    document: Document;
+    isMobile: boolean;
+}
+
+export default function ResponsiveEditor({ document, isMobile }: ResponsiveEditorProps) {
+    return (
+        <Editor.Root defaultDocument={document} readOnly={isMobile}>
+            <Editor.Properties />
+            <Editor.Toolbar>
+                <Editor.PreviewButton />
+                <Editor.DownloadButton />
+                {isMobile ? null : <Editor.AddImageButton />}
+            </Editor.Toolbar>
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
+}
+```
+
+`isMobile` would come from a media-query hook (or `useSyncExternalStore` against `matchMedia`). The same component works on both — only the `readOnly` flag flips.
+
+## Planned for v1.1
+
+- `react-dnd-touch-backend` wired into `Editor.Root` with auto-detection.
+- Large-target resize handles for touch.
+- Collapsible toolbar (overflow menu) for narrow viewports.
+- Tap-to-select instead of hover-driven floating toolbar.
+
+If you're blocked on any of these, please open an issue on GitHub with the use case — it helps prioritise.
+
+## Related
+
+- [Read-only viewer](/docs/examples/read-only) — the recommended mobile pattern today
+- [Editor.Root](/docs/primitives/root) — the `readOnly` prop reference

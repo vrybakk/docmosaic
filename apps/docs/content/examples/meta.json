@@ -1,0 +1,25 @@
+{
+    "title": "Examples",
+    "pages": [
+        "index",
+        "---Starter---",
+        "basic",
+        "print-and-pdf",
+        "controlled-state",
+        "byo-ui",
+        "---Composition---",
+        "multi-page",
+        "templates",
+        "drawing",
+        "read-only",
+        "embedded-modal",
+        "---Customization---",
+        "custom-pdf-backend",
+        "next-image",
+        "custom-theme",
+        "custom-keybindings",
+        "---Integration---",
+        "save-to-database",
+        "mobile"
+    ]
+}

@@ -1,0 +1,101 @@
+---
+title: Save to a database
+description: onDocumentChange → localStorage + simulated server sync with debounce.
+tags: [persistence, controlled, integration]
+---
+
+The persistence pattern that works for 95% of apps: controlled state, debounced writes. `Document` is plain JSON, so saving is "just `JSON.stringify`" — the work is in not spamming your backend with every drag pixel.
+
+This example shows the full loop: hydrate from `localStorage` on mount, debounce-write to a simulated server, surface a save indicator. Swap `simulatedSave` for your own `fetch` and you're done.
+
+## Code
+
+```tsx
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { Editor } from '@docmosaic/react';
+import { createDocument, type Document } from '@docmosaic/core';
+import '@docmosaic/react/styles.css';
+
+const STORAGE_KEY = 'docmosaic:draft';
+
+function loadDraft(): Document {
+    if (typeof window === 'undefined') return createDocument();
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return createDocument();
+    try {
+        return JSON.parse(raw) as Document;
+    } catch {
+        return createDocument();
+    }
+}
+
+// Replace with your real `fetch` call.
+async function simulatedSave(doc: Document): Promise<void> {
+    await new Promise((r) => setTimeout(r, 300));
+    // eslint-disable-next-line no-console
+    console.log(`[mock] saved ${doc.id} (${doc.sections.length} sections)`);
+}
+
+type SaveStatus = 'idle' | 'pending' | 'saved' | 'error';
+
+export default function PersistentEditor() {
+    const [doc, setDoc] = useState<Document>(loadDraft);
+    const [status, setStatus] = useState<SaveStatus>('idle');
+    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        // Local-first: write to localStorage on every change for instant recovery.
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(doc));
+
+        // Debounced server sync — 800 ms after the last edit.
+        setStatus('pending');
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(async () => {
+            try {
+                await simulatedSave(doc);
+                setStatus('saved');
+            } catch {
+                setStatus('error');
+            }
+        }, 800);
+
+        return () => {
+            if (timer.current) clearTimeout(timer.current);
+        };
+    }, [doc]);
+
+    return (
+        <div className="flex flex-col h-screen">
+            <div className="border-b px-4 py-2 text-sm text-muted-foreground">
+                {status === 'pending' ? 'Saving…' : status === 'saved' ? 'All changes saved' : status === 'error' ? 'Save failed — retrying' : ' '}
+            </div>
+            <Editor.Root document={doc} onDocumentChange={setDoc}>
+                <Editor.Properties />
+                <Editor.Toolbar />
+                <Editor.Pages />
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </Editor.Root>
+        </div>
+    );
+}
+```
+
+The pattern in three lines:
+
+1. **`useState(loadDraft)`** hydrates from `localStorage` on mount.
+2. **`useEffect`** writes locally on every change (instant recovery), then debounces a server write.
+3. **`onDocumentChange={setDoc}`** is the controlled-mode wire — every mutation flows through your state, then back into the editor.
+
+<Callout type="warn">
+    Image sections embed data URLs by default — a few photos can balloon a single document into MBs. For production, strip data URLs to object-store keys before saving and rehydrate them on load. See the [persisting templates recipe](/docs/recipes/persisting-templates) for the pattern.
+</Callout>
+
+## Related
+
+- [Persisting templates recipe](/docs/recipes/persisting-templates) — JSON serialisation + blob references
+- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — why this is the controlled-mode flow
+- [Document model](/docs/concepts/document-model) — the JSON shape you'll be saving

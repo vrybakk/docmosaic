@@ -1,0 +1,70 @@
+---
+title: BYO-UI (headless)
+description: Skip Editor.Root entirely. Use useDocumentState to drive your own UI on top of the same reducer + history timeline.
+tags: [headless, hook, advanced]
+---
+
+`useDocumentState` exposes the headless half of DocMosaic — the reducer, the history timeline, the stable action surface. No `<DndProvider>`, no compound primitives, no opinions about your visual tree. Use it when you're building something the bundled shell doesn't fit: a custom report builder, a card composer, a minimal name-tag designer.
+
+You get the same correctness guarantees the full editor does (undo/redo, point-accurate geometry, valid PDF on export) without inheriting the shell.
+
+## Code
+
+```tsx
+'use client';
+
+import { useDocumentState } from '@docmosaic/react';
+import { createDocument } from '@docmosaic/core';
+
+export default function CustomEditor() {
+    const { document, canUndo, canRedo, actions } = useDocumentState({
+        initialDocument: createDocument({ name: 'My custom doc' }),
+    });
+
+    return (
+        <div className="flex flex-col gap-4 p-6">
+            <header className="flex items-center gap-2">
+                <input
+                    value={document.name}
+                    onChange={(e) => actions.updateName(e.target.value)}
+                    className="border rounded px-2 py-1"
+                />
+                <button type="button" disabled={!canUndo} onClick={actions.undo}>
+                    Undo
+                </button>
+                <button type="button" disabled={!canRedo} onClick={actions.redo}>
+                    Redo
+                </button>
+            </header>
+
+            <div className="flex gap-2">
+                <button type="button" onClick={() => actions.addSection({ type: 'image' })}>
+                    Add image
+                </button>
+                <button type="button" onClick={() => actions.addSection({ type: 'text' })}>
+                    Add text
+                </button>
+                <button type="button" onClick={() => actions.addPage()}>
+                    Add page
+                </button>
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+                {document.sections.length} sections across {document.pages.length} pages
+            </p>
+        </div>
+    );
+}
+```
+
+No `Editor.Root`. The hook owns the timeline; your component renders whatever UI fits. `actions` is referentially stable — safe to pass to memoised buttons.
+
+<Callout type="info">
+    Want to mix custom UI with a few bundled primitives? Wrap your tree in `EditorProvider` with the hook's result and the primitives will read from the same state. See the [BYO-UI recipe](/docs/recipes/byo-ui-with-use-document-state) for the hybrid pattern.
+</Callout>
+
+## Related
+
+- [BYO-UI recipe](/docs/recipes/byo-ui-with-use-document-state) — hybrid composition
+- [useDocumentState reference](/docs/reference/hooks)
+- [Designer concept](/docs/concepts/designer) — the mental model the hook is built on

@@ -1,0 +1,68 @@
+---
+title: Custom keybindings
+description: Add a "b = bring to front" shortcut on top of the default keymap without losing undo/redo or nudge.
+tags: [keybindings, shortcuts, advanced]
+---
+
+`Editor.Root` ships a built-in keyboard layer — `mod+z` undo, arrow keys to nudge, `Delete` to remove, `Escape` to deselect. The `keybindings` prop accepts a `Partial<EditorKeymap>` so you can register alternates without touching the defaults.
+
+This example adds a Figma-style `b` for "bring to front" while keeping every default binding active.
+
+## Code
+
+```tsx
+'use client';
+
+import { Editor, type EditorKeymap } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+const myKeymap: Partial<EditorKeymap> = {
+    // Add Figma-style layer-order shortcuts. The defaults still apply for
+    // anything not in this map.
+    bringToFront: 'b',
+    sendToBack: 'shift+b',
+    // Extend delete with `x` — Delete and Backspace keep working.
+    deleteSection: ['Delete', 'Backspace', 'x'],
+};
+
+export default function CustomKeybindingsEditor() {
+    return (
+        <Editor.Root keybindings={myKeymap}>
+            <Editor.Properties />
+            <Editor.Toolbar />
+            <Editor.Pages />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            {/* Pass the same map so the help dialog reflects the active runtime. */}
+            <Editor.KeybindingHelp keymap={myKeymap} />
+        </Editor.Root>
+    );
+}
+```
+
+`mod` resolves to **Cmd on macOS, Ctrl elsewhere** — prefer it over hard-coded `cmd`/`ctrl`. Bindings are skipped while focus is inside an `<input>`, `<textarea>`, `<select>`, or anything `contenteditable`, so the document-name input keeps working without you guarding it.
+
+<Callout type="info">
+    Open the help dialog with `mod+/` (or whatever `showHelp` resolves to in your map). It groups every active binding by category — Edit, Selection, Movement, View — and renders platform-aware `<kbd>` chips.
+</Callout>
+
+## Disable everything
+
+Pass `false` to skip mounting the window listener entirely. Useful when your app owns its own shortcut layer and you don't want two listeners fighting:
+
+```tsx
+<Editor.Root keybindings={false}>{/* … */}</Editor.Root>
+```
+
+## Best practices
+
+- **Don't fight the browser.** `mod+t`, `mod+w`, `mod+r`, `mod+l` are common browser shortcuts. Users react badly when an editor steals them.
+- **Register alternates rather than overriding.** Adding `'x'` to `deleteSection` keeps `Delete` and `Backspace` working — strictly safer than replacing the defaults.
+- **Match conventions.** `mod+z` / `mod+shift+z` for undo/redo. `Escape` for cancel. Users have muscle memory.
+
+## Related
+
+- [Keybindings concept](/docs/concepts/keybindings) — the full default keymap
+- [Editor.KeybindingHelp](/docs/primitives/keybinding-help) — render the active keymap as a dialog
+- [useEditorKeybindings hook](/docs/reference/hooks) — standalone usage outside `Editor.Root`

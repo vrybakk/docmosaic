@@ -1,0 +1,65 @@
+---
+title: Multi-page documents
+description: Pages sidebar plus drag-to-reorder. The reducer handles page math; you compose primitives.
+tags: [pages, reorder]
+---
+
+Real documents are rarely one page. `Editor.Pages` is the left rail — a thumbnail per page, click to switch, drag the handle to reorder, "+" to add, "×" to delete. The reducer rewrites every section's `page` reference when pages move, so you never have to touch the math.
+
+## Code
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import { createDocument, createPage } from '@docmosaic/core';
+import '@docmosaic/react/styles.css';
+
+// Seed with three blank pages so the rail is interesting on first paint.
+const seed = (() => {
+    const doc = createDocument({ name: 'Three-pager' });
+    return {
+        ...doc,
+        pages: [createPage(), createPage(), createPage()],
+        totalPages: 3,
+    };
+})();
+
+export default function MultiPageEditor() {
+    return (
+        <Editor.Root defaultDocument={seed}>
+            <Editor.Properties />
+            <Editor.Toolbar />
+            <Editor.Pages />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
+}
+```
+
+The sidebar lives flush-left because `Editor.Root` arranges children — `Pages` is always placed to the left of `Canvas` regardless of source order, so you don't need a wrapping layout.
+
+<Callout type="info">
+    Drop the add-page button for fixed-format documents (like single-page invoices) with `<Editor.Pages hideAddPage />`. The user can still reorder existing pages — just not add or remove them.
+</Callout>
+
+## Horizontal rail
+
+For dashboards or in-form embeds, switch the rail to horizontal:
+
+```tsx
+<Editor.Pages orientation="horizontal" />
+```
+
+## Try it
+
+<StorybookEmbed id="editor-pages--default" />
+
+## Related
+
+- [Editor.Pages](/docs/primitives/pages) — full primitive reference
+- [Editor.PageThumbnail](/docs/primitives/page-thumbnail) — render thumbs in your own layout
+- [Document model](/docs/concepts/document-model) — how pages and sections relate

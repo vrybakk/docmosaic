@@ -1,0 +1,49 @@
+---
+title: Basic editor
+description: The 30-line minimum. Editor.Root + Canvas + Section — every other primitive is optional.
+tags: [starter, uncontrolled]
+---
+
+The smallest viable DocMosaic editor. `Editor.Root` owns the document state, mounts the DnD provider, and arranges its children into the default shell. Three primitives is all you need to render an empty canvas users can immediately drop images into.
+
+This is the right starting point when you want to see the editor work end-to-end before adding toolbars, page rails, or persistence.
+
+## Code
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+export default function BasicEditor() {
+    return (
+        <Editor.Root>
+            <Editor.Properties />
+            <Editor.Toolbar />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+        </Editor.Root>
+    );
+}
+```
+
+That's it — 12 lines including the imports. `Editor.Properties` is the document-name / page-size / orientation bar. `Editor.Toolbar` is the top action row (Add Image, Undo, Download, …). `Editor.Section` is the per-section primitive — `Editor.Canvas` renders one for every section in the document automatically.
+
+<Callout type="info">
+    `Editor.Root` mounts exactly one `<DndProvider>` for the whole tree. Don't wrap children in another `react-dnd` provider — drag-and-drop breaks silently.
+</Callout>
+
+## Try it
+
+The same composition runs as a Storybook story:
+
+<StorybookEmbed id="editor-root--default" />
+
+## Related
+
+- [Quick start](/docs/get-started/quick-start) — narrative walkthrough of the same shape
+- [Editor.Root](/docs/primitives/root) — the orchestrator
+- [Editor.Canvas](/docs/primitives/canvas) — the interactive workspace
+- [Editor.Section](/docs/primitives/section) — the per-section primitive

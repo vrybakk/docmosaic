@@ -1,0 +1,73 @@
+---
+title: Embedded in a modal
+description: Drop the editor into a Radix dialog without breaking drag-and-drop.
+tags: [modal, embedding]
+---
+
+The editor works inside a modal as long as one detail is right: don't re-mount the `<DndProvider>`. `Editor.Root` already mounts one for the whole tree — if your modal wraps the editor in another `react-dnd` provider, drags fail silently.
+
+This example uses Radix Dialog, but the rule is the same for any modal: one editor, one DnD provider, mounted inside the modal's content portal.
+
+## Code
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Editor } from '@docmosaic/react';
+import { createDocument, type Document } from '@docmosaic/core';
+import '@docmosaic/react/styles.css';
+
+export default function EditorModal() {
+    // Lift the draft up so closing/reopening the dialog doesn't reset it.
+    const [draft, setDraft] = useState<Document>(() => createDocument({ name: 'Draft' }));
+
+    return (
+        <Dialog.Root>
+            <Dialog.Trigger className="rounded bg-primary px-4 py-2 text-primary-foreground">
+                Open editor
+            </Dialog.Trigger>
+            <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+                <Dialog.Content
+                    className="fixed inset-4 overflow-hidden rounded-lg bg-background shadow-xl"
+                    // Critical: prevent Radix's auto-focus from stealing focus from
+                    // input fields the editor's keybindings care about.
+                    onOpenAutoFocus={(e) => e.preventDefault()}
+                >
+                    <Editor.Root document={draft} onDocumentChange={setDraft}>
+                        <Editor.Properties />
+                        <Editor.Toolbar />
+                        <Editor.Pages />
+                        <Editor.Canvas>
+                            <Editor.Section />
+                        </Editor.Canvas>
+                        <Editor.Preview />
+                    </Editor.Root>
+                </Dialog.Content>
+            </Dialog.Portal>
+        </Dialog.Root>
+    );
+}
+```
+
+The draft lives outside the dialog, so closing and reopening doesn't reset the document. That's the right pattern for "save draft" / "send" flows.
+
+<Callout type="warn">
+    **Don't mount inside the trigger.** Mount the editor inside `<Dialog.Content>`. Mounting in the trigger renders the entire editor eagerly and defeats the lazy-mount benefit.
+</Callout>
+
+<Callout type="info">
+    Use `inset-` (or explicit width/height) for the dialog so the editor's canvas has room. The editor fills its container — a too-small dialog leaves the canvas scrollable but cramped.
+</Callout>
+
+## Why focus matters
+
+The default `Dialog.Content` auto-focuses the first focusable child when it opens — usually the editor's document-name input. That blocks `Escape` from being seen by the editor's keybindings layer (the input swallows it). Calling `e.preventDefault()` on `onOpenAutoFocus` keeps focus on the dialog wrapper itself, so the editor's `Escape`-to-deselect and `Delete`-to-remove keep working.
+
+## Related
+
+- [Embedding in a modal recipe](/docs/recipes/embedding-in-modal) — narrative version
+- [Editor.Root](/docs/primitives/root) — the single-DnD-provider invariant
+- [Controlled state](/docs/examples/controlled-state) — lifting the draft out
