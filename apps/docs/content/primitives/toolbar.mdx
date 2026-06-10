@@ -1,0 +1,74 @@
+---
+title: Editor.Toolbar
+description: The top action bar — undo, redo, add image / text / shape, draw, preview, print, download. Composable; drop in only what you need.
+---
+
+`Editor.Toolbar` is the default top action bar. Mount it with no children and you get the bundled layout; mount it with explicit children and you get a custom toolbar with the same context wiring.
+
+<StorybookEmbed id="editor-toolbar--default" />
+
+## Usage
+
+```tsx
+<Editor.Root>
+    <Editor.Toolbar />
+</Editor.Root>
+```
+
+## Composition
+
+Pass children to override the default layout. Each button is also exported individually so you can compose your own:
+
+```tsx
+<Editor.Toolbar>
+    <Editor.UndoButton />
+    <Editor.RedoButton />
+    <Editor.AddImageButton />
+    <Editor.AddTextButton />
+    <Editor.DrawButton />
+    <Editor.FileSizeBadge />
+    <Editor.PreviewButton />
+    <Editor.DownloadButton />
+</Editor.Toolbar>
+```
+
+In `readOnly` mode, the mutating buttons (`Undo`, `Redo`, `Add*`, `Draw`) hide themselves automatically; the read-only buttons (`Preview`, `Print`, `Download`) stay live.
+
+## Examples
+
+### Minimal toolbar — just download
+
+```tsx
+<Editor.Toolbar>
+    <Editor.DownloadButton />
+</Editor.Toolbar>
+```
+
+### Custom toolbar with your own buttons
+
+Use the headless hook and dispatch actions directly from your own button.
+
+```tsx
+import { useEditor } from '@docmosaic/react';
+
+function SaveButton() {
+    const { document } = useEditor();
+    return <button onClick={() => save(document)}>Save</button>;
+}
+
+<Editor.Toolbar>
+    <Editor.UndoButton />
+    <Editor.RedoButton />
+    <SaveButton />
+</Editor.Toolbar>;
+```
+
+## API Reference
+
+<PropTable name="Toolbar" />
+
+## Related
+
+- [DownloadButton](/docs/primitives/download-button) — the PDF/PNG export trigger
+- [GenerationProgress](/docs/primitives/generation-progress) — progress overlay
+- [FileSizeBadge](/docs/primitives/file-size-badge) — live estimate pill

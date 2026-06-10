@@ -1,0 +1,84 @@
+---
+title: Persisting templates
+description: Save and load documents via localStorage, a backend, or a URL — without bloating the payload with embedded image data.
+---
+
+`Document` is plain JSON, so persistence is "just `JSON.stringify`." The trick is keeping the payload small — image sections embed data URLs by default, which can balloon a single document into MBs.
+
+## Minimal save / load
+
+```ts
+function saveDocument(doc: Document) {
+    localStorage.setItem('my-template', JSON.stringify(doc));
+}
+
+function loadDocument(): Document | null {
+    const raw = localStorage.getItem('my-template');
+    return raw ? (JSON.parse(raw) as Document) : null;
+}
+```
+
+Wire this into `Editor.Root` controlled mode:
+
+```tsx
+const [doc, setDoc] = useState<Document>(() => loadDocument() ?? createDocument());
+
+useEffect(() => {
+    saveDocument(doc);
+}, [doc]);
+
+return (
+    <Editor.Root document={doc} onDocumentChange={setDoc}>
+        {/* ... */}
+    </Editor.Root>
+);
+```
+
+## Keep image blobs separate
+
+Replace embedded data URLs with object-store references before saving. On load, swap them back.
+
+```ts
+async function strip(doc: Document): Promise<Document> {
+    const next = structuredClone(doc);
+    for (const s of next.sections) {
+        if (s.type === 'image' && s.imageUrl?.startsWith('data:')) {
+            const blob = dataURLToBlob(s.imageUrl);
+            const key = await uploadBlob(blob); // s3, R2, etc.
+            s.imageUrl = `blob://${key}`;
+        }
+    }
+    return next;
+}
+
+async function hydrate(doc: Document): Promise<Document> {
+    const next = structuredClone(doc);
+    for (const s of next.sections) {
+        if (s.type === 'image' && s.imageUrl?.startsWith('blob://')) {
+            const key = s.imageUrl.slice('blob://'.length);
+            s.imageUrl = await fetchBlobAsDataUrl(key);
+        }
+    }
+    return next;
+}
+```
+
+The reducer doesn't care what scheme `imageUrl` uses — it's just a string. As long as your custom image renderer (or the bundled `<img>` element) can resolve it, the editor works.
+
+## Templates (read-only seeds)
+
+For ship-with-the-app templates, save the JSON to a file and import it directly:
+
+```ts
+import template from './templates/invoice.json';
+
+<Editor.Root defaultDocument={template as Document}>
+    {/* ... */}
+</Editor.Root>;
+```
+
+## See also
+
+- [Document model](/docs/concepts/document-model) — the JSON shape
+- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — when the document is yours
+- [Custom image renderer](/docs/recipes/custom-image-renderer) — resolving `blob://` URLs

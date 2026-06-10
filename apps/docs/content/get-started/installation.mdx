@@ -1,0 +1,34 @@
+---
+title: Installation
+description: Install @docmosaic/react and @docmosaic/core. Bun, npm, pnpm, and yarn all work.
+---
+
+## Install
+
+```bash
+bun add @docmosaic/react @docmosaic/core
+```
+
+`@docmosaic/core` is a peer dependency of `@docmosaic/react` — install both.
+
+## Peer dependencies
+
+```bash
+bun add react react-dom react-dnd react-dnd-html5-backend
+```
+
+React 19 is required. `Editor.Root` mounts a single `HTML5Backend` for `react-dnd` — don't nest another.
+
+## Styles
+
+Import the bundled stylesheet once at the root of your app:
+
+```tsx
+import '@docmosaic/react/styles.css';
+```
+
+The stylesheet exposes a `--editor-*` CSS variable surface. See [Theming](/docs/theming) for how to swap themes (light / dark / brand) and how to override individual tokens.
+
+## TypeScript
+
+The packages ship `.d.ts` files. Both ESM and CJS entry points include matching type bundles.

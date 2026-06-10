@@ -1,0 +1,12 @@
+{
+    "title": "Docs",
+    "pages": [
+        "get-started",
+        "concepts",
+        "primitives",
+        "recipes",
+        "reference",
+        "theming",
+        "changelog"
+    ]
+}

@@ -1,0 +1,69 @@
+---
+title: Editor.Canvas
+description: The interactive workspace. Hosts every Editor.Section, handles drag / resize / pan / zoom, and paints the page background.
+---
+
+`Editor.Canvas` is where sections live. It's the interactive surface — pan, zoom, drag, resize, marquee-select, drop-image, render the page background. Children inside `<Editor.Canvas>` are rendered on top of the page (use `Editor.Section`, `Editor.CanvasControls`, etc.).
+
+<StorybookEmbed id="editor-canvas--default" />
+
+## Installation
+
+Already part of `@docmosaic/react` — no extra install.
+
+## Usage
+
+```tsx
+<Editor.Root>
+    <Editor.Canvas>
+        <Editor.Section />
+    </Editor.Canvas>
+</Editor.Root>
+```
+
+## Composition
+
+Inside `Editor.Canvas` you can mount:
+
+- `Editor.Section` — one entry per section on the active page (auto-iterates).
+- `Editor.CanvasControls` — the floating zoom / fit-to-screen controls.
+- `Editor.SelectionBounds` — multi-select bounding rectangle.
+- `Editor.SnapGuides` — accent lines that paint during drag.
+- `Editor.Ruler` / `Editor.Guides` — auto-mounted by `Editor.Root` when `showRuler` is true.
+
+The canvas applies a single `scale` to its content (`finalScale = pageScale * zoom`), so child sections can be authored in PDF points and still land in the right CSS pixels. You never write `section.x` from a mouse event in pixels — the hook divides by `finalScale` first.
+
+## Examples
+
+### Read-only canvas inside an editable root
+
+Use `Editor.StaticCanvas` when you want a viewer surface but the rest of the editor stays mutable.
+
+```tsx
+<Editor.Root>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.StaticCanvas />
+</Editor.Root>
+```
+
+### Custom controls
+
+Swap the default floating controls for your own.
+
+```tsx
+<Editor.Canvas controls={<MyFloatingZoom />}>
+    <Editor.Section />
+</Editor.Canvas>
+```
+
+## API Reference
+
+<PropTable name="Canvas" />
+
+## Related
+
+- [Section](/docs/primitives/section) — the unit of content
+- [StaticCanvas](/docs/primitives/static-canvas) — read-only variant
+- [Ruler](/docs/primitives/ruler) / [Guides](/docs/primitives/guides) — overlay layers
+- [Unit system](/docs/concepts/unit-system) — points vs CSS pixels

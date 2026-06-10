@@ -1,0 +1,54 @@
+---
+title: Editor.Preview
+description: Full-document preview dialog. Opens via Editor.PreviewButton; renders every page in a scrollable Radix modal.
+---
+
+`Editor.Preview` is the full-document preview dialog. The viewer scrolls vertically through every page at print fidelity — what you see is what `Editor.DownloadButton` exports.
+
+<StorybookEmbed id="editor-preview--default" />
+
+## Usage
+
+```tsx
+<Editor.Root>
+    <Editor.Preview />
+</Editor.Root>
+```
+
+The dialog mounts portaled at the body level and stays mounted across renders. `Editor.PreviewButton` (inside `Editor.Toolbar`) opens it.
+
+## Composition
+
+The dialog is a Radix `Dialog.Root` underneath. It reads its open state from the editor context — `actions.openPreview()` / `actions.closePreview()` are the dispatchers if you want to drive it from your own UI.
+
+```tsx
+import { useEditor } from '@docmosaic/react';
+
+function PreviewLink() {
+    const { actions } = useEditor();
+    return <a onClick={actions.openPreview}>Preview</a>;
+}
+```
+
+## Examples
+
+### Force-open on mount (e.g. shareable preview link)
+
+```tsx
+function PreviewOnly() {
+    const { actions } = useEditor();
+    useEffect(() => {
+        actions.openPreview();
+    }, [actions]);
+    return null;
+}
+```
+
+## API Reference
+
+<PropTable name="Preview" />
+
+## Related
+
+- [PreviewButton](/docs/primitives/preview-button)
+- [DownloadButton](/docs/primitives/download-button)

@@ -1,0 +1,18 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "plugins": [{ "name": "next" }],
+        "paths": {
+            "@/*": ["./*"]
+        }
+    },
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts",
+        ".source/**/*.ts"
+    ],
+    "exclude": ["node_modules"]
+}

@@ -1,0 +1,54 @@
+---
+title: Custom image renderer
+description: Swap the default <img> for next/image (or any other image component) via EditorConfigProvider.
+---
+
+By default, `Editor.Section` renders images with a plain `<img>` tag. In Next.js apps you'll usually want `next/image` for automatic optimization. `EditorConfigProvider` is the injection point.
+
+## Why override
+
+- **Next.js `next/image`** — automatic resizing, lazy loading, blur placeholders.
+- **CDN with custom transforms** — Cloudinary, Imgix, Cloudflare Images.
+- **Authenticated URLs** — sign the URL before rendering.
+
+## The injection point
+
+`Editor.Root` mounts `EditorConfigProvider` internally. Wrap your own provider underneath to override `ImageRenderer`:
+
+```tsx
+import Image from 'next/image';
+import { Editor, EditorConfigProvider, type ImageRenderer } from '@docmosaic/react';
+
+const NextImageRenderer: ImageRenderer = ({ src, alt, width, height, style, className }) => (
+    <Image
+        src={src}
+        alt={alt ?? ''}
+        width={width ?? 0}
+        height={height ?? 0}
+        style={style}
+        className={className}
+        unoptimized={src.startsWith('data:')}
+    />
+);
+
+export function MyEditor() {
+    return (
+        <Editor.Root>
+            <EditorConfigProvider imageRenderer={NextImageRenderer}>
+                <Editor.Properties />
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </EditorConfigProvider>
+        </Editor.Root>
+    );
+}
+```
+
+The renderer signature matches a subset of `<img>` props plus `width` / `height`. Data URLs (the default for in-browser uploads) skip optimization via `unoptimized` so `next/image` doesn't try to proxy them.
+
+## See also
+
+- [Editor.Root](/docs/primitives/root)
+- [Section](/docs/primitives/section)
+- [EditorConfig reference](/docs/reference/config)

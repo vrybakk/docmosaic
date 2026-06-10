@@ -1,0 +1,72 @@
+---
+title: Analytics wiring
+description: Inject an analytics tracker at boot so the React package can fire events through your existing pipe.
+---
+
+`@docmosaic/react` doesn't import any analytics SDK. Instead, the host app injects a tracker via `setReactPackageTracker`, and the package routes its internal events through it.
+
+## The contract
+
+```ts
+import { setReactPackageTracker, type AnalyticsTracker } from '@docmosaic/react';
+
+const tracker: AnalyticsTracker = (event, properties) => {
+    // Forward to PostHog, Mixpanel, GTM, or your own pipe.
+    myAnalytics.track(event, properties);
+};
+
+setReactPackageTracker(tracker);
+```
+
+Once set, the package fires events for high-signal interactions — `editor_section_added`, `editor_pdf_downloaded`, `editor_undo`, etc. — with consistent property shapes.
+
+## Wire it in Next.js
+
+```tsx
+// app/analytics-bridge.tsx
+'use client';
+
+import { useEffect } from 'react';
+import { setReactPackageTracker } from '@docmosaic/react';
+import { trackEvent } from '@/lib/analytics';
+
+export function AnalyticsBridge() {
+    useEffect(() => {
+        setReactPackageTracker((event, properties) => {
+            trackEvent(event, properties);
+        });
+    }, []);
+    return null;
+}
+```
+
+Mount it once at the root:
+
+```tsx
+// app/layout.tsx
+export default function Layout({ children }) {
+    return (
+        <html lang="en">
+            <body>
+                <AnalyticsBridge />
+                {children}
+            </body>
+        </html>
+    );
+}
+```
+
+## Production-only tracking
+
+The `apps/web` reference app gates the tracker on `NODE_ENV === 'production'` so local dev never produces events. Mirror that pattern:
+
+```ts
+export function trackEvent(event: string, properties?: Record<string, unknown>) {
+    if (process.env.NODE_ENV !== 'production') return;
+    posthog.capture(event, properties);
+}
+```
+
+## See also
+
+- [Editor.Root](/docs/primitives/root)

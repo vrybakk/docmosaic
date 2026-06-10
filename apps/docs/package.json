@@ -1,0 +1,41 @@
+{
+    "name": "@docmosaic/docs",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "next dev -p 4002",
+        "build": "next build",
+        "start": "next start -p 4002",
+        "typecheck": "tsc --noEmit",
+        "lint": "echo \"no-op (docs)\"",
+        "test": "echo \"no tests (docs)\"",
+        "test:run": "echo \"no tests (docs)\"",
+        "postinstall": "fumadocs-mdx",
+        "generate:props": "bun run scripts/generate-prop-tables.ts"
+    },
+    "dependencies": {
+        "@docmosaic/core": "workspace:*",
+        "@docmosaic/react": "workspace:*",
+        "fumadocs-core": "15.7.13",
+        "fumadocs-mdx": "11.10.1",
+        "fumadocs-ui": "15.7.13",
+        "lucide-react": "^0.475.0",
+        "next": "^15.3.0",
+        "next-themes": "^0.4.6",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4.0.0",
+        "@types/mdx": "^2.0.13",
+        "@types/node": "^20",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "eslint": "^9",
+        "postcss": "^8",
+        "react-docgen-typescript": "^2.2.2",
+        "tailwindcss": "^4.0.0",
+        "typescript": "^5"
+    }
+}

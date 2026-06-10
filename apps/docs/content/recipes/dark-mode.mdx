@@ -1,0 +1,76 @@
+---
+title: Dark mode
+description: Wire the bundled .dark scope to next-themes (or any class toggle) and the editor follows along.
+---
+
+The DocMosaic theme ships a `.dark` scope out of the box. Every semantic token (`--background`, `--foreground`, `--primary`, …) flips when the `.dark` class lands on `<html>` (or any ancestor of the editor). Pair it with `next-themes` and you're done.
+
+## Install
+
+```bash
+bun add next-themes
+```
+
+## Wire next-themes at the root
+
+```tsx
+// app/layout.tsx
+import { ThemeProvider } from 'next-themes';
+import '@docmosaic/react/styles.css';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <body>
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    {children}
+                </ThemeProvider>
+            </body>
+        </html>
+    );
+}
+```
+
+The key bits:
+
+- **`attribute="class"`** — `next-themes` adds the `dark` class to `<html>`, which the DocMosaic theme's `.dark` scope reads.
+- **`suppressHydrationWarning`** — required by `next-themes` to avoid the class-mismatch warning on first paint.
+- **`enableSystem`** — respects the user's OS preference by default.
+
+## Toggle button
+
+```tsx
+'use client';
+
+import { useTheme } from 'next-themes';
+import { Moon, Sun } from 'lucide-react';
+
+export function ThemeToggle() {
+    const { resolvedTheme, setTheme } = useTheme();
+    return (
+        <button onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+            {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
+        </button>
+    );
+}
+```
+
+## Custom selector
+
+Prefer `prefers-color-scheme` or a `data-theme` attribute? Mirror the brand dark palette under your selector. The token names are identical to the `.dark` scope shipped by `themes/docmosaic.css` — copy them in.
+
+```css
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: 13 8 11;
+        --foreground: 252 222 156;
+        /* ... */
+    }
+}
+```
+
+No JS toggle needed. The editor reads the variables on every paint.
+
+## See also
+
+- [Theming](/docs/theming) — the full token surface

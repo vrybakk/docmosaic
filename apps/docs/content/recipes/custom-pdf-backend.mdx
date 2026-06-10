@@ -1,0 +1,69 @@
+---
+title: Custom PDF backend
+description: Swap the bundled jspdf pipeline for your own renderer — or run generation in a Worker.
+---
+
+`Editor.Root` accepts a `pdf` prop with two optional functions: `generate` and `estimate`. Anything omitted falls back to the bundled `@docmosaic/core` implementation.
+
+## Why override
+
+- **Different renderer.** Swap `jspdf` for `pdf-lib`, `pdfkit`, or `react-pdf`.
+- **Worker offload.** Move the synchronous part of generation off the main thread.
+- **Server-side rendering.** Send the document to your backend and stream the result down.
+- **Testing.** Mock the pipeline entirely with deterministic output.
+
+## Signatures
+
+The two functions are typed off the core exports — copy the signatures to stay compatible:
+
+```ts
+import type { generatePDF, estimatePDFSize } from '@docmosaic/core';
+
+const generate: typeof generatePDF = async (sections, options, onProgress) => {
+    // ...
+};
+
+const estimate: typeof estimatePDFSize = (sections, backgrounds) => {
+    // ...
+};
+```
+
+`generate` must honor the third argument — `onProgress(value: number)` reports 0 → 1 to the bundled `GenerationProgress` overlay. `options.signal` is an `AbortSignal` you should respect at every awaitable step.
+
+## Full example — pdf-lib + Worker
+
+```tsx
+import type { generatePDF as GenerateFn } from '@docmosaic/core';
+
+const generate: GenerateFn = async (sections, options, onProgress) => {
+    const worker = new Worker(new URL('./pdf-worker.ts', import.meta.url), { type: 'module' });
+    try {
+        return await new Promise<Blob>((resolve, reject) => {
+            worker.addEventListener('message', (e) => {
+                if (e.data.type === 'progress') onProgress?.(e.data.value);
+                if (e.data.type === 'done') resolve(e.data.blob);
+                if (e.data.type === 'error') reject(new Error(e.data.message));
+            });
+            worker.postMessage({ sections, options });
+            options.signal?.addEventListener('abort', () => {
+                worker.terminate();
+                reject(new Error('PDF generation cancelled'));
+            });
+        });
+    } finally {
+        worker.terminate();
+    }
+};
+
+<Editor.Root pdf={{ generate }}>{/* ... */}</Editor.Root>;
+```
+
+## Estimation
+
+`estimatePDFSize` is called frequently (every time the document changes) so it must be cheap. If your custom backend can't produce a fast estimate, leave `estimate` undefined — `Editor.FileSizeBadge` will fall back to the bundled heuristic.
+
+## See also
+
+- [Editor.Root](/docs/primitives/root)
+- [DownloadButton](/docs/primitives/download-button)
+- [usePdfGeneration hook](/docs/reference/hooks)

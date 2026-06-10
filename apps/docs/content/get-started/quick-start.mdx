@@ -1,0 +1,50 @@
+---
+title: Quick start
+description: A minimal copy-paste editor. Drop in <Editor.Root>, get the full default shell.
+---
+
+The fastest path is the default shell. `<Editor.Root>` owns the document state, the DnD provider, and arranges its children into the standard layout.
+
+## Minimal editor
+
+```tsx
+import { Editor } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+export function MyEditor() {
+    return (
+        <Editor.Root>
+            <Editor.Properties />
+            <Editor.Toolbar />
+            <Editor.Pages />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
+}
+```
+
+That's the whole editor. The order of children doesn't matter for the default shell — `Editor.Root` auto-arranges `Pages` to the left of `Canvas` regardless of source order.
+
+## Next.js note
+
+`@docmosaic/react` is client-only. In Next.js App Router, mount it inside a client boundary:
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+export default function EditorMount() {
+    return (
+        <Editor.Root>
+            {/* ... */}
+        </Editor.Root>
+    );
+}
+```
+
+Server Components can't dereference the `Editor.*` namespace through a client-reference proxy, so the dereferencing has to happen inside the client boundary.

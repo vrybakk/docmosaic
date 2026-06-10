@@ -1,0 +1,19 @@
+---
+title: Changelog
+description: Release history for @docmosaic/react and @docmosaic/core.
+---
+
+The packages follow [semver](https://semver.org/). Breaking changes ship in majors; new primitives ship in minors; bug fixes ship in patches.
+
+## 0.1.0
+
+Initial public preview.
+
+- Compound `Editor.*` namespace with ~40 primitives (Root, Canvas, Section, Toolbar, Properties, Preview, Pages, LayerList, Ruler, Guides, Minimap, KeybindingHelp, ContextMenu, Toaster, and more).
+- Headless `useDocumentState` hook for BYO-UI consumers.
+- Framework-agnostic `@docmosaic/core` with reducer + history.
+- Theming surface — shadcn-aligned semantic tokens, dark-mode scope, four bundled themes (DocMosaic, Minimal Light, Minimal Dark, plus the convenience bundle).
+- Storybook with 100+ stories at [storybook.docmosaic.com](https://storybook.docmosaic.com).
+- PDF byte-diff fixtures gating the generation pipeline (image, text, shapes, drawing, cropped).
+
+For a full per-PR changelog, see the repository on GitHub.

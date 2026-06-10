@@ -1,0 +1,58 @@
+---
+title: Editor.Pages
+description: Left rail of page thumbnails. Add, delete, reorder pages via drag.
+---
+
+`Editor.Pages` is the page-list rail. One thumbnail per page; click to switch the active page; drag handle to reorder; per-page "+" button to add, "×" to delete.
+
+<StorybookEmbed id="editor-pages--default" />
+
+## Usage
+
+```tsx
+<Editor.Root>
+    <Editor.Pages />
+    <Editor.Canvas>
+        <Editor.Section />
+    </Editor.Canvas>
+</Editor.Root>
+```
+
+`Editor.Root` arranges `Pages` to the left of `Canvas` regardless of source order — no manual layout needed.
+
+## Composition
+
+Mount `Editor.PageThumbnail` individually for a custom list:
+
+```tsx
+const { document } = useEditor();
+
+<div className="flex flex-col gap-2">
+    {document.pages.map((_, i) => (
+        <Editor.PageThumbnail key={i} pageIndex={i} />
+    ))}
+</div>;
+```
+
+## Examples
+
+### Horizontal page rail
+
+```tsx
+<Editor.Pages orientation="horizontal" />
+```
+
+### Hide the add-page button (fixed-page documents)
+
+```tsx
+<Editor.Pages hideAddPage />
+```
+
+## API Reference
+
+<PropTable name="Pages" />
+
+## Related
+
+- [PageThumbnail](/docs/primitives/page-thumbnail)
+- [PageBackground](/docs/primitives/page-background)

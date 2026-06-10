@@ -15,6 +15,7 @@
         "test": "turbo run test",
         "test:run": "turbo run test:run",
         "storybook": "turbo run dev --filter=@docmosaic/storybook",
+        "docs": "turbo run dev --filter=@docmosaic/docs",
         "changeset": "changeset",
         "version-packages": "changeset version",
         "release": "turbo run build && changeset publish",

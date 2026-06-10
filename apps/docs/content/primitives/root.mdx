@@ -1,0 +1,104 @@
+---
+title: Editor.Root
+description: The orchestrator. Owns the document state, the history timeline, and the DnD provider. Every other primitive reads from its context.
+---
+
+`Editor.Root` is the entry point. It owns the document state (controlled or uncontrolled), mounts a single `<DndProvider backend={HTML5Backend}>` for the whole tree, and provides the editor + config contexts every other `Editor.*` primitive consumes.
+
+<StorybookEmbed id="editor-root--default" />
+
+## Installation
+
+```bash
+bun add @docmosaic/react @docmosaic/core
+```
+
+## Usage
+
+```tsx
+import { Editor } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+export function MyEditor() {
+    return (
+        <Editor.Root>
+            <Editor.Properties />
+            <Editor.Toolbar />
+            <Editor.Pages />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
+}
+```
+
+## Composition
+
+`Editor.Root` arranges its children into the default shell automatically — `Pages` is forced to the left of `Canvas` regardless of source order. Drop any primitive in the child tree; it'll find its place.
+
+Don't nest another `<DndProvider>` underneath — `Editor.Root` already mounts one.
+
+## Examples
+
+### Controlled
+
+Lift the document state out so you can persist it or sync it across collaborators.
+
+```tsx
+const [doc, setDoc] = useState<Document>(() => createDocument());
+
+<Editor.Root document={doc} onDocumentChange={setDoc}>
+    {/* ... */}
+</Editor.Root>;
+```
+
+### Read-only
+
+Flip the editor into viewer mode. Mutating interactions are suppressed; preview / print / download stay live.
+
+```tsx
+<Editor.Root defaultDocument={signedContract} readOnly>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.Canvas />
+    <Editor.Preview />
+</Editor.Root>
+```
+
+### Custom PDF backend
+
+Swap the bundled `jspdf` pipeline for your own renderer (or run it in a Worker).
+
+```tsx
+<Editor.Root
+    pdf={{
+        generate: myCustomRenderer,
+        estimate: mySizeHeuristic,
+    }}
+>
+    {/* ... */}
+</Editor.Root>
+```
+
+See the [custom PDF backend recipe](/docs/recipes/custom-pdf-backend) for a full example.
+
+### Rulers + minimap
+
+```tsx
+<Editor.Root showRuler showMinimap rulerUnit="mm">
+    {/* ... */}
+</Editor.Root>
+```
+
+## API Reference
+
+<PropTable name="Root" />
+
+## Related
+
+- [Canvas](/docs/primitives/canvas) — the interactive workspace
+- [Properties](/docs/primitives/properties) — document name + page size + orientation bar
+- [Toolbar](/docs/primitives/toolbar) — top action bar
+- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — the two state modes

@@ -1,0 +1,68 @@
+---
+title: Embedding in a modal
+description: Drop the editor into a Radix Dialog (or any modal) without breaking drag-and-drop.
+---
+
+The editor works inside a modal as long as one detail is right: don't re-mount the `<DndProvider>`. `Editor.Root` already mounts one — if your modal wraps the editor in another `react-dnd` provider, drags break silently.
+
+## The pattern
+
+```tsx
+import * as Dialog from '@radix-ui/react-dialog';
+import { Editor } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+export function EditorModal() {
+    return (
+        <Dialog.Root>
+            <Dialog.Trigger className="rounded bg-primary px-4 py-2 text-primary-foreground">
+                Open editor
+            </Dialog.Trigger>
+            <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+                <Dialog.Content className="fixed inset-4 overflow-hidden rounded-lg bg-background shadow-xl">
+                    <Editor.Root>
+                        <Editor.Properties />
+                        <Editor.Toolbar />
+                        <Editor.Pages />
+                        <Editor.Canvas>
+                            <Editor.Section />
+                        </Editor.Canvas>
+                        <Editor.Preview />
+                    </Editor.Root>
+                </Dialog.Content>
+            </Dialog.Portal>
+        </Dialog.Root>
+    );
+}
+```
+
+## Gotchas
+
+- **Don't mount inside the trigger.** Mount the editor inside `<Dialog.Content>`. Mounting in the trigger renders the entire editor unconditionally and defeats the lazy-mount benefit.
+- **Use `inset-` for sizing.** The editor fills its container — give the dialog `inset-4` (or explicit `width` / `height`) so the canvas has room.
+- **Re-mounting resets the document.** Closing and re-opening the dialog re-runs `Editor.Root`'s init. For draft persistence, lift state via controlled mode + a state container outside the dialog.
+
+## With persistence
+
+```tsx
+const [draft, setDraft] = useState<Document | null>(null);
+
+<Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Content>
+        <Editor.Root
+            document={draft ?? createDocument()}
+            onDocumentChange={setDraft}
+        >
+            {/* ... */}
+        </Editor.Root>
+    </Dialog.Content>
+</Dialog.Root>;
+```
+
+Now the draft survives close-and-reopen — perfect for "save draft" / "send" flows.
+
+## See also
+
+- [Editor.Root](/docs/primitives/root)
+- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled)

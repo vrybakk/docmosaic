@@ -1,0 +1,82 @@
+---
+title: History
+description: Undo / redo via withHistory — a snapshot timeline that wraps the reducer. Every action is undoable by default.
+---
+
+The history layer is a thin snapshot timeline on top of the reducer. Every mutation flows through `withHistory(reducer)`, which captures the previous state before applying each action. Users get the standard Cmd+Z / Cmd+Shift+Z experience without any per-action wiring.
+
+## The timeline
+
+```ts
+import { reducer, withHistory } from '@docmosaic/core';
+
+const wrapped = withHistory(reducer);
+let state = wrapped.init(initialDocument);
+
+state = wrapped.reduce(state, { type: 'ADD_SECTION', /* ... */ });
+state = wrapped.reduce(state, { type: 'UNDO' });
+state = wrapped.reduce(state, { type: 'REDO' });
+```
+
+`state` is `{ past: Document[], present: Document, future: Document[] }`. The `past` and `future` arrays are bounded — the timeline caps at the configured depth (defaults to 50) to keep memory predictable for image-heavy documents.
+
+## What's undoable
+
+Every reducer action is undoable by default. There's no opt-out flag and no "transient" action — if it mutates the document, it lands on the timeline.
+
+- `ADD_SECTION` / `UPDATE_SECTION` / `DELETE_SECTION`
+- `ADD_PAGE` / `DELETE_PAGE` / `REORDER_PAGES`
+- `BRING_TO_FRONT` / `SEND_TO_BACK` / `MOVE_FORWARD` / `MOVE_BACKWARD`
+- `SET_DOCUMENT_NAME` / `SET_PAGE_SIZE` / `SET_ORIENTATION`
+- `SET_HIDDEN` / `SET_LOCKED`
+- `ADD_GUIDE` / `REMOVE_GUIDE`
+- `SET_PAGE_BACKGROUND`
+
+UI-only state (the selection, the active hover, the marquee rectangle) lives outside the document and isn't part of the timeline.
+
+## Coalescing
+
+Continuous gestures coalesce into a single timeline entry. A drag that fires 60 `UPDATE_SECTION` calls becomes one undo step, not sixty. The hook detects same-target same-action sequences within a debounce window and merges them.
+
+Coalescing keeps the timeline tractable for image-heavy documents and matches user intent — one drag, one undo.
+
+## Reading the timeline state
+
+The headless hook surfaces two booleans:
+
+```ts
+const { canUndo, canRedo, actions } = useDocumentState();
+
+<button disabled={!canUndo} onClick={actions.undo}>Undo</button>
+<button disabled={!canRedo} onClick={actions.redo}>Redo</button>
+```
+
+`canUndo` is `past.length > 0`; `canRedo` is `future.length > 0`. Editing dispatch clears `future` — the standard browser-style "redo doesn't survive a new edit" behavior.
+
+## Controlled mode disables it
+
+`Editor.Root document={...} onDocumentChange={...}` (controlled) skips the timeline entirely — the parent owns state, so undo/redo would need to be implemented in the parent's own state container. `canUndo` / `canRedo` are always `false` and `actions.undo` / `actions.redo` are no-ops.
+
+If you want undo/redo in controlled mode, wrap your own state in `withHistory` and dispatch through it.
+
+## Reset / replace
+
+There's no "clear timeline" action — to reset, swap the whole `Document` via the root:
+
+```tsx
+const [doc, setDoc] = useState(initialDoc);
+
+function resetEditor() {
+    setDoc(createDocument()); // remount-equivalent; timeline restarts
+}
+
+<Editor.Root document={doc} onDocumentChange={setDoc}>{/* ... */}</Editor.Root>
+```
+
+In uncontrolled mode, change `key` on `Editor.Root` to force a remount and discard the timeline.
+
+## See also
+
+- [Document model](/docs/concepts/document-model) — what each timeline snapshot contains
+- [Keybindings](/docs/concepts/keybindings) — the default `mod+z` / `mod+shift+z` bindings
+- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — when the timeline is active

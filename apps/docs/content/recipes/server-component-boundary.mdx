@@ -1,0 +1,80 @@
+---
+title: Next.js Server Component boundary
+description: Where to put the 'use client' directive so the Editor.* namespace dereferences cleanly.
+---
+
+`@docmosaic/react` is client-only. In Next.js App Router, that's two minutes of wiring — but one detail trips people up.
+
+## The problem
+
+A Server Component can't dereference the `Editor.*` namespace through a client-reference proxy. This breaks:
+
+```tsx
+// app/editor/page.tsx — Server Component
+import { Editor } from '@docmosaic/react';
+
+export default function Page() {
+    // ❌ Editor.Root is a client reference; Server Component can't read .Root
+    return <Editor.Root>{/* ... */}</Editor.Root>;
+}
+```
+
+You'll see a runtime error like "Cannot read properties of undefined (reading 'Root')".
+
+## The fix
+
+Move the dereferencing into a client component. The simplest approach: one client file per editor route.
+
+```tsx
+// app/editor/page.tsx — Server Component, fine
+import { Suspense } from 'react';
+import { EditorMount } from './editor-mount';
+
+export default function Page() {
+    return (
+        <Suspense fallback={<div>Loading editor…</div>}>
+            <EditorMount />
+        </Suspense>
+    );
+}
+```
+
+```tsx
+// app/editor/editor-mount.tsx — Client component
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+export function EditorMount() {
+    return (
+        <Editor.Root>
+            <Editor.Properties />
+            <Editor.Toolbar />
+            <Editor.Pages />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
+}
+```
+
+The `'use client'` directive at the top of `editor-mount.tsx` means the dereferencing happens at the client-runtime, where the namespace object exists.
+
+## Why not import flat?
+
+The flat exports (`EditorRoot`, `EditorCanvas`, etc.) work from a Server Component because each is a single client-reference, not a property access:
+
+```tsx
+// Works from Server Component
+import { EditorRoot, EditorCanvas, EditorSection } from '@docmosaic/react';
+```
+
+But you still need a `'use client'` boundary somewhere — the components themselves are client components. The boundary is just slightly higher in the tree.
+
+## See also
+
+- [Quick start](/docs/get-started/quick-start)
+- [Editor.Root](/docs/primitives/root)

@@ -1,0 +1,53 @@
+---
+title: Controlled vs uncontrolled
+description: Editor.Root supports both modes. Pick uncontrolled for plug-and-play, controlled when you need to own the document.
+---
+
+`Editor.Root` follows the standard React controlled/uncontrolled pattern. Pick the mode that fits your data layer.
+
+## Uncontrolled (default)
+
+`Editor.Root` owns the document state and the history timeline internally. You don't pass anything.
+
+```tsx
+<Editor.Root>
+    {/* Editor.Root owns Document + history */}
+</Editor.Root>
+```
+
+Use this when you want a drop-in editor and don't need to persist state outside the React tree.
+
+## Controlled
+
+Pass `document` + `onChange` to lift state out. You become the source of truth.
+
+```tsx
+const [doc, setDoc] = useState<Document>(() => createDocument());
+
+return (
+    <Editor.Root document={doc} onChange={setDoc}>
+        {/* ... */}
+    </Editor.Root>
+);
+```
+
+Use this when you want to:
+
+- Persist the document to localStorage / a backend / a URL
+- Sync the document across collaborators
+- Integrate with a different state container (Zustand, Redux, Jotai)
+
+## Headless: bring your own UI
+
+If you want full control over the UI, skip `Editor.Root` and use `useDocumentState` directly:
+
+```tsx
+import { useDocumentState } from '@docmosaic/react';
+
+function CustomEditor() {
+    const { document, actions, canUndo, canRedo } = useDocumentState();
+    // render whatever UI you want
+}
+```
+
+See [BYO-UI with useDocumentState](/docs/recipes/byo-ui-with-use-document-state) for the full pattern.

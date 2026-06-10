@@ -1,0 +1,105 @@
+---
+title: Types
+description: The TypeScript surface — Document, Page, Section, PageSize, and supporting types.
+---
+
+The packages ship `.d.ts` for every public export. Two snippets cover most use cases — paste them into your project as a reminder of the public shape.
+
+## Document
+
+```ts
+interface Document {
+    id: string;
+    name: string;
+    pageSize: PageSize;
+    orientation: PageOrientation;
+    pages: Page[];
+    sections: Section[];
+    createdAt: number;
+    updatedAt: number;
+}
+```
+
+## Page
+
+```ts
+interface Page {
+    id: string;
+    name?: string;
+    background?: {
+        color?: string;
+        imageUrl?: string;
+    };
+    guides?: PageGuides;
+}
+
+interface PageGuides {
+    vertical: number[];
+    horizontal: number[];
+}
+```
+
+## Section
+
+```ts
+type Section = ImageSection | TextSection | ShapeSection | DrawingSection;
+
+interface BaseSection {
+    id: string;
+    pageIndex: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    zIndex?: number;
+    hidden?: boolean;
+    locked?: boolean;
+}
+
+interface ImageSection extends BaseSection {
+    type: 'image';
+    imageUrl?: string;
+    fit?: 'cover' | 'contain' | 'stretch' | 'crop';
+    crop?: { x: number; y: number; width: number; height: number };
+}
+
+interface TextSection extends BaseSection {
+    type: 'text';
+    content: string;
+    fontSize: number;
+    fontFamily: string;
+    color: string;
+    align: 'left' | 'center' | 'right';
+}
+
+interface ShapeSection extends BaseSection {
+    type: 'shape';
+    shape: 'rect' | 'ellipse' | 'line';
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
+}
+
+interface DrawingSection extends BaseSection {
+    type: 'drawing';
+    strokes: Array<{ color: string; width: number; points: Array<{ x: number; y: number }> }>;
+}
+```
+
+## Page sizes
+
+```ts
+type PageSize =
+    | 'A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5'
+    | 'LETTER' | 'LEGAL' | 'TABLOID'
+    | 'EXECUTIVE' | 'STATEMENT'
+    | string; // also accepts custom sizes registered via createPageSize
+
+type PageOrientation = 'portrait' | 'landscape';
+type MeasurementUnit = 'mm' | 'in' | 'px';
+```
+
+## See also
+
+- [Document model concept](/docs/concepts/document-model)
+- [Unit system](/docs/concepts/unit-system)

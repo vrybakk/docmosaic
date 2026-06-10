@@ -1,0 +1,55 @@
+---
+title: Editor.PropertiesPanel
+description: The contextual right-side panel. Reflects the selected section's fields — layout, text, shape, layer.
+---
+
+`Editor.PropertiesPanel` is the contextual inspector. It auto-discriminates based on the selected section's `type` and renders the matching field set — position + size for layout, font + color for text, fill + stroke for shape, hide / lock toggles for the layer tab.
+
+<StorybookEmbed id="editor-propertiespanel--default" />
+
+## Usage
+
+```tsx
+<Editor.Root>
+    <Editor.PropertiesPanel />
+</Editor.Root>
+```
+
+The panel reads from the editor context — drop it anywhere underneath `Editor.Root` and it lights up. With no section selected, the empty state suggests "Select a section to edit its properties."
+
+## Composition
+
+The default panel renders all four sub-tabs. Mount sub-tabs individually for a flat (un-tabbed) inspector:
+
+```tsx
+<Editor.PropertiesPanel>
+    <Editor.PropertiesPanel.Layout />
+    <Editor.PropertiesPanel.Text />
+    <Editor.PropertiesPanel.Shape />
+    <Editor.PropertiesPanel.Layer />
+</Editor.PropertiesPanel>
+```
+
+In `readOnly` mode the inputs render disabled and the layer-action buttons hide.
+
+## Examples
+
+### Side-by-side with the layer list
+
+```tsx
+<div className="flex flex-col border-l">
+    <Editor.LayerList className="border-b" />
+    <Editor.PropertiesPanel />
+</div>
+```
+
+This is the canonical right-rail composition — outliner on top, contextual props underneath.
+
+## API Reference
+
+<PropTable name="PropertiesPanel" />
+
+## Related
+
+- [LayerList](/docs/primitives/layer-list) — outliner that pairs with the panel
+- [Section](/docs/primitives/section) — the source of the selection

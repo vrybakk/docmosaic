@@ -1,0 +1,106 @@
+---
+title: Document model
+description: The Document → Page → Section hierarchy. One source of truth shared by the canvas, the PDF generator, and the headless hook.
+---
+
+The document model is a single normalized tree shared between the canvas, the PDF generator, and the headless `useDocumentState` hook. Everything else in the library reads from it; nothing else holds long-lived state.
+
+## The shape
+
+```ts
+interface Document {
+    id: string;
+    name: string;
+    pageSize: PageSize;          // 'A4' | 'LETTER' | ...
+    orientation: PageOrientation; // 'portrait' | 'landscape'
+    pages: Page[];
+    sections: Section[];          // flat, sections reference pages by index
+    createdAt: number;
+    updatedAt: number;
+}
+```
+
+Two design choices to call out:
+
+- **Sections are flat**, not nested under pages. Each `Section` carries a `pageIndex` field. This keeps reordering and cross-page moves cheap (no array surgery to lift a section out of one tree into another) and makes the reducer's update logic a single map over one array.
+- **Document-level `pageSize` and `orientation`**. All pages in a document share the same paper size — the editor is built for documents, not arbitrary multi-format canvases. If you need per-page sizes, fork the reducer; it's pure.
+
+## Page
+
+```ts
+interface Page {
+    id: string;
+    name?: string;
+    background?: { color?: string; imageUrl?: string };
+    guides?: PageGuides;
+}
+```
+
+`Page` is intentionally thin — it's a slot, not a container. The expensive content (sections) is keyed off `pageIndex`, so a page can be moved or deleted without rewriting every section underneath it.
+
+`background` and `guides` are both optional. Documents migrated from earlier versions render identically — the renderer treats `undefined` as "no override."
+
+## Section
+
+```ts
+interface Section {
+    id: string;
+    pageIndex: number;
+    type: 'image' | 'text' | 'shape' | 'drawing';
+    x: number;           // PDF points (72 DPI)
+    y: number;
+    width: number;
+    height: number;
+    zIndex?: number;     // default 0; see Layers
+    hidden?: boolean;    // skip on canvas + PDF
+    locked?: boolean;    // refuse selection/drag/resize
+    // ...type-specific payload fields
+}
+```
+
+The type-specific payload differs:
+
+- **`image`** — `imageUrl`, `fit: 'cover' | 'contain' | 'stretch' | 'crop'`, optional crop rectangle.
+- **`text`** — `content`, `fontSize`, `fontFamily`, `color`, `align`.
+- **`shape`** — `shape: 'rect' | 'ellipse' | 'line'`, `fill`, `stroke`, `strokeWidth`.
+- **`drawing`** — an array of stroke paths in points.
+
+The reducer doesn't care about the payload — it routes updates through `updateSection(id, patch)`. Per-type behavior lives in the canvas primitives and the PDF generator.
+
+## Where geometry lives
+
+Every `x/y/width/height` is in **PDF points**. Always. The canvas applies `finalScale = pageScale * zoom` at display time; the PDF generator hands the values straight to `jspdf` without any conversion. See [Unit system](/docs/concepts/unit-system) for the conversion API and why this matters.
+
+## Mutating the document
+
+There is exactly one way to mutate the document: dispatch through the reducer. Two surfaces wrap it:
+
+```ts
+// 1. The headless hook — owns history internally.
+const { document, actions } = useDocumentState();
+actions.addSection({ pageIndex: 0, type: 'image' });
+
+// 2. Editor.Root — same hook, mounted under context.
+<Editor.Root>
+    {/* primitives call useEditor().actions */}
+</Editor.Root>
+```
+
+Both paths funnel through `reducer` + `withHistory` from `@docmosaic/core`. If you add a new mutator, route it through there or the timeline will desync.
+
+## Serialization
+
+`Document` is plain JSON. Send it over the wire, persist it to localStorage, embed it in a Postgres `jsonb` column — the model is intentionally serialization-friendly.
+
+```ts
+const json = JSON.stringify(document);
+const restored: Document = JSON.parse(json);
+```
+
+The only thing to watch for: `imageUrl` is stored as a data URL by default. Documents with embedded images can get large. See the [persisting templates recipe](/docs/recipes/persisting-templates) for a pattern that keeps blobs on the side.
+
+## See also
+
+- [Designer](/docs/concepts/designer) — the mental model behind the UI
+- [History](/docs/concepts/history) — undo/redo and the timeline
+- [Unit system](/docs/concepts/unit-system) — why geometry is stored in points

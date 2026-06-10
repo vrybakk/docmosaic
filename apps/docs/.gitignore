@@ -1,0 +1,9 @@
+# Next.js build output
+/.next/
+/out/
+
+# Fumadocs MDX generated artifacts
+/.source/
+
+# Misc
+*.tsbuildinfo
