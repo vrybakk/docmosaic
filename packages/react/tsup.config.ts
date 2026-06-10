@@ -53,7 +53,6 @@ export default defineConfig({
             'styles.css',
             'styles/base.css',
             'styles/themes/docmosaic.css',
-            'styles/themes/minimal-dark.css',
             'styles/themes/minimal-light.css',
         ];
         for (const relPath of cssFiles) {

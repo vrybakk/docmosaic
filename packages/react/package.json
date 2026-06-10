@@ -1,6 +1,6 @@
 {
     "name": "@docmosaic/react",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "private": false,
     "type": "module",
     "main": "./dist/index.cjs",
@@ -20,7 +20,6 @@
         "./styles.css": "./dist/styles.css",
         "./styles/base.css": "./dist/styles/base.css",
         "./styles/themes/docmosaic.css": "./dist/styles/themes/docmosaic.css",
-        "./styles/themes/minimal-dark.css": "./dist/styles/themes/minimal-dark.css",
         "./styles/themes/minimal-light.css": "./dist/styles/themes/minimal-light.css"
     },
     "sideEffects": [

@@ -1,5 +1,11 @@
 # @docmosaic/core
 
+## 1.0.0
+
+### Major Changes
+
+-   v1.0 release. Removes deprecated aliases. See migration guide.
+
 ## 0.1.0
 
 ### Minor Changes

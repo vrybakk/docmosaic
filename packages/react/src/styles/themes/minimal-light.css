@@ -2,9 +2,10 @@
  * Minimal light theme — shadcn-inspired neutral grays on a white surface.
  * Pair with @docmosaic/react/styles/base.css.
  *
- * Brand-agnostic counterpart to minimal-dark — same restrained palette,
- * inverted for a light editor surface. Exposes the shadcn-aligned semantic
- * surface plus legacy `--editor-color-*` aliases for back-compat.
+ * Brand-agnostic alternative to docmosaic.css — same restrained palette, no
+ * brand colors. Exposes the shadcn-aligned semantic surface plus legacy
+ * `--editor-color-*` aliases for back-compat. For dark mode, import
+ * `styles.css` (or `themes/docmosaic.css`) and toggle the `.dark` class.
  */
 
 @layer docmosaic {

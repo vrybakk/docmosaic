@@ -35,7 +35,6 @@ const preview: Preview = {
             themes: {
                 DocMosaic: 'theme-docmosaic',
                 'DocMosaic Dark': 'theme-docmosaic dark',
-                'Minimal Dark': 'theme-minimal-dark',
                 Minimal: 'theme-minimal',
             },
             defaultTheme: 'DocMosaic',

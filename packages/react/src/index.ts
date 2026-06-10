@@ -159,20 +159,6 @@ export const Editor = {
     Ruler,
     Guides,
     Minimap,
-    /** @deprecated Use `Editor.Properties` instead. Removed in next major. */
-    Inspector: Properties,
-    /** @deprecated Use `Editor.PageBackground` instead. Removed in next major. */
-    PageBackgroundPicker: PageBackground,
-    /** @deprecated Use `Editor.FileSizeBadge` instead. Removed in next major. */
-    EstimatedSize: FileSizeBadge,
-    /** @deprecated Use `Editor.GenerationProgress` instead. Removed in next major. */
-    ProgressOverlay: GenerationProgress,
-    /** @deprecated Use `Editor.AddImageButton` instead. Removed in next major. */
-    AddSectionButton: AddImageButton,
-    /** @deprecated Use `Editor.Pages` instead. Removed in next major. */
-    PageList: Pages,
-    /** @deprecated Use `Editor.PageThumbnail` instead. Removed in next major. */
-    PageThumb: PageThumbnail,
 } as const;
 
 /**

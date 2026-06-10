@@ -15,7 +15,7 @@
     },
     "apps/docs": {
       "name": "@docmosaic/docs",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@docmosaic/core": "workspace:*",
         "@docmosaic/react": "workspace:*",
@@ -43,7 +43,7 @@
     },
     "apps/storybook": {
       "name": "@docmosaic/storybook",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@docmosaic/core": "workspace:*",
         "@docmosaic/react": "workspace:*",
@@ -134,7 +134,7 @@
     },
     "packages/core": {
       "name": "@docmosaic/core",
-      "version": "0.1.0",
+      "version": "1.0.0",
       "dependencies": {
         "jspdf": "^2.5.2",
         "uuid": "^11.0.5",
@@ -153,7 +153,7 @@
     },
     "packages/react": {
       "name": "@docmosaic/react",
-      "version": "0.1.0",
+      "version": "1.0.0",
       "dependencies": {
         "@radix-ui/react-context-menu": "^2.3.0",
         "@radix-ui/react-dialog": "^1.1.6",
