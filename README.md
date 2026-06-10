@@ -4,6 +4,8 @@ DocMosaic is an open-source, fully client-side PDF builder. Users drop images in
 
 This repository is the monorepo. It contains the reusable libraries plus the reference Next.js app that runs at [docmosaic.com](https://docmosaic.com).
 
+> **v1.0 released.** `@docmosaic/core` and `@docmosaic/react` left preview. See the [v1.0 migration guide](docs/migration/v1.md) ([online](https://docs.docmosaic.com/docs/migration/v1)) for the alias removals and codemods.
+
 ## What's in here
 
 | Package                                  | Description                                                                        |

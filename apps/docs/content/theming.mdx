@@ -1,12 +1,9 @@
 ---
 title: Theming
-description: The --editor-* CSS variable surface and the base / brand-theme split. Rebrand with a single variable, or ship your own theme on top of the shared structural base.
+description: The shadcn-aligned semantic token surface and the base / brand-theme split. Rebrand with a single variable, or ship your own theme on top of the shared structural base.
 ---
 
-`@docmosaic/react` reads every accent color, radius, and shadow from CSS custom properties. The token surface comes in two flavors:
-
-1. **shadcn-aligned semantic tokens** (recommended) — the same `--background`, `--foreground`, `--primary`, `--secondary`, `--muted`, `--accent`, `--destructive`, `--border`, `--input`, `--ring`, `--radius` every shadcn-based app already exposes. Rebrand the editor with the same variable an app uses for the rest of its UI.
-2. **legacy `--editor-color-*` aliases** — `--editor-color-accent`, `--editor-color-accent-soft`, `--editor-color-success`, `--editor-color-warning`, `--editor-color-warning-soft`, `--editor-color-surface`, `--editor-color-text`. Soft-deprecated; resolve to the semantic surface by default. Kept for one major so existing consumers don't break.
+`@docmosaic/react` reads every accent color, radius, and shadow from CSS custom properties — the same `--background`, `--foreground`, `--primary`, `--secondary`, `--muted`, `--accent`, `--destructive`, `--border`, `--input`, `--ring`, `--radius` every shadcn-based app already exposes. Rebrand the editor with the same variable an app uses for the rest of its UI.
 
 No JavaScript-side theme provider, no runtime config — just CSS.
 
@@ -15,8 +12,7 @@ No JavaScript-side theme provider, no runtime config — just CSS.
 The package ships its styles split into layers so you can swap colors without reinventing the structural defaults:
 
 - **`styles/base.css`** — brand-agnostic structural tokens (`--editor-radius-section`, `--editor-shadow-section`, `--radius`) and the cascade-layer order declaration.
-- **`styles/themes/docmosaic.css`** — the DocMosaic brand colors as shadcn semantic tokens (+ legacy aliases). **Default.**
-- **`styles/themes/minimal-dark.css`** — shadcn-inspired neutral grays on a dark surface.
+- **`styles/themes/docmosaic.css`** — the DocMosaic brand colors as shadcn semantic tokens, including the bundled `.dark` scope. **Default.**
 - **`styles/themes/minimal-light.css`** — shadcn-inspired neutral grays on a white surface.
 - **`styles.css`** — convenience bundle that imports `base` + the DocMosaic brand theme.
 
@@ -30,18 +26,17 @@ You pick one of these layering patterns at import time:
                                   import './my-theme.css';
 3. Explicit DocMosaic theme    →  import '@docmosaic/react/styles/base.css';
                                   import '@docmosaic/react/styles/themes/docmosaic.css';
-4. Minimal dark (shadcn-ish)   →  import '@docmosaic/react/styles/base.css';
-                                  import '@docmosaic/react/styles/themes/minimal-dark.css';
-5. Minimal light (shadcn-ish)  →  import '@docmosaic/react/styles/base.css';
+4. Minimal light (shadcn-ish)  →  import '@docmosaic/react/styles/base.css';
                                   import '@docmosaic/react/styles/themes/minimal-light.css';
 ```
+
+For dark mode, import `styles.css` (or `themes/docmosaic.css`) and toggle the `.dark` class on `<html>` — the theme ships a `.dark` scope. See the [dark mode recipe](/docs/recipes/dark-mode).
 
 ## Available themes
 
 | Theme           | Surface | Accent              | Import path                                                |
 | --------------- | ------- | ------------------- | ---------------------------------------------------------- |
 | DocMosaic       | white   | deep aubergine      | `@docmosaic/react/styles/themes/docmosaic.css` *(default)* |
-| Minimal Dark    | zinc-950| near-white          | `@docmosaic/react/styles/themes/minimal-dark.css`          |
 | Minimal Light   | white   | near-black          | `@docmosaic/react/styles/themes/minimal-light.css`         |
 
 ## Token reference

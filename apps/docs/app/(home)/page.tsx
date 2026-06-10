@@ -5,10 +5,13 @@ export default function HomePage() {
     return (
         <main className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-6 py-16 md:py-24">
             <section className="flex flex-col gap-6">
-                <div className="inline-flex w-fit items-center gap-2 rounded-full border border-fd-border bg-fd-card px-3 py-1 text-xs text-fd-muted-foreground">
+                <Link
+                    href="/docs/migration/v1"
+                    className="inline-flex w-fit items-center gap-2 rounded-full border border-fd-border bg-fd-card px-3 py-1 text-xs text-fd-muted-foreground transition-colors hover:bg-fd-accent"
+                >
                     <Sparkles className="size-3.5" />
-                    <span>v0.1 — early preview</span>
-                </div>
+                    <span>v1.0 — see migration guide</span>
+                </Link>
                 <h1 className="text-balance text-4xl font-semibold tracking-tight md:text-6xl">
                     The headless PDF editor for the web.
                 </h1>
