@@ -1,4 +1,7 @@
-# Unit system
+---
+title: Unit system
+description: Geometry is stored in PDF points. Conversions live at the edges — uploads (px → pt), display (pt → CSS px), export (pt → PDF).
+---
 
 Every coordinate, width, and height inside the document model is stored in **PDF points** (1pt = 1/72 inch). Everything else — millimeters in paper-size labels, CSS pixels in the on-screen canvas, image dimensions from a file upload — is a conversion happening at the boundary. Picking one canonical unit keeps the reducer pure and the PDF output byte-stable.
 
@@ -62,18 +65,6 @@ const { width, height } = getPageDimensionsWithOrientation('A4', 'landscape');
 
 That's the same shape jsPDF expects. Pass it straight to the renderer.
 
-## Example — converting a paper size for a tooltip
-
-```ts
-import { getPageDimensions, formatDimensions } from '@docmosaic/core';
-
-formatDimensions(getPageDimensions('LETTER', 'mm'), 'mm');
-// => '216×279mm'
-
-formatDimensions(getPageDimensions('LETTER', 'in'), 'in');
-// => '8.5×11in'
-```
-
 ## When you need to convert
 
 Three real boundaries — the rest is storage.
@@ -83,19 +74,9 @@ Three real boundaries — the rest is storage.
 A dropped image gives you pixel dimensions via `naturalWidth` / `naturalHeight`. Convert to points before persisting them on a `Section`:
 
 ```ts
-import { convertDimensions } from '@docmosaic/core';
-
-const { width, height } = convertDimensions(
-    { width: img.naturalWidth, height: img.naturalHeight },
-    'px',
-    'mm',
-);
-// then mmToPt(width) / mmToPt(height) — or skip the intermediate via px * 72/96
 const widthPt = img.naturalWidth * (72 / 96);
 const heightPt = img.naturalHeight * (72 / 96);
 ```
-
-The editor itself takes the shortcut: `px * 72/96`. Both paths are equivalent because 1mm = 96/25.4 px and 1mm = 2.83465pt.
 
 ### 2. Rendering (pt → CSS px)
 
@@ -115,14 +96,9 @@ This is a no-op. jsPDF is configured with `unit: 'pt'`, so the document's stored
 ## Tradeoffs
 
 - **No `'pt'` in `MeasurementUnit`.** Points are storage, not display. If a UI ever needs to show "12pt", convert via `ptToMm` then format — or build a `formatPoints` helper at the call site.
-- **`mmToPt`/`ptToMm` use the constant `2.83465`.** That's the rounded value of `72 / 25.4`. Errors are <1e-5 over A0 dimensions — well below jsPDF's own precision.
+- **`mmToPt`/`ptToMm` use the constant `2.83465`.** That's the rounded value of `72 / 25.4`. Errors are under `1e-5` over A0 dimensions — well below jsPDF's own precision.
 
 ## See also
 
-- [Designer](./designer.md) — how the canvas scales points into CSS pixels
-- [Guides and snap](./guides-and-snap.md) — `Editor.Ruler` is the unit-aware primitive that surfaces points/mm/in directly on the canvas
-- [`@docmosaic/core` README — Public surface](../../packages/core/README.md#public-surface) — every dimension helper export
-- [`packages/core/src/dimensions.ts`](../../packages/core/src/dimensions.ts) — source with JSDoc
-- [`packages/core/src/page-sizes.ts`](../../packages/core/src/page-sizes.ts) — points table for every supported paper size
-
-`Editor.Ruler` (Phase 29) consumes these helpers directly — pick the unit via `rulerUnit` on `Editor.Root` (`'pt'` / `'mm'` / `'in'`) and the major-tick labels run through `ptToMm` (and a 25.4 divider for inches) so the on-canvas measurements stay byte-identical to the rest of the document model.
+- [Designer](/docs/concepts/designer) — how the canvas scales points into CSS pixels
+- [Guides and snap](/docs/concepts/guides-and-snap) — `Editor.Ruler` is the unit-aware primitive that surfaces points/mm/in directly on the canvas

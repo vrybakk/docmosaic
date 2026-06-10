@@ -1,4 +1,7 @@
-# Keybindings
+---
+title: Keybindings
+description: The built-in keyboard layer — undo/redo, nudge, delete, deselect. Fully overridable.
+---
 
 `Editor.Root` ships a built-in keyboard layer. Cmd/Ctrl+Z for undo, arrows to nudge the selected section, Delete to remove it, Escape to deselect — the conventions consumers expect from Figma, Notion, and every other doc-editing tool. The layer is fully overridable: tweak a single action, register alternates, or turn the whole thing off.
 
@@ -16,7 +19,7 @@
 | Nudge by 10pt   | `Shift+ArrowUp/Down/Left/Right`  |
 | Show shortcuts  | `mod+/`                          |
 
-Nudge values are in points — see [Unit system](./unit-system.md) for why.
+Nudge values are in points — see [Unit system](/docs/concepts/unit-system) for why.
 
 ## Show the active keymap with `Editor.KeybindingHelp`
 
@@ -40,8 +43,6 @@ const myKeymap = { redo: 'mod+r' };
     <Editor.KeybindingHelp keymap={myKeymap} />
 </Editor.Root>
 ```
-
-The dialog also accepts a controlled `open` / `onOpenChange` pair so you can hook it up to a custom trigger (e.g. a "?" button in your toolbar). The `showHelp` listener is mounted by the dialog itself (not by the main `useEditorKeybindings` dispatcher), so the chord still works regardless of the `Editor.Root` `keybindings` prop — drop the dialog or skip rendering it entirely when you want the help layer off.
 
 ## Override individual bindings
 
@@ -97,7 +98,7 @@ Token rules:
 
 ## Standalone usage with `useEditorKeybindings`
 
-The hook is exported separately for "BYO-UI" trees that mount their own provider (see the [Designer headless-mode walk-through](./designer.md#headless-mode)). Render it anywhere inside an `EditorProvider`:
+The hook is exported separately for "BYO-UI" trees that mount their own provider. Render it anywhere inside an `EditorProvider`:
 
 ```tsx
 import { useEditorKeybindings, DEFAULT_KEYMAP } from '@docmosaic/react';
@@ -127,7 +128,5 @@ function MyShortcuts() {
 
 ## See also
 
-- [Designer](./designer.md) — selection model that nudge / delete operate on
-- [Layers](./layers.md) — z-index actions that could be bound to shortcuts in the future
-- [`@docmosaic/react` README — Keybindings](../../packages/react/README.md#keybindings)
-- [`packages/react/src/hooks/use-editor-keybindings.ts`](../../packages/react/src/hooks/use-editor-keybindings.ts) — source with JSDoc on every action
+- [Designer](/docs/concepts/designer) — selection model that nudge / delete operate on
+- [Layers](/docs/concepts/layers) — z-index actions that could be bound to shortcuts in the future

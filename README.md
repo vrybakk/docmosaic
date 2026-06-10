@@ -11,6 +11,8 @@ This repository is the monorepo. It contains the reusable libraries plus the ref
 | [`@docmosaic/core`](packages/core)       | Framework-agnostic TypeScript core: document model, reducer + history, PDF engine. |
 | [`@docmosaic/react`](packages/react)     | React UI primitives: compound `Editor.*` namespace plus headless hooks.            |
 | [`@docmosaic/web`](apps/web) _(private)_ | Reference Next.js 15 app — the site at docmosaic.com.                              |
+| [`@docmosaic/docs`](apps/docs) _(private)_ | Fumadocs site at docs.docmosaic.com.                                              |
+| [`@docmosaic/storybook`](apps/storybook) _(private)_ | Live primitive sandbox at storybook.docmosaic.com.                      |
 
 ## Architecture
 
@@ -67,15 +69,16 @@ After a manual change, walk through [`docs/SMOKE.md`](docs/SMOKE.md) — a 90-se
 
 ## Documentation
 
-Conceptual walk-throughs of how the editor is put together live in [`docs/concepts/`](docs/concepts):
+The canonical home for documentation is [docs.docmosaic.com](https://docs.docmosaic.com). It covers:
 
--   [Designer](docs/concepts/designer.md) — the `Editor.Root` composition and selection model
--   [Theming](docs/concepts/theming.md) — the `--editor-*` CSS-variable surface
--   [Unit system](docs/concepts/unit-system.md) — why geometry lives in PDF points
--   [Keybindings](docs/concepts/keybindings.md) — default keymap and overrides
--   [Layers](docs/concepts/layers.md) — `zIndex` model and reorder actions
+-   **Get started** — installation, quick start, controlled vs uncontrolled
+-   **Concepts** — designer, document model, history, unit system, layers, keybindings, guides and snap
+-   **Primitives** — every `Editor.*` primitive with a live preview, prop table, and examples
+-   **Recipes** — custom PDF backend, custom image renderer, persisting templates, BYO-UI, modal embedding, server-component boundary, analytics wiring, dark mode
+-   **Reference** — hooks, actions, types, config
+-   **Theming** — token surface, dark mode, brand swap
 
-Per-package API references live in [`packages/core/README.md`](packages/core/README.md) and [`packages/react/README.md`](packages/react/README.md). The manual smoke checklist is [`docs/SMOKE.md`](docs/SMOKE.md).
+Live primitive sandbox: [storybook.docmosaic.com](https://storybook.docmosaic.com). The manual smoke checklist is [`docs/SMOKE.md`](docs/SMOKE.md).
 
 ## Contributing
 

@@ -1,4 +1,7 @@
-# Layers
+---
+title: Layers
+description: Section.zIndex, the four reorder actions, the layer toolbar, and the Editor.LayerList outliner.
+---
 
 Every `Section` carries a `zIndex`. When two sections overlap, the higher `zIndex` paints on top — both on the canvas and in the exported PDF. Four reducer actions plus four toolbar buttons let users reorder layers without manipulating arrays directly. Operations are scoped per page; sections on other pages never influence the result.
 
@@ -75,7 +78,7 @@ Same actions, your visual. The reducer doesn't care who calls it.
 
 ## `Editor.LayerList`
 
-Phase 25 ships the dedicated outliner. `Editor.LayerList` renders every section on the current page in render order (top of stack first) with click-to-select, shift/meta-click to extend the selection, drag-to-reorder via the grip handle, and per-row toggles for hide and lock.
+The dedicated outliner. `Editor.LayerList` renders every section on the current page in render order (top of stack first) with click-to-select, shift/meta-click to extend the selection, drag-to-reorder via the grip handle, and per-row toggles for hide and lock.
 
 ```tsx
 import { Editor } from '@docmosaic/react';
@@ -112,13 +115,7 @@ The PDF generator filters out hidden sections before drawing, so a hidden layer 
 
 Grabbing the grip handle and dragging up/down past another row's midpoint reorders the layer stack — the panel reassigns `zIndex` to every section on the page in one atomic pass so the visible order matches the new list order. Reorder is suppressed in `readOnly` mode (along with the hide/lock toggles).
 
-### Reorder semantics
-
-Drag-reorder writes a fresh contiguous `zIndex` per page so the visible order in the list mirrors the canvas (and PDF) stacking. The per-section toolbar's `bringToFront` / `sendToBack` / `moveForward` / `moveBackward` keep working exactly as before — both surfaces converge on the same `zIndex` field.
-
 ## See also
 
-- [Designer](./designer.md) — selection model the layer buttons key off of
-- [Keybindings](./keybindings.md) — actions you might wire to keyboard shortcuts in the future
-- [`@docmosaic/react` README — Layers](../../packages/react/README.md#layers) — the canonical action surface
-- [`packages/core/src/reducer.ts`](../../packages/core/src/reducer.ts) — `BRING_TO_FRONT` / `SEND_TO_BACK` / `MOVE_FORWARD` / `MOVE_BACKWARD` cases
+- [Designer](/docs/concepts/designer) — selection model the layer buttons key off of
+- [Keybindings](/docs/concepts/keybindings) — actions you might wire to keyboard shortcuts in the future

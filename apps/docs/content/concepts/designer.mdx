@@ -1,4 +1,7 @@
-# Designer
+---
+title: Designer
+description: The mental model behind the editor — state, actions, and the Editor.* compound namespace that ties them together.
+---
 
 The DocMosaic editor is a **designer for printable documents** — users arrange image sections on a virtual page and export a PDF. `@docmosaic/react` exposes that designer as a small set of compound primitives that snap together; `@docmosaic/core` is the headless state machine they all read from. Same model, two surfaces.
 
@@ -6,7 +9,7 @@ The DocMosaic editor is a **designer for printable documents** — users arrange
 
 Think of the editor as three concentric layers:
 
-1. **State** — a single `Document` carrying `pages`, a flat `sections` array, and metadata (`name`, `pageSize`, `orientation`). All geometry is in [PDF points](./unit-system.md).
+1. **State** — a single `Document` carrying `pages`, a flat `sections` array, and metadata (`name`, `pageSize`, `orientation`). All geometry is in [PDF points](/docs/concepts/unit-system).
 2. **Actions** — a stable 18-method surface (`addSection`, `updateSection`, `bringToFront`, `undo`, …) that produces the next document. The bundled reducer wraps these with a history timeline so undo/redo "just work."
 3. **UI** — the `Editor.*` compound namespace. Every primitive reads its slice of state from context and dispatches actions back; nothing is prop-drilled.
 
@@ -43,14 +46,14 @@ export function MyEditor() {
 }
 ```
 
-The CSS import seeds the `--editor-*` tokens documented in [Theming](./theming.md). Drop any primitive — or build your own from `useEditor()` — and the rest of the tree keeps working.
+The CSS import seeds the `--editor-*` tokens documented in [Theming](/docs/theming). Drop any primitive — or build your own from `useEditor()` — and the rest of the tree keeps working.
 
 ## Selection model
 
 The editor tracks a **single selected section** at a time (`ui.selectedSectionId`). Selection drives:
 
 - The visible toolbar on `Editor.Section` (fit / layer / duplicate / delete buttons).
-- Keyboard nudge + delete bindings (see [Keybindings](./keybindings.md)).
+- Keyboard nudge + delete bindings (see [Keybindings](/docs/concepts/keybindings)).
 - Resize handles and the focus outline.
 
 Clicking a section selects it; clicking the canvas background, hitting `Escape`, or deleting the selected section clears the selection. Multi-select is intentionally not part of the v1 surface — most flows that "want" multi-select are better expressed via layer actions on a single section.
@@ -127,14 +130,13 @@ Don't mix modes mid-render — the root warns in development if you do.
 </Editor.Root>
 ```
 
-Selection (click, marquee), zoom, and pan all keep working — read-only is about mutation, not navigation. For a canvas-level override (read-only canvas inside an editable root), use `Editor.StaticCanvas`. See the [read-only recipe](./recipes/read-only.md) for the full surface table.
+Selection (click, marquee), zoom, and pan all keep working — read-only is about mutation, not navigation. For a canvas-level override (read-only canvas inside an editable root), use `Editor.StaticCanvas`.
 
 ## See also
 
-- [Unit System](./unit-system.md) — why geometry is stored in points and how to convert
-- [Theming](./theming.md) — the `--editor-*` CSS-variable surface
-- [Keybindings](./keybindings.md) — default shortcuts and how to override
-- [Layers](./layers.md) — z-index actions for overlapping sections
-- [Read-only recipe](./recipes/read-only.md) — `Editor.Root readOnly` + `Editor.StaticCanvas`
-- [`@docmosaic/react` API reference](../../packages/react/README.md) — every export with JSDoc
-- [`@docmosaic/core` API reference](../../packages/core/README.md) — the framework-agnostic core
+- [Document model](/docs/concepts/document-model) — the `Document` / `Page` / `Section` hierarchy in detail
+- [History](/docs/concepts/history) — undo/redo and the timeline
+- [Unit system](/docs/concepts/unit-system) — why geometry is stored in points
+- [Theming](/docs/theming) — the `--editor-*` CSS-variable surface
+- [Keybindings](/docs/concepts/keybindings) — default shortcuts and how to override
+- [Layers](/docs/concepts/layers) — z-index actions for overlapping sections
