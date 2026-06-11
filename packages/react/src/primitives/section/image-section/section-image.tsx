@@ -23,7 +23,12 @@ interface SectionImageProps {
  * crop region falls inside the section box — mirrors the PDF render path so
  * the editor preview matches export.
  */
-export function SectionImage({ section, imageRef, isDroppingFile, onReplaceClick }: SectionImageProps) {
+export function SectionImage({
+    section,
+    imageRef,
+    isDroppingFile,
+    onReplaceClick,
+}: SectionImageProps) {
     const { imageRenderer: Image } = useEditorConfig();
 
     const crop = section.crop;
@@ -69,7 +74,7 @@ export function SectionImage({ section, imageRef, isDroppingFile, onReplaceClick
                 className={cn(
                     'absolute inset-0 rounded-lg pointer-events-none z-20',
                     'opacity-0 group-hover:opacity-100 transition-opacity',
-                    isDroppingFile && 'opacity-100 bg-editor-accent/40',
+                    isDroppingFile && 'opacity-100 bg-primary/40',
                     !isDroppingFile && 'bg-black/40',
                 )}
             >

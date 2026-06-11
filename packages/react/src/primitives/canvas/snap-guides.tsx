@@ -30,7 +30,7 @@ export function SnapGuides({ guides, pageDimensions, finalScale }: SnapGuidesPro
                         <div
                             key={key}
                             data-snap-guide="vertical"
-                            className="absolute pointer-events-none bg-editor-accent"
+                            className="absolute pointer-events-none bg-primary"
                             style={{
                                 left: g.position,
                                 top: 0,
@@ -44,7 +44,7 @@ export function SnapGuides({ guides, pageDimensions, finalScale }: SnapGuidesPro
                     <div
                         key={key}
                         data-snap-guide="horizontal"
-                        className="absolute pointer-events-none bg-editor-accent"
+                        className="absolute pointer-events-none bg-primary"
                         style={{
                             left: 0,
                             top: g.position,

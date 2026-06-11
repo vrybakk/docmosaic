@@ -67,11 +67,7 @@ export function ColorPicker({
 
     return (
         <div
-            className={cn(
-                'flex items-center gap-2',
-                disabled && 'opacity-60',
-                className,
-            )}
+            className={cn('flex items-center gap-2', disabled && 'opacity-60', className)}
             data-color-picker="true"
             aria-disabled={disabled || undefined}
         >
@@ -88,9 +84,9 @@ export function ColorPicker({
                             onClick={() => onChange(preset)}
                             className={cn(
                                 'h-6 w-6 rounded-md border transition-shadow',
-                                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-editor-accent',
+                                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                                 isActive
-                                    ? 'border-editor-accent ring-2 ring-editor-accent'
+                                    ? 'border-primary ring-2 ring-primary'
                                     : 'border-gray-300 hover:border-gray-500',
                                 disabled && 'cursor-not-allowed',
                             )}
@@ -108,7 +104,7 @@ export function ColorPicker({
                     className={cn(
                         'h-6 w-6 rounded-md border border-dashed border-gray-400',
                         'bg-white hover:border-gray-600',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-editor-accent',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                         'flex items-center justify-center text-xs text-gray-500',
                         disabled && 'cursor-not-allowed',
                     )}

@@ -3,9 +3,8 @@
  * Pair with @docmosaic/react/styles/base.css.
  *
  * Brand-agnostic alternative to docmosaic.css — same restrained palette, no
- * brand colors. Exposes the shadcn-aligned semantic surface plus legacy
- * `--editor-color-*` aliases for back-compat. For dark mode, import
- * `styles.css` (or `themes/docmosaic.css`) and toggle the `.dark` class.
+ * brand colors. Exposes the shadcn-aligned semantic surface. For dark mode,
+ * import `styles.css` (or `themes/docmosaic.css`) and toggle the `.dark` class.
  */
 
 @layer docmosaic {
@@ -29,15 +28,6 @@
         --input: 228 228 231;
         --ring: 9 9 11;
         --radius: 0.5rem;
-
-        /* Legacy --editor-color-* aliases — soft-deprecated. */
-        --editor-color-accent: var(--primary);
-        --editor-color-accent-soft: var(--secondary);
-        --editor-color-success: 22 163 74; /* green-600 — no semantic equivalent */
-        --editor-color-warning: 202 138 4; /* yellow-600 */
-        --editor-color-warning-soft: 254 249 195; /* yellow-100 */
-        --editor-color-surface: var(--background);
-        --editor-color-text: var(--foreground);
 
         /* Tighter, more shadcn-y structural tokens. */
         --editor-radius-section: 6px;

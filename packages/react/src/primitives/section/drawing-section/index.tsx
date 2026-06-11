@@ -23,8 +23,16 @@ export function DrawingSectionView() {
     const { ui } = useEditor();
     const section = editor.section as DrawingSectionData;
     const rawSection = editor.rawSection as DrawingSectionData;
-    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, finalScale, groupDrag, readOnly } =
-        editor;
+    const {
+        isSelected,
+        onClick,
+        onUpdate,
+        onDuplicate,
+        onDelete,
+        finalScale,
+        groupDrag,
+        readOnly,
+    } = editor;
     const imageRef = { current: null } as React.RefObject<HTMLImageElement | null>;
 
     const { isResizing, handleResizeStart } = useSectionResize({
@@ -57,9 +65,9 @@ export function DrawingSectionView() {
             data-section-type="drawing"
             className={cn(
                 'absolute p-1',
-                'border-2 border-dashed border-gray-300 hover:border-editor-accent/50',
+                'border-2 border-dashed border-gray-300 hover:border-primary/50',
                 'rounded-lg overflow-visible group touch-none pointer-events-auto',
-                isSelected && 'border-solid border-editor-accent shadow-lg',
+                isSelected && 'border-solid border-primary shadow-lg',
                 isDragging && 'opacity-50 cursor-grabbing',
                 isResizing && 'pointer-events-none',
             )}
@@ -84,7 +92,7 @@ export function DrawingSectionView() {
             )}
 
             {isSelected && (
-                <div className="absolute inset-0 border-2 border-editor-accent border-dashed pointer-events-none z-5" />
+                <div className="absolute inset-0 border-2 border-primary border-dashed pointer-events-none z-5" />
             )}
 
             <div className="relative w-full h-full">

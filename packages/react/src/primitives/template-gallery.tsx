@@ -73,10 +73,7 @@ export function TemplateGallery({
 
     return (
         <div
-            className={cn(
-                'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3',
-                className,
-            )}
+            className={cn('grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3', className)}
             data-template-gallery="true"
         >
             {templates.map((template) => (
@@ -87,7 +84,7 @@ export function TemplateGallery({
                     className={cn(
                         'flex flex-col items-stretch gap-2 p-2 rounded-md text-left',
                         'border border-gray-200 bg-white shadow-sm',
-                        'hover:border-editor-accent hover:shadow-md transition',
+                        'hover:border-primary hover:shadow-md transition',
                     )}
                 >
                     <div

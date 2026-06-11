@@ -3,13 +3,7 @@
 import { useEditor } from '../../context/editor';
 import { ORIENTATION_OPTIONS } from '../../internal/options';
 import { cn } from '../../internal/utils';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '../../ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 
 interface OrientationSelectProps {
     /** When true, expands the trigger to fill its container (mobile sheet). */
@@ -34,9 +28,9 @@ export function OrientationSelect({ fullWidth = false }: OrientationSelectProps 
                     fullWidth
                         ? 'w-full'
                         : cn(
-                              'w-[120px] border-editor-accent/20',
-                              'text-editor-accent bg-white',
-                              'focus:ring-editor-accent-soft/20',
+                              'w-[120px] border-primary/20',
+                              'text-primary bg-white',
+                              'focus:ring-secondary/20',
                           )
                 }
             >

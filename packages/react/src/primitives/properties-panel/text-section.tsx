@@ -6,13 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useEditor } from '../../context/editor';
 import { cn } from '../../internal/utils';
 import { Input } from '../../ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '../../ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { ColorPicker } from '../color-picker';
 import { FieldLabel, SectionShell } from './section-shell';
 
@@ -200,10 +194,10 @@ function StyleToggle({ label, icon, pressed, onToggle, disabled }: StyleTogglePr
             onClick={onToggle}
             className={cn(
                 'h-7 inline-flex items-center justify-center rounded-md border',
-                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-editor-accent',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
                 pressed
-                    ? 'border-editor-accent bg-editor-accent-soft text-editor-text'
-                    : 'border-editor-accent/15 bg-editor-surface text-editor-text hover:bg-editor-accent-soft',
+                    ? 'border-primary bg-secondary text-secondary-foreground'
+                    : 'border-primary/15 bg-background text-foreground hover:bg-secondary',
                 disabled && 'opacity-50 cursor-not-allowed',
             )}
         >
@@ -219,7 +213,11 @@ interface AlignFieldProps {
 }
 
 function AlignField({ value, onChange, disabled }: AlignFieldProps) {
-    const options: Array<{ value: 'left' | 'center' | 'right'; icon: React.ReactNode; label: string }> = [
+    const options: Array<{
+        value: 'left' | 'center' | 'right';
+        icon: React.ReactNode;
+        label: string;
+    }> = [
         { value: 'left', icon: <AlignLeft className="h-3.5 w-3.5" />, label: 'Align left' },
         { value: 'center', icon: <AlignCenter className="h-3.5 w-3.5" />, label: 'Align center' },
         { value: 'right', icon: <AlignRight className="h-3.5 w-3.5" />, label: 'Align right' },
@@ -240,10 +238,10 @@ function AlignField({ value, onChange, disabled }: AlignFieldProps) {
                             onClick={() => onChange(option.value)}
                             className={cn(
                                 'h-7 inline-flex items-center justify-center rounded-md border',
-                                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-editor-accent',
+                                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
                                 pressed
-                                    ? 'border-editor-accent bg-editor-accent-soft text-editor-text'
-                                    : 'border-editor-accent/15 bg-editor-surface text-editor-text hover:bg-editor-accent-soft',
+                                    ? 'border-primary bg-secondary text-secondary-foreground'
+                                    : 'border-primary/15 bg-background text-foreground hover:bg-secondary',
                                 disabled && 'opacity-50 cursor-not-allowed',
                             )}
                         >

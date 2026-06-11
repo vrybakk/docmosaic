@@ -3,9 +3,7 @@
  *
  * Exposes a shadcn-aligned semantic surface (`--background`, `--foreground`,
  * `--primary`, `--secondary`, `--muted`, `--accent`, `--destructive`,
- * `--border`, `--input`, `--ring`, `--radius`). Legacy `--editor-color-*`
- * aliases are preserved for back-compat — they soft-deprecate to the semantic
- * surface so existing primitives keep working unchanged.
+ * `--border`, `--input`, `--ring`, `--radius`).
  *
  * Apply on top of `styles/base.css`, or import the bundled `styles.css` for
  * both. Triplets are space-separated to support the modern
@@ -13,9 +11,6 @@
  *
  * Dark mode is opt-in via the `.dark` class on a parent (typically `<html>`).
  * Pair with a runtime theme switcher such as `next-themes` (see consumer apps).
- * The legacy `--editor-color-*` aliases reference the semantic tokens via
- * `var(--primary)` etc., so flipping `.dark` cascades to them automatically —
- * no separate alias overrides needed.
  */
 
 @layer docmosaic {
@@ -39,17 +34,6 @@
         --input: 228 228 231;
         --ring: 56 29 42; /* docmosaic-purple focus ring */
         --radius: 0.5rem;
-
-        /* Legacy --editor-color-* aliases — soft-deprecated. Point at the
-           semantic surface so consumers using the old token names keep working
-           with no visual regression. */
-        --editor-color-accent: var(--primary);
-        --editor-color-accent-soft: var(--secondary);
-        --editor-color-success: var(--accent);
-        --editor-color-warning: var(--destructive);
-        --editor-color-warning-soft: 255 165 82; /* docmosaic-caramel — no shadcn equivalent */
-        --editor-color-surface: var(--background);
-        --editor-color-text: var(--foreground);
 
         /* Structural tokens fall through to `base.css` defaults
            (--editor-radius-section: 6px, --editor-shadow-section). */
@@ -83,9 +67,5 @@
         --input: 39 39 42;
         --ring: 252 222 156;
         --radius: 0.5rem;
-
-        /* --editor-color-* aliases inherit through their var() definitions
-           above. Override only the historic-pinned one. */
-        --editor-color-warning-soft: 67 56 0; /* yellow-800 — darker accent */
     }
 }

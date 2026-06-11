@@ -31,13 +31,29 @@ const HANDLES: ReadonlyArray<{
     cursor: string;
 }> = [
     { handle: 'topLeft', style: { top: -6, left: -6 }, cursor: 'nwse-resize' },
-    { handle: 'top', style: { top: -6, left: '50%', transform: 'translateX(-50%)' }, cursor: 'ns-resize' },
+    {
+        handle: 'top',
+        style: { top: -6, left: '50%', transform: 'translateX(-50%)' },
+        cursor: 'ns-resize',
+    },
     { handle: 'topRight', style: { top: -6, right: -6 }, cursor: 'nesw-resize' },
-    { handle: 'right', style: { top: '50%', right: -6, transform: 'translateY(-50%)' }, cursor: 'ew-resize' },
+    {
+        handle: 'right',
+        style: { top: '50%', right: -6, transform: 'translateY(-50%)' },
+        cursor: 'ew-resize',
+    },
     { handle: 'bottomRight', style: { bottom: -6, right: -6 }, cursor: 'nwse-resize' },
-    { handle: 'bottom', style: { bottom: -6, left: '50%', transform: 'translateX(-50%)' }, cursor: 'ns-resize' },
+    {
+        handle: 'bottom',
+        style: { bottom: -6, left: '50%', transform: 'translateX(-50%)' },
+        cursor: 'ns-resize',
+    },
     { handle: 'bottomLeft', style: { bottom: -6, left: -6 }, cursor: 'nesw-resize' },
-    { handle: 'left', style: { top: '50%', left: -6, transform: 'translateY(-50%)' }, cursor: 'ew-resize' },
+    {
+        handle: 'left',
+        style: { top: '50%', left: -6, transform: 'translateY(-50%)' },
+        cursor: 'ew-resize',
+    },
 ];
 
 /**
@@ -103,7 +119,7 @@ export function SectionCropOverlay({
             <div
                 onPointerDown={onStartMove}
                 className={cn(
-                    'absolute border-2 border-editor-accent',
+                    'absolute border-2 border-primary',
                     'cursor-move pointer-events-auto',
                 )}
                 style={{
@@ -140,7 +156,7 @@ export function SectionCropOverlay({
                         key={handle}
                         data-crop-handle={handle}
                         onPointerDown={(e) => onStartResize(e, handle)}
-                        className="absolute w-3 h-3 bg-white border-2 border-editor-accent rounded-sm pointer-events-auto"
+                        className="absolute w-3 h-3 bg-white border-2 border-primary rounded-sm pointer-events-auto"
                         style={{ ...style, cursor }}
                     />
                 ))}

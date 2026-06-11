@@ -38,10 +38,7 @@ export function BrushWeightSlider({
     className,
 }: BrushWeightSliderProps) {
     return (
-        <div
-            className={cn('flex items-center gap-3', className)}
-            data-brush-weight-slider="true"
-        >
+        <div className={cn('flex items-center gap-3', className)} data-brush-weight-slider="true">
             <div
                 aria-hidden="true"
                 className="flex h-6 w-6 items-center justify-center"
@@ -64,7 +61,7 @@ export function BrushWeightSlider({
                 step={1}
                 value={value}
                 onChange={(e) => onChange(Number(e.target.value))}
-                className="h-2 w-32 cursor-pointer accent-editor-accent"
+                className="h-2 w-32 cursor-pointer accent-primary"
             />
             <span className="w-7 text-right text-xs text-gray-600 tabular-nums">{value}</span>
         </div>

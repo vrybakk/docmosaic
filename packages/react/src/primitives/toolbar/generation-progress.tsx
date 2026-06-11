@@ -19,12 +19,12 @@ export function GenerationProgress() {
 
     return (
         <div className="flex items-center gap-2 w-full sm:w-auto justify-center">
-            <div className="flex items-center gap-2 min-w-[160px] bg-editor-accent text-editor-accent-soft px-4 py-2 rounded-md relative">
+            <div className="flex items-center gap-2 min-w-[160px] bg-primary text-primary-foreground px-4 py-2 rounded-md relative">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span>{progress ? `Generating (${progress}%)` : 'Generating...'}</span>
                 {progress && (
                     <div
-                        className="absolute bottom-0 left-0 h-1 bg-editor-accent-soft/20"
+                        className="absolute bottom-0 left-0 h-1 bg-primary-foreground/20"
                         style={{ width: `${progress}%` }}
                     />
                 )}

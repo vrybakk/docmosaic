@@ -4,8 +4,8 @@ import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-// Bundled DocMosaic look (base + brand theme). Sets the `--editor-color-*`
-// tokens consumed by the Tailwind `editor-*` utilities used in the primitives.
+// Bundled DocMosaic look (base + brand theme). Supplies the shadcn-aligned
+// semantic tokens consumed by the Tailwind utilities used in the primitives.
 import '@docmosaic/react/styles.css';
 import './preview.css';
 

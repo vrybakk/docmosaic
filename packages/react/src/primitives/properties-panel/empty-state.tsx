@@ -17,7 +17,7 @@ export function EmptyState({ className }: EmptyStateProps = {}) {
         <div
             className={cn(
                 'flex flex-1 items-center justify-center px-4 py-8 text-center',
-                'text-xs text-editor-text/60',
+                'text-xs text-foreground/60',
                 className,
             )}
             data-properties-empty-state="true"

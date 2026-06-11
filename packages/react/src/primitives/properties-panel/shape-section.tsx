@@ -47,7 +47,7 @@ export function ShapeSectionProperties({ className }: ShapeSectionPropertiesProp
             <div className="space-y-1">
                 <FieldLabel>Fill</FieldLabel>
                 <ColorPicker
-                    value={primary.fill === 'transparent' ? '#ffffff' : primary.fill ?? '#ffffff'}
+                    value={primary.fill === 'transparent' ? '#ffffff' : (primary.fill ?? '#ffffff')}
                     onChange={(fill) => applyUpdate({ fill })}
                     disabled={readOnly}
                 />
@@ -113,7 +113,7 @@ function SliderField({
         <div className="space-y-1">
             <div className="flex items-center justify-between">
                 <FieldLabel>{label}</FieldLabel>
-                <span className="text-[10px] tabular-nums text-editor-text/60">{displayValue}</span>
+                <span className="text-[10px] tabular-nums text-foreground/60">{displayValue}</span>
             </div>
             <input
                 type="range"
@@ -125,7 +125,7 @@ function SliderField({
                 disabled={disabled}
                 onChange={(e) => onChange(Number(e.target.value))}
                 className={cn(
-                    'h-2 w-full cursor-pointer accent-editor-accent',
+                    'h-2 w-full cursor-pointer accent-primary',
                     disabled && 'opacity-50 cursor-not-allowed',
                 )}
             />

@@ -46,7 +46,7 @@ export function LayerSection({ className }: LayerSectionProps = {}) {
 
     return (
         <SectionShell title="Layer" className={className}>
-            <div className="text-[11px] text-editor-text/70">{layerLabel}</div>
+            <div className="text-[11px] text-foreground/70">{layerLabel}</div>
             <div className="grid grid-cols-4 gap-1">
                 <LayerButton
                     label="Bring to front"
@@ -89,9 +89,9 @@ function LayerButton({ label, onClick, icon, className }: LayerButtonProps) {
             onClick={onClick}
             className={cn(
                 'h-7 inline-flex items-center justify-center rounded-md',
-                'border border-editor-accent/15 bg-editor-surface text-editor-text',
-                'hover:bg-editor-accent-soft hover:text-editor-text',
-                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-editor-accent',
+                'border border-primary/15 bg-background text-foreground',
+                'hover:bg-secondary hover:text-foreground',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
                 className,
             )}
         >

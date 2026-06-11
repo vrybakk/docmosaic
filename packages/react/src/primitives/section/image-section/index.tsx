@@ -67,10 +67,7 @@ export function ImageSectionView() {
     // a fresh crop update that was already authored in raw points. Route the
     // crop write through `actions.updateSection` to skip that conversion.
     const { actions } = useEditor();
-    const onCropUpdate = useCallback(
-        (next: Section) => actions.updateSection(next),
-        [actions],
-    );
+    const onCropUpdate = useCallback((next: Section) => actions.updateSection(next), [actions]);
     const {
         isCropping,
         draft,
@@ -148,10 +145,10 @@ export function ImageSectionView() {
             data-section-id={section.id}
             className={cn(
                 'absolute p-1',
-                'border-2 border-dashed border-gray-300 hover:border-editor-accent/50',
+                'border-2 border-dashed border-gray-300 hover:border-primary/50',
                 'rounded-lg overflow-visible group touch-none pointer-events-auto',
-                isSelected && 'border-solid border-editor-accent shadow-lg',
-                isDroppingFile && 'border-editor-accent border-solid bg-editor-accent/5',
+                isSelected && 'border-solid border-primary shadow-lg',
+                isDroppingFile && 'border-primary border-solid bg-primary/5',
                 isDragging && 'opacity-50 cursor-grabbing',
                 isResizing && 'pointer-events-none',
             )}
@@ -177,7 +174,7 @@ export function ImageSectionView() {
             )}
 
             {isSelected && (
-                <div className="absolute inset-0 border-2 border-editor-accent border-dashed pointer-events-none z-5" />
+                <div className="absolute inset-0 border-2 border-primary border-dashed pointer-events-none z-5" />
             )}
 
             {!readOnly && (

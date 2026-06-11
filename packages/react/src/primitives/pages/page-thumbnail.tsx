@@ -101,14 +101,14 @@ export function PageThumbnail({
             <div
                 className={cn(
                     'w-full bg-white rounded-lg shadow cursor-pointer transition-all relative overflow-hidden',
-                    isSelected && 'ring-2 ring-editor-accent-soft',
-                    !isSelected && 'hover:ring-2 hover:ring-editor-success',
+                    isSelected && 'ring-2 ring-secondary',
+                    !isSelected && 'hover:ring-2 hover:ring-accent',
                     dropIndicators?.isDragOver &&
                         dropIndicators.dropPosition === 'top' &&
-                        'border-t-4 border-editor-accent-soft',
+                        'border-t-4 border-secondary',
                     dropIndicators?.isDragOver &&
                         dropIndicators.dropPosition === 'bottom' &&
-                        'border-b-4 border-editor-accent-soft',
+                        'border-b-4 border-secondary',
                 )}
                 style={{
                     aspectRatio: `${pageDimensions.width} / ${pageDimensions.height}`,
@@ -195,7 +195,7 @@ export function PageThumbnail({
                                                     fill={
                                                         section.fill === 'transparent'
                                                             ? 'none'
-                                                            : section.fill ?? 'none'
+                                                            : (section.fill ?? 'none')
                                                     }
                                                     stroke={section.stroke ?? '#000'}
                                                     strokeWidth={section.strokeWidth ?? 1}
@@ -210,7 +210,7 @@ export function PageThumbnail({
                                                     fill={
                                                         section.fill === 'transparent'
                                                             ? 'none'
-                                                            : section.fill ?? 'none'
+                                                            : (section.fill ?? 'none')
                                                     }
                                                     stroke={section.stroke ?? '#000'}
                                                     strokeWidth={section.strokeWidth ?? 1}
@@ -233,7 +233,7 @@ export function PageThumbnail({
                     </div>
                 </div>
 
-                <div className="absolute top-2 left-2 bg-editor-accent-soft text-editor-accent text-xs px-2 py-1 rounded-full">
+                <div className="absolute top-2 left-2 bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-full">
                     Page {index + 1}
                 </div>
             </div>

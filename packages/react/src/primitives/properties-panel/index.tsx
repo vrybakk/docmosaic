@@ -68,8 +68,8 @@ export function PropertiesPanel({ children, className }: PropertiesPanelProps = 
     return (
         <aside
             className={cn(
-                'flex flex-col max-w-72 w-full bg-editor-surface text-editor-text',
-                'border-editor-accent/10',
+                'flex flex-col max-w-72 w-full bg-background text-foreground',
+                'border-primary/10',
                 className,
             )}
             data-properties-panel="true"

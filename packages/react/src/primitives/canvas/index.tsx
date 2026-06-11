@@ -16,11 +16,7 @@ import {
     useState,
 } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
-import {
-    EditorCanvasProvider,
-    EditorSectionProvider,
-    useEditor,
-} from '../../context/editor';
+import { EditorCanvasProvider, EditorSectionProvider, useEditor } from '../../context/editor';
 import { trackEvent } from '../../internal/analytics';
 import Loader from '../../ui/loader';
 import { Section } from '../section';
@@ -170,9 +166,14 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
     // marquee becomes selected (replacing the previous selection). The
     // marquee is stored as page-relative display pixels so the overlay div
     // can render without re-doing the scale.
-    const [marquee, setMarquee] = useState<
-        { startX: number; startY: number; x: number; y: number; width: number; height: number } | null
-    >(null);
+    const [marquee, setMarquee] = useState<{
+        startX: number;
+        startY: number;
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    } | null>(null);
     const marqueeRef = useRef<typeof marquee>(null);
     const marqueeMovedRef = useRef(false);
 
@@ -407,12 +408,8 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
     // Auto-mount opt-in polish overlays when the corresponding `Editor.Root`
     // flag is on. Manual renders still win — the check below only injects a
     // primitive when the consumer didn't already supply one.
-    const hasRulerChild = fullOverlayChildren.some(
-        (c) => isValidElement(c) && c.type === Ruler,
-    );
-    const hasGuidesChild = fullOverlayChildren.some(
-        (c) => isValidElement(c) && c.type === Guides,
-    );
+    const hasRulerChild = fullOverlayChildren.some((c) => isValidElement(c) && c.type === Ruler);
+    const hasGuidesChild = fullOverlayChildren.some((c) => isValidElement(c) && c.type === Guides);
     const hasMinimapChild = fullOverlayChildren.some(
         (c) => isValidElement(c) && c.type === Minimap,
     );
@@ -528,9 +525,7 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
                                             value={{
                                                 section: scaledSection,
                                                 rawSection: section,
-                                                isSelected: ui.selectedSectionIds.has(
-                                                    section.id,
-                                                ),
+                                                isSelected: ui.selectedSectionIds.has(section.id),
                                                 finalScale,
                                                 readOnly,
                                             }}
@@ -558,7 +553,7 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
                                 {marquee && (
                                     <div
                                         data-marquee="true"
-                                        className="absolute pointer-events-none border border-editor-accent bg-editor-accent/10"
+                                        className="absolute pointer-events-none border border-primary bg-primary/10"
                                         style={{
                                             left: marquee.x,
                                             top: marquee.y,

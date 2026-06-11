@@ -185,7 +185,14 @@ export function SelectionBounds({
             window.addEventListener('mousemove', onMove, { capture: true });
             window.addEventListener('mouseup', onUp, { capture: true });
         },
-        [actions, finalScale, pageDimensions.height, pageDimensions.width, rawBBox, selectedSections],
+        [
+            actions,
+            finalScale,
+            pageDimensions.height,
+            pageDimensions.width,
+            rawBBox,
+            selectedSections,
+        ],
     );
 
     if (!rawBBox) return null;
@@ -197,12 +204,12 @@ export function SelectionBounds({
     };
 
     const handleBase =
-        'absolute w-3 h-3 bg-white border-2 border-editor-accent rounded-full shadow pointer-events-auto';
+        'absolute w-3 h-3 bg-white border-2 border-primary rounded-full shadow pointer-events-auto';
 
     return (
         <div
             data-selection-bounds="true"
-            className="absolute pointer-events-none border-2 border-dashed border-editor-accent"
+            className="absolute pointer-events-none border-2 border-dashed border-primary"
             style={scaled}
         >
             <div

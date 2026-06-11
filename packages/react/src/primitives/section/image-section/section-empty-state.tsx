@@ -15,7 +15,7 @@ export function SectionEmptyState({ isDroppingFile, onUploadClick }: SectionEmpt
             className={cn(
                 'w-full h-full flex items-center justify-center pointer-events-none',
                 'bg-gray-50/50 hover:bg-gray-100/50 transition-colors',
-                isDroppingFile && 'bg-editor-accent/5',
+                isDroppingFile && 'bg-primary/5',
             )}
         >
             <button

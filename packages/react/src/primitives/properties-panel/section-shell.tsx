@@ -19,8 +19,8 @@ interface SectionShellProps {
  */
 export function SectionShell({ title, children, className }: SectionShellProps) {
     return (
-        <div className={cn('border-t border-editor-accent/10 first:border-t-0 px-3 py-3', className)}>
-            <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-editor-text/60">
+        <div className={cn('border-t border-primary/10 first:border-t-0 px-3 py-3', className)}>
+            <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-foreground/60">
                 {title}
             </div>
             <div className="space-y-2">{children}</div>
@@ -43,7 +43,7 @@ export function FieldLabel({ children, htmlFor, className }: FieldLabelProps) {
         <label
             htmlFor={htmlFor}
             className={cn(
-                'block text-[10px] font-medium uppercase tracking-wide text-editor-text/50',
+                'block text-[10px] font-medium uppercase tracking-wide text-foreground/50',
                 className,
             )}
         >

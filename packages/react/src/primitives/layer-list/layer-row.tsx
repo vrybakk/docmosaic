@@ -50,7 +50,7 @@ export interface LayerRowProps {
  * lucide icons; the icon is purely informational so we keep it small + neutral.
  */
 function SectionTypeIcon({ section }: { section: Section }) {
-    const className = 'h-3.5 w-3.5 text-editor-text/60';
+    const className = 'h-3.5 w-3.5 text-foreground/60';
     if (section.type === 'text') return <Type className={className} aria-hidden />;
     if (section.type === 'shape') return <Shapes className={className} aria-hidden />;
     if (section.type === 'drawing') return <PenLine className={className} aria-hidden />;
@@ -68,7 +68,7 @@ function SectionSwatch({ section }: { section: Section }) {
             <img
                 src={section.imageUrl}
                 alt=""
-                className="h-6 w-6 rounded-sm object-cover border border-editor-accent/15"
+                className="h-6 w-6 rounded-sm object-cover border border-primary/15"
             />
         );
     }
@@ -92,14 +92,14 @@ function SectionSwatch({ section }: { section: Section }) {
         const ink = section.strokes[0]?.color ?? '#000';
         return (
             <div
-                className="h-6 w-6 rounded-sm border border-editor-accent/15"
+                className="h-6 w-6 rounded-sm border border-primary/15"
                 style={{ background: ink, opacity: 0.7 }}
                 aria-hidden
             />
         );
     }
     // Image without source / text section — neutral placeholder.
-    return <div className="h-6 w-6 rounded-sm border border-editor-accent/15 bg-editor-accent/5" aria-hidden />;
+    return <div className="h-6 w-6 rounded-sm border border-primary/15 bg-primary/5" aria-hidden />;
 }
 
 /**
@@ -144,11 +144,7 @@ export function LayerRow({
 }: LayerRowProps) {
     const ref = useRef<HTMLDivElement>(null);
 
-    const [{ isDragging }, dragRef] = useDrag<
-        LayerRowDragItem,
-        unknown,
-        { isDragging: boolean }
-    >(
+    const [{ isDragging }, dragRef] = useDrag<LayerRowDragItem, unknown, { isDragging: boolean }>(
         () => ({
             type: LAYER_ROW_DRAG_TYPE,
             item: { id: section.id, index },
@@ -158,11 +154,7 @@ export function LayerRow({
         [section.id, index, readOnly],
     );
 
-    const [{ isOver }, dropRef] = useDrop<
-        LayerRowDragItem,
-        unknown,
-        { isOver: boolean }
-    >(
+    const [{ isOver }, dropRef] = useDrop<LayerRowDragItem, unknown, { isOver: boolean }>(
         () => ({
             accept: LAYER_ROW_DRAG_TYPE,
             collect: (monitor) => ({ isOver: monitor.isOver() }),
@@ -223,10 +215,10 @@ export function LayerRow({
             className={cn(
                 'group flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer',
                 'border border-transparent text-sm',
-                'hover:bg-editor-accent-soft',
-                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-editor-accent',
-                isSelected && 'bg-editor-accent-soft border-editor-accent/30 text-editor-text',
-                isOver && 'ring-1 ring-editor-accent',
+                'hover:bg-secondary',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+                isSelected && 'bg-secondary border-primary/30 text-foreground',
+                isOver && 'ring-1 ring-primary',
                 isDragging && 'opacity-40',
                 isHidden && 'opacity-60',
             )}
@@ -236,7 +228,7 @@ export function LayerRow({
                 data-layer-drag-handle="true"
                 aria-hidden
                 className={cn(
-                    'shrink-0 text-editor-text/40',
+                    'shrink-0 text-foreground/40',
                     readOnly ? 'cursor-default' : 'cursor-grab active:cursor-grabbing',
                 )}
                 // Stop click bubbling so grabbing the handle doesn't also fire
@@ -249,8 +241,8 @@ export function LayerRow({
             <SectionSwatch section={section} />
             <span
                 className={cn(
-                    'flex-1 min-w-0 truncate text-editor-text',
-                    isHidden && 'line-through text-editor-text/60',
+                    'flex-1 min-w-0 truncate text-foreground',
+                    isHidden && 'line-through text-foreground/60',
                 )}
             >
                 {label}
@@ -268,8 +260,8 @@ export function LayerRow({
                         }}
                         className={cn(
                             'shrink-0 h-6 w-6 inline-flex items-center justify-center rounded-sm',
-                            'text-editor-text/60 hover:text-editor-text hover:bg-editor-accent/10',
-                            'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-editor-accent',
+                            'text-foreground/60 hover:text-foreground hover:bg-primary/10',
+                            'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
                         )}
                     >
                         {isHidden ? (
@@ -289,9 +281,9 @@ export function LayerRow({
                         }}
                         className={cn(
                             'shrink-0 h-6 w-6 inline-flex items-center justify-center rounded-sm',
-                            'text-editor-text/60 hover:text-editor-text hover:bg-editor-accent/10',
-                            'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-editor-accent',
-                            isLocked && 'text-editor-accent',
+                            'text-foreground/60 hover:text-foreground hover:bg-primary/10',
+                            'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+                            isLocked && 'text-primary',
                         )}
                     >
                         <Lock className="h-3.5 w-3.5" />

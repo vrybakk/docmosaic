@@ -61,9 +61,7 @@ function reorderVisible(
     reordered.forEach((s, i) => {
         pageIds.set(s.id, maxZ - i);
     });
-    return sections.map((s) =>
-        pageIds.has(s.id) ? { ...s, zIndex: pageIds.get(s.id)! } : s,
-    );
+    return sections.map((s) => (pageIds.has(s.id) ? { ...s, zIndex: pageIds.get(s.id)! } : s));
 }
 
 /**
@@ -138,14 +136,14 @@ export function LayerList({ className, title = 'Layers' }: LayerListProps = {}) 
             data-layer-list="true"
             aria-label="Layers"
             className={cn(
-                'flex flex-col min-h-0 bg-editor-surface text-editor-text',
-                'border-editor-accent/10',
+                'flex flex-col min-h-0 bg-background text-foreground',
+                'border-primary/10',
                 className,
             )}
         >
             {title ? (
-                <div className="px-3 pt-3 pb-2 border-b border-editor-accent/10">
-                    <h2 className="text-[10px] font-semibold uppercase tracking-wider text-editor-text/60">
+                <div className="px-3 pt-3 pb-2 border-b border-primary/10">
+                    <h2 className="text-[10px] font-semibold uppercase tracking-wider text-foreground/60">
                         {title}
                     </h2>
                 </div>
@@ -155,7 +153,7 @@ export function LayerList({ className, title = 'Layers' }: LayerListProps = {}) 
                     {visibleSections.length === 0 ? (
                         <div
                             data-layer-list-empty="true"
-                            className="px-2 py-6 text-center text-xs text-editor-text/50"
+                            className="px-2 py-6 text-center text-xs text-foreground/50"
                         >
                             No layers on this page.
                         </div>
