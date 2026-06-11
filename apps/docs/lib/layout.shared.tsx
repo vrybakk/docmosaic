@@ -1,4 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import { externalLinks, siteConfig } from '@/lib/metadata';
 
 /**
  * Shared layout options for the docs site. Used by both the docs and home layouts
@@ -23,15 +24,15 @@ export function baseOptions(): BaseLayoutProps {
             },
             {
                 text: 'Storybook',
-                url: 'https://storybook.docmosaic.com',
+                url: externalLinks.storybook,
                 external: true,
             },
             {
                 text: 'App',
-                url: 'https://docmosaic.com/pdf-editor',
+                url: `${externalLinks.app}/pdf-editor`,
                 external: true,
             },
         ],
-        githubUrl: 'https://github.com/vrybakk/docmosaic',
+        githubUrl: siteConfig.githubUrl,
     };
 }
