@@ -8,23 +8,23 @@ index: true
 
 ## TL;DR
 
-- Six `Editor.*` namespace aliases are gone — switch to the canonical names.
-- The bundled `minimal-dark.css` theme is gone — import `styles.css` and toggle `.dark` instead.
-- No type or runtime behavior changes outside the deletions. The PDF generation pipeline, document model, reducer, history, and primitives all behave the same.
+-   Six `Editor.*` namespace aliases are gone — switch to the canonical names.
+-   The bundled `minimal-dark.css` theme is gone — import `styles.css` and toggle `.dark` instead.
+-   No type or runtime behavior changes outside the deletions. The PDF generation pipeline, document model, reducer, history, and primitives all behave the same.
 
 ## Renamed primitives
 
 The compound `Editor.*` namespace dropped the legacy alias names. Each was a re-export of the canonical primitive, so the migration is a pure rename.
 
-| Removed alias                  | Use instead                  | Notes                                  |
-| ------------------------------ | ---------------------------- | -------------------------------------- |
-| `Editor.Inspector`             | `Editor.Properties`          | Renamed for clarity                    |
-| `Editor.PageBackgroundPicker`  | `Editor.PageBackground`      | Renamed for symmetry with other primitives |
-| `Editor.EstimatedSize`         | `Editor.FileSizeBadge`       | More descriptive — it renders a badge  |
-| `Editor.ProgressOverlay`       | `Editor.GenerationProgress`  | More specific — it's PDF-generation progress |
-| `Editor.AddSectionButton`      | `Editor.AddImageButton`      | Disambiguated from text/shape/draw add-buttons |
-| `Editor.PageList`              | `Editor.Pages`               | Shorter, more idiomatic                |
-| `Editor.PageThumb`             | `Editor.PageThumbnail`       | Full word for readability              |
+| Removed alias                 | Use instead                 | Notes                                          |
+| ----------------------------- | --------------------------- | ---------------------------------------------- |
+| `Editor.Inspector`            | `Editor.Properties`         | Renamed for clarity                            |
+| `Editor.PageBackgroundPicker` | `Editor.PageBackground`     | Renamed for symmetry with other primitives     |
+| `Editor.EstimatedSize`        | `Editor.FileSizeBadge`      | More descriptive — it renders a badge          |
+| `Editor.ProgressOverlay`      | `Editor.GenerationProgress` | More specific — it's PDF-generation progress   |
+| `Editor.AddSectionButton`     | `Editor.AddImageButton`     | Disambiguated from text/shape/draw add-buttons |
+| `Editor.PageList`             | `Editor.Pages`              | Shorter, more idiomatic                        |
+| `Editor.PageThumb`            | `Editor.PageThumbnail`      | Full word for readability                      |
 
 ## Removed `minimal-dark.css` theme
 
@@ -92,17 +92,17 @@ Then add `<ThemeProvider attribute="class">` (or your own `.dark`-class toggle) 
 
 The legacy `--editor-color-*` CSS aliases (`--editor-color-accent`, `--editor-color-accent-soft`, `--editor-color-success`, `--editor-color-warning`, `--editor-color-warning-soft`, `--editor-color-surface`, `--editor-color-text`) are **still defined in v1.0** for back-compat. They resolve to the shadcn-aligned semantic surface (`--primary`, `--secondary`, `--accent`, `--destructive`, `--background`, `--foreground`) and will keep working.
 
-New code should prefer the semantic surface directly — `var(--primary)` instead of `var(--editor-color-accent)`, and so on. The `--editor-color-*` aliases are scheduled for removal in v2.0.
+New code should prefer the semantic surface directly — `var(--primary)` instead of `var(--editor-color-accent)`, and so on. These aliases — along with the `editor-*` Tailwind color classes — are **removed in [v2.0](/docs/migration/v2)**.
 
-| Legacy alias                  | Semantic equivalent          |
-| ----------------------------- | ---------------------------- |
-| `--editor-color-accent`       | `--primary`                  |
-| `--editor-color-accent-soft`  | `--secondary`                |
-| `--editor-color-success`      | `--accent`                   |
-| `--editor-color-warning`      | `--destructive`              |
+| Legacy alias                  | Semantic equivalent                          |
+| ----------------------------- | -------------------------------------------- |
+| `--editor-color-accent`       | `--primary`                                  |
+| `--editor-color-accent-soft`  | `--secondary`                                |
+| `--editor-color-success`      | `--accent`                                   |
+| `--editor-color-warning`      | `--destructive`                              |
 | `--editor-color-warning-soft` | (no semantic equivalent — caramel `#FFA552`) |
-| `--editor-color-surface`      | `--background`               |
-| `--editor-color-text`         | `--foreground`               |
+| `--editor-color-surface`      | `--background`                               |
+| `--editor-color-text`         | `--foreground`                               |
 
 The structural tokens `--editor-radius-section` and `--editor-shadow-section` are kept — they're domain-specific and have no shadcn equivalent.
 
