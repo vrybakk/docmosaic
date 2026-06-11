@@ -1,4 +1,49 @@
+import type { ReactNode } from 'react';
 import propsData from '@/generated/props.json';
+
+/** Render a string with `` `inline code` `` spans wrapped in `<code>`. */
+function renderInline(text: string): ReactNode[] {
+    return text
+        .split(/(`[^`]+`)/g)
+        .filter(Boolean)
+        .map((part, i) =>
+            part.length > 1 && part.startsWith('`') && part.endsWith('`') ? (
+                <code
+                    key={i}
+                    className="rounded border border-fd-border bg-fd-secondary px-1 py-0.5 font-mono text-[0.8em]"
+                >
+                    {part.slice(1, -1)}
+                </code>
+            ) : (
+                <span key={i}>{part}</span>
+            ),
+        );
+}
+
+/**
+ * Render a cleaned JSDoc summary: inline code spans become `<code>`, and a
+ * collapsed `" - "` bullet list (common in multi-case prop docs) becomes a
+ * real `<ul>`.
+ */
+function Description({ text }: { text: string }) {
+    if (!text) return <span className="text-fd-muted-foreground">—</span>;
+
+    const parts = text.split(/\s+-\s+/);
+    if (parts.length > 1) {
+        const [intro, ...items] = parts;
+        return (
+            <div className="space-y-2">
+                {intro.trim() && <p>{renderInline(intro.trim())}</p>}
+                <ul className="list-disc space-y-1 pl-4 marker:text-fd-muted-foreground">
+                    {items.map((item, i) => (
+                        <li key={i}>{renderInline(item.trim())}</li>
+                    ))}
+                </ul>
+            </div>
+        );
+    }
+    return <p>{renderInline(text)}</p>;
+}
 
 interface PropEntry {
     name: string;
@@ -35,8 +80,8 @@ export function PropTable({ name, rows }: PropTableProps) {
     }
 
     return (
-        <div className="my-6 overflow-x-auto rounded-lg border border-fd-border">
-            <table className="w-full text-sm">
+        <div className="not-prose my-6 overflow-x-auto rounded-lg border border-fd-border">
+            <table className="w-full border-collapse text-sm">
                 <thead className="bg-fd-secondary text-left text-xs uppercase tracking-wide text-fd-muted-foreground">
                     <tr>
                         <th className="px-4 py-2">Prop</th>
@@ -58,7 +103,9 @@ export function PropTable({ name, rows }: PropTableProps) {
                             <td className="px-4 py-3 font-mono text-xs text-fd-muted-foreground">
                                 {row.defaultValue ?? '—'}
                             </td>
-                            <td className="px-4 py-3 text-fd-foreground">{row.description}</td>
+                            <td className="px-4 py-3 text-fd-foreground">
+                                <Description text={row.description} />
+                            </td>
                         </tr>
                     ))}
                 </tbody>

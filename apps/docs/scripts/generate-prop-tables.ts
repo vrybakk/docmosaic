@@ -31,6 +31,31 @@ interface PropEntry {
     description: string;
 }
 
+/** JSDoc block tags that mark the end of the summary prose. */
+const BLOCK_TAG =
+    /\s@(example|param|returns?|see|default|defaultValue|remarks|deprecated|throws|typeParam|template|internal|privateRemarks)\b/i;
+
+/**
+ * Reduce a raw JSDoc comment to a concise, table-friendly summary: everything
+ * up to the first block tag (`@example`, `@param`, …), with `{@link X}` inline
+ * tags resolved to their target/label and whitespace collapsed. Full code
+ * examples stay in the prose docs and the source JSDoc — a prop-table cell only
+ * needs the summary. Inline `` `code` `` markers are preserved for the renderer.
+ */
+function cleanDescription(raw: string): string {
+    if (!raw) return '';
+    const tag = raw.search(BLOCK_TAG);
+    const summary = tag >= 0 ? raw.slice(0, tag) : raw;
+    return summary
+        .replace(/\{@link(?:code|plain)?\s+([^}]+)\}/gi, (_, body: string) => {
+            const text = body.trim();
+            const piped = text.split('|');
+            return piped.length > 1 ? piped[piped.length - 1].trim() : text.split(/\s+/)[0];
+        })
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 async function walk(dir: string, files: string[] = []): Promise<string[]> {
     const entries = await readdir(dir);
     for (const entry of entries) {
@@ -80,7 +105,7 @@ async function main() {
                 type: p.type?.name ?? 'unknown',
                 required: Boolean(p.required),
                 defaultValue: p.defaultValue?.value ?? null,
-                description: p.description ?? '',
+                description: cleanDescription(p.description ?? ''),
             }));
             if (rows.length === 0) continue;
             out[name] = rows;

@@ -362,7 +362,7 @@
             "type": "number | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Maximum size for the minimap thumbnail (CSS pixels). The thumbnail\npreserves the page aspect ratio so the actual dimensions are at most\n`maxSize` on the longer axis. Defaults to `200`."
+            "description": "Maximum size for the minimap thumbnail (CSS pixels). The thumbnail preserves the page aspect ratio so the actual dimensions are at most `maxSize` on the longer axis. Defaults to `200`."
         }
     ],
     "Zoom": [
@@ -387,7 +387,7 @@
             "type": "string | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Optional title rendered above the list. Pass an empty string to omit\nthe header entirely (useful when the surrounding shell already labels\nthe panel)."
+            "description": "Optional title rendered above the list. Pass an empty string to omit the header entirely (useful when the surrounding shell already labels the panel)."
         }
     ],
     "LayerList.Row": [
@@ -445,7 +445,7 @@
             "type": "(fromIndex: number, toIndex: number) => void",
             "required": true,
             "defaultValue": null,
-            "description": "Reorder callback fired when a row is dragged over another row's hover\nmidpoint, mirroring the Pages primitive's behavior."
+            "description": "Reorder callback fired when a row is dragged over another row's hover midpoint, mirroring the Pages primitive's behavior."
         }
     ],
     "LayerRow": [
@@ -503,7 +503,7 @@
             "type": "(fromIndex: number, toIndex: number) => void",
             "required": true,
             "defaultValue": null,
-            "description": "Reorder callback fired when a row is dragged over another row's hover\nmidpoint, mirroring the Pages primitive's behavior."
+            "description": "Reorder callback fired when a row is dragged over another row's hover midpoint, mirroring the Pages primitive's behavior."
         }
     ],
     "SectionShapeToolbar": [
@@ -673,7 +673,7 @@
             "type": "{ size: number; onStart: () => void; onMove: (dx: number, dy: number) => void; onEnd: () => void; } | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Group drag hook (Phase 16). When provided and `groupDrag.size > 1`, the\nsection's individual `onUpdate` is bypassed in favour of\n`groupDrag.onMove(dx, dy)` so the whole selection translates together.\n\nCoordinates are in canvas display pixels (matching the input movement),\nso the receiver converts to PDF points itself."
+            "description": "Group drag hook (Phase 16). When provided and `groupDrag.size > 1`, the section's individual `onUpdate` is bypassed in favour of `groupDrag.onMove(dx, dy)` so the whole selection translates together. Coordinates are in canvas display pixels (matching the input movement), so the receiver converts to PDF points itself."
         }
     ],
     "useImageUpload": [
@@ -719,7 +719,7 @@
             "type": "number",
             "required": true,
             "defaultValue": null,
-            "description": "Display scale: `finalScale` from {@link useEditorSection }. Pointer deltas\narrive in display pixels; the hook divides by `scale` before applying\nthem to the crop region (which lives in PDF points)."
+            "description": "Display scale: `finalScale` from useEditorSection. Pointer deltas arrive in display pixels; the hook divides by `scale` before applying them to the crop region (which lives in PDF points)."
         }
     ],
     "SectionImage": [
@@ -804,7 +804,7 @@
             "type": "number",
             "required": true,
             "defaultValue": null,
-            "description": "Display scale (`finalScale`) — point values are multiplied by this\nto render in display pixels so the overlay aligns with the visible\nsection box."
+            "description": "Display scale (`finalScale`) — point values are multiplied by this to render in display pixels so the overlay aligns with the visible section box."
         },
         {
             "name": "onStartMove",
@@ -915,7 +915,7 @@
             "type": "DefaultToastOptions | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Override the default toast styling. Defaults to a theme-token-styled\ncard matching `bg-card` / `text-card-foreground`. Anything you pass\ndeep-merges into the bundled defaults, so consumers only need to set the\nfields they want to change."
+            "description": "Override the default toast styling. Defaults to a theme-token-styled card matching `bg-card` / `text-card-foreground`. Anything you pass deep-merges into the bundled defaults, so consumers only need to set the fields they want to change."
         }
     ],
     "Ruler": [
@@ -931,7 +931,7 @@
             "type": "enum",
             "required": false,
             "defaultValue": null,
-            "description": "Override the display unit. Falls back to `display.rulerUnit` from the\neditor context (defaults to `'pt'`)."
+            "description": "Override the display unit. Falls back to `display.rulerUnit` from the editor context (defaults to `'pt'`)."
         }
     ],
     "TemplateGallery": [
@@ -947,7 +947,7 @@
             "type": "((template: TemplateGalleryItem) => void) | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Fired after the template has been applied via the editor's\n`UPDATE_DOCUMENT` action. Useful for analytics or closing a dialog."
+            "description": "Fired after the template has been applied via the editor's `UPDATE_DOCUMENT` action. Useful for analytics or closing a dialog."
         },
         {
             "name": "className",
@@ -963,14 +963,14 @@
             "type": "Partial<EditorKeymap> | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Override the displayed keymap. Defaults to {@link DEFAULT_KEYMAP}. Pass\nthe same partial map you handed to `Editor.Root` `keybindings` so the\ndialog reflects the actual active bindings.\n\nAnything omitted falls back to the default — the merge mirrors what the\nruntime layer does."
+            "description": "Override the displayed keymap. Defaults to DEFAULT_KEYMAP. Pass the same partial map you handed to `Editor.Root` `keybindings` so the dialog reflects the actual active bindings. Anything omitted falls back to the default — the merge mirrors what the runtime layer does."
         },
         {
             "name": "open",
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Externally control the open state. When omitted, the dialog manages its\nown visibility and listens for the `showHelp` keybinding to toggle."
+            "description": "Externally control the open state. When omitted, the dialog manages its own visibility and listens for the `showHelp` keybinding to toggle."
         },
         {
             "name": "onOpenChange",
@@ -986,7 +986,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Optional children. When provided, the toolbar renders the inverse\ndefault layout and shows whatever children the caller passes.\nWhen omitted, falls back to the bundled default layout — the same\narrangement the editor has always shipped with."
+            "description": "Optional children. When provided, the toolbar renders the inverse default layout and shows whatever children the caller passes. When omitted, falls back to the bundled default layout — the same arrangement the editor has always shipped with."
         }
     ],
     "AddShapeButton": [
@@ -1011,7 +1011,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Optional children. When provided, the panel renders them as the body —\nuseful for custom compositions that swap sub-sections or add their own\nfields. When omitted, the panel falls back to the bundled default\narrangement: `LayoutSection`, type-specific section (Text / Shape),\nthen `LayerSection`. An empty selection always renders the\n{@link EmptyState} regardless of children."
+            "description": "Optional children. When provided, the panel renders them as the body — useful for custom compositions that swap sub-sections or add their own fields. When omitted, the panel falls back to the bundled default arrangement: `LayoutSection`, type-specific section (Text / Shape), then `LayerSection`. An empty selection always renders the EmptyState regardless of children."
         },
         {
             "name": "className",
@@ -1149,7 +1149,7 @@
             "type": "number | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Page to target. Defaults to the document's current page (1-based\nindex, converted to 0-based internally to match the reducer action)."
+            "description": "Page to target. Defaults to the document's current page (1-based index, converted to 0-based internally to match the reducer action)."
         },
         {
             "name": "className",
@@ -1165,14 +1165,14 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Two kinds of children are supported:\n\n1. **Section template** — a single non-overlay child rendered once per\n   section. Pass `<Editor.Section />` (or a custom section component\n   that consumes {@link useEditorSection }) to control how each section\n   is rendered. Defaults to the bundled `<Section />` when omitted.\n2. **Canvas overlays** — primitives that opt in via the\n   `__editorCanvasOverlay` marker (e.g. {@link Editor.Zoom }). These are\n   rendered once, anchored to the canvas viewport, and have access to\n   {@link useEditorCanvas } via context. Any number can be supplied\n   alongside the section template."
+            "description": "Two kinds of children are supported: 1. **Section template** — a single non-overlay child rendered once per section. Pass `<Editor.Section />` (or a custom section component that consumes useEditorSection) to control how each section is rendered. Defaults to the bundled `<Section />` when omitted. 2. **Canvas overlays** — primitives that opt in via the `__editorCanvasOverlay` marker (e.g. Editor.Zoom). These are rendered once, anchored to the canvas viewport, and have access to useEditorCanvas via context. Any number can be supplied alongside the section template."
         },
         {
             "name": "readOnly",
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Force the canvas into read-only mode regardless of the root's\n`readOnly` flag. Defaults to `false`. The effective read-only state is\n`root.readOnly || canvas.readOnly` — either one is enough to suppress\ndrag, resize, drop, file upload, and section-toolbar buttons.\n\nSet automatically by {@link Editor.StaticCanvas }."
+            "description": "Force the canvas into read-only mode regardless of the root's `readOnly` flag. Defaults to `false`. The effective read-only state is `root.readOnly || canvas.readOnly` — either one is enough to suppress drag, resize, drop, file upload, and section-toolbar buttons. Set automatically by Editor.StaticCanvas."
         }
     ],
     "StaticCanvas": [
@@ -1181,7 +1181,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Two kinds of children are supported:\n\n1. **Section template** — a single non-overlay child rendered once per\n   section. Pass `<Editor.Section />` (or a custom section component\n   that consumes {@link useEditorSection }) to control how each section\n   is rendered. Defaults to the bundled `<Section />` when omitted.\n2. **Canvas overlays** — primitives that opt in via the\n   `__editorCanvasOverlay` marker (e.g. {@link Editor.Zoom }). These are\n   rendered once, anchored to the canvas viewport, and have access to\n   {@link useEditorCanvas } via context. Any number can be supplied\n   alongside the section template."
+            "description": "Two kinds of children are supported: 1. **Section template** — a single non-overlay child rendered once per section. Pass `<Editor.Section />` (or a custom section component that consumes useEditorSection) to control how each section is rendered. Defaults to the bundled `<Section />` when omitted. 2. **Canvas overlays** — primitives that opt in via the `__editorCanvasOverlay` marker (e.g. Editor.Zoom). These are rendered once, anchored to the canvas viewport, and have access to useEditorCanvas via context. Any number can be supplied alongside the section template."
         }
     ],
     "useCanvasZoom": [
@@ -1280,7 +1280,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Optional children. When provided, the properties bar renders an empty\nshell with the children inside. When omitted, falls back to the bundled\ndefault layout (document name + page size + orientation, plus a mobile\nsettings sheet)."
+            "description": "Optional children. When provided, the properties bar renders an empty shell with the children inside. When omitted, falls back to the bundled default layout (document name + page size + orientation, plus a mobile settings sheet)."
         }
     ],
     "PageSizeSelect": [
@@ -1402,7 +1402,7 @@
             "type": "Partial<EditorPdfBackend> | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Optional PDF backend override. Defaults to `@docmosaic/core` exports.\nUse this to swap the bundled jsPDF path for a custom implementation."
+            "description": "Optional PDF backend override. Defaults to `@docmosaic/core` exports. Use this to swap the bundled jsPDF path for a custom implementation."
         }
     ],
     "Root": [
@@ -1411,42 +1411,42 @@
             "type": "Partial<EditorPdfBackend> | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Pluggable PDF backend.\n\nEither or both functions can be overridden. Anything omitted falls back\nto the bundled `@docmosaic/core` implementation (`generatePDF` /\n`estimatePDFSize`).\n\nUse this to swap the jsPDF path for a different renderer, run generation\nin a Worker, or mock it out in tests.\n@example ```tsx\nimport type { generatePDF, estimatePDFSize } from '@docmosaic/core';\n\nconst generate: typeof generatePDF = async (sections, options, onProgress) => {\n  // Custom pipeline — e.g. delegate to a Worker or use pdf-lib.\n  return await myCustomRenderer(sections, options, onProgress);\n};\n\nconst estimate: typeof estimatePDFSize = (sections, backgrounds) => {\n  // Faster heuristic that matches the custom renderer's output.\n  return mySizeHeuristic(sections, backgrounds);\n};\n\n<Editor.Root pdf={{ generate, estimate }}>...</Editor.Root>\n```"
+            "description": "Pluggable PDF backend. Either or both functions can be overridden. Anything omitted falls back to the bundled `@docmosaic/core` implementation (`generatePDF` / `estimatePDFSize`). Use this to swap the jsPDF path for a different renderer, run generation in a Worker, or mock it out in tests."
         },
         {
             "name": "keybindings",
             "type": "false | Partial<EditorKeymap> | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Keyboard shortcuts.\n\n- Omit (default): the built-in keymap is active — `mod+z` undo,\n  `mod+shift+z` / `mod+y` redo, `Delete` / `Backspace` removes the\n  selected section, `Escape` deselects, and `Arrow` / `Shift+Arrow`\n  nudge the selected section by 1pt / 10pt.\n- Pass a partial {@link EditorKeymap} to override individual bindings or\n  register alternates (e.g. `{ redo: 'mod+r' }`).\n- Pass `false` to disable the layer entirely — no window listener is\n  attached.\n\nBindings are skipped while focus is inside an `<input>`, `<textarea>`,\n`<select>`, or anything `contenteditable`, so text fields like the\ndocument-name input remain typeable.\n@example Override redo\n```tsx\n<Editor.Root keybindings={{ redo: 'mod+r' }}>...</Editor.Root>\n```\n@example Disable all shortcuts\n```tsx\n<Editor.Root keybindings={false}>...</Editor.Root>\n```"
+            "description": "Keyboard shortcuts. - Omit (default): the built-in keymap is active — `mod+z` undo, `mod+shift+z` / `mod+y` redo, `Delete` / `Backspace` removes the selected section, `Escape` deselects, and `Arrow` / `Shift+Arrow` nudge the selected section by 1pt / 10pt. - Pass a partial EditorKeymap to override individual bindings or register alternates (e.g. `{ redo: 'mod+r' }`). - Pass `false` to disable the layer entirely — no window listener is attached. Bindings are skipped while focus is inside an `<input>`, `<textarea>`, `<select>`, or anything `contenteditable`, so text fields like the document-name input remain typeable."
         },
         {
             "name": "readOnly",
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Render the editor in read-only / viewer mode. Defaults to `false`.\n\nWhen `true`:\n- Section drag, resize, drop, and file upload are suppressed.\n- Section floating toolbars (delete, duplicate, layer buttons) hide.\n- The properties bar (document name, page size, orientation) becomes\n  read-only.\n- The page list hides Add Image / Add Page / per-page delete and\n  ignores reorder gestures.\n- The `PropertiesPanel` renders its number/text inputs disabled and\n  hides the Layer buttons.\n- The toolbar's `AddImageButton`, `AddTextButton`, `AddShapeButton`,\n  `DrawButton`, `UndoButton`, and `RedoButton` hide themselves.\n- Keybindings skip every mutating action (`undo`, `redo`,\n  `deleteSection`, `nudge*`); `deselect` (Esc) still works.\n- Drawing-mode pointer captures are ignored.\n\nWhat still works:\n- Selection (click, shift-click, marquee).\n- Zoom, pan, preview dialog, print, PDF/PNG download.\n@example ```tsx\n<Editor.Root defaultDocument={signedContract} readOnly>\n  <Editor.Properties />\n  <Editor.Toolbar />\n  <Editor.Canvas />\n  <Editor.Preview />\n</Editor.Root>\n```"
+            "description": "Render the editor in read-only / viewer mode. Defaults to `false`. When `true`: - Section drag, resize, drop, and file upload are suppressed. - Section floating toolbars (delete, duplicate, layer buttons) hide. - The properties bar (document name, page size, orientation) becomes read-only. - The page list hides Add Image / Add Page / per-page delete and ignores reorder gestures. - The `PropertiesPanel` renders its number/text inputs disabled and hides the Layer buttons. - The toolbar's `AddImageButton`, `AddTextButton`, `AddShapeButton`, `DrawButton`, `UndoButton`, and `RedoButton` hide themselves. - Keybindings skip every mutating action (`undo`, `redo`, `deleteSection`, `nudge*`); `deselect` (Esc) still works. - Drawing-mode pointer captures are ignored. What still works: - Selection (click, shift-click, marquee). - Zoom, pan, preview dialog, print, PDF/PNG download."
         },
         {
             "name": "showRuler",
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Render `Editor.Ruler` along the top and left edges of the canvas\nviewport. Defaults to `false`. When `true`, the canvas reserves a\n24px gutter on each axis so the rulers sit flush with the page edge\nwithout occluding section geometry."
+            "description": "Render `Editor.Ruler` along the top and left edges of the canvas viewport. Defaults to `false`. When `true`, the canvas reserves a 24px gutter on each axis so the rulers sit flush with the page edge without occluding section geometry."
         },
         {
             "name": "showMinimap",
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Render `Editor.Minimap` anchored to the bottom-right of the canvas\nviewport — a thumbnail of the current page plus a viewport rectangle\nthat pans the main canvas. Defaults to `false`."
+            "description": "Render `Editor.Minimap` anchored to the bottom-right of the canvas viewport — a thumbnail of the current page plus a viewport rectangle that pans the main canvas. Defaults to `false`."
         },
         {
             "name": "rulerUnit",
             "type": "enum",
             "required": false,
             "defaultValue": null,
-            "description": "Unit used by `Editor.Ruler` tick labels. Defaults to `'pt'` so the\ntick values match the document's storage unit one-to-one. Set to\n`'mm'` or `'in'` to surface a human-facing measurement instead."
+            "description": "Unit used by `Editor.Ruler` tick labels. Defaults to `'pt'` so the tick values match the document's storage unit one-to-one. Set to `'mm'` or `'in'` to surface a human-facing measurement instead."
         },
         {
             "name": "document",
@@ -1490,7 +1490,7 @@
             "type": "readonly string[] | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Optional override for the swatch palette. Defaults to\n{@link DEFAULT_COLOR_PRESETS} (12 colors)."
+            "description": "Optional override for the swatch palette. Defaults to DEFAULT_COLOR_PRESETS (12 colors)."
         },
         {
             "name": "className",
@@ -1504,7 +1504,7 @@
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "When `true`, the swatches and custom-color trigger become non-interactive\nand visually dim. The current `value` still shows so the swatch remains\na label for the actively-selected color."
+            "description": "When `true`, the swatches and custom-color trigger become non-interactive and visually dim. The current `value` still shows so the swatch remains a label for the actively-selected color."
         }
     ],
     "Guides": [
@@ -1592,7 +1592,7 @@
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "When `true`, the per-page delete button is hidden and the thumbnail\nis not `draggable` (so it cannot be reordered). The thumbnail still\nstays selectable. Defaults to `false`."
+            "description": "When `true`, the per-page delete button is hidden and the thumbnail is not `draggable` (so it cannot be reordered). The thumbnail still stays selectable. Defaults to `false`."
         }
     ],
     "ContextMenu": [
@@ -1601,14 +1601,14 @@
             "type": "ReactNode",
             "required": true,
             "defaultValue": null,
-            "description": "Children wrapped by the right-click trigger. Typically `Editor.Canvas`\n(or the page surface inside a custom shell)."
+            "description": "Children wrapped by the right-click trigger. Typically `Editor.Canvas` (or the page surface inside a custom shell)."
         },
         {
             "name": "keymap",
             "type": "Partial<EditorKeymap> | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Override the displayed shortcut chips. Defaults to {@link DEFAULT_KEYMAP}.\nPass the same partial map you handed to `Editor.Root` `keybindings` so\nthe inline shortcuts match the active runtime — the menu items\nthemselves dispatch through {@link useEditor} actions regardless."
+            "description": "Override the displayed shortcut chips. Defaults to DEFAULT_KEYMAP. Pass the same partial map you handed to `Editor.Root` `keybindings` so the inline shortcuts match the active runtime — the menu items themselves dispatch through useEditor actions regardless."
         },
         {
             "name": "className",
@@ -1708,7 +1708,7 @@
             "type": "EditorKeybinding | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Toggle the {@link Editor.KeybindingHelp } dialog. Defaults to `mod+/` —\nthe same chord used by Notion, GitHub, Slack, and most other web apps\nwith a built-in keymap viewer. Read-only safe (the dialog is a passive\nviewer)."
+            "description": "Toggle the Editor.KeybindingHelp dialog. Defaults to `mod+/` — the same chord used by Notion, GitHub, Slack, and most other web apps with a built-in keymap viewer. Read-only safe (the dialog is a passive viewer)."
         }
     ],
     "useDocumentState": [
@@ -1717,7 +1717,7 @@
             "type": "Document | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Optional seed document. Only read once (initial mount); subsequent\nchanges to this prop are ignored. Pass a new key on the parent to force\na remount if you need to swap documents."
+            "description": "Optional seed document. Only read once (initial mount); subsequent changes to this prop are ignored. Pass a new key on the parent to force a remount if you need to swap documents."
         }
     ]
 }
