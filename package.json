@@ -12,6 +12,8 @@
         "build": "turbo run build",
         "typecheck": "turbo run typecheck",
         "lint": "turbo run lint",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
         "test": "turbo run test",
         "test:run": "turbo run test:run",
         "storybook": "turbo run dev --filter=@docmosaic/storybook",
@@ -26,6 +28,7 @@
         "@commitlint/cli": "^19.3.0",
         "@commitlint/config-conventional": "^19.2.2",
         "husky": "^9.1.7",
+        "lint-staged": "^17.0.7",
         "prettier": "3.3.3",
         "turbo": "^2.9.16"
     }

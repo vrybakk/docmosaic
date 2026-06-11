@@ -1,5 +1,17 @@
+# Dependencies
 node_modules
+
+# Build output & caches
+dist
+.next
+.turbo
+.source
+storybook-static
+coverage
+
+# Generated / lockfiles
 package.json
 package.lock.json
+bun.lock
 next.config.js
 next.config.mjs
