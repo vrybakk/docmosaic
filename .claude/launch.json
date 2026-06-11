@@ -12,6 +12,12 @@
             "runtimeExecutable": "bun",
             "runtimeArgs": ["run", "storybook"],
             "port": 6006
+        },
+        {
+            "name": "Docs (Fumadocs)",
+            "runtimeExecutable": "bun",
+            "runtimeArgs": ["run", "--filter", "@docmosaic/docs", "dev"],
+            "port": 4002
         }
     ]
 }
