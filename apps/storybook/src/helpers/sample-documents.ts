@@ -158,9 +158,7 @@ export function documentWithPageBackground(color = '#fff7e6'): Document {
     const section = createSection({ x: 60, y: 60, page: 1 }) as ImageSection;
     return {
         ...base,
-        pages: base.pages.map((p, i) =>
-            i === 0 ? { ...p, background: { color } } : p,
-        ),
+        pages: base.pages.map((p, i) => (i === 0 ? { ...p, background: { color } } : p)),
         sections: [{ ...section, width: 220, height: 160 }],
     };
 }

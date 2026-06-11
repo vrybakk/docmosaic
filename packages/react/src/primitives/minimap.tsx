@@ -112,25 +112,25 @@ export function Minimap({ className, maxSize = 200 }: MinimapProps = {}) {
 
     // Drag the viewport rectangle to pan the canvas. Delta is converted from
     // minimap pixels to canvas pixels via the inverse of the minimap scale.
-    const dragRef = useRef<{ startX: number; startY: number; scrollLeft: number; scrollTop: number } | null>(
-        null,
-    );
+    const dragRef = useRef<{
+        startX: number;
+        startY: number;
+        scrollLeft: number;
+        scrollTop: number;
+    } | null>(null);
 
-    const handlePointerDown = useCallback(
-        (e: React.PointerEvent) => {
-            const scroll = scrollNodeRef.current;
-            if (!scroll) return;
-            e.preventDefault();
-            (e.target as Element).setPointerCapture?.(e.pointerId);
-            dragRef.current = {
-                startX: e.clientX,
-                startY: e.clientY,
-                scrollLeft: scroll.scrollLeft,
-                scrollTop: scroll.scrollTop,
-            };
-        },
-        [],
-    );
+    const handlePointerDown = useCallback((e: React.PointerEvent) => {
+        const scroll = scrollNodeRef.current;
+        if (!scroll) return;
+        e.preventDefault();
+        (e.target as Element).setPointerCapture?.(e.pointerId);
+        dragRef.current = {
+            startX: e.clientX,
+            startY: e.clientY,
+            scrollLeft: scroll.scrollLeft,
+            scrollTop: scroll.scrollTop,
+        };
+    }, []);
 
     if (!pageDimensions) return null;
 

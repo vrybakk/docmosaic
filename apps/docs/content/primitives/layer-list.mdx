@@ -34,10 +34,10 @@ const sections = document.sections.filter((s) => s.pageIndex === ui.currentPageI
 
 Each row exposes two toggles, mirroring Figma:
 
-| Toggle | Action                              | Effect                                                              |
-| ------ | ----------------------------------- | ------------------------------------------------------------------- |
-| Eye    | `actions.toggleHidden(sectionId)`   | Skips the section in the canvas and the PDF output.                 |
-| Lock   | `actions.toggleLocked(sectionId)`   | Refuses selection, drag, and resize for the section.                |
+| Toggle | Action                            | Effect                                               |
+| ------ | --------------------------------- | ---------------------------------------------------- |
+| Eye    | `actions.toggleHidden(sectionId)` | Skips the section in the canvas and the PDF output.  |
+| Lock   | `actions.toggleLocked(sectionId)` | Refuses selection, drag, and resize for the section. |
 
 Hidden and locked are independent flags. The PDF generator filters out hidden sections before drawing (byte-diff gate confirms it).
 
@@ -58,5 +58,5 @@ Hidden and locked are independent flags. The PDF generator filters out hidden se
 
 ## Related
 
-- [PropertiesPanel](/docs/primitives/properties-panel) — contextual editor for the selected layer
-- [Layers concept](/docs/concepts/layers) — the underlying `zIndex` model
+-   [PropertiesPanel](/docs/primitives/properties-panel) — contextual editor for the selected layer
+-   [Layers concept](/docs/concepts/layers) — the underlying `zIndex` model

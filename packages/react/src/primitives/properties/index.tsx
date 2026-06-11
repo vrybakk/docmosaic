@@ -3,13 +3,7 @@
 import { Settings2 } from 'lucide-react';
 import { Children, type ReactNode, useState } from 'react';
 import { Button } from '../../ui/button';
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from '../../ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../../ui/sheet';
 import { DocumentName } from './document-name';
 import { OrientationSelect } from './orientation-select';
 import { PageSizeSelect } from './page-size-select';

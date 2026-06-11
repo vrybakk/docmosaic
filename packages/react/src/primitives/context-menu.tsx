@@ -262,7 +262,13 @@ function renderSectionItems({
     items.push(
         <Item
             key="toggle-hidden"
-            icon={section.hidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+            icon={
+                section.hidden ? (
+                    <Eye className="h-3.5 w-3.5" />
+                ) : (
+                    <EyeOff className="h-3.5 w-3.5" />
+                )
+            }
             disabled={readOnly}
             onSelect={() => actions.toggleHidden(section.id)}
             data-context-menu-item="toggle-hidden"
@@ -271,7 +277,13 @@ function renderSectionItems({
         </Item>,
         <Item
             key="toggle-locked"
-            icon={section.locked ? <LockOpen className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}
+            icon={
+                section.locked ? (
+                    <LockOpen className="h-3.5 w-3.5" />
+                ) : (
+                    <Lock className="h-3.5 w-3.5" />
+                )
+            }
             disabled={readOnly}
             onSelect={() => actions.toggleLocked(section.id)}
             data-context-menu-item="toggle-locked"
@@ -334,7 +346,8 @@ function renderCanvasItems({
     ];
 }
 
-interface ItemProps extends Omit<ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item>, 'children'> {
+interface ItemProps
+    extends Omit<ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item>, 'children'> {
     icon?: ReactNode;
     shortcut?: string | undefined;
     destructive?: boolean;
@@ -368,9 +381,7 @@ const Item = forwardRef<ElementRef<typeof ContextMenuPrimitive.Item>, ItemProps>
 Item.displayName = 'EditorContextMenuItem';
 
 function Separator() {
-    return (
-        <ContextMenuPrimitive.Separator className="my-1 h-px bg-border" />
-    );
+    return <ContextMenuPrimitive.Separator className="my-1 h-px bg-border" />;
 }
 
 /**

@@ -9,11 +9,7 @@ import { Meta } from '@storybook/blocks';
 `EditorConfigProvider`.
 
 ```tsx
-import {
-    Editor,
-    EditorConfigProvider,
-    type ImageRenderer,
-} from '@docmosaic/react';
+import { Editor, EditorConfigProvider, type ImageRenderer } from '@docmosaic/react';
 
 const Picture: ImageRenderer = ({ src, alt, onLoad, style }) => (
     <picture>
@@ -42,11 +38,11 @@ export function App() {
 
 ## Use cases
 
-- **Responsive images** — serve AVIF/WebP via `<picture>`.
-- **Next.js `Image`** — keep the editor lightweight on the web by
-  delegating to the framework's optimized loader.
-- **Lazy + low-quality placeholder** — render a blurred placeholder while
-  the full image streams in.
+-   **Responsive images** — serve AVIF/WebP via `<picture>`.
+-   **Next.js `Image`** — keep the editor lightweight on the web by
+    delegating to the framework's optimized loader.
+-   **Lazy + low-quality placeholder** — render a blurred placeholder while
+    the full image streams in.
 
 The renderer receives everything `Editor.Section` would otherwise pass to
 the bare `<img>`: `src`, `alt`, `onLoad`, and `style`.

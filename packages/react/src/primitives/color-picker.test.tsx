@@ -8,18 +8,14 @@ import { ColorPicker, DEFAULT_COLOR_PRESETS } from './color-picker';
 describe('ColorPicker', () => {
     it('renders one swatch per preset color', () => {
         const onChange = vi.fn();
-        const { container } = render(
-            <ColorPicker value="#000000" onChange={onChange} />,
-        );
+        const { container } = render(<ColorPicker value="#000000" onChange={onChange} />);
         const swatches = container.querySelectorAll('button[aria-label^="Pick color"]');
         expect(swatches.length).toBe(DEFAULT_COLOR_PRESETS.length);
     });
 
     it('fires onChange with the picked color when a swatch is clicked', () => {
         const onChange = vi.fn();
-        const { container } = render(
-            <ColorPicker value="#000000" onChange={onChange} />,
-        );
+        const { container } = render(<ColorPicker value="#000000" onChange={onChange} />);
         const swatch = container.querySelector(
             'button[aria-label="Pick color #EF4444"]',
         ) as HTMLButtonElement | null;
@@ -30,9 +26,7 @@ describe('ColorPicker', () => {
     });
 
     it('marks the active swatch as pressed', () => {
-        const { container } = render(
-            <ColorPicker value="#EF4444" onChange={() => {}} />,
-        );
+        const { container } = render(<ColorPicker value="#EF4444" onChange={() => {}} />);
         const active = container.querySelector(
             'button[aria-label="Pick color #EF4444"]',
         ) as HTMLButtonElement | null;
@@ -41,9 +35,7 @@ describe('ColorPicker', () => {
 
     it('exposes a native color input that propagates changes', () => {
         const onChange = vi.fn();
-        const { container } = render(
-            <ColorPicker value="#000000" onChange={onChange} />,
-        );
+        const { container } = render(<ColorPicker value="#000000" onChange={onChange} />);
         const input = container.querySelector(
             'input[data-custom-color-input="true"]',
         ) as HTMLInputElement | null;
@@ -55,9 +47,7 @@ describe('ColorPicker', () => {
     });
 
     it('opens the native color input when the custom trigger is clicked', () => {
-        const { container } = render(
-            <ColorPicker value="#000000" onChange={() => {}} />,
-        );
+        const { container } = render(<ColorPicker value="#000000" onChange={() => {}} />);
         const input = container.querySelector(
             'input[data-custom-color-input="true"]',
         ) as HTMLInputElement | null;

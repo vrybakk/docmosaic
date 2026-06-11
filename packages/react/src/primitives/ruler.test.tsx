@@ -43,9 +43,7 @@ describe('Editor.Ruler', () => {
     it('renders horizontal and vertical ruler axes', async () => {
         const { container } = mountWithRuler();
         await waitForRulerMounted(container);
-        expect(
-            container.querySelector('[data-editor-ruler-axis="horizontal"]'),
-        ).not.toBeNull();
+        expect(container.querySelector('[data-editor-ruler-axis="horizontal"]')).not.toBeNull();
         expect(container.querySelector('[data-editor-ruler-axis="vertical"]')).not.toBeNull();
     });
 
@@ -89,9 +87,7 @@ describe('Editor.Ruler', () => {
             </Editor.Root>,
         );
         await waitForRulerMounted(container);
-        const labels = container.querySelectorAll(
-            '[data-editor-ruler-axis="horizontal"] span',
-        );
+        const labels = container.querySelectorAll('[data-editor-ruler-axis="horizontal"] span');
         const texts = Array.from(labels).map((l) => l.textContent);
         // 50pt ≈ 17.64mm — every major tick label should be a 2-decimal
         // millimeter value, not an integer point count.

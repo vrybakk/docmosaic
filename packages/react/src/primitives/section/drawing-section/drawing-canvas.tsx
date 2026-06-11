@@ -31,16 +31,19 @@ export function DrawingCanvas({ section, finalScale }: DrawingCanvasProps) {
     const [currentPoints, setCurrentPoints] = useState<{ x: number; y: number }[]>([]);
     const isDrawingRef = useRef(false);
 
-    const toLocalPoint = useCallback((e: React.PointerEvent) => {
-        const svg = svgRef.current;
-        if (!svg) return null;
-        const rect = svg.getBoundingClientRect();
-        // Convert client coords to section-local CSS-pixel coords, then to PDF
-        // points by dividing by finalScale.
-        const xCss = e.clientX - rect.left;
-        const yCss = e.clientY - rect.top;
-        return { x: xCss / finalScale, y: yCss / finalScale };
-    }, [finalScale]);
+    const toLocalPoint = useCallback(
+        (e: React.PointerEvent) => {
+            const svg = svgRef.current;
+            if (!svg) return null;
+            const rect = svg.getBoundingClientRect();
+            // Convert client coords to section-local CSS-pixel coords, then to PDF
+            // points by dividing by finalScale.
+            const xCss = e.clientX - rect.left;
+            const yCss = e.clientY - rect.top;
+            return { x: xCss / finalScale, y: yCss / finalScale };
+        },
+        [finalScale],
+    );
 
     const handlePointerDown = useCallback(
         (e: React.PointerEvent) => {

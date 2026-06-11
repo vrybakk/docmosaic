@@ -82,9 +82,7 @@ export function importTemplate(json: string): Document {
     try {
         parsed = JSON.parse(json);
     } catch (error) {
-        throw new Error(
-            `Failed to parse template JSON: ${(error as Error).message}`,
-        );
+        throw new Error(`Failed to parse template JSON: ${(error as Error).message}`);
     }
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
         throw new Error('Template JSON must decode to an object');

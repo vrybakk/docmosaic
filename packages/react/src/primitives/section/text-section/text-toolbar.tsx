@@ -1,15 +1,7 @@
 'use client';
 
 import type { TextSection } from '@docmosaic/core';
-import {
-    AlignCenter,
-    AlignLeft,
-    AlignRight,
-    Bold,
-    Italic,
-    Minus,
-    Plus,
-} from 'lucide-react';
+import { AlignCenter, AlignLeft, AlignRight, Bold, Italic, Minus, Plus } from 'lucide-react';
 import { cn } from '../../../internal/utils';
 import { Button } from '../../../ui/button';
 

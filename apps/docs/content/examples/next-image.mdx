@@ -15,14 +15,7 @@ import Image from 'next/image';
 import { Editor, EditorConfigProvider, type ImageRenderer } from '@docmosaic/react';
 import '@docmosaic/react/styles.css';
 
-const NextImageRenderer: ImageRenderer = ({
-    src,
-    alt,
-    width,
-    height,
-    style,
-    className,
-}) => (
+const NextImageRenderer: ImageRenderer = ({ src, alt, width, height, style, className }) => (
     <Image
         src={src}
         alt={alt ?? ''}
@@ -54,17 +47,19 @@ export default function NextImageEditor() {
 The renderer signature matches a subset of `<img>` props plus `width` / `height`. Override it once at the boundary and every section, page background, and preview thumbnail picks it up.
 
 <Callout type="warn">
-    DocMosaic's image uploads land as **data URLs** (no server, no upload pipeline). `next/image` can't proxy data URLs through its optimizer, so the renderer passes `unoptimized` for them. Skip this and you'll get a runtime error on the first user upload.
+    DocMosaic's image uploads land as **data URLs** (no server, no upload pipeline). `next/image`
+    can't proxy data URLs through its optimizer, so the renderer passes `unoptimized` for them. Skip
+    this and you'll get a runtime error on the first user upload.
 </Callout>
 
 ## When this matters
 
-- **Marketing pages** with CDN-hosted reference images — `next/image` resizes them per breakpoint.
-- **Authenticated assets** — sign the URL before rendering by intercepting `src` in the renderer.
-- **Cloudinary / Imgix / Cloudflare Images** — use their loader and the editor doesn't have to know.
+-   **Marketing pages** with CDN-hosted reference images — `next/image` resizes them per breakpoint.
+-   **Authenticated assets** — sign the URL before rendering by intercepting `src` in the renderer.
+-   **Cloudinary / Imgix / Cloudflare Images** — use their loader and the editor doesn't have to know.
 
 ## Related
 
-- [Custom image renderer recipe](/docs/recipes/custom-image-renderer) — narrative version
-- [EditorConfig reference](/docs/reference/config) — the full config surface
-- [Editor.Section](/docs/primitives/section) — what calls the renderer
+-   [Custom image renderer recipe](/docs/recipes/custom-image-renderer) — narrative version
+-   [EditorConfig reference](/docs/reference/config) — the full config surface
+-   [Editor.Section](/docs/primitives/section) — what calls the renderer

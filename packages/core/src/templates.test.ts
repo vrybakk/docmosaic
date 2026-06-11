@@ -60,9 +60,7 @@ describe('templates', () => {
         const doc = buildDoc();
         const parsed = JSON.parse(exportTemplate(doc));
         parsed.sections = 'oops';
-        expect(() => importTemplate(JSON.stringify(parsed))).toThrow(
-            /sections.*array/,
-        );
+        expect(() => importTemplate(JSON.stringify(parsed))).toThrow(/sections.*array/);
     });
 
     it('throws when payload is not an object', () => {

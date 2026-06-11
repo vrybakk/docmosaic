@@ -27,10 +27,7 @@ export default function ControlledEditor() {
                 <span className="text-sm text-muted-foreground">
                     {doc.sections.length} sections · {doc.pages.length} pages
                 </span>
-                <button
-                    type="button"
-                    onClick={() => setDoc(createDocument({ name: 'My doc' }))}
-                >
+                <button type="button" onClick={() => setDoc(createDocument({ name: 'My doc' }))}>
                     Reset
                 </button>
             </header>
@@ -52,7 +49,9 @@ export default function ControlledEditor() {
 The sibling header reads `doc.sections.length` directly. Every drag, drop, rename, or page reorder calls `setDoc(next)` and re-renders both the header and the editor.
 
 <Callout type="warn">
-    **Undo/redo are disabled in controlled mode.** The history timeline lives inside `Editor.Root`'s uncontrolled mode — when you own the document, you also own the timeline. If you need undo/redo, implement it on top of `useState`, `zustand`, or a CRDT in your own layer.
+    **Undo/redo are disabled in controlled mode.** The history timeline lives inside `Editor.Root`'s
+    uncontrolled mode — when you own the document, you also own the timeline. If you need undo/redo,
+    implement it on top of `useState`, `zustand`, or a CRDT in your own layer.
 </Callout>
 
 ## Try it
@@ -61,6 +60,6 @@ The sibling header reads `doc.sections.length` directly. Every drag, drop, renam
 
 ## Related
 
-- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — the conceptual split
-- [Save to a database](/docs/examples/save-to-database) — controlled mode + persistence
-- [Editor.Root](/docs/primitives/root) — props for both modes
+-   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — the conceptual split
+-   [Save to a database](/docs/examples/save-to-database) — controlled mode + persistence
+-   [Editor.Root](/docs/primitives/root) — props for both modes

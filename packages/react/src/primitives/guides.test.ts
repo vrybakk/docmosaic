@@ -124,11 +124,10 @@ describe('computeSnap — section sticks to guide', () => {
     });
 
     it('still snaps to non-guide targets when no guides are present', () => {
-        const targets = computeSnapTargets(
-            [s('peer', 200, 0, 100, 100)],
-            new Set(),
-            { width: 1000, height: 1000 },
-        );
+        const targets = computeSnapTargets([s('peer', 200, 0, 100, 100)], new Set(), {
+            width: 1000,
+            height: 1000,
+        });
         const startBBox = { x: 100, y: 100, width: 50, height: 50 };
         const result = computeSnap(startBBox, 102, 0, targets);
         expect(result.dx).toBe(100);

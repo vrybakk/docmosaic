@@ -52,7 +52,14 @@ function mixedDocument(): Document {
     return {
         ...base,
         sections: [
-            { ...image, id: 'img-1', imageUrl: PLACEHOLDER_PNG, width: 180, height: 120, zIndex: 0 },
+            {
+                ...image,
+                id: 'img-1',
+                imageUrl: PLACEHOLDER_PNG,
+                width: 180,
+                height: 120,
+                zIndex: 0,
+            },
             { ...text, id: 'text-1', text: 'Headline', width: 300, height: 60, zIndex: 1 },
             {
                 ...shape,
@@ -85,7 +92,12 @@ function manySectionsDocument(): Document {
             };
         }
         if (variant === 1) {
-            const s = createSection({ type: 'text', x: 30 + i * 8, y: 30 + i * 8, page: 1 }) as TextSection;
+            const s = createSection({
+                type: 'text',
+                x: 30 + i * 8,
+                y: 30 + i * 8,
+                page: 1,
+            }) as TextSection;
             return { ...s, id: `text-${i}`, text: `Line ${i}`, width: 200, height: 32, zIndex: i };
         }
         const s = createSection({
@@ -117,7 +129,14 @@ function withDrawingDocument(): Document {
     return {
         ...base,
         sections: [
-            { ...image, id: 'img-1', imageUrl: PLACEHOLDER_PNG, width: 200, height: 140, zIndex: 0 },
+            {
+                ...image,
+                id: 'img-1',
+                imageUrl: PLACEHOLDER_PNG,
+                width: 200,
+                height: 140,
+                zIndex: 0,
+            },
             {
                 ...drawing,
                 id: 'draw-1',

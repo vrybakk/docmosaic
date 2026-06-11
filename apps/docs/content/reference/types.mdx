@@ -90,9 +90,17 @@ interface DrawingSection extends BaseSection {
 
 ```ts
 type PageSize =
-    | 'A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'A5'
-    | 'LETTER' | 'LEGAL' | 'TABLOID'
-    | 'EXECUTIVE' | 'STATEMENT'
+    | 'A0'
+    | 'A1'
+    | 'A2'
+    | 'A3'
+    | 'A4'
+    | 'A5'
+    | 'LETTER'
+    | 'LEGAL'
+    | 'TABLOID'
+    | 'EXECUTIVE'
+    | 'STATEMENT'
     | string; // also accepts custom sizes registered via createPageSize
 
 type PageOrientation = 'portrait' | 'landscape';
@@ -101,5 +109,5 @@ type MeasurementUnit = 'mm' | 'in' | 'px';
 
 ## See also
 
-- [Document model concept](/docs/concepts/document-model)
-- [Unit system](/docs/concepts/unit-system)
+-   [Document model concept](/docs/concepts/document-model)
+-   [Unit system](/docs/concepts/unit-system)

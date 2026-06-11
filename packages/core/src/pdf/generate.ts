@@ -111,15 +111,12 @@ export async function generatePDF(
                         page: index + 1,
                         zIndex: 0,
                     };
-                    const optimizedBg = await processImagesForPDF(
-                        [bgSection],
-                        (progress) => {
-                            onProgress?.({
-                                stage: 'optimizing',
-                                progress: Math.round(progress * 0.3),
-                            });
-                        },
-                    );
+                    const optimizedBg = await processImagesForPDF([bgSection], (progress) => {
+                        onProgress?.({
+                            stage: 'optimizing',
+                            progress: Math.round(progress * 0.3),
+                        });
+                    });
                     const first = optimizedBg[0] as ImageSection | undefined;
                     return first?.imageUrl || null;
                 } catch (error) {
@@ -436,12 +433,7 @@ function drawShapeSection(doc: jsPDF, section: ShapeSection): void {
             const ry = section.height / 2;
             doc.ellipse(cx, cy, rx, ry, drawStyle);
         } else if (section.shape === 'line') {
-            doc.line(
-                section.x,
-                section.y,
-                section.x + section.width,
-                section.y + section.height,
-            );
+            doc.line(section.x, section.y, section.x + section.width, section.y + section.height);
         }
     } catch (error) {
         console.error('Error adding shape:', error);

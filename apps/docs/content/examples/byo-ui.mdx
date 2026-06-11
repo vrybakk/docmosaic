@@ -60,11 +60,13 @@ export default function CustomEditor() {
 No `Editor.Root`. The hook owns the timeline; your component renders whatever UI fits. `actions` is referentially stable — safe to pass to memoised buttons.
 
 <Callout type="info">
-    Want to mix custom UI with a few bundled primitives? Wrap your tree in `EditorProvider` with the hook's result and the primitives will read from the same state. See the [BYO-UI recipe](/docs/recipes/byo-ui-with-use-document-state) for the hybrid pattern.
+    Want to mix custom UI with a few bundled primitives? Wrap your tree in `EditorProvider` with the
+    hook's result and the primitives will read from the same state. See the [BYO-UI
+    recipe](/docs/recipes/byo-ui-with-use-document-state) for the hybrid pattern.
 </Callout>
 
 ## Related
 
-- [BYO-UI recipe](/docs/recipes/byo-ui-with-use-document-state) — hybrid composition
-- [useDocumentState reference](/docs/reference/hooks)
-- [Designer concept](/docs/concepts/designer) — the mental model the hook is built on
+-   [BYO-UI recipe](/docs/recipes/byo-ui-with-use-document-state) — hybrid composition
+-   [useDocumentState reference](/docs/reference/hooks)
+-   [Designer concept](/docs/concepts/designer) — the mental model the hook is built on

@@ -1,17 +1,17 @@
 {
-  "version": "0.0.1",
-  "configurations": [
-    {
-      "name": "Next.js dev server",
-      "runtimeExecutable": "bun",
-      "runtimeArgs": ["dev"],
-      "port": 4001
-    },
-    {
-      "name": "Storybook",
-      "runtimeExecutable": "bun",
-      "runtimeArgs": ["run", "storybook"],
-      "port": 6006
-    }
-  ]
+    "version": "0.0.1",
+    "configurations": [
+        {
+            "name": "Next.js dev server",
+            "runtimeExecutable": "bun",
+            "runtimeArgs": ["dev"],
+            "port": 4001
+        },
+        {
+            "name": "Storybook",
+            "runtimeExecutable": "bun",
+            "runtimeArgs": ["run", "storybook"],
+            "port": 6006
+        }
+    ]
 }

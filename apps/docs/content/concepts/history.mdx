@@ -13,7 +13,7 @@ import { reducer, withHistory } from '@docmosaic/core';
 const wrapped = withHistory(reducer);
 let state = wrapped.init(initialDocument);
 
-state = wrapped.reduce(state, { type: 'ADD_SECTION', /* ... */ });
+state = wrapped.reduce(state, { type: 'ADD_SECTION' /* ... */ });
 state = wrapped.reduce(state, { type: 'UNDO' });
 state = wrapped.reduce(state, { type: 'REDO' });
 ```
@@ -24,13 +24,13 @@ state = wrapped.reduce(state, { type: 'REDO' });
 
 Every reducer action is undoable by default. There's no opt-out flag and no "transient" action — if it mutates the document, it lands on the timeline.
 
-- `ADD_SECTION` / `UPDATE_SECTION` / `DELETE_SECTION`
-- `ADD_PAGE` / `DELETE_PAGE` / `REORDER_PAGES`
-- `BRING_TO_FRONT` / `SEND_TO_BACK` / `MOVE_FORWARD` / `MOVE_BACKWARD`
-- `SET_DOCUMENT_NAME` / `SET_PAGE_SIZE` / `SET_ORIENTATION`
-- `SET_HIDDEN` / `SET_LOCKED`
-- `ADD_GUIDE` / `REMOVE_GUIDE`
-- `SET_PAGE_BACKGROUND`
+-   `ADD_SECTION` / `UPDATE_SECTION` / `DELETE_SECTION`
+-   `ADD_PAGE` / `DELETE_PAGE` / `REORDER_PAGES`
+-   `BRING_TO_FRONT` / `SEND_TO_BACK` / `MOVE_FORWARD` / `MOVE_BACKWARD`
+-   `SET_DOCUMENT_NAME` / `SET_PAGE_SIZE` / `SET_ORIENTATION`
+-   `SET_HIDDEN` / `SET_LOCKED`
+-   `ADD_GUIDE` / `REMOVE_GUIDE`
+-   `SET_PAGE_BACKGROUND`
 
 UI-only state (the selection, the active hover, the marquee rectangle) lives outside the document and isn't part of the timeline.
 
@@ -70,13 +70,15 @@ function resetEditor() {
     setDoc(createDocument()); // remount-equivalent; timeline restarts
 }
 
-<Editor.Root document={doc} onDocumentChange={setDoc}>{/* ... */}</Editor.Root>
+<Editor.Root document={doc} onDocumentChange={setDoc}>
+    {/* ... */}
+</Editor.Root>;
 ```
 
 In uncontrolled mode, change `key` on `Editor.Root` to force a remount and discard the timeline.
 
 ## See also
 
-- [Document model](/docs/concepts/document-model) — what each timeline snapshot contains
-- [Keybindings](/docs/concepts/keybindings) — the default `mod+z` / `mod+shift+z` bindings
-- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — when the timeline is active
+-   [Document model](/docs/concepts/document-model) — what each timeline snapshot contains
+-   [Keybindings](/docs/concepts/keybindings) — the default `mod+z` / `mod+shift+z` bindings
+-   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — when the timeline is active

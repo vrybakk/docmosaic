@@ -30,8 +30,7 @@ const meta: Meta<typeof Editor.Root> = {
             control: false,
         },
         keybindings: {
-            description:
-                'Partial keymap overrides or `false` to disable shortcuts entirely.',
+            description: 'Partial keymap overrides or `false` to disable shortcuts entirely.',
             control: false,
         },
         defaultDocument: {

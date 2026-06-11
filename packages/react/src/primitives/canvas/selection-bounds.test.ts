@@ -50,20 +50,22 @@ describe('mapSectionToBBox', () => {
     const startBBox = { x: 0, y: 0, width: 100, height: 100 };
 
     it('scales coordinates proportionally to the new bbox', () => {
-        const next = mapSectionToBBox(
-            { x: 0, y: 0, width: 50, height: 50 },
-            startBBox,
-            { x: 0, y: 0, width: 200, height: 100 },
-        );
+        const next = mapSectionToBBox({ x: 0, y: 0, width: 50, height: 50 }, startBBox, {
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 100,
+        });
         expect(next).toEqual({ x: 0, y: 0, width: 100, height: 50 });
     });
 
     it('offsets the section when the group bbox translates', () => {
-        const next = mapSectionToBBox(
-            { x: 50, y: 50, width: 25, height: 25 },
-            startBBox,
-            { x: 100, y: 100, width: 100, height: 100 },
-        );
+        const next = mapSectionToBBox({ x: 50, y: 50, width: 25, height: 25 }, startBBox, {
+            x: 100,
+            y: 100,
+            width: 100,
+            height: 100,
+        });
         expect(next).toEqual({ x: 150, y: 150, width: 25, height: 25 });
     });
 

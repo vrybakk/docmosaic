@@ -21,16 +21,12 @@ implementation. The split lets you swap just the heavy `generate` path
 ## Move generation to a Web Worker
 
 ```tsx
-const generate: EditorPdfBackend['generate'] = async (
-    sections,
-    options,
-    onProgress,
-) => {
+const generate: EditorPdfBackend['generate'] = async (sections, options, onProgress) => {
     const blob = await runInWorker({ sections, options, onProgress });
     return blob;
 };
 
-<Editor.Root pdf={{ generate }}>...</Editor.Root>
+<Editor.Root pdf={{ generate }}>...</Editor.Root>;
 ```
 
 ## Mock in tests
@@ -41,7 +37,7 @@ const mockBackend: EditorPdfBackend = {
     estimate: () => 1024,
 };
 
-<Editor.Root pdf={mockBackend}>...</Editor.Root>
+<Editor.Root pdf={mockBackend}>...</Editor.Root>;
 ```
 
 This is exactly what the Storybook stories do under the hood — the

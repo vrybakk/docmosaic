@@ -74,7 +74,7 @@ const VerticalSlideFeatures = () => {
                                     height={800}
                                     className="w-full h-full object-contain"
                                     priority={index === 0}
-                                    loading={index === 0 ? "eager" : "lazy"}
+                                    loading={index === 0 ? 'eager' : 'lazy'}
                                     sizes="(max-width: 768px) 100vw, 50vw"
                                 />
                             )}

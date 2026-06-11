@@ -1,11 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { createDocument, createSection } from '@docmosaic/core';
-import type {
-    Document,
-    ImageSection,
-    ShapeSection,
-    TextSection,
-} from '@docmosaic/core';
+import type { Document, ImageSection, ShapeSection, TextSection } from '@docmosaic/core';
 import { Editor, useEditor } from '@docmosaic/react';
 import { useEffect } from 'react';
 

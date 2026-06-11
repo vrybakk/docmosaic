@@ -8,19 +8,10 @@
  * onClick wired by `useEditorSection`.
  */
 import { act, fireEvent, render } from '@testing-library/react';
-import {
-    createDocument,
-    createSection,
-    type Document,
-    type ImageSection,
-} from '@docmosaic/core';
+import { createDocument, createSection, type Document, type ImageSection } from '@docmosaic/core';
 import { useEffect } from 'react';
 import { describe, expect, it } from 'vitest';
-import {
-    EditorSectionProvider,
-    useEditor,
-    type EditorContextValue,
-} from '../context/editor';
+import { EditorSectionProvider, useEditor, type EditorContextValue } from '../context/editor';
 import { ImageSectionView } from '../primitives/section/image-section';
 import { Editor } from '../index';
 
@@ -175,9 +166,7 @@ describe('selection — shift+click toggle via useEditorSection', () => {
     it('shift+click on a different section adds it to the selection', () => {
         const { get, container } = setupTwo();
 
-        const [, second] = container.querySelectorAll<HTMLDivElement>(
-            '[data-section="true"]',
-        );
+        const [, second] = container.querySelectorAll<HTMLDivElement>('[data-section="true"]');
         expect(second).toBeTruthy();
         expect(get().ui.selectedSectionIds.size).toBe(1);
 
@@ -190,9 +179,7 @@ describe('selection — shift+click toggle via useEditorSection', () => {
 
     it('plain click replaces the selection with the clicked section', () => {
         const { get, container } = setupTwo();
-        const [, second] = container.querySelectorAll<HTMLDivElement>(
-            '[data-section="true"]',
-        );
+        const [, second] = container.querySelectorAll<HTMLDivElement>('[data-section="true"]');
 
         act(() => {
             fireEvent.click(second, { shiftKey: false });
@@ -203,9 +190,7 @@ describe('selection — shift+click toggle via useEditorSection', () => {
 
     it('shift+click on an already-selected section removes it', () => {
         const { get, container, sections } = setupTwo();
-        const [first, second] = container.querySelectorAll<HTMLDivElement>(
-            '[data-section="true"]',
-        );
+        const [first, second] = container.querySelectorAll<HTMLDivElement>('[data-section="true"]');
 
         act(() => {
             fireEvent.click(second, { shiftKey: true });

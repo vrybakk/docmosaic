@@ -39,9 +39,9 @@ export function EditorModal() {
 
 ## Gotchas
 
-- **Don't mount inside the trigger.** Mount the editor inside `<Dialog.Content>`. Mounting in the trigger renders the entire editor unconditionally and defeats the lazy-mount benefit.
-- **Use `inset-` for sizing.** The editor fills its container — give the dialog `inset-4` (or explicit `width` / `height`) so the canvas has room.
-- **Re-mounting resets the document.** Closing and re-opening the dialog re-runs `Editor.Root`'s init. For draft persistence, lift state via controlled mode + a state container outside the dialog.
+-   **Don't mount inside the trigger.** Mount the editor inside `<Dialog.Content>`. Mounting in the trigger renders the entire editor unconditionally and defeats the lazy-mount benefit.
+-   **Use `inset-` for sizing.** The editor fills its container — give the dialog `inset-4` (or explicit `width` / `height`) so the canvas has room.
+-   **Re-mounting resets the document.** Closing and re-opening the dialog re-runs `Editor.Root`'s init. For draft persistence, lift state via controlled mode + a state container outside the dialog.
 
 ## With persistence
 
@@ -50,10 +50,7 @@ const [draft, setDraft] = useState<Document | null>(null);
 
 <Dialog.Root open={open} onOpenChange={setOpen}>
     <Dialog.Content>
-        <Editor.Root
-            document={draft ?? createDocument()}
-            onDocumentChange={setDraft}
-        >
+        <Editor.Root document={draft ?? createDocument()} onDocumentChange={setDraft}>
             {/* ... */}
         </Editor.Root>
     </Dialog.Content>
@@ -64,5 +61,5 @@ Now the draft survives close-and-reopen — perfect for "save draft" / "send" fl
 
 ## See also
 
-- [Editor.Root](/docs/primitives/root)
-- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled)
+-   [Editor.Root](/docs/primitives/root)
+-   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled)

@@ -10,9 +10,7 @@ description: Editor.Root supports both modes. Pick uncontrolled for plug-and-pla
 `Editor.Root` owns the document state and the history timeline internally. You don't pass anything.
 
 ```tsx
-<Editor.Root>
-    {/* Editor.Root owns Document + history */}
-</Editor.Root>
+<Editor.Root>{/* Editor.Root owns Document + history */}</Editor.Root>
 ```
 
 Use this when you want a drop-in editor and don't need to persist state outside the React tree.
@@ -33,9 +31,9 @@ return (
 
 Use this when you want to:
 
-- Persist the document to localStorage / a backend / a URL
-- Sync the document across collaborators
-- Integrate with a different state container (Zustand, Redux, Jotai)
+-   Persist the document to localStorage / a backend / a URL
+-   Sync the document across collaborators
+-   Integrate with a different state container (Zustand, Redux, Jotai)
 
 ## Headless: bring your own UI
 

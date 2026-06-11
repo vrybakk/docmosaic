@@ -9,12 +9,7 @@
  * - Selecting "Duplicate" calls the duplicate-section action.
  * - Read-only mode disables mutating items but keeps the menu reachable.
  */
-import {
-    createDocument,
-    createSection,
-    type Document,
-    type ImageSection,
-} from '@docmosaic/core';
+import { createDocument, createSection, type Document, type ImageSection } from '@docmosaic/core';
 import { act, fireEvent, render } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { useEditor, type EditorContextValue } from '../context/editor';
@@ -94,9 +89,7 @@ describe('Editor.ContextMenu', () => {
     it('renders the section menu when right-clicking a section', () => {
         const { a, b } = buildSections();
         const { container } = mount([a, b]);
-        const sectionEl = container.querySelector(
-            '[data-section-id="sec-a"]',
-        ) as HTMLElement;
+        const sectionEl = container.querySelector('[data-section-id="sec-a"]') as HTMLElement;
         openContextMenuOn(sectionEl);
         const items = getMenuItems(container);
         const keys = items.map((el) => el.getAttribute('data-context-menu-item'));
@@ -118,9 +111,7 @@ describe('Editor.ContextMenu', () => {
     it('renders the canvas menu when right-clicking outside any section', () => {
         const { a, b } = buildSections();
         const { container } = mount([a, b]);
-        const canvasEl = container.querySelector(
-            '[data-canvas-stub="true"]',
-        ) as HTMLElement;
+        const canvasEl = container.querySelector('[data-canvas-stub="true"]') as HTMLElement;
         openContextMenuOn(canvasEl);
         const items = getMenuItems(container);
         const keys = items.map((el) => el.getAttribute('data-context-menu-item'));
@@ -132,9 +123,7 @@ describe('Editor.ContextMenu', () => {
     it('clicking Duplicate dispatches duplicateSection on the target section', () => {
         const { a, b } = buildSections();
         const { container, get } = mount([a, b]);
-        const sectionEl = container.querySelector(
-            '[data-section-id="sec-a"]',
-        ) as HTMLElement;
+        const sectionEl = container.querySelector('[data-section-id="sec-a"]') as HTMLElement;
         openContextMenuOn(sectionEl);
         const duplicate = getMenuItems(container).find(
             (el) => el.getAttribute('data-context-menu-item') === 'duplicate',
@@ -150,9 +139,7 @@ describe('Editor.ContextMenu', () => {
     it('right-clicking an unselected section selects it', () => {
         const { a, b } = buildSections();
         const { container, get } = mount([a, b]);
-        const sectionEl = container.querySelector(
-            '[data-section-id="sec-b"]',
-        ) as HTMLElement;
+        const sectionEl = container.querySelector('[data-section-id="sec-b"]') as HTMLElement;
         openContextMenuOn(sectionEl);
         expect(get().ui.selectedSectionId).toBe('sec-b');
     });
@@ -160,9 +147,7 @@ describe('Editor.ContextMenu', () => {
     it('clicking Delete dispatches deleteSection for that section', () => {
         const { a, b } = buildSections();
         const { container, get } = mount([a, b]);
-        const sectionEl = container.querySelector(
-            '[data-section-id="sec-a"]',
-        ) as HTMLElement;
+        const sectionEl = container.querySelector('[data-section-id="sec-a"]') as HTMLElement;
         openContextMenuOn(sectionEl);
         const del = getMenuItems(container).find(
             (el) => el.getAttribute('data-context-menu-item') === 'delete',
@@ -176,9 +161,7 @@ describe('Editor.ContextMenu', () => {
     it('Select all replaces the selection with every section on the current page', () => {
         const { a, b } = buildSections();
         const { container, get } = mount([a, b]);
-        const canvasEl = container.querySelector(
-            '[data-canvas-stub="true"]',
-        ) as HTMLElement;
+        const canvasEl = container.querySelector('[data-canvas-stub="true"]') as HTMLElement;
         openContextMenuOn(canvasEl);
         const selectAll = getMenuItems(container).find(
             (el) => el.getAttribute('data-context-menu-item') === 'select-all',
@@ -195,9 +178,7 @@ describe('Editor.ContextMenu', () => {
         const { a, b } = buildSections();
         const { container, get } = mount([a, b]);
         // Copy sec-a.
-        const sectionEl = container.querySelector(
-            '[data-section-id="sec-a"]',
-        ) as HTMLElement;
+        const sectionEl = container.querySelector('[data-section-id="sec-a"]') as HTMLElement;
         openContextMenuOn(sectionEl);
         const copyItem = getMenuItems(container).find(
             (el) => el.getAttribute('data-context-menu-item') === 'copy',
@@ -207,9 +188,7 @@ describe('Editor.ContextMenu', () => {
         });
         const before = get().state.sections.length;
         // Re-open menu on the canvas and click paste.
-        const canvasEl = container.querySelector(
-            '[data-canvas-stub="true"]',
-        ) as HTMLElement;
+        const canvasEl = container.querySelector('[data-canvas-stub="true"]') as HTMLElement;
         openContextMenuOn(canvasEl);
         const paste = getMenuItems(container).find(
             (el) => el.getAttribute('data-context-menu-item') === 'paste',
@@ -223,9 +202,7 @@ describe('Editor.ContextMenu', () => {
     it('readOnly disables mutating items', () => {
         const { a, b } = buildSections();
         const { container } = mount([a, b], true);
-        const sectionEl = container.querySelector(
-            '[data-section-id="sec-a"]',
-        ) as HTMLElement;
+        const sectionEl = container.querySelector('[data-section-id="sec-a"]') as HTMLElement;
         openContextMenuOn(sectionEl);
         const items = getMenuItems(container);
         const find = (key: string) =>
@@ -241,9 +218,7 @@ describe('Editor.ContextMenu — toggle items', () => {
     it('toggle-hidden flips the hidden flag', () => {
         const { a, b } = buildSections();
         const { container, get } = mount([a, b]);
-        const sectionEl = container.querySelector(
-            '[data-section-id="sec-a"]',
-        ) as HTMLElement;
+        const sectionEl = container.querySelector('[data-section-id="sec-a"]') as HTMLElement;
         openContextMenuOn(sectionEl);
         const toggle = getMenuItems(container).find(
             (el) => el.getAttribute('data-context-menu-item') === 'toggle-hidden',
@@ -257,9 +232,7 @@ describe('Editor.ContextMenu — toggle items', () => {
     it('toggle-locked flips the locked flag', () => {
         const { a, b } = buildSections();
         const { container, get } = mount([a, b]);
-        const sectionEl = container.querySelector(
-            '[data-section-id="sec-a"]',
-        ) as HTMLElement;
+        const sectionEl = container.querySelector('[data-section-id="sec-a"]') as HTMLElement;
         openContextMenuOn(sectionEl);
         const toggle = getMenuItems(container).find(
             (el) => el.getAttribute('data-context-menu-item') === 'toggle-locked',
@@ -270,4 +243,3 @@ describe('Editor.ContextMenu — toggle items', () => {
         expect(get().state.sections.find((s) => s.id === 'sec-a')?.locked).toBe(true);
     });
 });
-

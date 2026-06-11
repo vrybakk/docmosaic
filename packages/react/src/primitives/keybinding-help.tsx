@@ -9,12 +9,7 @@ import {
 } from '../hooks/use-editor-keybindings';
 import { cn } from '../internal/utils';
 import { isMacPlatform } from '../internal/platform';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '../ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 
 export interface KeybindingHelpProps {
     /**

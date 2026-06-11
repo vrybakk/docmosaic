@@ -124,12 +124,9 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
             },
             addStroke: (sectionId: string, stroke: Stroke) =>
                 dispatch({ type: 'ADD_STROKE', sectionId, stroke }),
-            clearStrokes: (sectionId: string) =>
-                dispatch({ type: 'CLEAR_STROKES', sectionId }),
-            updateSection: (section: Section) =>
-                dispatch({ type: 'UPDATE_SECTION', section }),
-            deleteSection: (sectionId: string) =>
-                dispatch({ type: 'DELETE_SECTION', sectionId }),
+            clearStrokes: (sectionId: string) => dispatch({ type: 'CLEAR_STROKES', sectionId }),
+            updateSection: (section: Section) => dispatch({ type: 'UPDATE_SECTION', section }),
+            deleteSection: (sectionId: string) => dispatch({ type: 'DELETE_SECTION', sectionId }),
             duplicateSection: (section: Section) =>
                 dispatch({ type: 'DUPLICATE_SECTION', section }),
             addPage: () => dispatch({ type: 'ADD_PAGE' }),
@@ -140,8 +137,7 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
                 }
                 dispatch({ type: 'DELETE_PAGE', pageIndex });
             },
-            changePage: (pageNumber: number) =>
-                dispatch({ type: 'CHANGE_PAGE', pageNumber }),
+            changePage: (pageNumber: number) => dispatch({ type: 'CHANGE_PAGE', pageNumber }),
             updatePageSize: (pageSize: PageSize) =>
                 dispatch({ type: 'UPDATE_PAGE_SIZE', pageSize }),
             updateOrientation: (orientation: PageOrientation) =>
@@ -153,34 +149,21 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
                 dispatch({ type: 'UPDATE_ESTIMATED_SIZE', size }),
             setPageBackground: (pageIndex: number, background: PageBackground | undefined) =>
                 dispatch({ type: 'UPDATE_PAGE_BACKGROUND', pageIndex, background }),
-            bringToFront: (sectionId: string) =>
-                dispatch({ type: 'BRING_TO_FRONT', sectionId }),
-            sendToBack: (sectionId: string) =>
-                dispatch({ type: 'SEND_TO_BACK', sectionId }),
-            moveForward: (sectionId: string) =>
-                dispatch({ type: 'MOVE_FORWARD', sectionId }),
-            moveBackward: (sectionId: string) =>
-                dispatch({ type: 'MOVE_BACKWARD', sectionId }),
-            toggleHidden: (sectionId: string) =>
-                dispatch({ type: 'TOGGLE_HIDDEN', sectionId }),
-            toggleLocked: (sectionId: string) =>
-                dispatch({ type: 'TOGGLE_LOCKED', sectionId }),
+            bringToFront: (sectionId: string) => dispatch({ type: 'BRING_TO_FRONT', sectionId }),
+            sendToBack: (sectionId: string) => dispatch({ type: 'SEND_TO_BACK', sectionId }),
+            moveForward: (sectionId: string) => dispatch({ type: 'MOVE_FORWARD', sectionId }),
+            moveBackward: (sectionId: string) => dispatch({ type: 'MOVE_BACKWARD', sectionId }),
+            toggleHidden: (sectionId: string) => dispatch({ type: 'TOGGLE_HIDDEN', sectionId }),
+            toggleLocked: (sectionId: string) => dispatch({ type: 'TOGGLE_LOCKED', sectionId }),
             setHidden: (sectionId: string, hidden: boolean) =>
                 dispatch({ type: 'SET_HIDDEN', sectionId, hidden }),
             setLocked: (sectionId: string, locked: boolean) =>
                 dispatch({ type: 'SET_LOCKED', sectionId, locked }),
-            loadDocument: (next: Document) =>
-                dispatch({ type: 'UPDATE_DOCUMENT', updates: next }),
-            addGuide: (
-                pageIndex: number,
-                axis: 'vertical' | 'horizontal',
-                position: number,
-            ) => dispatch({ type: 'ADD_GUIDE', pageIndex, axis, position }),
-            removeGuide: (
-                pageIndex: number,
-                axis: 'vertical' | 'horizontal',
-                position: number,
-            ) => dispatch({ type: 'REMOVE_GUIDE', pageIndex, axis, position }),
+            loadDocument: (next: Document) => dispatch({ type: 'UPDATE_DOCUMENT', updates: next }),
+            addGuide: (pageIndex: number, axis: 'vertical' | 'horizontal', position: number) =>
+                dispatch({ type: 'ADD_GUIDE', pageIndex, axis, position }),
+            removeGuide: (pageIndex: number, axis: 'vertical' | 'horizontal', position: number) =>
+                dispatch({ type: 'REMOVE_GUIDE', pageIndex, axis, position }),
         }),
         [],
     );

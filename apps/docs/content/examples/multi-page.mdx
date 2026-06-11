@@ -43,7 +43,9 @@ export default function MultiPageEditor() {
 The sidebar lives flush-left because `Editor.Root` arranges children — `Pages` is always placed to the left of `Canvas` regardless of source order, so you don't need a wrapping layout.
 
 <Callout type="info">
-    Drop the add-page button for fixed-format documents (like single-page invoices) with `<Editor.Pages hideAddPage />`. The user can still reorder existing pages — just not add or remove them.
+    Drop the add-page button for fixed-format documents (like single-page invoices) with `
+    <Editor.Pages hideAddPage />
+    `. The user can still reorder existing pages — just not add or remove them.
 </Callout>
 
 ## Horizontal rail
@@ -60,6 +62,6 @@ For dashboards or in-form embeds, switch the rail to horizontal:
 
 ## Related
 
-- [Editor.Pages](/docs/primitives/pages) — full primitive reference
-- [Editor.PageThumbnail](/docs/primitives/page-thumbnail) — render thumbs in your own layout
-- [Document model](/docs/concepts/document-model) — how pages and sections relate
+-   [Editor.Pages](/docs/primitives/pages) — full primitive reference
+-   [Editor.PageThumbnail](/docs/primitives/page-thumbnail) — render thumbs in your own layout
+-   [Document model](/docs/concepts/document-model) — how pages and sections relate

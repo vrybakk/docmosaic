@@ -9,11 +9,7 @@ import {
     documentWithTextSection,
     emptyDocument,
 } from '../helpers/sample-documents';
-import {
-    createSection,
-    type Document,
-    type TextSection as TextSectionData,
-} from '@docmosaic/core';
+import { createSection, type Document, type TextSection as TextSectionData } from '@docmosaic/core';
 
 /**
  * `Editor.Section` is the per-section primitive: empty placeholder, image,
@@ -100,7 +96,12 @@ export const Dragging: Story = {
 export const TextPlaceholder: Story = {
     render: () => {
         const base = emptyDocument();
-        const placeholder = createSection({ type: 'text', x: 60, y: 60, page: 1 }) as TextSectionData;
+        const placeholder = createSection({
+            type: 'text',
+            x: 60,
+            y: 60,
+            page: 1,
+        }) as TextSectionData;
         const doc: Document = {
             ...base,
             sections: [{ ...placeholder, width: 320, height: 80 }],

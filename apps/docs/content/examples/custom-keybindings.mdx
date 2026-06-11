@@ -57,12 +57,12 @@ Pass `false` to skip mounting the window listener entirely. Useful when your app
 
 ## Best practices
 
-- **Don't fight the browser.** `mod+t`, `mod+w`, `mod+r`, `mod+l` are common browser shortcuts. Users react badly when an editor steals them.
-- **Register alternates rather than overriding.** Adding `'x'` to `deleteSection` keeps `Delete` and `Backspace` working — strictly safer than replacing the defaults.
-- **Match conventions.** `mod+z` / `mod+shift+z` for undo/redo. `Escape` for cancel. Users have muscle memory.
+-   **Don't fight the browser.** `mod+t`, `mod+w`, `mod+r`, `mod+l` are common browser shortcuts. Users react badly when an editor steals them.
+-   **Register alternates rather than overriding.** Adding `'x'` to `deleteSection` keeps `Delete` and `Backspace` working — strictly safer than replacing the defaults.
+-   **Match conventions.** `mod+z` / `mod+shift+z` for undo/redo. `Escape` for cancel. Users have muscle memory.
 
 ## Related
 
-- [Keybindings concept](/docs/concepts/keybindings) — the full default keymap
-- [Editor.KeybindingHelp](/docs/primitives/keybinding-help) — render the active keymap as a dialog
-- [useEditorKeybindings hook](/docs/reference/hooks) — standalone usage outside `Editor.Root`
+-   [Keybindings concept](/docs/concepts/keybindings) — the full default keymap
+-   [Editor.KeybindingHelp](/docs/primitives/keybinding-help) — render the active keymap as a dialog
+-   [useEditorKeybindings hook](/docs/reference/hooks) — standalone usage outside `Editor.Root`

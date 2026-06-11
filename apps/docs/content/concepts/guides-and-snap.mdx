@@ -7,13 +7,13 @@ description: Editor.Ruler, Editor.Guides, and the snap engine share one source o
 
 ## Layers
 
-| Layer            | Source of truth                                | Role                                                                 |
-| ---------------- | ---------------------------------------------- | -------------------------------------------------------------------- |
-| `Editor.Ruler`   | `useEditorCanvas().finalScale` + page dims     | Paints tick marks. Pure display surface, no document writes.         |
-| `Editor.Guides`  | `Page.guides` on the current page              | Drag from a ruler to drop a guide; click the × badge to remove.      |
-| `computeSnap*`   | `snap.ts` in `@docmosaic/react`                | Pure math. Mixes page margins + section edges + page guides.         |
-| `useEditorSection`| group drag handlers                            | Calls `computeSnap` on every move and updates `ui.activeSnapGuides`. |
-| `Editor.SnapGuides` | `ui.activeSnapGuides`                       | Paints the matched alignment lines while a drag is live.             |
+| Layer               | Source of truth                            | Role                                                                 |
+| ------------------- | ------------------------------------------ | -------------------------------------------------------------------- |
+| `Editor.Ruler`      | `useEditorCanvas().finalScale` + page dims | Paints tick marks. Pure display surface, no document writes.         |
+| `Editor.Guides`     | `Page.guides` on the current page          | Drag from a ruler to drop a guide; click the × badge to remove.      |
+| `computeSnap*`      | `snap.ts` in `@docmosaic/react`            | Pure math. Mixes page margins + section edges + page guides.         |
+| `useEditorSection`  | group drag handlers                        | Calls `computeSnap` on every move and updates `ui.activeSnapGuides`. |
+| `Editor.SnapGuides` | `ui.activeSnapGuides`                      | Paints the matched alignment lines while a drag is live.             |
 
 Rulers and guides are opt-in: pass `showRuler` (and optionally `showMinimap`) on `Editor.Root`. The canvas reserves a 24px gutter on each axis when rulers are visible and auto-mounts `Editor.Ruler` + `Editor.Guides` inside the canvas overlay slot.
 
@@ -23,7 +23,7 @@ Rulers and guides are opt-in: pass `showRuler` (and optionally `showMinimap`) on
 import type { PageGuides } from '@docmosaic/core';
 
 interface PageGuides {
-    vertical: number[];   // x positions in PDF points
+    vertical: number[]; // x positions in PDF points
     horizontal: number[]; // y positions in PDF points
 }
 ```
@@ -37,12 +37,7 @@ interface PageGuides {
 ```ts
 import { computeSnap, computeSnapTargets } from '@docmosaic/react';
 
-const targets = computeSnapTargets(
-    sections,
-    selectedIds,
-    pageDimensions,
-    page.guides,
-);
+const targets = computeSnapTargets(sections, selectedIds, pageDimensions, page.guides);
 const { dx, dy, matched } = computeSnap(bbox, proposedDx, proposedDy, targets);
 ```
 
@@ -74,4 +69,4 @@ The React layer wraps both through `actions.addGuide(pageIndex, axis, position)`
 
 ## See also
 
-- [Unit system](/docs/concepts/unit-system) — why guides are stored in PDF points alongside section geometry
+-   [Unit system](/docs/concepts/unit-system) — why guides are stored in PDF points alongside section geometry

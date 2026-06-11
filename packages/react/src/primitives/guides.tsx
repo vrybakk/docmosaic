@@ -121,8 +121,7 @@ export function Guides({ className }: GuidesProps = {}) {
                 // releasing back over the ruler cancels the drag, matching
                 // most graphics-tools convention for "throw away guide".
                 if (inPage) {
-                    const pos =
-                        current.axis === 'vertical' ? point.x : point.y;
+                    const pos = current.axis === 'vertical' ? point.x : point.y;
                     actions.addGuide(pageIndex, current.axis, Math.round(pos));
                 }
             }

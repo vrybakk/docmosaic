@@ -8,13 +8,13 @@ This repository is the monorepo. It contains the reusable libraries plus the ref
 
 ## What's in here
 
-| Package                                  | Description                                                                        |
-| ---------------------------------------- | ---------------------------------------------------------------------------------- |
-| [`@docmosaic/core`](packages/core)       | Framework-agnostic TypeScript core: document model, reducer + history, PDF engine. |
-| [`@docmosaic/react`](packages/react)     | React UI primitives: compound `Editor.*` namespace plus headless hooks.            |
-| [`@docmosaic/web`](apps/web) _(private)_ | Reference Next.js 15 app — the site at docmosaic.com.                              |
-| [`@docmosaic/docs`](apps/docs) _(private)_ | Fumadocs site at docs.docmosaic.com.                                              |
-| [`@docmosaic/storybook`](apps/storybook) _(private)_ | Live primitive sandbox at storybook.docmosaic.com.                      |
+| Package                                              | Description                                                                        |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [`@docmosaic/core`](packages/core)                   | Framework-agnostic TypeScript core: document model, reducer + history, PDF engine. |
+| [`@docmosaic/react`](packages/react)                 | React UI primitives: compound `Editor.*` namespace plus headless hooks.            |
+| [`@docmosaic/web`](apps/web) _(private)_             | Reference Next.js 15 app — the site at docmosaic.com.                              |
+| [`@docmosaic/docs`](apps/docs) _(private)_           | Fumadocs site at docs.docmosaic.com.                                               |
+| [`@docmosaic/storybook`](apps/storybook) _(private)_ | Live primitive sandbox at storybook.docmosaic.com.                                 |
 
 ## Architecture
 

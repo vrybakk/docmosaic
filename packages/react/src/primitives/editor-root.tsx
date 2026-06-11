@@ -25,10 +25,7 @@ import {
     type EditorPdfBackend,
 } from '../context/editor';
 import { useDocumentState } from '../hooks/use-document-state';
-import {
-    useEditorKeybindings,
-    type EditorKeymap,
-} from '../hooks/use-editor-keybindings';
+import { useEditorKeybindings, type EditorKeymap } from '../hooks/use-editor-keybindings';
 import { trackEvent } from '../internal/analytics';
 import { Canvas } from './canvas';
 import { Pages } from './pages';
@@ -280,9 +277,7 @@ function buildControlledActions(
                 x: section.x + 20,
                 y: section.y + 20,
             };
-            onDocumentChange(
-                touch({ ...document, sections: [...document.sections, duplicated] }),
-            );
+            onDocumentChange(touch({ ...document, sections: [...document.sections, duplicated] }));
         },
         addPage: () => {
             const newTotal = (document.totalPages ?? document.pages.length) + 1;
@@ -319,8 +314,7 @@ function buildControlledActions(
         },
         changePage: (pageNumber: number) =>
             onDocumentChange(touch({ ...document, currentPage: pageNumber })),
-        updatePageSize: (pageSize: PageSize) =>
-            onDocumentChange(touch({ ...document, pageSize })),
+        updatePageSize: (pageSize: PageSize) => onDocumentChange(touch({ ...document, pageSize })),
         updateOrientation: (orientation: PageOrientation) =>
             onDocumentChange(touch({ ...document, orientation })),
         updateName: (name: string) => onDocumentChange(touch({ ...document, name })),
@@ -470,11 +464,7 @@ function buildControlledActions(
             );
         },
         loadDocument: (next: Document) => onDocumentChange(touch(next)),
-        addGuide: (
-            pageIndex: number,
-            axis: 'vertical' | 'horizontal',
-            position: number,
-        ) => {
+        addGuide: (pageIndex: number, axis: 'vertical' | 'horizontal', position: number) => {
             if (pageIndex < 0 || pageIndex >= document.pages.length) return;
             const page = document.pages[pageIndex];
             const existing = page.guides ?? { vertical: [], horizontal: [] };
@@ -496,11 +486,7 @@ function buildControlledActions(
                 }),
             );
         },
-        removeGuide: (
-            pageIndex: number,
-            axis: 'vertical' | 'horizontal',
-            position: number,
-        ) => {
+        removeGuide: (pageIndex: number, axis: 'vertical' | 'horizontal', position: number) => {
             if (pageIndex < 0 || pageIndex >= document.pages.length) return;
             const page = document.pages[pageIndex];
             if (!page.guides) return;
@@ -852,4 +838,3 @@ export function Root(props: EditorRootProps) {
         </EditorConfigProvider>
     );
 }
-

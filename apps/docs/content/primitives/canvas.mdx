@@ -25,11 +25,11 @@ Already part of `@docmosaic/react` — no extra install.
 
 Inside `Editor.Canvas` you can mount:
 
-- `Editor.Section` — one entry per section on the active page (auto-iterates).
-- `Editor.CanvasControls` — the floating zoom / fit-to-screen controls.
-- `Editor.SelectionBounds` — multi-select bounding rectangle.
-- `Editor.SnapGuides` — accent lines that paint during drag.
-- `Editor.Ruler` / `Editor.Guides` — auto-mounted by `Editor.Root` when `showRuler` is true.
+-   `Editor.Section` — one entry per section on the active page (auto-iterates).
+-   `Editor.CanvasControls` — the floating zoom / fit-to-screen controls.
+-   `Editor.SelectionBounds` — multi-select bounding rectangle.
+-   `Editor.SnapGuides` — accent lines that paint during drag.
+-   `Editor.Ruler` / `Editor.Guides` — auto-mounted by `Editor.Root` when `showRuler` is true.
 
 The canvas applies a single `scale` to its content (`finalScale = pageScale * zoom`), so child sections can be authored in PDF points and still land in the right CSS pixels. You never write `section.x` from a mouse event in pixels — the hook divides by `finalScale` first.
 
@@ -63,7 +63,7 @@ Swap the default floating controls for your own.
 
 ## Related
 
-- [Section](/docs/primitives/section) — the unit of content
-- [StaticCanvas](/docs/primitives/static-canvas) — read-only variant
-- [Ruler](/docs/primitives/ruler) / [Guides](/docs/primitives/guides) — overlay layers
-- [Unit system](/docs/concepts/unit-system) — points vs CSS pixels
+-   [Section](/docs/primitives/section) — the unit of content
+-   [StaticCanvas](/docs/primitives/static-canvas) — read-only variant
+-   [Ruler](/docs/primitives/ruler) / [Guides](/docs/primitives/guides) — overlay layers
+-   [Unit system](/docs/concepts/unit-system) — points vs CSS pixels

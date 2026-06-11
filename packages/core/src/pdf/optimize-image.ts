@@ -12,8 +12,7 @@
 
 import type { Section } from '../types';
 
-const BROWSER_ONLY_ERROR =
-    '@docmosaic/core PDF image optimization requires a browser environment.';
+const BROWSER_ONLY_ERROR = '@docmosaic/core PDF image optimization requires a browser environment.';
 
 /**
  * Options accepted by {@link optimizeImageForPDF}.
@@ -61,11 +60,7 @@ export async function optimizeImageForPDF(
         throw new Error(BROWSER_ONLY_ERROR);
     }
 
-    const {
-        maxWidth = 2000,
-        maxHeight = 2000,
-        quality = 0.85,
-    } = options;
+    const { maxWidth = 2000, maxHeight = 2000, quality = 0.85 } = options;
 
     const img = new Image();
     await new Promise((resolve, reject) => {

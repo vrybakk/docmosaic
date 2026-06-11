@@ -6,11 +6,7 @@ import { createDocument, createSection } from '@docmosaic/core';
 import { act, fireEvent, render } from '@testing-library/react';
 import { useEffect } from 'react';
 import { describe, expect, it } from 'vitest';
-import {
-    EditorSectionProvider,
-    useEditor,
-    type EditorContextValue,
-} from '../../../context/editor';
+import { EditorSectionProvider, useEditor, type EditorContextValue } from '../../../context/editor';
 import { Editor } from '../../../index';
 import { DrawingCanvas } from './drawing-canvas';
 
@@ -75,7 +71,12 @@ function setup() {
 
 describe('DrawingCanvas', () => {
     it('renders existing strokes as polylines', () => {
-        const seedSection = createSection({ type: 'drawing', x: 0, y: 0, page: 1 }) as DrawingSection;
+        const seedSection = createSection({
+            type: 'drawing',
+            x: 0,
+            y: 0,
+            page: 1,
+        }) as DrawingSection;
         const withStroke: DrawingSection = {
             ...seedSection,
             id: 'draw-with-stroke',

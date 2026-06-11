@@ -27,7 +27,8 @@ const fixturePath = join(__dirname, '__fixtures__', 'sample-doc-cropped.pdf.bin'
 const CREATION_DATE_RE = /\/CreationDate \(D:[^)]*\)/g;
 const ID_RE = /\/ID \[ <[0-9A-Fa-f]+> <[0-9A-Fa-f]+> \]/g;
 const CREATION_DATE_PLACEHOLDER = "/CreationDate (D:00000000000000+00'00')";
-const ID_PLACEHOLDER = '/ID [ <00000000000000000000000000000000> <00000000000000000000000000000000> ]';
+const ID_PLACEHOLDER =
+    '/ID [ <00000000000000000000000000000000> <00000000000000000000000000000000> ]';
 
 function normalize(bytes: Uint8Array): Uint8Array {
     const buf = Buffer.from(bytes);

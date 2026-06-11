@@ -18,10 +18,10 @@ const { document, formattedDate, canUndo, canRedo, actions } = useDocumentState(
 
 It returns:
 
-- **`document`** — the current snapshot. Re-renders on every change.
-- **`formattedDate`** — `updatedAt` formatted for display.
-- **`canUndo` / `canRedo`** — booleans for button enabled states.
-- **`actions`** — a stable, referentially-equal object of dispatcher functions.
+-   **`document`** — the current snapshot. Re-renders on every change.
+-   **`formattedDate`** — `updatedAt` formatted for display.
+-   **`canUndo` / `canRedo`** — booleans for button enabled states.
+-   **`actions`** — a stable, referentially-equal object of dispatcher functions.
 
 ## A minimal custom editor
 
@@ -44,8 +44,12 @@ export function CustomEditor() {
                     onChange={(e) => actions.setDocumentName(e.target.value)}
                     className="border rounded px-2 py-1"
                 />
-                <button disabled={!canUndo} onClick={actions.undo}>Undo</button>
-                <button disabled={!canRedo} onClick={actions.redo}>Redo</button>
+                <button disabled={!canUndo} onClick={actions.undo}>
+                    Undo
+                </button>
+                <button disabled={!canRedo} onClick={actions.redo}>
+                    Redo
+                </button>
             </header>
 
             <button onClick={() => actions.addSection({ pageIndex: 0, type: 'image' })}>
@@ -86,6 +90,6 @@ function HybridEditor() {
 
 ## See also
 
-- [Designer concept](/docs/concepts/designer) — the mental model
-- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled)
-- [Hooks reference](/docs/reference/hooks)
+-   [Designer concept](/docs/concepts/designer) — the mental model
+-   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled)
+-   [Hooks reference](/docs/reference/hooks)

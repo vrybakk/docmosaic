@@ -34,10 +34,7 @@ function OpenOnMount() {
 /** Preview opened with a sample document. Uses the mock backend. */
 export const OpenWithContent: Story = {
     render: () => (
-        <Editor.Root
-            defaultDocument={documentWithSections()}
-            pdf={createMockPdfBackend()}
-        >
+        <Editor.Root defaultDocument={documentWithSections()} pdf={createMockPdfBackend()}>
             <Editor.Properties />
             <OpenOnMount />
             <Editor.Preview />
@@ -55,8 +52,7 @@ export const Generating: Story = {
                 generate: () =>
                     new Promise<Blob>((resolve) => {
                         setTimeout(
-                            () =>
-                                resolve(new Blob(['%PDF-1.4 mock'], { type: 'application/pdf' })),
+                            () => resolve(new Blob(['%PDF-1.4 mock'], { type: 'application/pdf' })),
                             3000,
                         );
                     }),

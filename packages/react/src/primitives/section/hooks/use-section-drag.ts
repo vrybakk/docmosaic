@@ -31,12 +31,7 @@ interface UseSectionDragArgs {
  * group handlers (which translate every selected section) instead of the
  * single-section update.
  */
-export function useSectionDrag({
-    section,
-    onUpdate,
-    isResizing,
-    groupDrag,
-}: UseSectionDragArgs) {
+export function useSectionDrag({ section, onUpdate, isResizing, groupDrag }: UseSectionDragArgs) {
     const [isDragging, setIsDragging] = useState(false);
 
     const bindDrag = useDrag(
@@ -64,7 +59,9 @@ export function useSectionDrag({
                 return memo;
             }
 
-            const pageElement = document.querySelector('[data-page-container]') as HTMLElement | null;
+            const pageElement = document.querySelector(
+                '[data-page-container]',
+            ) as HTMLElement | null;
             if (!pageElement) return memo;
 
             const { startX, startY } = memo || { startX: section.x, startY: section.y };

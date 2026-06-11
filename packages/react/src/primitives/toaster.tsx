@@ -38,11 +38,7 @@ export interface ToasterProps extends Omit<HotToasterProps, 'toastOptions'> {
  * names are not honoured on its container. The variables themselves are
  * defined by the editor's theme files, so dark mode flips automatically.
  */
-export function Toaster({
-    position = 'bottom-right',
-    toastOptions,
-    ...rest
-}: ToasterProps = {}) {
+export function Toaster({ position = 'bottom-right', toastOptions, ...rest }: ToasterProps = {}) {
     return (
         <HotToaster
             position={position}

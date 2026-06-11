@@ -38,7 +38,11 @@ async function walk(dir: string, files: string[] = []): Promise<string[]> {
         const s = await stat(full);
         if (s.isDirectory()) {
             await walk(full, files);
-        } else if (/\.tsx?$/.test(entry) && !entry.endsWith('.test.ts') && !entry.endsWith('.test.tsx')) {
+        } else if (
+            /\.tsx?$/.test(entry) &&
+            !entry.endsWith('.test.ts') &&
+            !entry.endsWith('.test.tsx')
+        ) {
             files.push(full);
         }
     }

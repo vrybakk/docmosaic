@@ -7,24 +7,16 @@ import { BrushWeightSlider } from './brush-weight-slider';
 
 describe('BrushWeightSlider', () => {
     it('renders an input with the current value', () => {
-        const { container } = render(
-            <BrushWeightSlider value={5} onChange={() => {}} />,
-        );
-        const input = container.querySelector(
-            'input[type="range"]',
-        ) as HTMLInputElement | null;
+        const { container } = render(<BrushWeightSlider value={5} onChange={() => {}} />);
+        const input = container.querySelector('input[type="range"]') as HTMLInputElement | null;
         expect(input).not.toBeNull();
         expect(input?.value).toBe('5');
     });
 
     it('fires onChange with the parsed numeric value', () => {
         const onChange = vi.fn();
-        const { container } = render(
-            <BrushWeightSlider value={3} onChange={onChange} />,
-        );
-        const input = container.querySelector(
-            'input[type="range"]',
-        ) as HTMLInputElement | null;
+        const { container } = render(<BrushWeightSlider value={3} onChange={onChange} />);
+        const input = container.querySelector('input[type="range"]') as HTMLInputElement | null;
         expect(input).not.toBeNull();
         if (!input) return;
         fireEvent.change(input, { target: { value: '12' } });
@@ -35,9 +27,7 @@ describe('BrushWeightSlider', () => {
         const { container } = render(
             <BrushWeightSlider value={10} onChange={() => {}} min={2} max={15} />,
         );
-        const input = container.querySelector(
-            'input[type="range"]',
-        ) as HTMLInputElement | null;
+        const input = container.querySelector('input[type="range"]') as HTMLInputElement | null;
         expect(input?.min).toBe('2');
         expect(input?.max).toBe('15');
     });

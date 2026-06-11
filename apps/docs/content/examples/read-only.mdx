@@ -45,7 +45,9 @@ export default function DocumentViewer({ document }: DocumentViewerProps) {
 The toolbar's mutating buttons (`AddImageButton`, `AddTextButton`, `DrawButton`, `UndoButton`, `RedoButton`) hide themselves when the root is `readOnly`. You don't need to conditionally render them.
 
 <Callout type="info">
-    For a side-by-side "current vs reference" view, mix an editable canvas with `Editor.StaticCanvas` — same root, two surfaces, one frozen. See the [read-only recipe](/docs/recipes/read-only) for the pattern.
+    For a side-by-side "current vs reference" view, mix an editable canvas with
+    `Editor.StaticCanvas` — same root, two surfaces, one frozen. See the [read-only
+    recipe](/docs/recipes/read-only) for the pattern.
 </Callout>
 
 ## Detecting read-only in custom primitives
@@ -64,6 +66,6 @@ function CustomAddButton() {
 
 ## Related
 
-- [Read-only recipe](/docs/recipes/read-only) — full behaviour matrix
-- [Editor.StaticCanvas](/docs/primitives/static-canvas) — canvas-level read-only
-- [Editor.Root](/docs/primitives/root) — the `readOnly` prop reference
+-   [Read-only recipe](/docs/recipes/read-only) — full behaviour matrix
+-   [Editor.StaticCanvas](/docs/primitives/static-canvas) — canvas-level read-only
+-   [Editor.Root](/docs/primitives/root) — the `readOnly` prop reference

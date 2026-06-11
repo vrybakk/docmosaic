@@ -157,36 +157,30 @@ export function useImageCrop({ section, onUpdate, scale }: UseImageCropArgs): Us
         };
     }, [isCropping, scale, section, stopGesture]);
 
-    const startMove = useCallback(
-        (e: React.PointerEvent) => {
-            e.stopPropagation();
-            const current = draftRef.current;
-            if (!current) return;
-            gestureRef.current = {
-                mode: 'move',
-                startPointerX: e.clientX,
-                startPointerY: e.clientY,
-                startCrop: current,
-            };
-        },
-        [],
-    );
+    const startMove = useCallback((e: React.PointerEvent) => {
+        e.stopPropagation();
+        const current = draftRef.current;
+        if (!current) return;
+        gestureRef.current = {
+            mode: 'move',
+            startPointerX: e.clientX,
+            startPointerY: e.clientY,
+            startCrop: current,
+        };
+    }, []);
 
-    const startResize = useCallback(
-        (e: React.PointerEvent, handle: CropHandle) => {
-            e.stopPropagation();
-            const current = draftRef.current;
-            if (!current) return;
-            gestureRef.current = {
-                mode: 'resize',
-                handle,
-                startPointerX: e.clientX,
-                startPointerY: e.clientY,
-                startCrop: current,
-            };
-        },
-        [],
-    );
+    const startResize = useCallback((e: React.PointerEvent, handle: CropHandle) => {
+        e.stopPropagation();
+        const current = draftRef.current;
+        if (!current) return;
+        gestureRef.current = {
+            mode: 'resize',
+            handle,
+            startPointerX: e.clientX,
+            startPointerY: e.clientY,
+            startCrop: current,
+        };
+    }, []);
 
     return {
         isCropping,
@@ -233,10 +227,7 @@ function clampResize(
         y = newY;
     }
     if (handle === 'bottom' || handle === 'bottomLeft' || handle === 'bottomRight') {
-        height = Math.max(
-            MIN_CROP_SIZE_PT,
-            Math.min(bounds.height - start.y, start.height + dy),
-        );
+        height = Math.max(MIN_CROP_SIZE_PT, Math.min(bounds.height - start.y, start.height + dy));
     }
     return { x, y, width, height };
 }

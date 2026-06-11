@@ -39,9 +39,9 @@ bunx serve apps/storybook/storybook-static
 
 ## Layout
 
-- `.storybook/main.ts` — framework + addons + autodocs config.
-- `.storybook/preview.tsx` — global decorators (DnD provider, theme
-  switcher) and parameters.
-- `src/stories/*.stories.tsx` — one file per primitive group.
-- `src/docs/*.mdx` — long-form documentation pages.
-- `src/helpers/` — shared sample documents and mock backends.
+-   `.storybook/main.ts` — framework + addons + autodocs config.
+-   `.storybook/preview.tsx` — global decorators (DnD provider, theme
+    switcher) and parameters.
+-   `src/stories/*.stories.tsx` — one file per primitive group.
+-   `src/docs/*.mdx` — long-form documentation pages.
+-   `src/helpers/` — shared sample documents and mock backends.

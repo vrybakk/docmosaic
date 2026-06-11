@@ -94,9 +94,9 @@ describe('Editor.Minimap', () => {
             { ...shp, id: 'shp' },
         ]);
         await waitForMinimapMounted(container);
-        const types = Array.from(
-            container.querySelectorAll('[data-minimap-section]'),
-        ).map((n) => n.getAttribute('data-minimap-section'));
+        const types = Array.from(container.querySelectorAll('[data-minimap-section]')).map((n) =>
+            n.getAttribute('data-minimap-section'),
+        );
         expect(types.sort()).toEqual(['image', 'shape', 'text']);
     });
 

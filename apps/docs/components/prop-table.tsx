@@ -28,8 +28,8 @@ export function PropTable({ name, rows }: PropTableProps) {
         return (
             <div className="my-4 rounded-md border border-fd-border bg-fd-card p-4 text-sm text-fd-muted-foreground">
                 No props documented yet for <code>{name}</code>. Run
-                <code className="mx-1">bun run generate:props</code> or pass{' '}
-                <code>rows</code> explicitly.
+                <code className="mx-1">bun run generate:props</code> or pass <code>rows</code>{' '}
+                explicitly.
             </div>
         );
     }

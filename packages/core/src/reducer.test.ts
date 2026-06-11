@@ -77,7 +77,11 @@ describe('reducer', () => {
         const state = buildFixture();
         const before = snapshot(state);
 
-        const next = reducer(state, { type: 'UPDATE_PAGE_SIZE', pageSize: 'LETTER', now: FIXED_NOW });
+        const next = reducer(state, {
+            type: 'UPDATE_PAGE_SIZE',
+            pageSize: 'LETTER',
+            now: FIXED_NOW,
+        });
 
         expect(next.pageSize).toBe('LETTER');
         expect(snapshot(state)).toBe(before);

@@ -7,10 +7,10 @@ description: Render a fully-composed editor as a viewer. Users can select, zoom,
 
 ## When you'd use this
 
-- Embedding a finished contract / template for review.
-- Sharing a built document with a stakeholder who shouldn't accidentally drag a section.
-- Pairing an editable canvas with a frozen reference canvas in a compare view.
-- A "preview" before commit step inside a multi-step flow.
+-   Embedding a finished contract / template for review.
+-   Sharing a built document with a stakeholder who shouldn't accidentally drag a section.
+-   Pairing an editable canvas with a frozen reference canvas in a compare view.
+-   A "preview" before commit step inside a multi-step flow.
 
 ## Basic — root-level `readOnly`
 
@@ -35,21 +35,21 @@ export function DocumentViewer({ document }: { document: Document }) {
 
 ## What changes in `readOnly`
 
-| Surface                     | Behavior in `readOnly`                                                       |
-| --------------------------- | ---------------------------------------------------------------------------- |
-| Canvas drag / drop          | No-op. Section positions are frozen.                                         |
-| Section resize              | Handles never render. Resize hook never arms.                                |
-| Section file upload         | Drop, drag-over, click-to-upload are no-ops. Crop overlay is suppressed.     |
-| Section floating toolbar    | Hidden — duplicate / delete / layer buttons aren't rendered.                 |
-| Drawing mode                | Pointer captures ignored. The Draw button isn't rendered.                    |
-| Page list                   | Add Image / Add Page buttons hidden. Per-page delete hidden. Reorder ignored. |
-| Properties bar              | Document name input, page size, orientation select are `disabled`.           |
-| PropertiesPanel             | Layout / Text / Shape inputs are `disabled`. Layer sub-section hides.        |
-| Page background             | `Editor.PageBackground` returns `null`.                                      |
-| Toolbar                     | `UndoButton`, `RedoButton`, `Add*Button`, `DrawButton` return `null`.        |
-|                             | `PreviewButton`, `PrintButton`, `DownloadButton` stay live.                  |
-| Keybindings                 | Every mutating action (undo, redo, delete, nudge) is suppressed.             |
-|                             | `Escape` (deselect) still works.                                             |
+| Surface                  | Behavior in `readOnly`                                                        |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| Canvas drag / drop       | No-op. Section positions are frozen.                                          |
+| Section resize           | Handles never render. Resize hook never arms.                                 |
+| Section file upload      | Drop, drag-over, click-to-upload are no-ops. Crop overlay is suppressed.      |
+| Section floating toolbar | Hidden — duplicate / delete / layer buttons aren't rendered.                  |
+| Drawing mode             | Pointer captures ignored. The Draw button isn't rendered.                     |
+| Page list                | Add Image / Add Page buttons hidden. Per-page delete hidden. Reorder ignored. |
+| Properties bar           | Document name input, page size, orientation select are `disabled`.            |
+| PropertiesPanel          | Layout / Text / Shape inputs are `disabled`. Layer sub-section hides.         |
+| Page background          | `Editor.PageBackground` returns `null`.                                       |
+| Toolbar                  | `UndoButton`, `RedoButton`, `Add*Button`, `DrawButton` return `null`.         |
+|                          | `PreviewButton`, `PrintButton`, `DownloadButton` stay live.                   |
+| Keybindings              | Every mutating action (undo, redo, delete, nudge) is suppressed.              |
+|                          | `Escape` (deselect) still works.                                              |
 
 Selection (click, shift-click, marquee) keeps working — read-only is about mutation, not navigation.
 
@@ -72,9 +72,9 @@ When the root is editable but a single canvas surface should refuse mutations, u
 
 This is the right primitive when:
 
-- You want a side-by-side "current vs. reference" view.
-- The root needs the toolbar / undo / page list to stay live for adjacent editable surfaces.
-- You're rendering a snapshot inside an otherwise-editable flow.
+-   You want a side-by-side "current vs. reference" view.
+-   The root needs the toolbar / undo / page list to stay live for adjacent editable surfaces.
+-   You're rendering a snapshot inside an otherwise-editable flow.
 
 ## Detecting read-only in custom primitives
 
@@ -90,6 +90,6 @@ function CustomAddButton() {
 
 ## See also
 
-- [Designer](/docs/concepts/designer) — composition model and primitive layering
-- [StaticCanvas](/docs/primitives/static-canvas)
-- [Keybindings](/docs/concepts/keybindings) — full default keymap
+-   [Designer](/docs/concepts/designer) — composition model and primitive layering
+-   [StaticCanvas](/docs/primitives/static-canvas)
+-   [Keybindings](/docs/concepts/keybindings) — full default keymap

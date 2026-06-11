@@ -12,13 +12,7 @@ import type { Section } from '@docmosaic/core';
  * Build a minimal Section for snap calculations — only the geometry fields are
  * read by the helpers so the discriminator + rest can be elided with `as`.
  */
-function s(
-    id: string,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-): Section {
+function s(id: string, x: number, y: number, width: number, height: number): Section {
     return {
         id,
         type: 'image',
@@ -83,11 +77,10 @@ describe('computeSnap', () => {
     });
 
     it('snaps the left edge to a candidate within threshold', () => {
-        const targets = computeSnapTargets(
-            [s('a', 200, 0, 100, 100)],
-            new Set(),
-            { width: 1000, height: 1000 },
-        );
+        const targets = computeSnapTargets([s('a', 200, 0, 100, 100)], new Set(), {
+            width: 1000,
+            height: 1000,
+        });
         // Moving by 102 places the left edge at 202, which is within 2px of
         // the 'section-left' candidate at 200 — should snap exactly.
         const result = computeSnap(startBBox, 102, 0, targets);
@@ -102,21 +95,19 @@ describe('computeSnap', () => {
         // Group ends at x=150. To align to a candidate at x=200 (section
         // 'a' at x=200), we move by ~52. That puts the right edge at 202 —
         // 2px out, within threshold.
-        const targets = computeSnapTargets(
-            [s('a', 200, 0, 100, 100)],
-            new Set(),
-            { width: 1000, height: 1000 },
-        );
+        const targets = computeSnapTargets([s('a', 200, 0, 100, 100)], new Set(), {
+            width: 1000,
+            height: 1000,
+        });
         const result = computeSnap(startBBox, 52, 0, targets);
         expect(result.dx).toBe(50);
     });
 
     it('does not snap when the closest target sits beyond threshold', () => {
-        const targets = computeSnapTargets(
-            [s('a', 500, 0, 100, 100)],
-            new Set(),
-            { width: 1000, height: 1000 },
-        );
+        const targets = computeSnapTargets([s('a', 500, 0, 100, 100)], new Set(), {
+            width: 1000,
+            height: 1000,
+        });
         const result = computeSnap(startBBox, 50, 0, targets);
         expect(result.dx).toBe(50);
         expect(result.matched.filter((t) => t.orientation === 'vertical')).toHaveLength(0);

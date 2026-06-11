@@ -6,11 +6,7 @@ import { createDocument, createSection } from '@docmosaic/core';
 import { act, fireEvent, render } from '@testing-library/react';
 import { useEffect } from 'react';
 import { describe, expect, it } from 'vitest';
-import {
-    EditorSectionProvider,
-    useEditor,
-    type EditorContextValue,
-} from '../../../context/editor';
+import { EditorSectionProvider, useEditor, type EditorContextValue } from '../../../context/editor';
 import { Editor } from '../../../index';
 import { TextSectionView } from './index';
 

@@ -11,10 +11,10 @@ The document model is a single normalized tree shared between the canvas, the PD
 interface Document {
     id: string;
     name: string;
-    pageSize: PageSize;          // 'A4' | 'LETTER' | ...
+    pageSize: PageSize; // 'A4' | 'LETTER' | ...
     orientation: PageOrientation; // 'portrait' | 'landscape'
     pages: Page[];
-    sections: Section[];          // flat, sections reference pages by index
+    sections: Section[]; // flat, sections reference pages by index
     createdAt: number;
     updatedAt: number;
 }
@@ -22,8 +22,8 @@ interface Document {
 
 Two design choices to call out:
 
-- **Sections are flat**, not nested under pages. Each `Section` carries a `pageIndex` field. This keeps reordering and cross-page moves cheap (no array surgery to lift a section out of one tree into another) and makes the reducer's update logic a single map over one array.
-- **Document-level `pageSize` and `orientation`**. All pages in a document share the same paper size — the editor is built for documents, not arbitrary multi-format canvases. If you need per-page sizes, fork the reducer; it's pure.
+-   **Sections are flat**, not nested under pages. Each `Section` carries a `pageIndex` field. This keeps reordering and cross-page moves cheap (no array surgery to lift a section out of one tree into another) and makes the reducer's update logic a single map over one array.
+-   **Document-level `pageSize` and `orientation`**. All pages in a document share the same paper size — the editor is built for documents, not arbitrary multi-format canvases. If you need per-page sizes, fork the reducer; it's pure.
 
 ## Page
 
@@ -47,23 +47,23 @@ interface Section {
     id: string;
     pageIndex: number;
     type: 'image' | 'text' | 'shape' | 'drawing';
-    x: number;           // PDF points (72 DPI)
+    x: number; // PDF points (72 DPI)
     y: number;
     width: number;
     height: number;
-    zIndex?: number;     // default 0; see Layers
-    hidden?: boolean;    // skip on canvas + PDF
-    locked?: boolean;    // refuse selection/drag/resize
+    zIndex?: number; // default 0; see Layers
+    hidden?: boolean; // skip on canvas + PDF
+    locked?: boolean; // refuse selection/drag/resize
     // ...type-specific payload fields
 }
 ```
 
 The type-specific payload differs:
 
-- **`image`** — `imageUrl`, `fit: 'cover' | 'contain' | 'stretch' | 'crop'`, optional crop rectangle.
-- **`text`** — `content`, `fontSize`, `fontFamily`, `color`, `align`.
-- **`shape`** — `shape: 'rect' | 'ellipse' | 'line'`, `fill`, `stroke`, `strokeWidth`.
-- **`drawing`** — an array of stroke paths in points.
+-   **`image`** — `imageUrl`, `fit: 'cover' | 'contain' | 'stretch' | 'crop'`, optional crop rectangle.
+-   **`text`** — `content`, `fontSize`, `fontFamily`, `color`, `align`.
+-   **`shape`** — `shape: 'rect' | 'ellipse' | 'line'`, `fill`, `stroke`, `strokeWidth`.
+-   **`drawing`** — an array of stroke paths in points.
 
 The reducer doesn't care about the payload — it routes updates through `updateSection(id, patch)`. Per-type behavior lives in the canvas primitives and the PDF generator.
 
@@ -101,6 +101,6 @@ The only thing to watch for: `imageUrl` is stored as a data URL by default. Docu
 
 ## See also
 
-- [Designer](/docs/concepts/designer) — the mental model behind the UI
-- [History](/docs/concepts/history) — undo/redo and the timeline
-- [Unit system](/docs/concepts/unit-system) — why geometry is stored in points
+-   [Designer](/docs/concepts/designer) — the mental model behind the UI
+-   [History](/docs/concepts/history) — undo/redo and the timeline
+-   [Unit system](/docs/concepts/unit-system) — why geometry is stored in points

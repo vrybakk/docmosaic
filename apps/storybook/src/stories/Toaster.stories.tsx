@@ -75,8 +75,8 @@ export const Variants: Story = {
     render: () => (
         <div className="min-h-[420px] min-w-[480px] p-6 space-y-3">
             <p className="text-sm text-muted-foreground">
-                Each toast inherits theme tokens via `rgb(var(--card))` etc., so dark mode
-                flips them along with the rest of the editor.
+                Each toast inherits theme tokens via `rgb(var(--card))` etc., so dark mode flips
+                them along with the rest of the editor.
             </p>
             <ButtonRow />
             <Editor.Toaster />

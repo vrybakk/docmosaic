@@ -206,17 +206,7 @@ async function drawImageSection(ctx: AnyCtx, section: ImageSection): Promise<voi
         const sy = (section.crop.y / section.height) * imageHeight(img);
         const sw = (section.crop.width / section.width) * imageWidth(img);
         const sh = (section.crop.height / section.height) * imageHeight(img);
-        ctx.drawImage(
-            img,
-            sx,
-            sy,
-            sw,
-            sh,
-            section.x,
-            section.y,
-            section.width,
-            section.height,
-        );
+        ctx.drawImage(img, sx, sy, sw, sh, section.x, section.y, section.width, section.height);
     } else {
         ctx.drawImage(img, section.x, section.y, section.width, section.height);
     }

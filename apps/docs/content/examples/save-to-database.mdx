@@ -69,7 +69,13 @@ export default function PersistentEditor() {
     return (
         <div className="flex flex-col h-screen">
             <div className="border-b px-4 py-2 text-sm text-muted-foreground">
-                {status === 'pending' ? 'Saving…' : status === 'saved' ? 'All changes saved' : status === 'error' ? 'Save failed — retrying' : ' '}
+                {status === 'pending'
+                    ? 'Saving…'
+                    : status === 'saved'
+                      ? 'All changes saved'
+                      : status === 'error'
+                        ? 'Save failed — retrying'
+                        : ' '}
             </div>
             <Editor.Root document={doc} onDocumentChange={setDoc}>
                 <Editor.Properties />
@@ -91,11 +97,13 @@ The pattern in three lines:
 3. **`onDocumentChange={setDoc}`** is the controlled-mode wire — every mutation flows through your state, then back into the editor.
 
 <Callout type="warn">
-    Image sections embed data URLs by default — a few photos can balloon a single document into MBs. For production, strip data URLs to object-store keys before saving and rehydrate them on load. See the [persisting templates recipe](/docs/recipes/persisting-templates) for the pattern.
+    Image sections embed data URLs by default — a few photos can balloon a single document into MBs.
+    For production, strip data URLs to object-store keys before saving and rehydrate them on load.
+    See the [persisting templates recipe](/docs/recipes/persisting-templates) for the pattern.
 </Callout>
 
 ## Related
 
-- [Persisting templates recipe](/docs/recipes/persisting-templates) — JSON serialisation + blob references
-- [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — why this is the controlled-mode flow
-- [Document model](/docs/concepts/document-model) — the JSON shape you'll be saving
+-   [Persisting templates recipe](/docs/recipes/persisting-templates) — JSON serialisation + blob references
+-   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — why this is the controlled-mode flow
+-   [Document model](/docs/concepts/document-model) — the JSON shape you'll be saving

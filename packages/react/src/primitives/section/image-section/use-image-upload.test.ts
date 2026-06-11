@@ -21,9 +21,7 @@ describe('validateImageFile', () => {
     });
 
     it('rejects a GIF (unsupported MIME)', () => {
-        expect(validateImageFile(mockFile({ type: 'image/gif', size: 1024 }))).toBe(
-            'invalid-type',
-        );
+        expect(validateImageFile(mockFile({ type: 'image/gif', size: 1024 }))).toBe('invalid-type');
     });
 
     it('rejects a PDF (wrong MIME)', () => {
@@ -33,14 +31,12 @@ describe('validateImageFile', () => {
     });
 
     it('rejects a JPEG over 10MB', () => {
-        expect(
-            validateImageFile(mockFile({ type: 'image/jpeg', size: MAX_FILE_SIZE + 1 })),
-        ).toBe('too-large');
+        expect(validateImageFile(mockFile({ type: 'image/jpeg', size: MAX_FILE_SIZE + 1 }))).toBe(
+            'too-large',
+        );
     });
 
     it('accepts a JPEG exactly at the size limit', () => {
-        expect(
-            validateImageFile(mockFile({ type: 'image/jpeg', size: MAX_FILE_SIZE })),
-        ).toBeNull();
+        expect(validateImageFile(mockFile({ type: 'image/jpeg', size: MAX_FILE_SIZE }))).toBeNull();
     });
 });

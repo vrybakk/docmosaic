@@ -248,10 +248,7 @@ export function useEditorKeybindings(keymap: Partial<EditorKeymap> = {}): void {
  * the caller can decide whether to call `preventDefault()` — we don't want to
  * eat ArrowRight while no section is selected.
  */
-function dispatchAction(
-    action: keyof EditorKeymap,
-    editor: ReturnType<typeof useEditor>,
-): boolean {
+function dispatchAction(action: keyof EditorKeymap, editor: ReturnType<typeof useEditor>): boolean {
     const { state, actions, ui, canUndo, canRedo, readOnly } = editor;
     const selectedIds = ui.selectedSectionIds;
 

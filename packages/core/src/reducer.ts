@@ -177,9 +177,7 @@ export function reducer(state: State, action: Action): State {
             const adjustedSections = state.sections
                 .filter((section) => section.page !== pageIndex + 1)
                 .map((section) =>
-                    section.page > pageIndex + 1
-                        ? { ...section, page: section.page - 1 }
-                        : section,
+                    section.page > pageIndex + 1 ? { ...section, page: section.page - 1 } : section,
                 );
             return touch(
                 {
@@ -342,9 +340,7 @@ export function reducer(state: State, action: Action): State {
                 (s) => s.page === target.page && s.id !== target.id && s.zIndex > target.zIndex,
             );
             if (higherPeers.length === 0) return state;
-            const nextHigher = higherPeers.reduce((best, s) =>
-                s.zIndex < best.zIndex ? s : best,
-            );
+            const nextHigher = higherPeers.reduce((best, s) => (s.zIndex < best.zIndex ? s : best));
             return touch(
                 {
                     ...state,
@@ -365,9 +361,7 @@ export function reducer(state: State, action: Action): State {
                 (s) => s.page === target.page && s.id !== target.id && s.zIndex < target.zIndex,
             );
             if (lowerPeers.length === 0) return state;
-            const nextLower = lowerPeers.reduce((best, s) =>
-                s.zIndex > best.zIndex ? s : best,
-            );
+            const nextLower = lowerPeers.reduce((best, s) => (s.zIndex > best.zIndex ? s : best));
             return touch(
                 {
                     ...state,
@@ -484,9 +478,12 @@ export function reducer(state: State, action: Action): State {
             // group should round positions before dispatching.
             if (existing[axis].includes(position)) return state;
             const nextGuides: PageGuides = {
-                vertical: axis === 'vertical' ? [...existing.vertical, position] : existing.vertical,
+                vertical:
+                    axis === 'vertical' ? [...existing.vertical, position] : existing.vertical,
                 horizontal:
-                    axis === 'horizontal' ? [...existing.horizontal, position] : existing.horizontal,
+                    axis === 'horizontal'
+                        ? [...existing.horizontal, position]
+                        : existing.horizontal,
             };
             const newPages = state.pages.map((p, idx) =>
                 idx === pageIndex ? { ...p, guides: nextGuides } : p,

@@ -150,17 +150,9 @@ export interface EditorActions {
      * duplicates are skipped so repeated drags onto the same value don't grow
      * the underlying array.
      */
-    addGuide: (
-        pageIndex: number,
-        axis: 'vertical' | 'horizontal',
-        position: number,
-    ) => void;
+    addGuide: (pageIndex: number, axis: 'vertical' | 'horizontal', position: number) => void;
     /** Remove a previously-placed guide line. No-op when absent. */
-    removeGuide: (
-        pageIndex: number,
-        axis: 'vertical' | 'horizontal',
-        position: number,
-    ) => void;
+    removeGuide: (pageIndex: number, axis: 'vertical' | 'horizontal', position: number) => void;
 }
 
 /**
@@ -417,9 +409,7 @@ export function EditorSectionProvider({
     value: EditorSectionContextValue;
     children: ReactNode;
 }) {
-    return (
-        <EditorSectionContext.Provider value={value}>{children}</EditorSectionContext.Provider>
-    );
+    return <EditorSectionContext.Provider value={value}>{children}</EditorSectionContext.Provider>;
 }
 
 /**
@@ -545,10 +535,7 @@ export function useEditorSection(): UseEditorSectionResult {
             const bbox = computeGroupBBox(selected);
             if (!bbox) return;
             const positions = new Map(
-                selected.map((s) => [
-                    s.id,
-                    { x: s.x, y: s.y, width: s.width, height: s.height },
-                ]),
+                selected.map((s) => [s.id, { x: s.x, y: s.y, width: s.width, height: s.height }]),
             );
             const pageDims = getPageDimensionsWithOrientation(pageSize, orientation);
             const pageGuides = pagesRef.current[currentPage - 1]?.guides;
@@ -690,9 +677,7 @@ export function EditorCanvasProvider({
     value: EditorCanvasContextValue;
     children: ReactNode;
 }) {
-    return (
-        <EditorCanvasContext.Provider value={value}>{children}</EditorCanvasContext.Provider>
-    );
+    return <EditorCanvasContext.Provider value={value}>{children}</EditorCanvasContext.Provider>;
 }
 
 /**

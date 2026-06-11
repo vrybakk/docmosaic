@@ -52,9 +52,9 @@ The CSS import seeds the `--editor-*` tokens documented in [Theming](/docs/themi
 
 The editor tracks a **single selected section** at a time (`ui.selectedSectionId`). Selection drives:
 
-- The visible toolbar on `Editor.Section` (fit / layer / duplicate / delete buttons).
-- Keyboard nudge + delete bindings (see [Keybindings](/docs/concepts/keybindings)).
-- Resize handles and the focus outline.
+-   The visible toolbar on `Editor.Section` (fit / layer / duplicate / delete buttons).
+-   Keyboard nudge + delete bindings (see [Keybindings](/docs/concepts/keybindings)).
+-   Resize handles and the focus outline.
 
 Clicking a section selects it; clicking the canvas background, hitting `Escape`, or deleting the selected section clears the selection. Multi-select is intentionally not part of the v1 surface — most flows that "want" multi-select are better expressed via layer actions on a single section.
 
@@ -62,9 +62,9 @@ Clicking a section selects it; clicking the canvas background, hitting `Escape`,
 
 The Canvas wires every section to three gestures:
 
-- **Drag** — pointer down on a section, move, pointer up. The reducer applies `UPDATE_SECTION` with the new `(x, y)`.
-- **Resize** — drag the right, bottom, or bottom-right handle. The Canvas captures the start size and dispatches incremental `UPDATE_SECTION` calls.
-- **Image upload** — drop a file onto a section (or click the empty-state). The reader produces a data URL, which becomes `section.imageUrl`.
+-   **Drag** — pointer down on a section, move, pointer up. The reducer applies `UPDATE_SECTION` with the new `(x, y)`.
+-   **Resize** — drag the right, bottom, or bottom-right handle. The Canvas captures the start size and dispatches incremental `UPDATE_SECTION` calls.
+-   **Image upload** — drop a file onto a section (or click the empty-state). The reader produces a data URL, which becomes `section.imageUrl`.
 
 Drag-and-drop is powered by `react-dnd` with the HTML5 backend. `Editor.Root` mounts a single `<DndProvider>` for the whole tree — don't nest another.
 
@@ -104,8 +104,8 @@ function CustomEditor() {
 
 `Editor.Root` works in both modes:
 
-- **Uncontrolled** (default) — omit `document`. The root owns state internally. Pass `defaultDocument` to seed it.
-- **Controlled** — pass `document` + `onDocumentChange`. Every mutation calls back out; the parent is responsible for re-rendering. Undo/redo are disabled because the timeline lives outside.
+-   **Uncontrolled** (default) — omit `document`. The root owns state internally. Pass `defaultDocument` to seed it.
+-   **Controlled** — pass `document` + `onDocumentChange`. Every mutation calls back out; the parent is responsible for re-rendering. Undo/redo are disabled because the timeline lives outside.
 
 ```tsx
 const [doc, setDoc] = useState(createDocument());
@@ -134,9 +134,9 @@ Selection (click, marquee), zoom, and pan all keep working — read-only is abou
 
 ## See also
 
-- [Document model](/docs/concepts/document-model) — the `Document` / `Page` / `Section` hierarchy in detail
-- [History](/docs/concepts/history) — undo/redo and the timeline
-- [Unit system](/docs/concepts/unit-system) — why geometry is stored in points
-- [Theming](/docs/theming) — the `--editor-*` CSS-variable surface
-- [Keybindings](/docs/concepts/keybindings) — default shortcuts and how to override
-- [Layers](/docs/concepts/layers) — z-index actions for overlapping sections
+-   [Document model](/docs/concepts/document-model) — the `Document` / `Page` / `Section` hierarchy in detail
+-   [History](/docs/concepts/history) — undo/redo and the timeline
+-   [Unit system](/docs/concepts/unit-system) — why geometry is stored in points
+-   [Theming](/docs/theming) — the `--editor-*` CSS-variable surface
+-   [Keybindings](/docs/concepts/keybindings) — default shortcuts and how to override
+-   [Layers](/docs/concepts/layers) — z-index actions for overlapping sections

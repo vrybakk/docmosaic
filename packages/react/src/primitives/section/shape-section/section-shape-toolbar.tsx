@@ -28,21 +28,14 @@ const STROKE_WIDTH_STEP = 1;
  * stroke-only shape (`fill: 'transparent'`) without remembering the magic
  * string.
  */
-export function SectionShapeToolbar({
-    section,
-    isSelected,
-    onUpdate,
-}: SectionShapeToolbarProps) {
+export function SectionShapeToolbar({ section, isSelected, onUpdate }: SectionShapeToolbarProps) {
     const stroke = section.stroke ?? '#000000';
     const fill = section.fill ?? 'transparent';
     const isTransparentFill = fill === 'transparent';
     const strokeWidth = section.strokeWidth ?? 1;
 
     const bumpStrokeWidth = (delta: number) => {
-        const next = Math.max(
-            MIN_STROKE_WIDTH,
-            Math.min(MAX_STROKE_WIDTH, strokeWidth + delta),
-        );
+        const next = Math.max(MIN_STROKE_WIDTH, Math.min(MAX_STROKE_WIDTH, strokeWidth + delta));
         if (next !== strokeWidth) {
             onUpdate({ strokeWidth: next });
         }

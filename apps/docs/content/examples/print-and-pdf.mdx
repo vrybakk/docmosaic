@@ -48,7 +48,9 @@ export default function PrintAndPdfEditor() {
 `Editor.DownloadButton` produces a real PDF via the bundled `jspdf` pipeline. `Editor.PrintButton` opens the OS print dialog with the canvas rasterised — useful when users want paper instead of a file. `Editor.FileSizeBadge` shows a live size estimate so users know what they're about to download.
 
 <Callout type="info">
-    All geometry is stored in **PDF points (72 DPI)**, not CSS pixels. The download is byte-identical between dev and prod because the document model carries pre-converted coordinates. See [Unit system](/docs/concepts/unit-system).
+    All geometry is stored in **PDF points (72 DPI)**, not CSS pixels. The download is
+    byte-identical between dev and prod because the document model carries pre-converted
+    coordinates. See [Unit system](/docs/concepts/unit-system).
 </Callout>
 
 ## Try it
@@ -57,7 +59,7 @@ export default function PrintAndPdfEditor() {
 
 ## Related
 
-- [Editor.DownloadButton](/docs/primitives/download-button) — the PDF export
-- [Editor.PrintButton](/docs/primitives/print-button) — OS print dialog
-- [Editor.Preview](/docs/primitives/preview) — full-document preview
-- [Custom PDF backend](/docs/examples/custom-pdf-backend) — swap jsPDF for something else
+-   [Editor.DownloadButton](/docs/primitives/download-button) — the PDF export
+-   [Editor.PrintButton](/docs/primitives/print-button) — OS print dialog
+-   [Editor.Preview](/docs/primitives/preview) — full-document preview
+-   [Custom PDF backend](/docs/examples/custom-pdf-backend) — swap jsPDF for something else

@@ -51,10 +51,7 @@ export function PageBackground({ pageIndex, className }: PageBackgroundProps = {
         } else {
             delete next.color;
         }
-        actions.setPageBackground(
-            targetIndex,
-            next.color || next.image ? next : undefined,
-        );
+        actions.setPageBackground(targetIndex, next.color || next.image ? next : undefined);
     };
 
     const updateImage = (nextImage: string | undefined) => {
@@ -64,10 +61,7 @@ export function PageBackground({ pageIndex, className }: PageBackgroundProps = {
         } else {
             delete next.image;
         }
-        actions.setPageBackground(
-            targetIndex,
-            next.color || next.image ? next : undefined,
-        );
+        actions.setPageBackground(targetIndex, next.color || next.image ? next : undefined);
     };
 
     const onPickFile = (e: React.ChangeEvent<HTMLInputElement>) => {

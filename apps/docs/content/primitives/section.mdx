@@ -21,12 +21,12 @@ That single mount renders every section on the current page. The component reads
 
 Per section, `Editor.Section` wires up:
 
-- **Drag** — pointer down + move. Dispatches `UPDATE_SECTION` with new `(x, y)`.
-- **Resize** — three handles (right, bottom, bottom-right). Dispatches incremental `UPDATE_SECTION` calls.
-- **Image upload** — drop a file or click the empty state. The reader produces a data URL, which becomes `section.imageUrl`.
-- **Selection** — click to select; click the canvas background to deselect.
-- **Floating toolbar** — fit, duplicate, delete, layer-order buttons appear on hover and stay visible while selected.
-- **Snap** — drag respects the snap engine (page margins, section edges, page guides).
+-   **Drag** — pointer down + move. Dispatches `UPDATE_SECTION` with new `(x, y)`.
+-   **Resize** — three handles (right, bottom, bottom-right). Dispatches incremental `UPDATE_SECTION` calls.
+-   **Image upload** — drop a file or click the empty state. The reader produces a data URL, which becomes `section.imageUrl`.
+-   **Selection** — click to select; click the canvas background to deselect.
+-   **Floating toolbar** — fit, duplicate, delete, layer-order buttons appear on hover and stay visible while selected.
+-   **Snap** — drag respects the snap engine (page margins, section edges, page guides).
 
 All gestures are suppressed in `readOnly` mode.
 
@@ -39,7 +39,11 @@ The default `Editor.Section` ships with image / text / shape / drawing renderers
 ```tsx
 <Editor.Canvas>
     {sections.map((s) =>
-        s.type === 'custom' ? <MyCustomSection key={s.id} section={s} /> : <Editor.Section key={s.id} />
+        s.type === 'custom' ? (
+            <MyCustomSection key={s.id} section={s} />
+        ) : (
+            <Editor.Section key={s.id} />
+        ),
     )}
 </Editor.Canvas>
 ```
@@ -52,6 +56,6 @@ This is rarely needed — most extensions are better expressed as a new section 
 
 ## Related
 
-- [Canvas](/docs/primitives/canvas) — the parent surface
-- [SelectionBounds](/docs/primitives/selection-bounds) — multi-select rectangle
-- [Layers](/docs/concepts/layers) — z-index actions
+-   [Canvas](/docs/primitives/canvas) — the parent surface
+-   [SelectionBounds](/docs/primitives/selection-bounds) — multi-select rectangle
+-   [Layers](/docs/concepts/layers) — z-index actions

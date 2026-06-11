@@ -33,8 +33,6 @@ describe('ThemeToggle', () => {
     it('uses an aria-label that reflects the current theme', () => {
         useThemeMock.mockReturnValue({ resolvedTheme: 'light', setTheme: setThemeMock });
         render(<ThemeToggle />);
-        expect(screen.getByRole('button').getAttribute('aria-label')).toBe(
-            'Switch to dark mode',
-        );
+        expect(screen.getByRole('button').getAttribute('aria-label')).toBe('Switch to dark mode');
     });
 });

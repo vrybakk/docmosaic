@@ -5,10 +5,7 @@ const config: StorybookConfig = {
         name: '@storybook/react-vite',
         options: {},
     },
-    stories: [
-        '../src/docs/**/*.mdx',
-        '../src/stories/**/*.stories.@(ts|tsx|mdx)',
-    ],
+    stories: ['../src/docs/**/*.mdx', '../src/stories/**/*.stories.@(ts|tsx|mdx)'],
     addons: [
         '@storybook/addon-essentials',
         '@storybook/addon-a11y',
@@ -23,8 +20,7 @@ const config: StorybookConfig = {
         reactDocgen: 'react-docgen-typescript',
         reactDocgenTypescriptOptions: {
             shouldExtractLiteralValuesFromEnum: true,
-            propFilter: (prop) =>
-                prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
+            propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
         },
     },
 };

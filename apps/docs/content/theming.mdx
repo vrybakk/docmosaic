@@ -11,10 +11,10 @@ No JavaScript-side theme provider, no runtime config — just CSS.
 
 The package ships its styles split into layers so you can swap colors without reinventing the structural defaults:
 
-- **`styles/base.css`** — brand-agnostic structural tokens (`--editor-radius-section`, `--editor-shadow-section`, `--radius`) and the cascade-layer order declaration.
-- **`styles/themes/docmosaic.css`** — the DocMosaic brand colors as shadcn semantic tokens, including the bundled `.dark` scope. **Default.**
-- **`styles/themes/minimal-light.css`** — shadcn-inspired neutral grays on a white surface.
-- **`styles.css`** — convenience bundle that imports `base` + the DocMosaic brand theme.
+-   **`styles/base.css`** — brand-agnostic structural tokens (`--editor-radius-section`, `--editor-shadow-section`, `--radius`) and the cascade-layer order declaration.
+-   **`styles/themes/docmosaic.css`** — the DocMosaic brand colors as shadcn semantic tokens, including the bundled `.dark` scope. **Default.**
+-   **`styles/themes/minimal-light.css`** — shadcn-inspired neutral grays on a white surface.
+-   **`styles.css`** — convenience bundle that imports `base` + the DocMosaic brand theme.
 
 All token values land in a `@layer docmosaic` cascade layer. `base.css` declares the layer order as `docmosaic, base, components, utilities` — so any consumer that already has a shadcn `:root { --background: ... }` block in `@layer base` (the default Tailwind `@tailwind base` layer) wins automatically.
 
@@ -34,10 +34,10 @@ For dark mode, import `styles.css` (or `themes/docmosaic.css`) and toggle the `.
 
 ## Available themes
 
-| Theme           | Surface | Accent              | Import path                                                |
-| --------------- | ------- | ------------------- | ---------------------------------------------------------- |
-| DocMosaic       | white   | deep aubergine      | `@docmosaic/react/styles/themes/docmosaic.css` *(default)* |
-| Minimal Light   | white   | near-black          | `@docmosaic/react/styles/themes/minimal-light.css`         |
+| Theme         | Surface | Accent         | Import path                                                |
+| ------------- | ------- | -------------- | ---------------------------------------------------------- |
+| DocMosaic     | white   | deep aubergine | `@docmosaic/react/styles/themes/docmosaic.css` _(default)_ |
+| Minimal Light | white   | near-black     | `@docmosaic/react/styles/themes/minimal-light.css`         |
 
 ## Token reference
 
@@ -45,34 +45,34 @@ Color tokens are stored as **space-separated RGB triplets** so they compose with
 
 ### Semantic surface (shadcn-aligned)
 
-| Token                      | Purpose                                       | DocMosaic value      |
-| -------------------------- | --------------------------------------------- | -------------------- |
-| `--background`             | Editor canvas surround                        | `255 255 255`        |
-| `--foreground`             | Default text on `--background`                | `56 29 42` (#381D2A) |
-| `--card`                   | Elevated surfaces — sidebars, inspector       | `255 255 255`        |
-| `--card-foreground`        | Text on `--card`                              | `56 29 42`           |
-| `--primary`                | Primary accent — buttons, active borders      | `56 29 42`           |
-| `--primary-foreground`     | Text/icons on `--primary`                     | `252 222 156`        |
-| `--secondary`              | Soft accent — hover states, subtle fills      | `252 222 156`        |
-| `--secondary-foreground`   | Text on `--secondary`                         | `56 29 42`           |
-| `--muted`                  | Placeholder / disabled background             | `244 244 245`        |
-| `--muted-foreground`       | Placeholder / disabled text                   | `113 113 122`        |
-| `--accent`                 | Selection highlight                           | `196 214 176`        |
-| `--accent-foreground`      | Text on `--accent`                            | `56 29 42`           |
-| `--destructive`            | Errors, destructive actions, warnings         | `186 86 36`          |
-| `--destructive-foreground` | Text on `--destructive`                       | `255 255 255`        |
-| `--border`                 | Default border color                          | `228 228 231`        |
-| `--input`                  | Input border color                            | `228 228 231`        |
-| `--ring`                   | Focus ring                                    | `56 29 42`           |
-| `--radius`                 | Default border radius                         | `0.5rem`             |
+| Token                      | Purpose                                  | DocMosaic value      |
+| -------------------------- | ---------------------------------------- | -------------------- |
+| `--background`             | Editor canvas surround                   | `255 255 255`        |
+| `--foreground`             | Default text on `--background`           | `56 29 42` (#381D2A) |
+| `--card`                   | Elevated surfaces — sidebars, inspector  | `255 255 255`        |
+| `--card-foreground`        | Text on `--card`                         | `56 29 42`           |
+| `--primary`                | Primary accent — buttons, active borders | `56 29 42`           |
+| `--primary-foreground`     | Text/icons on `--primary`                | `252 222 156`        |
+| `--secondary`              | Soft accent — hover states, subtle fills | `252 222 156`        |
+| `--secondary-foreground`   | Text on `--secondary`                    | `56 29 42`           |
+| `--muted`                  | Placeholder / disabled background        | `244 244 245`        |
+| `--muted-foreground`       | Placeholder / disabled text              | `113 113 122`        |
+| `--accent`                 | Selection highlight                      | `196 214 176`        |
+| `--accent-foreground`      | Text on `--accent`                       | `56 29 42`           |
+| `--destructive`            | Errors, destructive actions, warnings    | `186 86 36`          |
+| `--destructive-foreground` | Text on `--destructive`                  | `255 255 255`        |
+| `--border`                 | Default border color                     | `228 228 231`        |
+| `--input`                  | Input border color                       | `228 228 231`        |
+| `--ring`                   | Focus ring                               | `56 29 42`           |
+| `--radius`                 | Default border radius                    | `0.5rem`             |
 
 ### Structural tokens
 
-| Token                     | Purpose                          | Default                          |
-| ------------------------- | -------------------------------- | -------------------------------- |
-| `--editor-radius-section` | Border radius for image sections | `6px`                            |
-| `--editor-shadow-section` | Shadow for image sections        | `0 1px 3px rgba(0, 0, 0, 0.1)`   |
-| `--radius`                | Default border radius            | `0.5rem`                         |
+| Token                     | Purpose                          | Default                        |
+| ------------------------- | -------------------------------- | ------------------------------ |
+| `--editor-radius-section` | Border radius for image sections | `6px`                          |
+| `--editor-shadow-section` | Shadow for image sections        | `0 1px 3px rgba(0, 0, 0, 0.1)` |
+| `--radius`                | Default border radius            | `0.5rem`                       |
 
 ## One-variable rebrand
 
@@ -150,5 +150,5 @@ See the [dark mode recipe](/docs/recipes/dark-mode) for a full walkthrough with 
 
 ## See also
 
-- [Designer](/docs/concepts/designer) — how primitives consume these tokens
-- [Dark mode recipe](/docs/recipes/dark-mode) — full setup
+-   [Designer](/docs/concepts/designer) — how primitives consume these tokens
+-   [Dark mode recipe](/docs/recipes/dark-mode) — full setup

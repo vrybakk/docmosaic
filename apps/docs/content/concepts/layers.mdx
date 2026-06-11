@@ -17,27 +17,27 @@ There's no "current layer" mode and no separate layer state — `zIndex` is part
 import { useEditor } from '@docmosaic/react';
 
 const { actions } = useEditor();
-actions.bringToFront(sectionId);  // zIndex = max(peers) + 1
-actions.sendToBack(sectionId);    // zIndex = min(peers) - 1
-actions.moveForward(sectionId);   // swap zIndex with next-higher peer
-actions.moveBackward(sectionId);  // swap zIndex with next-lower peer
+actions.bringToFront(sectionId); // zIndex = max(peers) + 1
+actions.sendToBack(sectionId); // zIndex = min(peers) - 1
+actions.moveForward(sectionId); // swap zIndex with next-higher peer
+actions.moveBackward(sectionId); // swap zIndex with next-lower peer
 ```
 
-| Action          | What it does                                                            |
-| --------------- | ----------------------------------------------------------------------- |
-| `bringToFront`  | Section's `zIndex` becomes `max(zIndex) + 1` of same-page peers.        |
-| `sendToBack`    | Section's `zIndex` becomes `min(zIndex) - 1` of same-page peers.        |
-| `moveForward`   | Swap `zIndex` with the next-higher peer on the same page. No-op if already on top.    |
-| `moveBackward`  | Swap `zIndex` with the next-lower peer on the same page. No-op if already at the bottom. |
+| Action         | What it does                                                                             |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| `bringToFront` | Section's `zIndex` becomes `max(zIndex) + 1` of same-page peers.                         |
+| `sendToBack`   | Section's `zIndex` becomes `min(zIndex) - 1` of same-page peers.                         |
+| `moveForward`  | Swap `zIndex` with the next-higher peer on the same page. No-op if already on top.       |
+| `moveBackward` | Swap `zIndex` with the next-lower peer on the same page. No-op if already at the bottom. |
 
 The matching dispatchable reducer actions (`BRING_TO_FRONT`, `SEND_TO_BACK`, `MOVE_FORWARD`, `MOVE_BACKWARD`) are exported from `@docmosaic/core` for callers driving the reducer directly.
 
 ## When you want layers
 
-- **Overlapping images** — a portrait on a card background, a logo over a photo.
-- **Watermarks / stamps** — a translucent "DRAFT" sitting above every content image.
-- **Annotated callouts** — an arrow image layered on top of a screenshot.
-- **Composite collages** — manually-ordered photo grids where the order matters.
+-   **Overlapping images** — a portrait on a card background, a logo over a photo.
+-   **Watermarks / stamps** — a translucent "DRAFT" sitting above every content image.
+-   **Annotated callouts** — an arrow image layered on top of a screenshot.
+-   **Composite collages** — manually-ordered photo grids where the order matters.
 
 If sections never overlap (a strict grid of disjoint rectangles), `zIndex` is invisible. The default of `0` everywhere just means "render in insertion order," which is the legacy behavior preserved by the array-index tiebreaker.
 
@@ -45,12 +45,12 @@ If sections never overlap (a strict grid of disjoint rectangles), `zIndex` is in
 
 `Editor.Section` exposes the four actions as icon buttons in the section's hover/selected toolbar, grouped with duplicate and delete:
 
-| Button         | Icon          | Action                                                          |
-| -------------- | ------------- | --------------------------------------------------------------- |
-| Bring to front | `ChevronsUp`  | `actions.bringToFront(sectionId)`                               |
-| Move forward   | `ChevronUp`   | `actions.moveForward(sectionId)`                                |
-| Move backward  | `ChevronDown` | `actions.moveBackward(sectionId)`                               |
-| Send to back   | `ChevronsDown`| `actions.sendToBack(sectionId)`                                 |
+| Button         | Icon           | Action                            |
+| -------------- | -------------- | --------------------------------- |
+| Bring to front | `ChevronsUp`   | `actions.bringToFront(sectionId)` |
+| Move forward   | `ChevronUp`    | `actions.moveForward(sectionId)`  |
+| Move backward  | `ChevronDown`  | `actions.moveBackward(sectionId)` |
+| Send to back   | `ChevronsDown` | `actions.sendToBack(sectionId)`   |
 
 The toolbar appears on hover and stays visible while the section is selected. No additional wiring required — every layer action runs through the editor context so undo/redo, analytics, and the controlled-mode forward-pass all just work.
 
@@ -87,13 +87,15 @@ import { Editor } from '@docmosaic/react';
     <Editor.Properties />
     <Editor.Toolbar />
     <Editor.Pages />
-    <Editor.Canvas><Editor.Section /></Editor.Canvas>
+    <Editor.Canvas>
+        <Editor.Section />
+    </Editor.Canvas>
     <div className="flex flex-col border-l">
         <Editor.LayerList className="border-b" />
         <Editor.PropertiesPanel />
     </div>
     <Editor.Preview />
-</Editor.Root>
+</Editor.Root>;
 ```
 
 The panel reads its data from the editor context — drop it anywhere underneath `Editor.Root` and it lights up.
@@ -102,9 +104,9 @@ The panel reads its data from the editor context — drop it anywhere underneath
 
 Each row has two toggles, mirroring Figma:
 
-| Toggle | Action | Effect |
-| ------ | ------ | ------ |
-| Eye    | `actions.toggleHidden(sectionId)` | Skips the section in the canvas and the PDF output. |
+| Toggle | Action                            | Effect                                                                                               |
+| ------ | --------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Eye    | `actions.toggleHidden(sectionId)` | Skips the section in the canvas and the PDF output.                                                  |
 | Lock   | `actions.toggleLocked(sectionId)` | Refuses selection, drag, and resize for the section. The properties panel still surfaces its fields. |
 
 Hidden and locked are independent — a section can be both. They live as `Section.hidden` and `Section.locked` on the core type so they survive document round-trips and undo/redo. Programmatic callers can also use `actions.setHidden(id, true)` / `actions.setLocked(id, true)` when they want to write an explicit value instead of toggling.
@@ -117,5 +119,5 @@ Grabbing the grip handle and dragging up/down past another row's midpoint reorde
 
 ## See also
 
-- [Designer](/docs/concepts/designer) — selection model the layer buttons key off of
-- [Keybindings](/docs/concepts/keybindings) — actions you might wire to keyboard shortcuts in the future
+-   [Designer](/docs/concepts/designer) — selection model the layer buttons key off of
+-   [Keybindings](/docs/concepts/keybindings) — actions you might wire to keyboard shortcuts in the future

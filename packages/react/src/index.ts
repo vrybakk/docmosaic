@@ -234,10 +234,7 @@ export {
     type RulerUnit as EditorRulerUnit,
     RULER_THICKNESS,
 } from './primitives/ruler';
-export {
-    Guides as EditorGuides,
-    type GuidesProps as EditorGuidesProps,
-} from './primitives/guides';
+export { Guides as EditorGuides, type GuidesProps as EditorGuidesProps } from './primitives/guides';
 export {
     Minimap as EditorMinimap,
     type MinimapProps as EditorMinimapProps,
@@ -262,11 +259,7 @@ export {
     defaultImageRenderer,
     useEditorConfig,
 } from './context/editor-config';
-export type {
-    EditorConfig,
-    ImageRenderer,
-    ImageRendererProps,
-} from './context/editor-config';
+export type { EditorConfig, ImageRenderer, ImageRendererProps } from './context/editor-config';
 
 /**
  * Hook returning the active editor context. Composed primitives use this
@@ -276,12 +269,7 @@ export type {
  * `Editor.Root`-style provider; in that case you're responsible for
  * mounting your own `EditorProvider`.
  */
-export {
-    useEditor,
-    useEditorCanvas,
-    useEditorSection,
-    EditorProvider,
-} from './context/editor';
+export { useEditor, useEditorCanvas, useEditorSection, EditorProvider } from './context/editor';
 export type {
     EditorActions,
     EditorContextValue,
@@ -302,10 +290,7 @@ export type {
  */
 export { useDocumentState } from './hooks/use-document-state';
 
-export {
-    DEFAULT_KEYMAP,
-    useEditorKeybindings,
-} from './hooks/use-editor-keybindings';
+export { DEFAULT_KEYMAP, useEditorKeybindings } from './hooks/use-editor-keybindings';
 export type { EditorKeybinding, EditorKeymap } from './hooks/use-editor-keybindings';
 
 export { useEditorZoom } from './hooks/use-editor-zoom';
