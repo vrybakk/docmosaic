@@ -20,8 +20,14 @@ interface UseCanvasZoomResult {
     zoomIn: () => void;
     zoomOut: () => void;
     reset: () => void;
-    /** Apply a wheel event with ctrl/meta as a zoom delta. No-op otherwise. */
-    handleWheel: (e: React.WheelEvent) => void;
+    /**
+     * Apply a native wheel event with ctrl/meta (or trackpad pinch, which the
+     * browser reports as `ctrlKey`) as a zoom delta, and `preventDefault` it so
+     * the browser doesn't page-zoom. No-op for plain scroll. Attach via
+     * `addEventListener('wheel', handleWheel, { passive: false })` — a React
+     * `onWheel` prop is passive and would swallow the `preventDefault`.
+     */
+    handleWheel: (e: WheelEvent) => void;
 }
 
 /**
@@ -51,10 +57,12 @@ export function useCanvasZoom({
     const reset = useCallback(() => updateZoom(1), [updateZoom]);
 
     const handleWheel = useCallback(
-        (e: React.WheelEvent) => {
+        (e: WheelEvent) => {
             if (!(e.ctrlKey || e.metaKey)) return;
             e.preventDefault();
-            const delta = e.deltaY * -0.01;
+            // Gentle, multiplicative-ish feel: ~one wheel notch (~120 deltaY)
+            // nudges zoom by ~18%, instead of the old 120%-per-notch jump.
+            const delta = e.deltaY * -0.0015;
             updateZoom(zoom + delta);
         },
         [zoom, updateZoom],

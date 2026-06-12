@@ -130,6 +130,16 @@ export function Canvas({
         return () => window.removeEventListener('resize', updateScale);
     }, [pageDimensions, rulerGutter]);
 
+    // Ctrl/⌘ + wheel (and trackpad pinch) zooms the canvas only. Attached
+    // natively as a non-passive listener so `preventDefault` actually stops the
+    // browser's page zoom — a React `onWheel` prop is passive and would not.
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        el.addEventListener('wheel', handleWheel, { passive: false });
+        return () => el.removeEventListener('wheel', handleWheel);
+    }, [handleWheel]);
+
     const handleResetZoom = () => {
         reset();
         setPan({ x: 0, y: 0 });
@@ -472,7 +482,6 @@ export function Canvas({
                 onPointerMove={handleCanvasPointerMove}
                 onPointerUp={handleCanvasPointerUp}
                 onPointerCancel={handleCanvasPointerUp}
-                onWheel={handleWheel}
                 style={{ cursor: ui.drawingMode ? 'crosshair' : undefined }}
             >
                 {isLoading ? (
