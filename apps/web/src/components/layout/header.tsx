@@ -32,6 +32,12 @@ export default function Header() {
 
     const router = useRouter();
 
+    // The /pdf-editor route is a full-screen editor with its own top bar; the
+    // marketing header would double up the chrome, so it is omitted there.
+    if (pathname?.startsWith('/pdf-editor')) {
+        return null;
+    }
+
     const changeLanguage = (lang: string) => {
         setCurrentLanguage(lang);
         setIsLanguageMenuOpen(false);

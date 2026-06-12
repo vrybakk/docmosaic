@@ -1,6 +1,7 @@
 'use client';
 
 import { Editor } from '@docmosaic/react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 /**
  * Client boundary for the editor.
@@ -11,20 +12,10 @@ import { Editor } from '@docmosaic/react';
  * here in a Client Component while the page itself stays server-rendered
  * for metadata + JSON-LD.
  *
- * The composition below is the canonical compound tree advertised in the
- * package docs: pass the named buttons/selects as children and the
- * Properties/Toolbar primitives fall back to their default layouts.
+ * `Editor.Root` with no children renders the full resizable app-shell out of
+ * the box; we only forward the display toggles and inject the host
+ * theme-toggle (the package never imports `next-themes` itself).
  */
 export function EditorMount() {
-    return (
-        <Editor.Root>
-            <Editor.Properties />
-            <Editor.Toolbar />
-            <Editor.Pages />
-            <Editor.Canvas>
-                <Editor.Section />
-            </Editor.Canvas>
-            <Editor.Preview />
-        </Editor.Root>
-    );
+    return <Editor.Root showRuler showMinimap themeToggle={<ThemeToggle />} />;
 }

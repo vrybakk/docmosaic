@@ -135,7 +135,7 @@ export default function PDFEditorPage() {
     };
 
     return (
-        <main className="pt-20">
+        <main className="h-screen overflow-hidden">
             {/* Add JSON-LD structured data */}
             <script
                 type="application/ld+json"
