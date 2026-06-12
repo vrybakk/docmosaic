@@ -21,17 +21,24 @@ export function PageSizeSelect({ fullWidth = false }: PageSizeSelectProps = {}) 
     return (
         <Select value={state.pageSize} onValueChange={actions.updatePageSize} disabled={readOnly}>
             <SelectTrigger
+                aria-label="Page size"
                 className={
                     fullWidth
                         ? 'w-full'
                         : cn(
-                              'min-w-[120px] w-fit border-secondary/20',
-                              'text-primary bg-white',
-                              'focus:ring-primary/20',
+                              'h-8 w-fit gap-1 border-input px-2.5',
+                              'text-foreground bg-transparent',
+                              'focus:ring-ring',
                           )
                 }
             >
-                <SelectValue placeholder={fullWidth ? 'Select page size' : 'Page Size'} />
+                {fullWidth ? (
+                    <SelectValue placeholder="Select page size" />
+                ) : (
+                    // Compact trigger: show just the short code (e.g. "A4"),
+                    // not the full "A4 (210×297mm)" label that lives in the menu.
+                    <span className="text-sm">{state.pageSize}</span>
+                )}
             </SelectTrigger>
             <SelectContent>
                 {PAGE_SIZE_OPTIONS.map((item, index) =>

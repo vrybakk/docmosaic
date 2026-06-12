@@ -12,7 +12,7 @@ export function CanvasControls() {
     const { zoom, minZoom, maxZoom, zoomIn, zoomOut, reset } = useEditorCanvas();
 
     return (
-        <div className="absolute top-4 right-4 flex items-center gap-2 bg-white rounded-lg shadow-sm p-1 z-10 transition-all duration-200">
+        <div className="absolute top-4 right-4 flex items-center gap-2 bg-card text-foreground border border-border rounded-lg shadow-sm p-1 z-10 transition-all duration-200">
             <Button
                 variant="ghost"
                 size="icon"

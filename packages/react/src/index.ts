@@ -21,6 +21,7 @@
  */
 
 import { Root } from './primitives/editor-root';
+import { EditorShell } from './primitives/app-shell';
 import { BrushWeightSlider } from './primitives/brush-weight-slider';
 import { Canvas } from './primitives/canvas';
 import { CanvasControls } from './primitives/canvas/canvas-controls';
@@ -42,6 +43,7 @@ import { AddImageButton } from './primitives/toolbar/add-image-button';
 import { AddShapeButton } from './primitives/toolbar/add-shape-button';
 import { AddTextButton } from './primitives/toolbar/add-text-button';
 import { DrawButton } from './primitives/toolbar/draw-button';
+import { SelectToolButton } from './primitives/toolbar/select-tool-button';
 import { PageBackground } from './primitives/page-background';
 import { FileSizeBadge } from './primitives/toolbar/file-size-badge';
 import { GenerationProgress } from './primitives/toolbar/generation-progress';
@@ -120,6 +122,7 @@ import { Minimap } from './primitives/minimap';
  */
 export const Editor = {
     Root,
+    Shell: EditorShell,
     Canvas,
     StaticCanvas,
     CanvasControls,
@@ -138,6 +141,7 @@ export const Editor = {
     AddTextButton,
     AddShapeButton,
     DrawButton,
+    SelectToolButton,
     DrawingControls,
     ColorPicker,
     BrushWeightSlider,
@@ -178,6 +182,7 @@ export const Editor = {
  * ```
  */
 export { Root as EditorRoot } from './primitives/editor-root';
+export { EditorShell, type EditorShellProps } from './primitives/app-shell';
 export { Canvas as EditorCanvas, type CanvasProps as EditorCanvasProps } from './primitives/canvas';
 export { StaticCanvas as EditorStaticCanvas } from './primitives/canvas/static-canvas';
 export { CanvasControls as EditorCanvasControls } from './primitives/canvas/canvas-controls';
@@ -196,6 +201,7 @@ export { AddImageButton as EditorAddImageButton } from './primitives/toolbar/add
 export { AddTextButton as EditorAddTextButton } from './primitives/toolbar/add-text-button';
 export { AddShapeButton as EditorAddShapeButton } from './primitives/toolbar/add-shape-button';
 export { DrawButton as EditorDrawButton } from './primitives/toolbar/draw-button';
+export { SelectToolButton as EditorSelectToolButton } from './primitives/toolbar/select-tool-button';
 export { DrawingControls as EditorDrawingControls } from './primitives/drawing-controls';
 export { ColorPicker as EditorColorPicker } from './primitives/color-picker';
 export { BrushWeightSlider as EditorBrushWeightSlider } from './primitives/brush-weight-slider';

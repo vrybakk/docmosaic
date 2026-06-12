@@ -24,17 +24,22 @@ export function OrientationSelect({ fullWidth = false }: OrientationSelectProps 
             disabled={readOnly}
         >
             <SelectTrigger
+                aria-label="Orientation"
                 className={
                     fullWidth
                         ? 'w-full'
                         : cn(
-                              'w-[120px] border-primary/20',
-                              'text-primary bg-white',
-                              'focus:ring-secondary/20',
+                              'h-8 w-fit gap-1 border-input px-2.5',
+                              'text-foreground bg-transparent',
+                              'focus:ring-ring',
                           )
                 }
             >
-                <SelectValue placeholder={fullWidth ? 'Select orientation' : 'Orientation'} />
+                {fullWidth ? (
+                    <SelectValue placeholder="Select orientation" />
+                ) : (
+                    <span className="text-sm capitalize">{state.orientation}</span>
+                )}
             </SelectTrigger>
             <SelectContent>
                 {ORIENTATION_OPTIONS.map((option) => (

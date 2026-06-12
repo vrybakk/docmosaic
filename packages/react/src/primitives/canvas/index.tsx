@@ -53,6 +53,13 @@ export interface CanvasProps {
      * Set automatically by {@link Editor.StaticCanvas}.
      */
     readOnly?: boolean;
+    /**
+     * Render the built-in top-right `CanvasControls` zoom strip. Defaults to
+     * `true`. Set `false` when the surrounding layout supplies its own zoom
+     * widget (e.g. the app-shell mounts a single bottom-center `Editor.Zoom`)
+     * so there is exactly one zoom control on the canvas.
+     */
+    showControls?: boolean;
 }
 
 /**
@@ -69,7 +76,11 @@ export interface CanvasProps {
  *   `Editor.Root` is editable. Selection and zoom stay live. Used by
  *   {@link Editor.StaticCanvas}.
  */
-export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps = {}) {
+export function Canvas({
+    children,
+    readOnly: readOnlyProp = false,
+    showControls = true,
+}: CanvasProps = {}) {
     const editor = useEditor();
     const { state, ui, actions, display } = editor;
     const readOnly = editor.readOnly || readOnlyProp;
@@ -98,8 +109,12 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
             if (!containerRef.current) return;
 
             const container = containerRef.current;
-            const containerWidth = container.clientWidth - 48;
-            const containerHeight = container.clientHeight - 48;
+            // Fit-to-view: reserve the `p-6` canvas padding (48px) plus the
+            // ruler gutter (reserved once on top + left) so the page fits the
+            // viewport on both axes — including the ruler — with comfortable
+            // margin instead of overflowing past the fold.
+            const containerWidth = container.clientWidth - 48 - rulerGutter;
+            const containerHeight = container.clientHeight - 48 - rulerGutter;
 
             const scaleX = containerWidth / pageDimensions.width;
             const scaleY = containerHeight / pageDimensions.height;
@@ -113,7 +128,7 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
         updateScale();
         window.addEventListener('resize', updateScale);
         return () => window.removeEventListener('resize', updateScale);
-    }, [pageDimensions]);
+    }, [pageDimensions, rulerGutter]);
 
     const handleResetZoom = () => {
         reset();
@@ -365,8 +380,8 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
 
     if (!page || !pageDimensions || !pageDimensions.width || !pageDimensions.height) {
         return (
-            <div className="flex-1 min-h-0 overflow-auto bg-gray-100 p-6 flex items-center justify-center">
-                <div className="text-gray-500">Loading page...</div>
+            <div className="flex-1 min-h-0 overflow-auto bg-muted p-6 flex items-center justify-center">
+                <div className="text-muted-foreground">Loading page...</div>
             </div>
         );
     }
@@ -438,7 +453,7 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
         >
             <div
                 ref={containerRef}
-                className="flex-1 min-h-0 overflow-auto bg-gray-100 p-6 relative"
+                className="flex-1 min-h-0 overflow-auto bg-muted p-6 relative"
                 onClick={(e) => {
                     // In drawing mode the canvas owns pointer events for stroke
                     // capture — deselecting on click would feel out of place.
@@ -567,7 +582,7 @@ export function Canvas({ children, readOnly: readOnlyProp = false }: CanvasProps
                     </div>
                 )}
 
-                {!isLoading && <CanvasControls />}
+                {!isLoading && showControls && <CanvasControls />}
                 {!isLoading && fullOverlayChildren.length > 0 && (
                     <div
                         data-canvas-overlay-layer="true"

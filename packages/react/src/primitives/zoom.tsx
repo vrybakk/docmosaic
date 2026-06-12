@@ -1,6 +1,6 @@
 'use client';
 
-import { Maximize2, ZoomIn, ZoomOut } from 'lucide-react';
+import { Maximize2, Minus, Plus } from 'lucide-react';
 import { cn } from '../internal/utils';
 import { useEditorZoom } from '../hooks/use-editor-zoom';
 
@@ -20,10 +20,10 @@ export interface ZoomProps {
  * 2. Percentage label (clickable — clicking it resets to 100%)
  * 3. Zoom in (`+`)
  * 4. Fit-to-screen (re-fits the page to the viewport)
- * 5. Explicit "100%" button
  *
- * Styled with semantic tokens (`bg-card`, `text-foreground`, `hover:bg-muted`)
- * so it adapts to the active theme without per-theme overrides.
+ * Rendered as a subtle rounded-full pill with semantic tokens (`bg-card`,
+ * `text-foreground`, `hover:bg-muted`) so it adapts to the active theme
+ * without per-theme overrides.
  *
  * @example
  * ```tsx
@@ -43,7 +43,7 @@ export function Zoom({ className }: ZoomProps = {}) {
         <div
             data-zoom-controls="true"
             className={cn(
-                'inline-flex items-center gap-1 rounded-md border border-border bg-card text-foreground shadow-sm p-1',
+                'inline-flex items-center gap-0.5 rounded-full border border-border bg-card text-foreground shadow-sm p-1',
                 className,
             )}
         >
@@ -54,12 +54,13 @@ export function Zoom({ className }: ZoomProps = {}) {
                 aria-label="Zoom out"
                 title="Zoom out"
                 className={cn(
-                    'inline-flex h-8 w-8 items-center justify-center rounded-sm transition-colors',
-                    'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                    'inline-flex h-7 w-7 items-center justify-center rounded-full transition-colors',
+                    'text-muted-foreground hover:bg-muted hover:text-foreground',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                 )}
             >
-                <ZoomOut className="h-4 w-4" />
+                <Minus className="h-4 w-4" />
             </button>
             <button
                 type="button"
@@ -67,7 +68,7 @@ export function Zoom({ className }: ZoomProps = {}) {
                 aria-label={`Zoom ${percent} percent — click to reset to 100%`}
                 title="Reset zoom to 100%"
                 className={cn(
-                    'inline-flex h-8 min-w-[3.25rem] items-center justify-center rounded-sm px-2 text-sm font-medium tabular-nums transition-colors',
+                    'inline-flex h-7 min-w-[3rem] items-center justify-center rounded-full px-2 text-sm font-medium tabular-nums transition-colors',
                     'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 )}
             >
@@ -80,12 +81,13 @@ export function Zoom({ className }: ZoomProps = {}) {
                 aria-label="Zoom in"
                 title="Zoom in"
                 className={cn(
-                    'inline-flex h-8 w-8 items-center justify-center rounded-sm transition-colors',
-                    'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                    'inline-flex h-7 w-7 items-center justify-center rounded-full transition-colors',
+                    'text-muted-foreground hover:bg-muted hover:text-foreground',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                 )}
             >
-                <ZoomIn className="h-4 w-4" />
+                <Plus className="h-4 w-4" />
             </button>
             <button
                 type="button"
@@ -93,25 +95,12 @@ export function Zoom({ className }: ZoomProps = {}) {
                 aria-label="Fit to screen"
                 title="Fit to screen"
                 className={cn(
-                    'inline-flex h-8 w-8 items-center justify-center rounded-sm transition-colors',
-                    'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                    'inline-flex h-7 w-7 items-center justify-center rounded-full transition-colors',
+                    'text-muted-foreground hover:bg-muted hover:text-foreground',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                 )}
             >
                 <Maximize2 className="h-4 w-4" />
-            </button>
-            <button
-                type="button"
-                onClick={reset}
-                aria-label="Reset zoom to 100%"
-                title="Reset zoom to 100%"
-                className={cn(
-                    'inline-flex h-8 items-center justify-center rounded-sm px-2 text-xs font-medium transition-colors',
-                    'hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                    'disabled:cursor-not-allowed disabled:opacity-50',
-                )}
-                disabled={scale === 1}
-            >
-                100%
             </button>
         </div>
     );

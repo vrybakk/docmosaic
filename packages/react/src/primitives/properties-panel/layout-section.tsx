@@ -47,40 +47,46 @@ export function LayoutSection({ className }: LayoutSectionProps = {}) {
     };
 
     return (
-        <SectionShell title="Layout" className={className}>
-            <div className="grid grid-cols-2 gap-2">
-                <NumberField
-                    label="X"
-                    value={primary.x}
-                    onCommit={(v) => onCommit('x', v)}
-                    ariaLabel="Position X"
-                    disabled={readOnly}
-                />
-                <NumberField
-                    label="Y"
-                    value={primary.y}
-                    onCommit={(v) => onCommit('y', v)}
-                    ariaLabel="Position Y"
-                    disabled={readOnly}
-                />
-                <NumberField
-                    label="W"
-                    value={primary.width}
-                    onCommit={(v) => onCommit('width', v)}
-                    ariaLabel="Width"
-                    min={1}
-                    disabled={readOnly}
-                />
-                <NumberField
-                    label="H"
-                    value={primary.height}
-                    onCommit={(v) => onCommit('height', v)}
-                    ariaLabel="Height"
-                    min={1}
-                    disabled={readOnly}
-                />
-            </div>
-        </SectionShell>
+        <>
+            <SectionShell title="Position" className={className}>
+                <div className="grid grid-cols-2 gap-2">
+                    <NumberField
+                        label="X"
+                        value={primary.x}
+                        onCommit={(v) => onCommit('x', v)}
+                        ariaLabel="Position X"
+                        disabled={readOnly}
+                    />
+                    <NumberField
+                        label="Y"
+                        value={primary.y}
+                        onCommit={(v) => onCommit('y', v)}
+                        ariaLabel="Position Y"
+                        disabled={readOnly}
+                    />
+                </div>
+            </SectionShell>
+            <SectionShell title="Size">
+                <div className="grid grid-cols-2 gap-2">
+                    <NumberField
+                        label="W"
+                        value={primary.width}
+                        onCommit={(v) => onCommit('width', v)}
+                        ariaLabel="Width"
+                        min={1}
+                        disabled={readOnly}
+                    />
+                    <NumberField
+                        label="H"
+                        value={primary.height}
+                        onCommit={(v) => onCommit('height', v)}
+                        ariaLabel="Height"
+                        min={1}
+                        disabled={readOnly}
+                    />
+                </div>
+            </SectionShell>
+        </>
     );
 }
 

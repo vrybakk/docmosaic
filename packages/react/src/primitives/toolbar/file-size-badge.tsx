@@ -19,7 +19,7 @@ export function FileSizeBadge() {
     } = useEditor();
     if (!estimatedSize) return null;
     return (
-        <div className="text-sm text-gray-500 hidden sm:block text-nowrap whitespace-nowrap">
+        <div className="hidden whitespace-nowrap text-nowrap text-sm text-muted-foreground sm:block">
             Estimated size: {formatFileSize(estimatedSize)}
         </div>
     );

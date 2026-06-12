@@ -11,7 +11,8 @@ export interface MinimapProps {
     /**
      * Maximum size for the minimap thumbnail (CSS pixels). The thumbnail
      * preserves the page aspect ratio so the actual dimensions are at most
-     * `maxSize` on the longer axis. Defaults to `200`.
+     * `maxSize` on the longer axis. Defaults to `72` — a small peripheral
+     * tile rather than a large preview.
      */
     maxSize?: number;
 }
@@ -56,7 +57,7 @@ function sectionFill(type: Section['type']): string {
  * </Editor.Root>
  * ```
  */
-export function Minimap({ className, maxSize = 200 }: MinimapProps = {}) {
+export function Minimap({ className, maxSize = 72 }: MinimapProps = {}) {
     const { state } = useEditor();
     const { finalScale } = useEditorCanvas();
 
@@ -192,7 +193,7 @@ export function Minimap({ className, maxSize = 200 }: MinimapProps = {}) {
             style={{ width: minimapWidth + 8, height: minimapHeight + 8 }}
         >
             <div
-                className="relative bg-background border border-border overflow-hidden"
+                className="relative bg-muted/40 border border-border rounded-sm overflow-hidden"
                 style={{ width: minimapWidth, height: minimapHeight }}
             >
                 {currentPageSections.map((s) => (
@@ -209,15 +210,15 @@ export function Minimap({ className, maxSize = 200 }: MinimapProps = {}) {
                         }}
                     />
                 ))}
-                {/* Viewport rectangle — red border + grab cursor so it's
-                    obvious what the rectangle controls. */}
+                {/* Viewport rectangle — a subtle ring-accented box + grab
+                    cursor so it's obvious what the rectangle controls. */}
                 <div
                     data-minimap-viewport="true"
                     onPointerDown={handlePointerDown}
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
                     onPointerCancel={handlePointerUp}
-                    className="absolute cursor-grab active:cursor-grabbing border border-destructive"
+                    className="absolute cursor-grab active:cursor-grabbing rounded-[1px] border border-ring bg-ring/10"
                     style={{
                         left: viewportRect.left,
                         top: viewportRect.top,

@@ -13,7 +13,7 @@ import {
     type Section,
     type Stroke,
 } from '@docmosaic/core';
-import { Children, isValidElement, type ReactNode, useEffect, useMemo, useState } from 'react';
+import { Children, type ReactNode, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { EditorConfigProvider, defaultImageRenderer } from '../context/editor-config';
@@ -27,10 +27,7 @@ import {
 import { useDocumentState } from '../hooks/use-document-state';
 import { useEditorKeybindings, type EditorKeymap } from '../hooks/use-editor-keybindings';
 import { trackEvent } from '../internal/analytics';
-import { Canvas } from './canvas';
-import { Pages } from './pages';
-import { Properties } from './properties';
-import { Toolbar } from './toolbar';
+import { EditorShell } from './app-shell';
 import { usePdfGeneration } from './use-pdf-generation';
 
 /**
@@ -51,7 +48,29 @@ import { usePdfGeneration } from './use-pdf-generation';
  * will warn in development.
  */
 export type EditorRootProps = {
-    children: ReactNode;
+    /**
+     * Extra nodes mounted **after** the default app-shell — custom dialogs,
+     * an extra toaster, analytics bridges, etc. The shell renders the full
+     * editor on its own, so children are purely additive overlays. Omit for
+     * the canonical `<Editor.Root />` usage.
+     */
+    children?: ReactNode;
+    /**
+     * Theme-toggle slot rendered in the top-bar right group. The package never
+     * imports `next-themes`; the host app injects a ready-made toggle node
+     * here. Renders nothing when omitted.
+     */
+    themeToggle?: ReactNode;
+    /** Render the left rail (tool palette + Pages + Layers). Defaults to `true`. */
+    showLeftRail?: boolean;
+    /** Render the tool palette inside the left rail. Defaults to `true`. */
+    showToolPalette?: boolean;
+    /** Render the "Pages" section inside the left rail. Defaults to `true`. */
+    showPages?: boolean;
+    /** Render the "Layers" section inside the left rail. Defaults to `true`. */
+    showLayers?: boolean;
+    /** Render the right inspector panel. Defaults to `true`. */
+    showInspector?: boolean;
     /**
      * Pluggable PDF backend.
      *
@@ -687,98 +706,36 @@ function UncontrolledRoot({
 }
 
 /**
- * Arrange children into the editor's default shell:
+ * Editor root — orchestrator + default app-shell.
  *
- * 1. `Editor.Properties` (or any non-workspace, non-preview child up top)
- * 2. `Editor.Toolbar`
- * 3. Flex-row workspace containing `Editor.Pages` + `Editor.Canvas` —
- *    regardless of the source order, the sidebar is forced to the left.
- * 4. Any remaining children (e.g. `Editor.Preview`)
+ * Wraps the editor in the DnD provider, the editor config (image renderer)
+ * provider, and the editor state context, then renders the resizable
+ * Figma/Canva-style app-shell ({@link EditorShell}): a top bar over a
+ * three-panel workspace (left rail · canvas · inspector). `<Editor.Root />`
+ * with no children renders the full editor out of the box.
  *
- * This lets consumers write the flat composition the docs advertise
- * without re-introducing the rigid slot props from the previous root.
- */
-function arrangeChildren(children: ReactNode): ReactNode {
-    const top: ReactNode[] = [];
-    let toolbar: ReactNode | null = null;
-    let pages: ReactNode | null = null;
-    let canvas: ReactNode | null = null;
-    const trailing: ReactNode[] = [];
-
-    Children.forEach(children, (child) => {
-        if (!isValidElement(child)) {
-            trailing.push(child);
-            return;
-        }
-        if (child.type === Properties) {
-            top.push(child);
-            return;
-        }
-        if (child.type === Toolbar) {
-            toolbar = child;
-            return;
-        }
-        if (child.type === Pages) {
-            pages = child;
-            return;
-        }
-        if (child.type === Canvas) {
-            canvas = child;
-            return;
-        }
-        trailing.push(child);
-    });
-
-    return (
-        <>
-            {top}
-            {toolbar}
-            {(pages || canvas) && (
-                <div className="flex-1 flex min-h-0">
-                    {pages}
-                    {canvas}
-                </div>
-            )}
-            {trailing}
-        </>
-    );
-}
-
-/**
- * Editor root — orchestrator + default shell.
+ * Any `children` are mounted **after** the shell as additive overlays — use
+ * them for custom dialogs or extra toasters; the shell already renders the
+ * editor itself.
  *
- * Wraps children in the DnD provider, the editor config (image renderer)
- * provider, and the editor state context. Children are arranged into a
- * flex column with the page-list/canvas placed side-by-side inside a
- * shared workspace row so the flat compound composition advertised in the
- * docs works out of the box.
- *
- * @example Uncontrolled (default)
+ * @example Default (uncontrolled) — the full editor with no composition
  * ```tsx
- * <Editor.Root>
- *   <Editor.Properties />
- *   <Editor.Toolbar />
- *   <Editor.Pages />
- *   <Editor.Canvas><Editor.Section /></Editor.Canvas>
- *   <Editor.Preview />
- * </Editor.Root>
+ * <Editor.Root showRuler showMinimap themeToggle={<ThemeToggle />} />
  * ```
  *
  * @example Controlled
  * ```tsx
  * const [doc, setDoc] = useState(createDocument());
- * <Editor.Root document={doc} onDocumentChange={setDoc}>
- *   ...
- * </Editor.Root>
+ * <Editor.Root document={doc} onDocumentChange={setDoc} />
  * ```
  *
  * @example Override or disable keyboard shortcuts
  * ```tsx
  * // Add a custom redo binding alongside the defaults.
- * <Editor.Root keybindings={{ redo: 'mod+r' }}>...</Editor.Root>
+ * <Editor.Root keybindings={{ redo: 'mod+r' }} />
  *
  * // Or turn the layer off entirely.
- * <Editor.Root keybindings={false}>...</Editor.Root>
+ * <Editor.Root keybindings={false} />
  * ```
  */
 export function Root(props: EditorRootProps) {
@@ -804,11 +761,32 @@ export function Root(props: EditorRootProps) {
         [props.showRuler, props.showMinimap, props.rulerUnit],
     );
 
+    // `<Editor.Root />` (no children) renders the full resizable app-shell.
+    // When children are supplied, they take over composition and render in a
+    // plain full-height column instead — the shell would otherwise duplicate
+    // every primitive the consumer mounted. This keeps the flat compound API
+    // (`<Editor.Root><Editor.Canvas/>…</Editor.Root>`) working as an escape
+    // hatch on top of the zero-config default.
+    const hasChildren = Children.count(props.children) > 0;
+
     const layout = (
-        <div className="flex flex-col h-screen bg-gray-50">
+        <>
             {keybindingsEnabled && <KeybindingsListener keymap={keymap} />}
-            {arrangeChildren(props.children)}
-        </div>
+            {hasChildren ? (
+                <div className="flex h-screen flex-col bg-background text-foreground">
+                    {props.children}
+                </div>
+            ) : (
+                <EditorShell
+                    themeToggle={props.themeToggle}
+                    showLeftRail={props.showLeftRail !== false}
+                    showToolPalette={props.showToolPalette !== false}
+                    showPages={props.showPages !== false}
+                    showLayers={props.showLayers !== false}
+                    showInspector={props.showInspector !== false}
+                />
+            )}
+        </>
     );
 
     return (
