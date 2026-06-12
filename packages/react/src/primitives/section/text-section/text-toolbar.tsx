@@ -18,10 +18,14 @@ const MAX_FONT_SIZE = 120;
 /** Step in points per click on +/-. */
 const FONT_SIZE_STEP = 2;
 
+/** Subtle filled state for an active toggle, layered onto the ghost variant. */
+const ACTIVE = 'bg-accent text-accent-foreground';
+
 /**
  * Floating toolbar for {@link TextSection}: alignment, bold, italic, and
- * font-size +/-. Mirrors the visual style of the image-section toolbar so
- * the two variants feel like one family.
+ * font-size +/-. Rendered as a `card`-surfaced popover so it stays legible
+ * over the page in both light and dark themes; the active toggle uses the
+ * subtle `accent` fill rather than a bright brand color.
  */
 export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps) {
     const align = section.align ?? 'left';
@@ -38,15 +42,15 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
     return (
         <div
             className={cn(
-                'absolute top-2 right-2 flex items-center gap-1 bg-white rounded-lg shadow-md p-1 z-50 pointer-events-none',
-                'opacity-0 group-hover:opacity-100 transition-opacity',
+                'absolute right-2 top-2 z-50 flex items-center gap-1 rounded-lg border border-border bg-card p-1 text-card-foreground shadow-md',
+                'pointer-events-none opacity-0 transition-opacity group-hover:opacity-100',
                 isSelected && 'opacity-100',
             )}
         >
             <Button
                 size="icon"
-                variant={align === 'left' ? 'caramel' : 'ghost'}
-                className="h-8 w-8 pointer-events-auto"
+                variant="ghost"
+                className={cn('pointer-events-auto h-8 w-8', align === 'left' && ACTIVE)}
                 onClick={(e) => {
                     e.stopPropagation();
                     onUpdate({ align: 'left' });
@@ -57,8 +61,8 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
             </Button>
             <Button
                 size="icon"
-                variant={align === 'center' ? 'caramel' : 'ghost'}
-                className="h-8 w-8 pointer-events-auto"
+                variant="ghost"
+                className={cn('pointer-events-auto h-8 w-8', align === 'center' && ACTIVE)}
                 onClick={(e) => {
                     e.stopPropagation();
                     onUpdate({ align: 'center' });
@@ -69,8 +73,8 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
             </Button>
             <Button
                 size="icon"
-                variant={align === 'right' ? 'caramel' : 'ghost'}
-                className="h-8 w-8 pointer-events-auto"
+                variant="ghost"
+                className={cn('pointer-events-auto h-8 w-8', align === 'right' && ACTIVE)}
                 onClick={(e) => {
                     e.stopPropagation();
                     onUpdate({ align: 'right' });
@@ -80,12 +84,12 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
                 <AlignRight className="h-4 w-4" />
             </Button>
 
-            <div className="w-px h-5 bg-gray-200" />
+            <div className="h-5 w-px bg-border" />
 
             <Button
                 size="icon"
-                variant={isBold ? 'caramel' : 'ghost'}
-                className="h-8 w-8 pointer-events-auto"
+                variant="ghost"
+                className={cn('pointer-events-auto h-8 w-8', isBold && ACTIVE)}
                 onClick={(e) => {
                     e.stopPropagation();
                     onUpdate({ fontWeight: isBold ? 'normal' : 'bold' });
@@ -96,8 +100,8 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
             </Button>
             <Button
                 size="icon"
-                variant={isItalic ? 'caramel' : 'ghost'}
-                className="h-8 w-8 pointer-events-auto"
+                variant="ghost"
+                className={cn('pointer-events-auto h-8 w-8', isItalic && ACTIVE)}
                 onClick={(e) => {
                     e.stopPropagation();
                     onUpdate({ fontStyle: isItalic ? 'normal' : 'italic' });
@@ -107,12 +111,12 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
                 <Italic className="h-4 w-4" />
             </Button>
 
-            <div className="w-px h-5 bg-gray-200" />
+            <div className="h-5 w-px bg-border" />
 
             <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 pointer-events-auto"
+                className="pointer-events-auto h-8 w-8"
                 onClick={(e) => {
                     e.stopPropagation();
                     bumpFontSize(-FONT_SIZE_STEP);
@@ -122,7 +126,7 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
                 <Minus className="h-4 w-4" />
             </Button>
             <span
-                className="text-xs font-medium text-gray-700 px-1 min-w-[28px] text-center pointer-events-auto"
+                className="pointer-events-auto min-w-[28px] px-1 text-center text-xs font-medium text-foreground"
                 title="Font size"
             >
                 {section.fontSize}
@@ -130,7 +134,7 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
             <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 pointer-events-auto"
+                className="pointer-events-auto h-8 w-8"
                 onClick={(e) => {
                     e.stopPropagation();
                     bumpFontSize(FONT_SIZE_STEP);

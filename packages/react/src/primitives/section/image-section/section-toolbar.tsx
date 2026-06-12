@@ -40,7 +40,7 @@ export function SectionToolbar({
     return (
         <div
             className={cn(
-                'absolute top-2 right-2 flex gap-1 bg-white rounded-lg shadow-md p-1 z-50 pointer-events-none',
+                'pointer-events-none absolute right-2 top-2 z-50 flex gap-1 rounded-lg border border-border bg-card p-1 text-card-foreground shadow-md',
                 'opacity-0 group-hover:opacity-100 transition-opacity',
                 isSelected && 'opacity-100',
             )}
@@ -49,7 +49,7 @@ export function SectionToolbar({
                 <Button
                     size="icon"
                     variant="ghost"
-                    className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
+                    className="h-8 w-8 hover:bg-accent pointer-events-auto"
                     onClick={onResizeToProportion}
                     title="Fit to image proportion"
                 >
@@ -59,7 +59,7 @@ export function SectionToolbar({
             <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
+                className="h-8 w-8 hover:bg-accent pointer-events-auto"
                 onClick={(e) => {
                     e.stopPropagation();
                     onBringToFront(section.id);
@@ -71,7 +71,7 @@ export function SectionToolbar({
             <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
+                className="h-8 w-8 hover:bg-accent pointer-events-auto"
                 onClick={(e) => {
                     e.stopPropagation();
                     onMoveForward(section.id);
@@ -83,7 +83,7 @@ export function SectionToolbar({
             <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
+                className="h-8 w-8 hover:bg-accent pointer-events-auto"
                 onClick={(e) => {
                     e.stopPropagation();
                     onMoveBackward(section.id);
@@ -95,7 +95,7 @@ export function SectionToolbar({
             <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
+                className="h-8 w-8 hover:bg-accent pointer-events-auto"
                 onClick={(e) => {
                     e.stopPropagation();
                     onSendToBack(section.id);
@@ -107,7 +107,7 @@ export function SectionToolbar({
             <Button
                 size="icon"
                 variant="ghost"
-                className="h-8 w-8 hover:bg-gray-100 pointer-events-auto"
+                className="h-8 w-8 hover:bg-accent pointer-events-auto"
                 onClick={(e) => {
                     e.stopPropagation();
                     onDuplicate(section);

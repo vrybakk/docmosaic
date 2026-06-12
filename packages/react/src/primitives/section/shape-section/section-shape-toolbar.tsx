@@ -44,7 +44,7 @@ export function SectionShapeToolbar({ section, isSelected, onUpdate }: SectionSh
     return (
         <div
             className={cn(
-                'absolute top-2 right-2 flex items-center gap-1 bg-white rounded-lg shadow-md p-1 z-50 pointer-events-none',
+                'pointer-events-none absolute right-2 top-2 z-50 flex items-center gap-1 rounded-lg border border-border bg-card p-1 text-card-foreground shadow-md',
                 'opacity-0 group-hover:opacity-100 transition-opacity',
                 isSelected && 'opacity-100',
             )}
@@ -54,37 +54,37 @@ export function SectionShapeToolbar({ section, isSelected, onUpdate }: SectionSh
                 title="Stroke color"
                 onClick={(e) => e.stopPropagation()}
             >
-                <span className="text-[10px] uppercase text-gray-500">Stroke</span>
+                <span className="text-[10px] uppercase text-muted-foreground">Stroke</span>
                 <input
                     type="color"
                     value={normalizeColorForInput(stroke)}
-                    className="h-6 w-6 rounded border border-gray-200 bg-white"
+                    className="h-6 w-6 rounded border border-border bg-white"
                     onChange={(e) => onUpdate({ stroke: e.target.value })}
                     onClick={(e) => e.stopPropagation()}
                 />
             </label>
 
-            <div className="w-px h-5 bg-gray-200" />
+            <div className="h-5 w-px bg-border" />
 
             <label
                 className="flex items-center gap-1 px-1 pointer-events-auto"
                 title="Fill color"
                 onClick={(e) => e.stopPropagation()}
             >
-                <span className="text-[10px] uppercase text-gray-500">Fill</span>
+                <span className="text-[10px] uppercase text-muted-foreground">Fill</span>
                 <input
                     type="color"
                     value={normalizeColorForInput(isTransparentFill ? '#ffffff' : fill)}
                     disabled={isTransparentFill}
                     className={cn(
-                        'h-6 w-6 rounded border border-gray-200 bg-white',
+                        'h-6 w-6 rounded border border-border bg-white',
                         isTransparentFill && 'opacity-50',
                     )}
                     onChange={(e) => onUpdate({ fill: e.target.value })}
                     onClick={(e) => e.stopPropagation()}
                 />
                 <label
-                    className="flex items-center gap-1 text-[10px] text-gray-600 cursor-pointer"
+                    className="flex cursor-pointer items-center gap-1 text-[10px] text-muted-foreground"
                     title="No fill"
                 >
                     <input
@@ -100,7 +100,7 @@ export function SectionShapeToolbar({ section, isSelected, onUpdate }: SectionSh
                 </label>
             </label>
 
-            <div className="w-px h-5 bg-gray-200" />
+            <div className="h-5 w-px bg-border" />
 
             <Button
                 size="icon"
@@ -115,7 +115,7 @@ export function SectionShapeToolbar({ section, isSelected, onUpdate }: SectionSh
                 <Minus className="h-4 w-4" />
             </Button>
             <span
-                className="text-xs font-medium text-gray-700 px-1 min-w-[24px] text-center pointer-events-auto"
+                className="pointer-events-auto min-w-[24px] px-1 text-center text-xs font-medium text-foreground"
                 title="Stroke width"
             >
                 {strokeWidth}
