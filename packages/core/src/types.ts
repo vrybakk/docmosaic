@@ -162,6 +162,20 @@ export interface ImageSection extends SectionBase {
      * See {@link ImageCrop} for the coordinate model.
      */
     crop?: ImageCrop;
+    /**
+     * Optional shape mask turning this image section into a Canva-style
+     * **placeholder frame**: the image (and the empty-state drop zone) is
+     * clipped to this primitive instead of the full rectangle. `'rect'` (or
+     * absent) is the plain rectangular image — the byte-stable legacy path;
+     * `'circle'` clips to the inscribed ellipse. `'line'` is not a meaningful
+     * mask and is treated as `'rect'`.
+     *
+     * @remarks
+     * Optional + undefined-as-rect so every image authored before placeholder
+     * frames existed renders exactly as before and the PDF byte-diff fixtures
+     * stay stable.
+     */
+    maskShape?: ShapeKind;
 }
 
 /**

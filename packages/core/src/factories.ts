@@ -78,6 +78,12 @@ export interface CreateSectionOptions {
      * ellipse, or diagonal line.
      */
     shape?: ShapeKind;
+    /**
+     * Optional shape mask for an image section, turning it into a Canva-style
+     * placeholder frame. Ignored for non-image types. See
+     * {@link ImageSection.maskShape}.
+     */
+    maskShape?: ShapeKind;
     /** Initial X coordinate in CSS pixels. Default `50`. */
     x?: number;
     /** Initial Y coordinate in CSS pixels. Default `50`. */
@@ -179,5 +185,5 @@ export function createSection(opts: CreateSectionOptions = {}): Section {
             strokeWidth: 1,
         };
     }
-    return { ...base, type: 'image' };
+    return { ...base, type: 'image', ...(opts.maskShape ? { maskShape: opts.maskShape } : {}) };
 }

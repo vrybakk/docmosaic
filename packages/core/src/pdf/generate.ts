@@ -265,7 +265,11 @@ export async function generatePDF(
 function drawImageSection(doc: jsPDF, section: ImageSection): void {
     if (!section.imageUrl) return;
     const { crop } = section;
-    if (!crop) {
+    // A circle mask (placeholder frame) clips the image to the inscribed
+    // ellipse; `'rect'`/`'line'`/undefined leave the full rectangle.
+    const circleMask = section.maskShape === 'circle';
+
+    if (!crop && !circleMask) {
         // Legacy path: byte-stable with the pre-Phase-17 generator.
         doc.addImage(
             section.imageUrl,
@@ -280,29 +284,48 @@ function drawImageSection(doc: jsPDF, section: ImageSection): void {
         return;
     }
 
-    // Crop path. Scale the source image so its crop window fits the section
-    // bounds 1:1, then offset the image so the crop's origin lands on the
-    // section's origin. Clip to the section box so the parts outside aren't
-    // rendered.
-    const scaleX = section.width / crop.width;
-    const scaleY = section.height / crop.height;
-    const drawWidth = section.width * (section.width / crop.width);
-    const drawHeight = section.height * (section.height / crop.height);
-    const drawX = section.x - crop.x * scaleX;
-    const drawY = section.y - crop.y * scaleY;
-
+    // Clipped path. The clip region is the mask shape when set, otherwise the
+    // section box (for a plain crop). When cropping, scale the source image so
+    // its crop window fits the section bounds 1:1, then offset it so the crop's
+    // origin lands on the section's origin.
     doc.saveGraphicsState();
-    doc.rect(section.x, section.y, section.width, section.height).clip().discardPath();
-    doc.addImage(
-        section.imageUrl,
-        'JPEG',
-        drawX,
-        drawY,
-        drawWidth,
-        drawHeight,
-        `img-${section.id}`,
-        'SLOW',
-    );
+    if (circleMask) {
+        const cx = section.x + section.width / 2;
+        const cy = section.y + section.height / 2;
+        doc.ellipse(cx, cy, section.width / 2, section.height / 2).clip().discardPath();
+    } else {
+        doc.rect(section.x, section.y, section.width, section.height).clip().discardPath();
+    }
+
+    if (crop) {
+        const scaleX = section.width / crop.width;
+        const scaleY = section.height / crop.height;
+        const drawWidth = section.width * (section.width / crop.width);
+        const drawHeight = section.height * (section.height / crop.height);
+        const drawX = section.x - crop.x * scaleX;
+        const drawY = section.y - crop.y * scaleY;
+        doc.addImage(
+            section.imageUrl,
+            'JPEG',
+            drawX,
+            drawY,
+            drawWidth,
+            drawHeight,
+            `img-${section.id}`,
+            'SLOW',
+        );
+    } else {
+        doc.addImage(
+            section.imageUrl,
+            'JPEG',
+            section.x,
+            section.y,
+            section.width,
+            section.height,
+            `img-${section.id}`,
+            'SLOW',
+        );
+    }
     doc.restoreGraphicsState();
 }
 

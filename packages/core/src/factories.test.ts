@@ -70,4 +70,14 @@ describe('createSection', () => {
         expect(section.strokeWidth).toBe(1);
         expect(section.parentFrameId).toBeUndefined();
     });
+
+    it('stamps maskShape onto an image section (placeholder frame), and omits it otherwise', () => {
+        const masked = createSection({ type: 'image', maskShape: 'circle', page: 1 });
+        if (masked.type !== 'image') throw new Error('narrowing');
+        expect(masked.maskShape).toBe('circle');
+
+        const plain = createSection({ type: 'image', page: 1 });
+        if (plain.type !== 'image') throw new Error('narrowing');
+        expect(plain.maskShape).toBeUndefined();
+    });
 });

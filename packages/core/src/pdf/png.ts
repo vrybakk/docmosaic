@@ -196,6 +196,23 @@ async function drawImageDataUrl(
 async function drawImageSection(ctx: AnyCtx, section: ImageSection): Promise<void> {
     if (!section.imageUrl) return;
     const img = await loadImage(section.imageUrl);
+    // Placeholder-frame circle mask: clip to the inscribed ellipse before
+    // drawing, mirroring the PDF generator.
+    const circleMask = section.maskShape === 'circle';
+    ctx.save();
+    if (circleMask) {
+        ctx.beginPath();
+        ctx.ellipse(
+            section.x + section.width / 2,
+            section.y + section.height / 2,
+            section.width / 2,
+            section.height / 2,
+            0,
+            0,
+            Math.PI * 2,
+        );
+        ctx.clip();
+    }
     if (section.crop) {
         // Convert section-coord crop window into source-image pixel coords. The
         // crop is expressed in PDF points relative to the section box; the
