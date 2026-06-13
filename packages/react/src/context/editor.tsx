@@ -614,6 +614,17 @@ export function useEditorSection(): UseEditorSectionResult {
         const onEnd = () => {
             groupDragSnapshot.current = null;
             setActiveSnapGuides([]);
+            // Frame adoption for the WHOLE moved selection — the single-section
+            // `onDragEnd` only re-parents the grabbed section, so without this a
+            // multi-select dragged into/out of a frame would leave the other
+            // members with a stale `parentFrameId`.
+            for (const s of sectionsRef.current) {
+                if (!selectedSectionIds.has(s.id)) continue;
+                const nextParent = resolveFrameParent(s, sectionsRef.current);
+                if (s.parentFrameId !== nextParent) {
+                    actions.updateSection({ ...s, parentFrameId: nextParent });
+                }
+            }
         };
 
         return { size, onStart, onMove, onEnd };

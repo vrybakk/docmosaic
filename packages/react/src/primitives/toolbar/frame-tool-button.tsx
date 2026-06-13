@@ -58,7 +58,11 @@ export function FrameToolButton({
                 aria-label={label}
                 title={label}
                 onClick={toggle}
-                className={cn('h-9 w-full', frameTool ? activeClassName : className)}
+                className={cn(
+                    'h-9 w-full',
+                    'frame-tool-button-click-trigger',
+                    frameTool ? activeClassName : className,
+                )}
             >
                 <Frame className="h-4 w-4" />
                 <span className="sr-only">{label}</span>
@@ -71,7 +75,7 @@ export function FrameToolButton({
             variant={frameTool ? 'orange' : 'caramel'}
             aria-pressed={frameTool}
             onClick={toggle}
-            className="w-full"
+            className={cn('w-full', 'frame-tool-button-click-trigger')}
             icon={<Frame className="h-4 w-4" />}
         >
             {label}
