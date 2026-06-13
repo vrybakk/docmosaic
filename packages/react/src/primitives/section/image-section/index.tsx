@@ -144,11 +144,8 @@ export function ImageSectionView() {
             data-section="true"
             data-section-id={section.id}
             className={cn(
-                'absolute p-1',
-                'border-2 border-dashed border-gray-300 hover:border-primary/50',
-                'rounded-lg overflow-visible group touch-none pointer-events-auto',
-                isSelected && 'border-solid border-primary shadow-lg',
-                isDroppingFile && 'border-primary border-solid bg-primary/5',
+                'absolute overflow-visible group touch-none pointer-events-auto',
+                isDroppingFile && 'rounded-md bg-primary/5',
                 isDragging && 'opacity-50 cursor-grabbing',
                 isResizing && 'pointer-events-none',
             )}
@@ -169,6 +166,22 @@ export function ImageSectionView() {
             onDragLeave={handleDragLeave}
             onDrop={onFileDrop}
         >
+            {/* Selection / hover / drop affordance — a thin dashed outline that
+                sits just outside the box (so it never affects the image geometry
+                or the PDF render) and turns solid when selected or while a file
+                is being dragged over. No drop shadow: flat, like the other
+                section variants. */}
+            {!readOnly && (
+                <div
+                    aria-hidden="true"
+                    className={cn(
+                        'pointer-events-none absolute -inset-1 rounded-md border-2 border-dashed border-muted-foreground/40',
+                        'opacity-0 transition-opacity group-hover:opacity-100',
+                        (isSelected || isDroppingFile) && 'border-solid border-primary opacity-100',
+                    )}
+                />
+            )}
+
             {isSelected && !isResizing && !isCropping && !readOnly && (
                 <SectionResizeHandles onResizeStart={handleResizeStart} />
             )}

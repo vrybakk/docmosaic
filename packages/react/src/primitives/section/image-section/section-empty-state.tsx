@@ -20,7 +20,7 @@ export function SectionEmptyState({ isDroppingFile, onUploadClick }: SectionEmpt
         >
             <button
                 type="button"
-                className="flex flex-col items-center gap-2 p-4 cursor-pointer pointer-events-auto rounded-lg hover:bg-gray-100/50 transition-colors border-0 bg-transparent"
+                className="flex flex-col items-center gap-2 p-4 cursor-pointer pointer-events-auto rounded-lg hover:bg-gray-100/50 transition-colors border-0 bg-transparent outline-none focus:outline-none focus-visible:outline-none"
                 onClick={onUploadClick}
             >
                 <ImageIcon className="h-8 w-8 text-gray-400" />
