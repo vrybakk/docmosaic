@@ -239,6 +239,7 @@ function buildControlledActions(
             const created = createSection({
                 type: opts?.type ?? 'image',
                 shape: opts?.shape,
+                maskShape: opts?.maskShape,
                 x: 5,
                 y: 5,
                 page: document.currentPage,

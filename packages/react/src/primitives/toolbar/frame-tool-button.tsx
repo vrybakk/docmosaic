@@ -32,20 +32,21 @@ export function FrameToolButton({
     activeClassName,
 }: FrameToolButtonProps = {}) {
     const { ui, readOnly } = useEditor();
-    const { frameTool, setFrameTool, setDrawingMode, setShapeTool } = ui;
+    const { frameTool, setFrameTool, setDrawingMode, setShapeTool, setImageFrameTool } = ui;
 
     if (readOnly) return null;
 
     const label = frameTool ? 'Cancel Frame' : 'Frame';
 
-    // Arming the frame tool disarms drawing + the shape tool — all draw tools
-    // are mutually exclusive.
+    // Arming the frame tool disarms the drawing, shape, and image-frame tools —
+    // all draw tools are mutually exclusive.
     const toggle = () => {
         const next = !frameTool;
         setFrameTool(next);
         if (next) {
             setDrawingMode(false);
             setShapeTool(null);
+            setImageFrameTool(null);
         }
     };
 

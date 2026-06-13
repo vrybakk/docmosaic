@@ -8,6 +8,7 @@ import { AddImageButton } from '../toolbar/add-image-button';
 import { AddTextButton } from '../toolbar/add-text-button';
 import { DrawButton } from '../toolbar/draw-button';
 import { FrameToolButton } from '../toolbar/frame-tool-button';
+import { ImageFrameToolButton } from '../toolbar/image-frame-tool-button';
 import { SelectToolButton } from '../toolbar/select-tool-button';
 import { ShapeToolButton } from '../toolbar/shape-tool-button';
 import { CollapsibleSection } from './section-label';
@@ -69,6 +70,13 @@ export function LeftRail({
                         activeClassName={TOOL_BUTTON_ACTIVE_CLASS}
                     />
                     <FrameToolButton
+                        iconOnly
+                        variant="ghost"
+                        activeVariant="secondary"
+                        className={TOOL_BUTTON_CLASS}
+                        activeClassName={TOOL_BUTTON_ACTIVE_CLASS}
+                    />
+                    <ImageFrameToolButton
                         iconOnly
                         variant="ghost"
                         activeVariant="secondary"

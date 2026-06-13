@@ -32,19 +32,29 @@ export function SelectToolButton({
     activeClassName,
 }: SelectToolButtonProps = {}) {
     const { ui, readOnly } = useEditor();
-    const { drawingMode, setDrawingMode, shapeTool, setShapeTool, frameTool, setFrameTool } = ui;
+    const {
+        drawingMode,
+        setDrawingMode,
+        shapeTool,
+        setShapeTool,
+        frameTool,
+        setFrameTool,
+        imageFrameTool,
+        setImageFrameTool,
+    } = ui;
 
     if (readOnly) return null;
 
     // The cursor tool is the default mode — active only when no draw tool
-    // (pen / shape / frame) is armed. Clicking it disarms all of them.
-    const active = !drawingMode && shapeTool === null && !frameTool;
+    // (pen / shape / frame / image-frame) is armed. Clicking it disarms all.
+    const active = !drawingMode && shapeTool === null && !frameTool && imageFrameTool === null;
     const label = 'Select';
 
     const activate = () => {
         setDrawingMode(false);
         setShapeTool(null);
         setFrameTool(false);
+        setImageFrameTool(null);
     };
 
     if (iconOnly) {

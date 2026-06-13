@@ -107,12 +107,14 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
             addSection: (opts?: {
                 type?: 'image' | 'text' | 'shape' | 'drawing' | 'frame';
                 shape?: 'rect' | 'circle' | 'line';
+                maskShape?: 'rect' | 'circle' | 'line';
                 rect?: { x: number; y: number; width: number; height: number };
             }) => {
                 const current = stateRef.current.present;
                 const created = createSection({
                     type: opts?.type ?? 'image',
                     shape: opts?.shape,
+                    maskShape: opts?.maskShape,
                     x: 5,
                     y: 5,
                     page: current.currentPage,

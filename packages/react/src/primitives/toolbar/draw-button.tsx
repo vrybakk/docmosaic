@@ -34,20 +34,21 @@ export function DrawButton({
     activeClassName,
 }: DrawButtonProps = {}) {
     const { ui, readOnly } = useEditor();
-    const { drawingMode, setDrawingMode, setShapeTool, setFrameTool } = ui;
+    const { drawingMode, setDrawingMode, setShapeTool, setFrameTool, setImageFrameTool } = ui;
 
     if (readOnly) return null;
 
     const label = drawingMode ? 'Stop Drawing' : 'Draw';
 
-    // Arming drawing disarms the shape + frame tools — all draw tools are
-    // mutually exclusive.
+    // Arming drawing disarms the shape, frame, and image-frame tools — all draw
+    // tools are mutually exclusive.
     const toggle = () => {
         const next = !drawingMode;
         setDrawingMode(next);
         if (next) {
             setShapeTool(null);
             setFrameTool(false);
+            setImageFrameTool(null);
         }
     };
 

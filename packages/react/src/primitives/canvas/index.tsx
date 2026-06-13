@@ -213,7 +213,7 @@ export function Canvas({
     const [shapeDraft, setShapeDraft] = useState<typeof marquee>(null);
     const shapeDraftRef = useRef<typeof marquee>(null);
     const shapeDraftMovedRef = useRef(false);
-    const drawToolActive = ui.shapeTool !== null || ui.frameTool;
+    const drawToolActive = ui.shapeTool !== null || ui.frameTool || ui.imageFrameTool !== null;
 
     const handleCanvasPointerDown = (e: React.PointerEvent) => {
         if (ui.drawingMode) return;
@@ -299,6 +299,8 @@ export function Canvas({
                     actions.addSection({ type: 'shape', shape: ui.shapeTool, rect });
                 } else if (ui.frameTool) {
                     actions.addSection({ type: 'frame', rect });
+                } else if (ui.imageFrameTool) {
+                    actions.addSection({ type: 'image', maskShape: ui.imageFrameTool, rect });
                 }
             }
             return;
@@ -339,12 +341,13 @@ export function Canvas({
     // Esc exits drawing mode or any armed draw tool (shape / frame). Scoped to
     // the canvas surface (window listener) so it works regardless of focus.
     useEffect(() => {
-        if (!ui.drawingMode && !ui.shapeTool && !ui.frameTool) return;
+        if (!ui.drawingMode && !ui.shapeTool && !ui.frameTool && !ui.imageFrameTool) return;
         const onKey = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 ui.setDrawingMode(false);
                 ui.setShapeTool(null);
                 ui.setFrameTool(false);
+                ui.setImageFrameTool(null);
             }
         };
         window.addEventListener('keydown', onKey);
@@ -590,9 +593,9 @@ export function Canvas({
                                             height: shapeDraft.height,
                                         }}
                                     >
-                                        {ui.shapeTool ? (
+                                        {ui.shapeTool || ui.imageFrameTool ? (
                                             <ShapeDraftPreview
-                                                kind={ui.shapeTool}
+                                                kind={ui.shapeTool ?? ui.imageFrameTool!}
                                                 width={shapeDraft.width}
                                                 height={shapeDraft.height}
                                             />

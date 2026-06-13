@@ -202,7 +202,17 @@ export function ImageSectionView() {
                 />
             )}
 
-            <div className="relative w-full h-full group pointer-events-none">
+            <div
+                className="relative w-full h-full group pointer-events-none"
+                style={
+                    // Placeholder-frame circle mask: a 50% radius on the
+                    // (possibly non-square) box clips both the image and the
+                    // empty drop zone to the inscribed ellipse, matching the PDF.
+                    section.maskShape === 'circle'
+                        ? { borderRadius: '50%', overflow: 'hidden' }
+                        : undefined
+                }
+            >
                 {section.imageUrl ? (
                     <SectionImage
                         section={section}

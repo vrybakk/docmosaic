@@ -81,6 +81,11 @@ export interface AddSectionOptions {
     /** Picks the primitive when `type === 'shape'`. Ignored for other variants. */
     shape?: ShapeKind;
     /**
+     * Shape mask for an image section (placeholder frame). Ignored for non-image
+     * types. See {@link ImageSection.maskShape}.
+     */
+    maskShape?: ShapeKind;
+    /**
      * Explicit geometry in PDF points. When supplied, it overrides the factory's
      * default position/size — used by the draw-to-size shape and frame tools so
      * the new section lands exactly where the user dragged, in a single history
@@ -272,6 +277,15 @@ export interface EditorUiState {
      */
     frameTool: boolean;
     setFrameTool: (on: boolean) => void;
+    /**
+     * Armed mask shape for the placeholder-frame (image-slot) draw-to-size tool,
+     * or `null` when off. While set, a pointer drag rubber-bands a new
+     * {@link ImageSection} with this `maskShape` instead of marquee-selecting.
+     * Mutually exclusive with {@link drawingMode}, {@link shapeTool}, and
+     * {@link frameTool}.
+     */
+    imageFrameTool: ShapeKind | null;
+    setImageFrameTool: (shape: ShapeKind | null) => void;
     /** Active brush color used by the drawing canvas while drawing. */
     drawingColor: string;
     setDrawingColor: (color: string) => void;
@@ -770,6 +784,7 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
     const [drawingMode, setDrawingMode] = useState(false);
     const [shapeTool, setShapeTool] = useState<ShapeKind | null>(null);
     const [frameTool, setFrameTool] = useState(false);
+    const [imageFrameTool, setImageFrameTool] = useState<ShapeKind | null>(null);
     const [drawingColor, setDrawingColor] = useState('#000000');
     const [drawingWeight, setDrawingWeight] = useState(3);
     const [activeSnapGuides, setActiveSnapGuides] = useState<SnapGuide[]>([]);
@@ -843,6 +858,8 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
             setShapeTool,
             frameTool,
             setFrameTool,
+            imageFrameTool,
+            setImageFrameTool,
             drawingColor,
             setDrawingColor,
             drawingWeight,
@@ -865,6 +882,7 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
             drawingMode,
             shapeTool,
             frameTool,
+            imageFrameTool,
             drawingColor,
             drawingWeight,
             activeSnapGuides,

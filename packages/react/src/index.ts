@@ -44,6 +44,7 @@ import { AddShapeButton } from './primitives/toolbar/add-shape-button';
 import { AddTextButton } from './primitives/toolbar/add-text-button';
 import { DrawButton } from './primitives/toolbar/draw-button';
 import { FrameToolButton } from './primitives/toolbar/frame-tool-button';
+import { ImageFrameToolButton } from './primitives/toolbar/image-frame-tool-button';
 import { SelectToolButton } from './primitives/toolbar/select-tool-button';
 import { ShapeToolButton } from './primitives/toolbar/shape-tool-button';
 import { PageBackground } from './primitives/page-background';
@@ -144,6 +145,7 @@ export const Editor = {
     AddShapeButton,
     ShapeToolButton,
     FrameToolButton,
+    ImageFrameToolButton,
     DrawButton,
     SelectToolButton,
     DrawingControls,
@@ -206,6 +208,7 @@ export { AddTextButton as EditorAddTextButton } from './primitives/toolbar/add-t
 export { AddShapeButton as EditorAddShapeButton } from './primitives/toolbar/add-shape-button';
 export { ShapeToolButton as EditorShapeToolButton } from './primitives/toolbar/shape-tool-button';
 export { FrameToolButton as EditorFrameToolButton } from './primitives/toolbar/frame-tool-button';
+export { ImageFrameToolButton as EditorImageFrameToolButton } from './primitives/toolbar/image-frame-tool-button';
 export { DrawButton as EditorDrawButton } from './primitives/toolbar/draw-button';
 export { SelectToolButton as EditorSelectToolButton } from './primitives/toolbar/select-tool-button';
 export { DrawingControls as EditorDrawingControls } from './primitives/drawing-controls';
