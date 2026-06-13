@@ -140,11 +140,11 @@ export function createSection(opts: CreateSectionOptions = {}): Section {
     if (type === 'text') {
         return {
             ...base,
-            // Text reads as a line, not a block: a wide, short field instead of
-            // the square image/shape default. `height` sits at the resize floor
-            // (MIN_SECTION_SIZE) so it never snaps larger on first drag.
-            width: 280,
-            height: 100,
+            // Auto-width text hugs its content: these are just the seed size for
+            // the single frame before the first measurement runs (an empty
+            // caret line ~one line tall), then the view overwrites them.
+            width: 40,
+            height: 19,
             type: 'text',
             text: '',
             fontSize: 16,

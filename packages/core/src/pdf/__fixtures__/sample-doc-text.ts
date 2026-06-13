@@ -45,6 +45,10 @@ export const sampleTextDoc: Document = {
         },
         {
             id: 'fixture-text-section-2',
+            // Auto-width text breaks on explicit "\n" only (no word-wrap), so
+            // this body exercises the multi-line newline-split path. width /
+            // height are content-derived in the editor and unused by the
+            // left-aligned PDF path; they stay here only to freeze the shape.
             type: 'text',
             x: 72,
             y: 180,
@@ -52,7 +56,7 @@ export const sampleTextDoc: Document = {
             height: 120,
             page: 1,
             zIndex: 0,
-            text: 'A second paragraph with longer body text that should wrap across multiple lines inside the section box.',
+            text: 'A second paragraph with explicit\nline breaks across\nmultiple lines.',
             fontSize: 12,
             color: 'rgb(0,0,0)',
             align: 'left',

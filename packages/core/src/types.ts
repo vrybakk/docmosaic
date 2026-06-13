@@ -150,7 +150,11 @@ export interface ImageSection extends SectionBase {
  */
 export interface TextSection extends SectionBase {
     type: 'text';
-    /** Raw text content. Multi-line strings are wrapped to `width` at render time. */
+    /**
+     * Raw text content. Text is auto-width: it is not word-wrapped, and the
+     * section box hugs the content. Line breaks render only on explicit `\n`;
+     * `width`/`height` are derived from the rendered text, not user-set.
+     */
     text: string;
     /** CSS / PDF font family. Falls back to `helvetica` when unset. */
     fontFamily?: string;

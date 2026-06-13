@@ -7,6 +7,9 @@ import { cn } from '../../../internal/utils';
 interface TextEditorProps {
     section: TextSection;
     isEditing: boolean;
+    /** Canvas display scale (pageScale * zoom). The stored font size is in
+     *  points; multiply by this so the rendered text tracks the scaled box. */
+    scale: number;
     onTextChange: (text: string) => void;
     onEditStart: () => void;
     onEditEnd: () => void;
@@ -18,13 +21,14 @@ interface TextEditorProps {
  * {@link TextEditorProps.onTextChange} on every input event.
  *
  * @remarks
- * The contentEditable surface only accepts input while `isEditing` is true.
- * Click-to-focus is handled in the orchestrator — this component stays a
- * dumb view so the dispatcher can drive selection + editing state.
+ * Auto-width: `white-space: pre` so the text never word-wraps — it grows
+ * rightward as you type and breaks only on explicit newlines. The
+ * contentEditable surface only accepts input while `isEditing` is true.
  */
 export function TextEditor({
     section,
     isEditing,
+    scale,
     onTextChange,
     onEditStart,
     onEditEnd,
@@ -42,6 +46,28 @@ export function TextEditor({
         }
     }, [section.text]);
 
+    // When editing begins (e.g. auto-on-create or click-to-edit), focus the
+    // node and drop the caret at the end. Set innerText *before* focusing so
+    // the sync effect's `activeElement` guard then protects the caret.
+    useEffect(() => {
+        const node = ref.current;
+        if (!node || !isEditing) return;
+        if (document.activeElement === node) return;
+        if (node.innerText !== section.text) {
+            node.innerText = section.text;
+        }
+        node.focus();
+        const selection = window.getSelection();
+        if (selection) {
+            const range = document.createRange();
+            range.selectNodeContents(node);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isEditing]);
+
     const handleInput = () => {
         const node = ref.current;
         if (!node) return;
@@ -58,12 +84,12 @@ export function TextEditor({
             onBlur={onEditEnd}
             onDoubleClick={onEditStart}
             className={cn(
-                'w-full h-full outline-none whitespace-pre-wrap break-words',
+                'w-full h-full outline-none whitespace-pre',
                 isEditing ? 'cursor-text' : 'cursor-pointer pointer-events-auto',
             )}
             style={{
                 fontFamily: section.fontFamily ?? 'helvetica',
-                fontSize: section.fontSize,
+                fontSize: section.fontSize * scale,
                 fontWeight: section.fontWeight === 'bold' ? 700 : 400,
                 fontStyle: section.fontStyle === 'italic' ? 'italic' : 'normal',
                 color: section.color ?? 'rgb(0,0,0)',

@@ -310,10 +310,13 @@ function drawImageSection(doc: jsPDF, section: ImageSection): void {
  * @remarks
  * - Font family / weight / style are applied via `setFont`. Unknown fonts
  *   fall back to jspdf's `helvetica` family.
- * - `text` is wrapped to the section width via `splitTextToSize` so multi-line
- *   bodies don't overflow.
- * - Alignment uses jspdf's anchor model: `left` anchors at `x`, `center` at
- *   the midline, `right` at the trailing edge.
+ * - Text is auto-width (Figma-style): it is **not** word-wrapped. Lines break
+ *   only on explicit `\n`, so the rendered lines match the on-canvas content
+ *   exactly and the section box hugs its text.
+ * - Alignment uses jspdf's anchor model, anchored to the measured content
+ *   width (the widest line) rather than a stored box width: `left` anchors at
+ *   `x`, `center` at the content midline, `right` at the content's trailing
+ *   edge.
  *
  * Errors are caught and logged so a malformed text section can't abort the
  * whole document — matches the behaviour of the image path above.
@@ -328,14 +331,18 @@ function drawTextSection(doc: jsPDF, section: TextSection): void {
             doc.setTextColor(section.color);
         }
 
-        const lines = doc.splitTextToSize(section.text ?? '', section.width);
+        // Auto-width: break on explicit newlines only (no word-wrap).
+        const lines = (section.text ?? '').split('\n');
 
         const align: 'left' | 'center' | 'right' = section.align ?? 'left';
+        // Anchor center/right to the widest measured line so alignment matches
+        // the auto-sized canvas box, not the (now content-derived) box width.
+        const maxLineWidth = lines.reduce((max, line) => Math.max(max, doc.getTextWidth(line)), 0);
         const textX =
             align === 'center'
-                ? section.x + section.width / 2
+                ? section.x + maxLineWidth / 2
                 : align === 'right'
-                  ? section.x + section.width
+                  ? section.x + maxLineWidth
                   : section.x;
         // jspdf draws text from the baseline; offset by one line-height so the
         // first line lands inside the section box rather than above it.
@@ -345,7 +352,6 @@ function drawTextSection(doc: jsPDF, section: TextSection): void {
         doc.text(lines, textX, baselineY, {
             align,
             lineHeightFactor: lineHeight,
-            maxWidth: section.width,
         });
     } catch (error) {
         console.error('Error adding text:', error);
