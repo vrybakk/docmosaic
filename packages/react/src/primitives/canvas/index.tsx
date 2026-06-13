@@ -1,6 +1,10 @@
 'use client';
 
-import { getPageDimensionsWithOrientation, type Section as SectionData } from '@docmosaic/core';
+import {
+    getPageDimensionsWithOrientation,
+    orderSectionsForRender,
+    type Section as SectionData,
+} from '@docmosaic/core';
 import {
     Children,
     isValidElement,
@@ -145,8 +149,12 @@ export function Canvas({
     // Sections marked `hidden` are skipped on canvas, matching the PDF
     // generator. They keep their geometry and live in `state.sections` so
     // `Editor.LayerList` can still show them with a struck-through eye and
-    // let the user toggle visibility back on.
-    const pageSections = (sections || []).filter((s) => s.page === currentPage && !s.hidden);
+    // let the user toggle visibility back on. `orderSectionsForRender` mirrors
+    // the PDF/PNG draw order — notably keeping container frames behind their
+    // children — so the on-canvas stacking matches the export.
+    const pageSections = orderSectionsForRender(
+        (sections || []).filter((s) => s.page === currentPage && !s.hidden),
+    );
     const finalScale = (pageScale || 1) * (zoom || 1);
 
     const [, dropRef] = useDrop(

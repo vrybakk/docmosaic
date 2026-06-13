@@ -10,6 +10,7 @@
  */
 
 import { jsPDF } from 'jspdf';
+import { orderSectionsForRender } from '../frames';
 import { getStrokeOutline } from '../freehand';
 import { CUSTOM_PAGE_SIZES } from '../page-sizes';
 import type {
@@ -186,24 +187,21 @@ export async function generatePDF(
                 }
             }
 
-            // Add sections for current page, sorted by (zIndex asc, array
-            // index asc). Lower zIndex draws first (back); ties fall back to
-            // the original array order so legacy documents — where every
-            // section's zIndex defaults to 0 — keep their insertion-order
-            // rendering and the byte-diff fixture stays stable.
+            // Add sections for current page in back-to-front render order via
+            // the shared `orderSectionsForRender` (zIndex asc, then container
+            // frames behind non-frames at equal zIndex, then original array
+            // order). Lower zIndex draws first (back); the frame tiebreak keeps
+            // a filled/bordered frame behind its children. Documents without
+            // frames keep their insertion-order rendering, so the byte-diff
+            // fixture stays stable.
             //
             // Hidden sections (`section.hidden === true`) are filtered out
             // entirely so they neither contribute to the PDF nor influence
             // the visible stacking order. Fixtures pre-Phase-25 never set
             // `hidden`, so the byte-diff gate stays stable.
-            const indexById = new Map(optimizedSections.map((s, idx) => [s.id, idx]));
-            const pageSections = optimizedSections
-                .filter((section) => section.page === i + 1 && !section.hidden)
-                .sort(
-                    (a, b) =>
-                        (a.zIndex ?? 0) - (b.zIndex ?? 0) ||
-                        (indexById.get(a.id) ?? 0) - (indexById.get(b.id) ?? 0),
-                );
+            const pageSections = orderSectionsForRender(
+                optimizedSections.filter((section) => section.page === i + 1 && !section.hidden),
+            );
             for (const section of pageSections) {
                 if (signal?.aborted) throw new Error('PDF generation cancelled');
 

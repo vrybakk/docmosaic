@@ -43,3 +43,40 @@ export function resolveFrameParent(target: Section, sections: Section[]): string
     }
     return best?.id;
 }
+
+/**
+ * Render rank used as a layering tiebreak: a {@link FrameSection} is a
+ * backdrop / grouping box, so it must draw *behind* the non-frame sections it
+ * contains. `0` sorts first (back), `1` sorts later (front).
+ */
+function frameRank(section: Section): number {
+    return section.type === 'frame' ? 0 : 1;
+}
+
+/**
+ * Order a page's sections back-to-front for rendering — the single source of
+ * truth shared by the canvas, the PDF generator, and the PNG generator so all
+ * three paint in the same order.
+ *
+ * @remarks
+ * Sort keys, in order: `zIndex` ascending (lower draws first/behind), then
+ * frames before non-frames at equal `zIndex` (so a filled or bordered frame
+ * sits behind its children instead of covering them), then the original array
+ * order as a stable tiebreak.
+ *
+ * Pass a list already filtered to a single page (and to visible sections). The
+ * frame-rank tiebreak only reorders when a frame shares a `zIndex` with a
+ * non-frame, so documents without frames keep their exact prior order — which
+ * keeps the PDF byte-diff fixtures stable.
+ */
+export function orderSectionsForRender<T extends Section>(sections: T[]): T[] {
+    return sections
+        .map((section, index) => ({ section, index }))
+        .sort(
+            (a, b) =>
+                (a.section.zIndex ?? 0) - (b.section.zIndex ?? 0) ||
+                frameRank(a.section) - frameRank(b.section) ||
+                a.index - b.index,
+        )
+        .map((entry) => entry.section);
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createSection } from './factories';
-import { resolveFrameParent } from './frames';
+import { orderSectionsForRender, resolveFrameParent } from './frames';
 import type { Section } from './types';
 
 /** Geometry-only overrides — never `type`, so the discriminated union holds. */
@@ -48,5 +48,29 @@ describe('resolveFrameParent', () => {
         const drawing = { ...createSection({ type: 'drawing', page: 1 }), id: 'd', x: 80, y: 80 };
         expect(resolveFrameParent(innerFrame, [f, innerFrame])).toBeUndefined();
         expect(resolveFrameParent(drawing, [f, drawing])).toBeUndefined();
+    });
+});
+
+describe('orderSectionsForRender', () => {
+    it('draws a frame behind a non-frame at equal zIndex regardless of array order', () => {
+        const child = box('child', 80, 80, { zIndex: 0 });
+        const f = frame('f', 0, 0, { zIndex: 0 });
+        // Frame added AFTER the child (higher array index) — the natural "draw a
+        // frame around existing content" flow. It must still render first (behind).
+        const order = orderSectionsForRender([child, f]).map((s) => s.id);
+        expect(order).toEqual(['f', 'child']);
+    });
+
+    it('respects explicit zIndex over the frame tiebreak', () => {
+        const child = box('child', 80, 80, { zIndex: 0 });
+        const f = frame('f', 0, 0, { zIndex: 5 }); // explicitly brought forward
+        expect(orderSectionsForRender([child, f]).map((s) => s.id)).toEqual(['child', 'f']);
+    });
+
+    it('preserves original order for documents without frames (byte-diff safety)', () => {
+        const a = box('a', 0, 0, { zIndex: 0 });
+        const b = box('b', 0, 0, { zIndex: 0 });
+        const c = box('c', 0, 0, { zIndex: 0 });
+        expect(orderSectionsForRender([a, b, c]).map((s) => s.id)).toEqual(['a', 'b', 'c']);
     });
 });

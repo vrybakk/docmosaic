@@ -32,7 +32,7 @@ export type {
 export { normalizeSection } from './types';
 
 // ----- Container frames ------------------------------------------------------
-export { resolveFrameParent } from './frames';
+export { orderSectionsForRender, resolveFrameParent } from './frames';
 
 // Page sizes
 export { CUSTOM_PAGE_SIZES, getPageDimensionsWithOrientation } from './page-sizes';

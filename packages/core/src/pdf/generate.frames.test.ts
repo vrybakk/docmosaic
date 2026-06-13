@@ -68,4 +68,19 @@ describe('generatePDF — container frames', () => {
 
         expect(drawn).not.toBe(transparent);
     });
+
+    it('renders a filled frame behind its child regardless of section array order', async () => {
+        const child = createSection({ type: 'shape', shape: 'rect', x: 30, y: 30, page: 1 });
+        const frame = createSection({ type: 'frame', x: 0, y: 0, page: 1 });
+        if (frame.type !== 'frame') throw new Error('narrowing');
+        const filled: FrameSection = { ...frame, fill: '#ff0000' };
+
+        // Frame-first and child-first array orders must produce identical bytes:
+        // orderSectionsForRender always draws the frame first (behind), so a
+        // filled frame can never paint over its contents.
+        const frameFirst = await render([filled, child]);
+        const childFirst = await render([child, filled]);
+
+        expect(frameFirst).toBe(childFirst);
+    });
 });

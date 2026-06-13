@@ -10,6 +10,7 @@
  * @packageDocumentation
  */
 
+import { orderSectionsForRender } from '../frames';
 import { getStrokeOutline } from '../freehand';
 import { CUSTOM_PAGE_SIZES } from '../page-sizes';
 import type {
@@ -117,16 +118,10 @@ export async function generatePNGs(
             await drawImageDataUrl(ctx, pages[i].backgroundPDF!, 0, 0, w, h);
         }
 
-        // Sort sections deterministically — same rule as generate.ts so the
-        // PNG layer order matches the PDF.
-        const indexById = new Map(sections.map((s, idx) => [s.id, idx]));
-        const pageSections = sections
-            .filter((s) => s.page === i + 1)
-            .sort(
-                (a, b) =>
-                    (a.zIndex ?? 0) - (b.zIndex ?? 0) ||
-                    (indexById.get(a.id) ?? 0) - (indexById.get(b.id) ?? 0),
-            );
+        // Order sections deterministically — same shared rule as generate.ts
+        // (zIndex, then frames behind non-frames, then array order) so the PNG
+        // layer order matches the PDF.
+        const pageSections = orderSectionsForRender(sections.filter((s) => s.page === i + 1));
 
         for (const section of pageSections) {
             if (signal?.aborted) throw new Error('PNG generation cancelled');
