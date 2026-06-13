@@ -36,6 +36,7 @@ export function ImageSectionView() {
         onMoveForward,
         onMoveBackward,
         groupDrag,
+        onDragEnd,
         finalScale,
         readOnly,
     } = editor;
@@ -56,6 +57,7 @@ export function ImageSectionView() {
         // rendered, so the resize hook itself is never armed.
         isResizing: isResizing || readOnly,
         groupDrag,
+        onDragEnd,
     });
     const { handleFileDrop, handleImageUpload, uploadProgress } = useImageUpload({
         section,

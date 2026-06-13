@@ -20,6 +20,12 @@ interface UseSectionDragArgs {
         onMove: (dx: number, dy: number) => void;
         onEnd: () => void;
     };
+    /**
+     * Fired once when a drag gesture ends (pointer up). Used for frame
+     * adoption: the section view recomputes whether the dropped section now
+     * sits inside a container frame. No-op while resizing or read-only.
+     */
+    onDragEnd?: () => void;
 }
 
 /**
@@ -31,7 +37,13 @@ interface UseSectionDragArgs {
  * group handlers (which translate every selected section) instead of the
  * single-section update.
  */
-export function useSectionDrag({ section, onUpdate, isResizing, groupDrag }: UseSectionDragArgs) {
+export function useSectionDrag({
+    section,
+    onUpdate,
+    isResizing,
+    groupDrag,
+    onDragEnd,
+}: UseSectionDragArgs) {
     const [isDragging, setIsDragging] = useState(false);
 
     const bindDrag = useDrag(
@@ -51,6 +63,7 @@ export function useSectionDrag({ section, onUpdate, isResizing, groupDrag }: Use
             if (!active) {
                 setIsDragging(false);
                 if (isGroup) groupDrag!.onEnd();
+                onDragEnd?.();
                 return memo;
             }
 

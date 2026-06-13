@@ -22,6 +22,7 @@
 
 import {
     getPageDimensionsWithOrientation,
+    resolveFrameParent,
     type Document,
     type PageBackground,
     type Section,
@@ -484,6 +485,13 @@ export interface UseEditorSectionResult {
     readOnly: boolean;
     onClick: (e: React.MouseEvent) => void;
     onUpdate: (next: Section) => void;
+    /**
+     * Frame adoption — call when a drag gesture ends. Recomputes whether this
+     * section now sits inside a container frame (by center-point containment),
+     * stamping or clearing {@link SectionBase.parentFrameId} accordingly.
+     * No-op for frames and drawings, which never become children.
+     */
+    onDragEnd: () => void;
     onImageUpload: (sectionId: string, imageUrl: string) => void;
     onDuplicate: (section: Section) => void;
     onDelete: (sectionId: string) => void;
@@ -650,6 +658,20 @@ export function useEditorSection(): UseEditorSectionResult {
         [rawSection.id, rawSection.locked, ui],
     );
 
+    // Frame adoption — after a drag, decide whether this section now belongs to
+    // a container frame (top-most frame whose box contains its center), or
+    // release it when dragged out of every frame. Reads the live section from
+    // the ref so it sees the just-committed drag position. The containment rule
+    // is the pure `resolveFrameParent` so it stays unit-tested in core.
+    const onDragEnd = useCallback(() => {
+        const sec = sectionsRef.current.find((s) => s.id === rawSection.id);
+        if (!sec) return;
+        const nextParent = resolveFrameParent(sec, sectionsRef.current);
+        if (sec.parentFrameId !== nextParent) {
+            actions.updateSection({ ...sec, parentFrameId: nextParent });
+        }
+    }, [actions, rawSection.id]);
+
     // Locked sections fold into readOnly so the existing drag/resize/file
     // drop/toolbar guards short-circuit without each variant having to know
     // about `section.locked` directly. The properties panel still reads the
@@ -664,6 +686,7 @@ export function useEditorSection(): UseEditorSectionResult {
         readOnly: effectiveReadOnly,
         onClick,
         onUpdate,
+        onDragEnd,
         onImageUpload,
         onDuplicate: actions.duplicateSection,
         onDelete: actions.deleteSection,

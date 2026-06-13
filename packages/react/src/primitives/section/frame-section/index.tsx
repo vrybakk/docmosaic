@@ -1,8 +1,8 @@
 'use client';
 
 import type { FrameSection as FrameSectionData } from '@docmosaic/core';
-import { useCallback } from 'react';
-import { useEditorSection } from '../../../context/editor';
+import { useCallback, useMemo, useRef } from 'react';
+import { useEditor, useEditorSection } from '../../../context/editor';
 import { cn } from '../../../internal/utils';
 import { SectionResizeHandles } from '../hooks/section-resize-handles';
 import { useSectionDrag } from '../hooks/use-section-drag';
@@ -21,16 +21,64 @@ export function FrameSectionView() {
     const section = editor.section as FrameSectionData;
     const { isSelected, onClick, onUpdate, onDuplicate, onDelete, groupDrag, finalScale, readOnly } =
         editor;
+    const { state, actions } = useEditor();
+    const frameId = editor.rawSection.id;
     // No image element for a frame; provide a stable empty ref so the resize
     // hook keeps its narrow signature.
     const imageRef = { current: null } as React.RefObject<HTMLImageElement | null>;
 
     const { isResizing, handleResizeStart } = useSectionResize({ section, onUpdate, imageRef });
+
+    // Frame move = move-with-children: dragging the frame translates the frame
+    // plus every section parented to it. Built as a group-drag scoped to the
+    // frame (instead of the multi-selection), so a childless frame falls back
+    // to the plain single-section path (size 1). When the frame is part of an
+    // explicit multi-selection, the selection's group drag wins.
+    const sectionsRef = useRef(state.sections);
+    sectionsRef.current = state.sections;
+    const frameMoveSnapshot = useRef<Map<string, { x: number; y: number }> | null>(null);
+    const childCount = state.sections.filter((s) => s.parentFrameId === frameId).length;
+    const frameGroupDrag = useMemo(
+        () => ({
+            size: childCount + 1,
+            onStart: () => {
+                const snap = new Map<string, { x: number; y: number }>();
+                for (const s of sectionsRef.current) {
+                    if (s.id === frameId || s.parentFrameId === frameId) {
+                        snap.set(s.id, { x: s.x, y: s.y });
+                    }
+                }
+                frameMoveSnapshot.current = snap;
+            },
+            onMove: (dxPx: number, dyPx: number) => {
+                const snap = frameMoveSnapshot.current;
+                if (!snap) return;
+                const dx = dxPx / finalScale;
+                const dy = dyPx / finalScale;
+                for (const s of sectionsRef.current) {
+                    const start = snap.get(s.id);
+                    if (!start) continue;
+                    actions.updateSection({
+                        ...s,
+                        x: Math.round(start.x + dx),
+                        y: Math.round(start.y + dy),
+                    });
+                }
+            },
+            onEnd: () => {
+                frameMoveSnapshot.current = null;
+            },
+        }),
+        [actions, childCount, finalScale, frameId],
+    );
+
+    const effectiveGroupDrag = groupDrag.size > 1 ? groupDrag : frameGroupDrag;
+
     const { bindDrag, isDragging } = useSectionDrag({
         section,
         onUpdate,
         isResizing: isResizing || readOnly,
-        groupDrag,
+        groupDrag: effectiveGroupDrag,
     });
 
     const handleClick = (e: React.MouseEvent) => {

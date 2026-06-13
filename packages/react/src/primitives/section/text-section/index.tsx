@@ -29,8 +29,17 @@ export function TextSectionView() {
     const editor = useEditorSection();
     const section = editor.section as TextSectionData;
     const rawSection = editor.rawSection as TextSectionData;
-    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, groupDrag, finalScale, readOnly } =
-        editor;
+    const {
+        isSelected,
+        onClick,
+        onUpdate,
+        onDuplicate,
+        onDelete,
+        groupDrag,
+        onDragEnd,
+        finalScale,
+        readOnly,
+    } = editor;
     const { actions } = useEditor();
 
     const [isEditing, setIsEditing] = useState(false);
@@ -42,6 +51,7 @@ export function TextSectionView() {
         onUpdate,
         isResizing: isEditing || readOnly,
         groupDrag,
+        onDragEnd,
     });
 
     /**

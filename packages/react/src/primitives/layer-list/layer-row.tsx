@@ -4,6 +4,7 @@ import type { Section } from '@docmosaic/core';
 import {
     Eye,
     EyeOff,
+    Frame as FrameIcon,
     GripVertical,
     Image as ImageIcon,
     Lock,
@@ -56,6 +57,7 @@ function SectionTypeIcon({ section }: { section: Section }) {
     if (section.type === 'text') return <Type className={className} aria-hidden />;
     if (section.type === 'shape') return <Shapes className={className} aria-hidden />;
     if (section.type === 'drawing') return <PenLine className={className} aria-hidden />;
+    if (section.type === 'frame') return <FrameIcon className={className} aria-hidden />;
     return <ImageIcon className={className} aria-hidden />;
 }
 
@@ -103,6 +105,26 @@ function SectionSwatch({ section }: { section: Section }) {
             />
         );
     }
+    if (section.type === 'frame') {
+        const bg = section.fill && section.fill !== 'transparent' ? section.fill : 'transparent';
+        const border =
+            section.stroke && section.stroke !== 'transparent'
+                ? section.stroke
+                : 'var(--muted-foreground)';
+        return (
+            <div
+                className="h-6 w-6 rounded-sm"
+                style={{
+                    background: bg,
+                    borderColor: border,
+                    borderWidth: 1,
+                    borderStyle: 'dashed',
+                }}
+                title={`Frame · fill ${bg === 'transparent' ? 'none' : bg}`}
+                aria-hidden
+            />
+        );
+    }
     // Image without source / text section — neutral placeholder.
     return (
         <div
@@ -130,6 +152,7 @@ function getSectionLabel(section: Section, index: number): string {
         return `${kind} ${index + 1}`;
     }
     if (section.type === 'drawing') return `Drawing ${index + 1}`;
+    if (section.type === 'frame') return `Frame ${index + 1}`;
     return `Image ${index + 1}`;
 }
 
