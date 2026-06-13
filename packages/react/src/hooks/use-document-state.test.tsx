@@ -50,4 +50,37 @@ describe('useDocumentState', () => {
         expect(afterUndo.canUndo).toBe(false);
         expect(afterUndo.canRedo).toBe(true);
     });
+
+    it('creates a shape at explicit rect geometry in one history step (draw-to-size)', () => {
+        const get = setupHook();
+        const initialCount = get().document.sections.length;
+
+        act(() => {
+            get().actions.addSection({
+                type: 'shape',
+                shape: 'circle',
+                rect: { x: 120, y: 80, width: 240, height: 160 },
+            });
+        });
+
+        const after = get();
+        expect(after.document.sections.length).toBe(initialCount + 1);
+        const created = after.document.sections[after.document.sections.length - 1];
+        expect(created.type).toBe('shape');
+        if (created.type !== 'shape') throw new Error('narrowing');
+        expect(created.shape).toBe('circle');
+        // rect overrides the factory defaults verbatim (PDF points, no scaling).
+        expect({
+            x: created.x,
+            y: created.y,
+            width: created.width,
+            height: created.height,
+        }).toEqual({ x: 120, y: 80, width: 240, height: 160 });
+        // One undoable step — a single undo removes the whole shape.
+        expect(after.canUndo).toBe(true);
+        act(() => {
+            after.actions.undo();
+        });
+        expect(get().document.sections.length).toBe(initialCount);
+    });
 });

@@ -44,6 +44,7 @@ import { AddShapeButton } from './primitives/toolbar/add-shape-button';
 import { AddTextButton } from './primitives/toolbar/add-text-button';
 import { DrawButton } from './primitives/toolbar/draw-button';
 import { SelectToolButton } from './primitives/toolbar/select-tool-button';
+import { ShapeToolButton } from './primitives/toolbar/shape-tool-button';
 import { PageBackground } from './primitives/page-background';
 import { FileSizeBadge } from './primitives/toolbar/file-size-badge';
 import { GenerationProgress } from './primitives/toolbar/generation-progress';
@@ -140,6 +141,7 @@ export const Editor = {
     AddImageButton,
     AddTextButton,
     AddShapeButton,
+    ShapeToolButton,
     DrawButton,
     SelectToolButton,
     DrawingControls,
@@ -200,6 +202,7 @@ export { DownloadButton as EditorDownloadButton } from './primitives/toolbar/dow
 export { AddImageButton as EditorAddImageButton } from './primitives/toolbar/add-image-button';
 export { AddTextButton as EditorAddTextButton } from './primitives/toolbar/add-text-button';
 export { AddShapeButton as EditorAddShapeButton } from './primitives/toolbar/add-shape-button';
+export { ShapeToolButton as EditorShapeToolButton } from './primitives/toolbar/shape-tool-button';
 export { DrawButton as EditorDrawButton } from './primitives/toolbar/draw-button';
 export { SelectToolButton as EditorSelectToolButton } from './primitives/toolbar/select-tool-button';
 export { DrawingControls as EditorDrawingControls } from './primitives/drawing-controls';
@@ -277,6 +280,7 @@ export type { EditorConfig, ImageRenderer, ImageRendererProps } from './context/
  */
 export { useEditor, useEditorCanvas, useEditorSection, EditorProvider } from './context/editor';
 export type {
+    AddSectionOptions,
     EditorActions,
     EditorContextValue,
     EditorPdfApi,

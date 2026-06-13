@@ -32,12 +32,19 @@ export function SelectToolButton({
     activeClassName,
 }: SelectToolButtonProps = {}) {
     const { ui, readOnly } = useEditor();
-    const { drawingMode, setDrawingMode } = ui;
+    const { drawingMode, setDrawingMode, shapeTool, setShapeTool } = ui;
 
     if (readOnly) return null;
 
-    const active = !drawingMode;
+    // The cursor tool is the default mode — active only when neither the
+    // freehand pen nor the shape tool is armed. Clicking it disarms both.
+    const active = !drawingMode && shapeTool === null;
     const label = 'Select';
+
+    const activate = () => {
+        setDrawingMode(false);
+        setShapeTool(null);
+    };
 
     if (iconOnly) {
         return (
@@ -47,7 +54,7 @@ export function SelectToolButton({
                 aria-pressed={active}
                 aria-label={label}
                 title={label}
-                onClick={() => setDrawingMode(false)}
+                onClick={activate}
                 className={cn(
                     'h-9 w-full',
                     'select-tool-button-click-trigger',

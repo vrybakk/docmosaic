@@ -56,10 +56,7 @@ export function ShapeSectionView() {
             data-section-type="shape"
             data-section-shape={section.shape}
             className={cn(
-                'absolute p-1',
-                'border-2 border-dashed border-gray-300 hover:border-primary/50',
-                'rounded-lg overflow-visible group touch-none pointer-events-auto',
-                isSelected && 'border-solid border-primary shadow-lg',
+                'absolute overflow-visible group touch-none pointer-events-auto',
                 isDragging && 'opacity-50 cursor-grabbing',
                 isResizing && 'pointer-events-none',
             )}
@@ -73,6 +70,21 @@ export function ShapeSectionView() {
             }}
             onClick={handleClick}
         >
+            {/* Selection / hover affordance — a thin dashed outline that sits
+                just outside the box (so it never affects the shape geometry or
+                the PDF render) and turns solid when selected. No drop shadow:
+                the shape should read as flat vector art, like the text variant. */}
+            {!readOnly && (
+                <div
+                    aria-hidden="true"
+                    className={cn(
+                        'pointer-events-none absolute -inset-1 rounded-md border-2 border-dashed border-muted-foreground/40',
+                        'opacity-0 transition-opacity group-hover:opacity-100',
+                        isSelected && 'border-solid border-primary opacity-100',
+                    )}
+                />
+            )}
+
             {isSelected && !isResizing && !readOnly && (
                 <SectionResizeHandles onResizeStart={handleResizeStart} />
             )}

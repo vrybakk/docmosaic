@@ -107,15 +107,19 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
             addSection: (opts?: {
                 type?: 'image' | 'text' | 'shape' | 'drawing';
                 shape?: 'rect' | 'circle' | 'line';
+                rect?: { x: number; y: number; width: number; height: number };
             }) => {
                 const current = stateRef.current.present;
-                const newSection = createSection({
+                const created = createSection({
                     type: opts?.type ?? 'image',
                     shape: opts?.shape,
                     x: 5,
                     y: 5,
                     page: current.currentPage,
                 });
+                // Explicit geometry (the draw-to-size shape tool) overrides the
+                // factory's default position/size so creation stays one step.
+                const newSection: Section = opts?.rect ? { ...created, ...opts.rect } : created;
                 dispatch({
                     type: 'UPDATE_DOCUMENT',
                     updates: { sections: [...current.sections, newSection] },

@@ -5,10 +5,10 @@ import { ScrollArea } from '../../ui/scroll-area';
 import { LayerList } from '../layer-list';
 import { Pages } from '../pages';
 import { AddImageButton } from '../toolbar/add-image-button';
-import { AddShapeButton } from '../toolbar/add-shape-button';
 import { AddTextButton } from '../toolbar/add-text-button';
 import { DrawButton } from '../toolbar/draw-button';
 import { SelectToolButton } from '../toolbar/select-tool-button';
+import { ShapeToolButton } from '../toolbar/shape-tool-button';
 import { CollapsibleSection } from './section-label';
 
 /**
@@ -60,7 +60,13 @@ export function LeftRail({
                     />
                     <AddImageButton iconOnly variant="ghost" className={TOOL_BUTTON_CLASS} />
                     <AddTextButton iconOnly variant="ghost" className={TOOL_BUTTON_CLASS} />
-                    <AddShapeButton iconOnly variant="ghost" className={TOOL_BUTTON_CLASS} />
+                    <ShapeToolButton
+                        iconOnly
+                        variant="ghost"
+                        activeVariant="secondary"
+                        className={TOOL_BUTTON_CLASS}
+                        activeClassName={TOOL_BUTTON_ACTIVE_CLASS}
+                    />
                     <DrawButton
                         iconOnly
                         variant="ghost"

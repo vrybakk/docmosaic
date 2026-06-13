@@ -20,6 +20,7 @@ import { EditorConfigProvider, defaultImageRenderer } from '../context/editor-co
 import {
     EditorProvider,
     useEditorUiState,
+    type AddSectionOptions,
     type EditorActions,
     type EditorContextValue,
     type EditorPdfBackend,
@@ -234,17 +235,15 @@ function buildControlledActions(
     return {
         undo: () => {},
         redo: () => {},
-        addSection: (opts?: {
-            type?: 'image' | 'text' | 'shape' | 'drawing';
-            shape?: 'rect' | 'circle' | 'line';
-        }) => {
-            const newSection = createSection({
+        addSection: (opts?: AddSectionOptions) => {
+            const created = createSection({
                 type: opts?.type ?? 'image',
                 shape: opts?.shape,
                 x: 5,
                 y: 5,
                 page: document.currentPage,
             });
+            const newSection: Section = opts?.rect ? { ...created, ...opts.rect } : created;
             onDocumentChange(touch({ ...document, sections: [...document.sections, newSection] }));
             return newSection;
         },
@@ -561,10 +560,7 @@ function ControlledRoot({
     const wrappedActions = useMemo<EditorActions>(
         () => ({
             ...actions,
-            addSection: (opts?: {
-                type?: 'image' | 'text' | 'shape' | 'drawing';
-                shape?: 'rect' | 'circle' | 'line';
-            }) => {
+            addSection: (opts?: AddSectionOptions) => {
                 trackEvent.addSection();
                 const section = actions.addSection(opts);
                 ui.setSelectedSectionId(section.id);
@@ -664,10 +660,7 @@ function UncontrolledRoot({
                 trackEvent.redo();
                 actions.redo();
             },
-            addSection: (opts?: {
-                type?: 'image' | 'text' | 'shape' | 'drawing';
-                shape?: 'rect' | 'circle' | 'line';
-            }) => {
+            addSection: (opts?: AddSectionOptions) => {
                 trackEvent.addSection();
                 const section = actions.addSection(opts);
                 ui.setSelectedSectionId(section.id);

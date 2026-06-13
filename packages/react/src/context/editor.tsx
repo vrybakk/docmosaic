@@ -25,6 +25,7 @@ import {
     type Document,
     type PageBackground,
     type Section,
+    type ShapeKind,
     type Stroke,
     type estimatePDFSize,
     type generatePDF,
@@ -68,6 +69,25 @@ export interface EditorPdfBackend {
 }
 
 /**
+ * Options accepted by {@link EditorActions.addSection}.
+ */
+export interface AddSectionOptions {
+    /**
+     * Variant to create. Defaults to `'image'` so existing callers (the bundled
+     * `AddImageButton`) keep producing image sections.
+     */
+    type?: 'image' | 'text' | 'shape' | 'drawing';
+    /** Picks the primitive when `type === 'shape'`. Ignored for other variants. */
+    shape?: ShapeKind;
+    /**
+     * Explicit geometry in PDF points. When supplied, it overrides the factory's
+     * default position/size — used by the draw-to-size shape tool so the new
+     * section lands exactly where the user dragged, in a single history step.
+     */
+    rect?: { x: number; y: number; width: number; height: number };
+}
+
+/**
  * Action surface exposed by the editor context.
  *
  * Mirrors the 18-action surface returned from {@link useDocumentState}, so
@@ -78,17 +98,9 @@ export interface EditorActions {
     undo: () => void;
     redo: () => void;
     /**
-     * Append a new section to the current page.
-     *
-     * @param opts.type - Variant to create. Defaults to `'image'` so existing
-     * callers (the bundled `AddSectionButton`) keep producing image sections.
-     * @param opts.shape - Picks the primitive when `type === 'shape'`. Ignored
-     * for other variants.
+     * Append a new section to the current page. See {@link AddSectionOptions}.
      */
-    addSection: (opts?: {
-        type?: 'image' | 'text' | 'shape' | 'drawing';
-        shape?: 'rect' | 'circle' | 'line';
-    }) => Section;
+    addSection: (opts?: AddSectionOptions) => Section;
     updateSection: (section: Section) => void;
     deleteSection: (sectionId: string) => void;
     duplicateSection: (section: Section) => void;
@@ -242,6 +254,14 @@ export interface EditorUiState {
      */
     drawingMode: boolean;
     setDrawingMode: (on: boolean) => void;
+    /**
+     * Armed shape primitive for the draw-to-size tool, or `null` when the tool
+     * is off. While set, the canvas rubber-bands a new {@link ShapeSection} of
+     * this kind on pointer drag instead of marquee-selecting. Mutually
+     * exclusive with {@link drawingMode}.
+     */
+    shapeTool: ShapeKind | null;
+    setShapeTool: (shape: ShapeKind | null) => void;
     /** Active brush color used by the drawing canvas while drawing. */
     drawingColor: string;
     setDrawingColor: (color: string) => void;
@@ -705,6 +725,7 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [estimatedSize, setEstimatedSize] = useState(0);
     const [drawingMode, setDrawingMode] = useState(false);
+    const [shapeTool, setShapeTool] = useState<ShapeKind | null>(null);
     const [drawingColor, setDrawingColor] = useState('#000000');
     const [drawingWeight, setDrawingWeight] = useState(3);
     const [activeSnapGuides, setActiveSnapGuides] = useState<SnapGuide[]>([]);
@@ -774,6 +795,8 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
             formattedDate,
             drawingMode,
             setDrawingMode,
+            shapeTool,
+            setShapeTool,
             drawingColor,
             setDrawingColor,
             drawingWeight,
@@ -794,6 +817,7 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
             estimatedSize,
             formattedDate,
             drawingMode,
+            shapeTool,
             drawingColor,
             drawingWeight,
             activeSnapGuides,
