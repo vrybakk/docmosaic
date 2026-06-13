@@ -14,6 +14,7 @@ import { getStrokeOutline } from '../freehand';
 import { CUSTOM_PAGE_SIZES } from '../page-sizes';
 import type {
     DrawingSection,
+    FrameSection,
     ImageSection,
     PDFGenerationOptions,
     Section,
@@ -137,6 +138,8 @@ export async function generatePNGs(
                 drawShapeSection(ctx, section);
             } else if (section.type === 'drawing') {
                 drawDrawingSection(ctx, section);
+            } else if (section.type === 'frame') {
+                drawFrameSection(ctx, section);
             }
         }
 
@@ -317,6 +320,34 @@ function drawShapeSection(ctx: AnyCtx, section: ShapeSection): void {
         ctx.moveTo(section.x, section.y);
         ctx.lineTo(section.x + section.width, section.y + section.height);
         ctx.stroke();
+    }
+    ctx.restore();
+}
+
+function drawFrameSection(ctx: AnyCtx, section: FrameSection): void {
+    const fill = section.fill;
+    const stroke = section.stroke;
+    const hasFill = fill !== undefined && fill !== 'transparent';
+    const hasStroke = stroke !== undefined && stroke !== 'transparent';
+    // A frame with no visible fill or border is a pure grouping box — nothing
+    // to raster. Mirrors the PDF generator's skip path.
+    if (!hasFill && !hasStroke) return;
+
+    const radius = section.radius ?? 0;
+    ctx.save();
+    if (hasFill) ctx.fillStyle = fill!;
+    if (hasStroke) {
+        ctx.strokeStyle = stroke!;
+        ctx.lineWidth = section.strokeWidth ?? 1;
+    }
+    if (radius > 0 && typeof ctx.roundRect === 'function') {
+        ctx.beginPath();
+        ctx.roundRect(section.x, section.y, section.width, section.height, radius);
+        if (hasFill) ctx.fill();
+        if (hasStroke) ctx.stroke();
+    } else {
+        if (hasFill) ctx.fillRect(section.x, section.y, section.width, section.height);
+        if (hasStroke) ctx.strokeRect(section.x, section.y, section.width, section.height);
     }
     ctx.restore();
 }

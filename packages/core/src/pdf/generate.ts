@@ -14,6 +14,7 @@ import { getStrokeOutline } from '../freehand';
 import { CUSTOM_PAGE_SIZES } from '../page-sizes';
 import type {
     DrawingSection,
+    FrameSection,
     ImageSection,
     PDFGenerationOptions,
     Section,
@@ -221,6 +222,8 @@ export async function generatePDF(
                     drawShapeSection(doc, section);
                 } else if (section.type === 'drawing') {
                     drawDrawingSection(doc, section);
+                } else if (section.type === 'frame') {
+                    drawFrameSection(doc, section);
                 }
             }
 
@@ -449,6 +452,53 @@ function drawShapeSection(doc: jsPDF, section: ShapeSection): void {
         }
     } catch (error) {
         console.error('Error adding shape:', error);
+    }
+}
+
+/**
+ * Render a {@link FrameSection} — a container frame's own background fill and
+ * border. Children are independent sections drawn separately in z-order; this
+ * draws only the frame's box.
+ *
+ * @remarks
+ * A frame with a transparent (or absent) fill **and** border is a pure
+ * grouping box and contributes nothing to the PDF, so it's skipped entirely —
+ * which keeps the byte-diff fixture stable (it has no frames) and means an
+ * empty content frame leaves no trace in the export. `radius` rounds the
+ * corners via {@link jsPDF.roundedRect}. Errors are caught so a malformed
+ * frame can't abort generation.
+ */
+function drawFrameSection(doc: jsPDF, section: FrameSection): void {
+    try {
+        const fill = section.fill;
+        const stroke = section.stroke;
+        const hasFill = fill !== undefined && fill !== 'transparent';
+        const hasStroke = stroke !== undefined && stroke !== 'transparent';
+        if (!hasFill && !hasStroke) return;
+
+        if (hasFill) doc.setFillColor(fill!);
+        if (hasStroke) {
+            doc.setDrawColor(stroke!);
+            doc.setLineWidth(section.strokeWidth ?? 1);
+        }
+        const style: 'F' | 'S' | 'FD' = hasFill && hasStroke ? 'FD' : hasFill ? 'F' : 'S';
+        const radius = section.radius ?? 0;
+
+        if (radius > 0) {
+            doc.roundedRect(
+                section.x,
+                section.y,
+                section.width,
+                section.height,
+                radius,
+                radius,
+                style,
+            );
+        } else {
+            doc.rect(section.x, section.y, section.width, section.height, style);
+        }
+    } catch (error) {
+        console.error('Error adding frame:', error);
     }
 }
 
