@@ -72,7 +72,7 @@ export function createPage(): Page {
  */
 export interface CreateSectionOptions {
     /** Variant discriminator. Defaults to `'image'`. */
-    type?: 'image' | 'text' | 'shape' | 'drawing';
+    type?: 'image' | 'text' | 'shape' | 'drawing' | 'frame';
     /**
      * Required when `type === 'shape'`. Picks the primitive — rectangle,
      * ellipse, or diagonal line.
@@ -168,6 +168,15 @@ export function createSection(opts: CreateSectionOptions = {}): Section {
             ...base,
             type: 'drawing',
             strokes: [],
+        };
+    }
+    if (type === 'frame') {
+        return {
+            ...base,
+            type: 'frame',
+            fill: 'transparent',
+            stroke: 'transparent',
+            strokeWidth: 1,
         };
     }
     return { ...base, type: 'image' };

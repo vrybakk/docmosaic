@@ -59,4 +59,15 @@ describe('createSection', () => {
         if (section.type !== 'shape') throw new Error('narrowing');
         expect(section.shape).toBe('rect');
     });
+
+    it('returns a transparent container frame when type is "frame"', () => {
+        const section = createSection({ type: 'frame', page: 1 });
+
+        expect(section.type).toBe('frame');
+        if (section.type !== 'frame') throw new Error('narrowing');
+        expect(section.fill).toBe('transparent');
+        expect(section.stroke).toBe('transparent');
+        expect(section.strokeWidth).toBe(1);
+        expect(section.parentFrameId).toBeUndefined();
+    });
 });

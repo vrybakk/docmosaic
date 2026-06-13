@@ -9,6 +9,7 @@ export type {
     DragPosition,
     Document,
     DrawingSection,
+    FrameSection,
     ImageCrop,
     ImageSection,
     MeasurementUnit,

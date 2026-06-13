@@ -241,6 +241,49 @@ describe('reducer', () => {
         expect(snapshot(state)).toBe(before);
     });
 
+    it('DELETE_SECTION on a frame also removes its children', () => {
+        const doc = createDocument();
+        const frame = { ...createSection({ type: 'frame', page: 1 }), id: 'frame-1' };
+        const childA = { ...createSection({ page: 1 }), id: 'child-a', parentFrameId: 'frame-1' };
+        const childB = { ...createSection({ page: 1 }), id: 'child-b', parentFrameId: 'frame-1' };
+        const loose = { ...createSection({ page: 1 }), id: 'loose' };
+        const state = deepFreeze({
+            ...doc,
+            sections: [frame, childA, childB, loose] as Section[],
+        });
+
+        const next = reducer(state, { type: 'DELETE_SECTION', sectionId: 'frame-1', now: FIXED_NOW });
+
+        expect(next.sections.map((s) => s.id)).toEqual(['loose']);
+    });
+
+    it('DUPLICATE_SECTION on a frame clones its children re-pointed at the new frame', () => {
+        const doc = createDocument();
+        const frame = { ...createSection({ type: 'frame', x: 0, y: 0, page: 1 }), id: 'frame-1' };
+        const child = {
+            ...createSection({ x: 0, y: 0, page: 1 }),
+            id: 'child-a',
+            parentFrameId: 'frame-1',
+        };
+        const state = deepFreeze({ ...doc, sections: [frame, child] as Section[] });
+
+        const next = reducer(state, {
+            type: 'DUPLICATE_SECTION',
+            section: state.sections[0],
+            now: FIXED_NOW,
+        });
+
+        expect(next.sections).toHaveLength(4);
+        const newFrame = next.sections[2];
+        const newChild = next.sections[3];
+        expect(newFrame.id).not.toBe('frame-1');
+        expect(newChild.id).not.toBe('child-a');
+        // The cloned child follows the cloned frame, not the original.
+        expect(newChild.parentFrameId).toBe(newFrame.id);
+        expect(newChild.x).toBe(child.x + 20);
+        expect(newChild.y).toBe(child.y + 20);
+    });
+
     /**
      * Build a fixture with 3 sections on page 1 carrying distinct zIndex values
      * so the layer actions have non-trivial peers to swap with.

@@ -108,6 +108,20 @@ export interface SectionBase {
      * undefined-as-false for legacy compatibility.
      */
     locked?: boolean;
+    /**
+     * Id of the {@link FrameSection} this section belongs to, when it has been
+     * dropped inside a container frame. Children are stored flat in
+     * `Document.sections` alongside their frame — this back-pointer is the only
+     * link. Moving or deleting the frame fans out to every section carrying its
+     * id (see the reducer's `DELETE_SECTION` / `DUPLICATE_SECTION`).
+     *
+     * @remarks
+     * Optional + undefined-as-top-level so documents authored before container
+     * frames existed keep rendering every section at the page root. A frame
+     * never nests inside another frame in v1 — only non-frame sections carry
+     * this field in practice.
+     */
+    parentFrameId?: string;
 }
 
 /**
@@ -277,6 +291,34 @@ export interface DrawingSection extends SectionBase {
 }
 
 /**
+ * Container frame — a box on a page that owns other sections. Children
+ * reference it via {@link SectionBase.parentFrameId}; the frame itself draws an
+ * optional background fill and border and groups its children for move /
+ * duplicate / delete.
+ *
+ * @remarks
+ * `type: 'frame'` is the discriminator. Visual properties have no inline
+ * defaults so they fall back to sensible render-time values (transparent fill
+ * + transparent border → an invisible grouping box in the PDF, visible only via
+ * the canvas selection affordance). See {@link createSection} for the factory
+ * defaults. Frames do not nest inside other frames in v1.
+ */
+export interface FrameSection extends SectionBase {
+    type: 'frame';
+    /**
+     * Background fill — any CSS color string or `'transparent'` (the default)
+     * to draw a contents-only frame with no visible backdrop.
+     */
+    fill?: string;
+    /** Border color. Defaults to `'transparent'` (no visible border). */
+    stroke?: string;
+    /** Border width in PDF points. Defaults to `1`. */
+    strokeWidth?: number;
+    /** Corner radius in PDF points. Defaults to `0` (square corners). */
+    radius?: number;
+}
+
+/**
  * Discriminated union over the supported section variants. Use the `type`
  * field to narrow — for example:
  *
@@ -287,12 +329,14 @@ export interface DrawingSection extends SectionBase {
  *   section.shape; // ShapeKind
  * } else if (section.type === 'drawing') {
  *   section.strokes; // Stroke[]
+ * } else if (section.type === 'frame') {
+ *   section.fill; // string | undefined
  * } else {
  *   section.imageUrl; // string | undefined
  * }
  * ```
  */
-export type Section = ImageSection | TextSection | ShapeSection | DrawingSection;
+export type Section = ImageSection | TextSection | ShapeSection | DrawingSection | FrameSection;
 
 /**
  * Normalize a possibly-legacy section value. Sections persisted before the

@@ -10,6 +10,7 @@
  * @packageDocumentation
  */
 
+import { v4 as uuidv4 } from 'uuid';
 import { createPage, createSection } from './factories';
 import type {
     Document,
@@ -58,7 +59,7 @@ export type Action =
            * Variant to create. Defaults to `'image'` so legacy callers
            * (which never passed a type) keep producing image sections.
            */
-          sectionType?: 'image' | 'text' | 'shape' | 'drawing';
+          sectionType?: 'image' | 'text' | 'shape' | 'drawing' | 'frame';
           /**
            * Required when `sectionType === 'shape'`. Picks the primitive
            * (`'rect' | 'circle' | 'line'`). Ignored for other variants.
@@ -268,27 +269,49 @@ export function reducer(state: State, action: Action): State {
             );
 
         case 'DELETE_SECTION':
+            // Deleting a container frame fans out to its children: any section
+            // whose `parentFrameId` points at the target is removed too, so a
+            // frame and its contents leave the document as one undoable step.
             return touch(
                 {
                     ...state,
-                    sections: state.sections.filter((section) => section.id !== action.sectionId),
+                    sections: state.sections.filter(
+                        (section) =>
+                            section.id !== action.sectionId &&
+                            section.parentFrameId !== action.sectionId,
+                    ),
                 },
                 action.now,
             );
 
         case 'DUPLICATE_SECTION': {
             const source = action.section;
-            const clone = createSection({ x: 0, y: 0, page: source.page });
+            const newId = uuidv4();
             const duplicated: Section = {
                 ...source,
-                id: clone.id,
+                id: newId,
                 x: source.x + 20,
                 y: source.y + 20,
             };
+            // Duplicating a container frame also clones its children, re-pointing
+            // them at the new frame and shifting by the same offset so the copied
+            // group keeps its internal layout.
+            const childClones: Section[] =
+                source.type === 'frame'
+                    ? state.sections
+                          .filter((s) => s.parentFrameId === source.id)
+                          .map((child) => ({
+                              ...child,
+                              id: uuidv4(),
+                              x: child.x + 20,
+                              y: child.y + 20,
+                              parentFrameId: newId,
+                          }))
+                    : [];
             return touch(
                 {
                     ...state,
-                    sections: [...state.sections, duplicated],
+                    sections: [...state.sections, duplicated, ...childClones],
                 },
                 action.now,
             );
