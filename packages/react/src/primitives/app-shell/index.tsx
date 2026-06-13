@@ -1,7 +1,12 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { useRef, useState, type ReactNode } from 'react';
+import {
+    Panel,
+    PanelGroup,
+    PanelResizeHandle,
+    type ImperativePanelHandle,
+} from 'react-resizable-panels';
 import { cn } from '../../internal/utils';
 import { Canvas } from '../canvas';
 import { ContextMenu } from '../context-menu';
@@ -67,9 +72,28 @@ export function EditorShell({
     showInspector = true,
     children,
 }: EditorShellProps) {
+    const leftPanelRef = useRef<ImperativePanelHandle>(null);
+    const inspectorPanelRef = useRef<ImperativePanelHandle>(null);
+    const [leftCollapsed, setLeftCollapsed] = useState(false);
+    const [inspectorCollapsed, setInspectorCollapsed] = useState(false);
+
+    const toggle = (panel: ImperativePanelHandle | null) => {
+        if (!panel) return;
+        if (panel.isCollapsed()) panel.expand();
+        else panel.collapse();
+    };
+
     return (
         <div className="flex h-screen flex-col bg-background text-foreground">
-            <TopBar themeToggle={themeToggle} />
+            <TopBar
+                themeToggle={themeToggle}
+                onToggleLeftRail={showLeftRail ? () => toggle(leftPanelRef.current) : undefined}
+                leftRailCollapsed={leftCollapsed}
+                onToggleInspector={
+                    showInspector ? () => toggle(inspectorPanelRef.current) : undefined
+                }
+                inspectorCollapsed={inspectorCollapsed}
+            />
 
             <div className="min-h-0 flex-1">
                 <PanelGroup direction="horizontal" className="h-full">
@@ -78,9 +102,15 @@ export function EditorShell({
                             <Panel
                                 id="left-rail"
                                 order={1}
+                                ref={leftPanelRef}
+                                collapsible
+                                collapsedSize={0}
                                 defaultSize={17}
                                 minSize={13}
                                 maxSize={28}
+                                onCollapse={() => setLeftCollapsed(true)}
+                                onExpand={() => setLeftCollapsed(false)}
+                                className="overflow-hidden"
                             >
                                 <LeftRail
                                     showToolPalette={showToolPalette}
@@ -112,9 +142,15 @@ export function EditorShell({
                             <Panel
                                 id="inspector"
                                 order={3}
+                                ref={inspectorPanelRef}
+                                collapsible
+                                collapsedSize={0}
                                 defaultSize={20}
                                 minSize={14}
                                 maxSize={32}
+                                onCollapse={() => setInspectorCollapsed(true)}
+                                onExpand={() => setInspectorCollapsed(false)}
+                                className="overflow-hidden"
                             >
                                 <Inspector />
                             </Panel>
