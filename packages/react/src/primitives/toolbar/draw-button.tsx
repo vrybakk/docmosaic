@@ -34,17 +34,21 @@ export function DrawButton({
     activeClassName,
 }: DrawButtonProps = {}) {
     const { ui, readOnly } = useEditor();
-    const { drawingMode, setDrawingMode, setShapeTool } = ui;
+    const { drawingMode, setDrawingMode, setShapeTool, setFrameTool } = ui;
 
     if (readOnly) return null;
 
     const label = drawingMode ? 'Stop Drawing' : 'Draw';
 
-    // Arming drawing disarms the shape tool — the two modes are exclusive.
+    // Arming drawing disarms the shape + frame tools — all draw tools are
+    // mutually exclusive.
     const toggle = () => {
         const next = !drawingMode;
         setDrawingMode(next);
-        if (next) setShapeTool(null);
+        if (next) {
+            setShapeTool(null);
+            setFrameTool(false);
+        }
     };
 
     if (iconOnly) {
@@ -72,7 +76,7 @@ export function DrawButton({
         <Button
             variant={drawingMode ? 'orange' : 'caramel'}
             aria-pressed={drawingMode}
-            onClick={() => setDrawingMode(!drawingMode)}
+            onClick={toggle}
             className={cn('w-full', 'draw-button-click-trigger')}
             icon={<Pencil className="h-4 w-4" />}
         >

@@ -7,6 +7,7 @@ import { Pages } from '../pages';
 import { AddImageButton } from '../toolbar/add-image-button';
 import { AddTextButton } from '../toolbar/add-text-button';
 import { DrawButton } from '../toolbar/draw-button';
+import { FrameToolButton } from '../toolbar/frame-tool-button';
 import { SelectToolButton } from '../toolbar/select-tool-button';
 import { ShapeToolButton } from '../toolbar/shape-tool-button';
 import { CollapsibleSection } from './section-label';
@@ -61,6 +62,13 @@ export function LeftRail({
                     <AddImageButton iconOnly variant="ghost" className={TOOL_BUTTON_CLASS} />
                     <AddTextButton iconOnly variant="ghost" className={TOOL_BUTTON_CLASS} />
                     <ShapeToolButton
+                        iconOnly
+                        variant="ghost"
+                        activeVariant="secondary"
+                        className={TOOL_BUTTON_CLASS}
+                        activeClassName={TOOL_BUTTON_ACTIVE_CLASS}
+                    />
+                    <FrameToolButton
                         iconOnly
                         variant="ghost"
                         activeVariant="secondary"

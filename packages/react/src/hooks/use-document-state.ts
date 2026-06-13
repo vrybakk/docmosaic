@@ -105,7 +105,7 @@ export function useDocumentState(args: UseDocumentStateArgs = {}) {
             undo: () => dispatch({ type: 'UNDO' }),
             redo: () => dispatch({ type: 'REDO' }),
             addSection: (opts?: {
-                type?: 'image' | 'text' | 'shape' | 'drawing';
+                type?: 'image' | 'text' | 'shape' | 'drawing' | 'frame';
                 shape?: 'rect' | 'circle' | 'line';
                 rect?: { x: number; y: number; width: number; height: number };
             }) => {

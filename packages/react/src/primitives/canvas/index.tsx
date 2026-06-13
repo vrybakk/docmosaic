@@ -199,12 +199,13 @@ export function Canvas({
     const marqueeRef = useRef<typeof marquee>(null);
     const marqueeMovedRef = useRef(false);
 
-    // Shape draw-to-size draft — when the shape tool is armed, a pointer drag
-    // on the empty page rubber-bands a new shape box (same page-relative
+    // Draw-to-size draft — when the shape OR container-frame tool is armed, a
+    // pointer drag on the empty page rubber-bands a new box (same page-relative
     // display-pixel frame as the marquee) and creates the section on release.
     const [shapeDraft, setShapeDraft] = useState<typeof marquee>(null);
     const shapeDraftRef = useRef<typeof marquee>(null);
     const shapeDraftMovedRef = useRef(false);
+    const drawToolActive = ui.shapeTool !== null || ui.frameTool;
 
     const handleCanvasPointerDown = (e: React.PointerEvent) => {
         if (ui.drawingMode) return;
@@ -222,9 +223,9 @@ export function Canvas({
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         const next = { startX: x, startY: y, x, y, width: 0, height: 0 };
-        // Armed shape tool takes over the drag for draw-to-size; marquee
-        // selection is suppressed while a shape is being placed.
-        if (ui.shapeTool) {
+        // An armed draw tool (shape or container frame) takes over the drag for
+        // draw-to-size; marquee selection is suppressed while a box is placed.
+        if (drawToolActive) {
             shapeDraftRef.current = next;
             shapeDraftMovedRef.current = false;
             setShapeDraft(next);
@@ -278,18 +279,19 @@ export function Canvas({
             shapeDraftMovedRef.current = false;
             setShapeDraft(null);
             // A negligible drag (just a click) leaves the tool armed without
-            // spawning a zero-size shape.
-            if (moved && ui.shapeTool) {
-                actions.addSection({
-                    type: 'shape',
-                    shape: ui.shapeTool,
-                    rect: {
-                        x: Math.round(draft.x / finalScale),
-                        y: Math.round(draft.y / finalScale),
-                        width: Math.max(1, Math.round(draft.width / finalScale)),
-                        height: Math.max(1, Math.round(draft.height / finalScale)),
-                    },
-                });
+            // spawning a zero-size section.
+            if (moved) {
+                const rect = {
+                    x: Math.round(draft.x / finalScale),
+                    y: Math.round(draft.y / finalScale),
+                    width: Math.max(1, Math.round(draft.width / finalScale)),
+                    height: Math.max(1, Math.round(draft.height / finalScale)),
+                };
+                if (ui.shapeTool) {
+                    actions.addSection({ type: 'shape', shape: ui.shapeTool, rect });
+                } else if (ui.frameTool) {
+                    actions.addSection({ type: 'frame', rect });
+                }
             }
             return;
         }
@@ -326,14 +328,15 @@ export function Canvas({
         setMarquee(null);
     };
 
-    // Esc exits drawing mode or the armed shape tool. Scoped to the canvas
-    // surface (window listener) so the keybinding works regardless of focus.
+    // Esc exits drawing mode or any armed draw tool (shape / frame). Scoped to
+    // the canvas surface (window listener) so it works regardless of focus.
     useEffect(() => {
-        if (!ui.drawingMode && !ui.shapeTool) return;
+        if (!ui.drawingMode && !ui.shapeTool && !ui.frameTool) return;
         const onKey = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 ui.setDrawingMode(false);
                 ui.setShapeTool(null);
+                ui.setFrameTool(false);
             }
         };
         window.addEventListener('keydown', onKey);
@@ -452,7 +455,7 @@ export function Canvas({
                     // capture — deselecting on click would feel out of place.
                     // The armed shape tool likewise keeps its just-placed shape
                     // selected instead of clearing it on the trailing click.
-                    if (ui.drawingMode || ui.shapeTool) return;
+                    if (ui.drawingMode || drawToolActive) return;
                     // Ignore clicks that fired at the tail of a marquee drag;
                     // the marquee already updated the selection.
                     if (marqueeMovedRef.current) {
@@ -467,7 +470,7 @@ export function Canvas({
                 onPointerMove={handleCanvasPointerMove}
                 onPointerUp={handleCanvasPointerUp}
                 onPointerCancel={handleCanvasPointerUp}
-                style={{ cursor: ui.drawingMode || ui.shapeTool ? 'crosshair' : undefined }}
+                style={{ cursor: ui.drawingMode || drawToolActive ? 'crosshair' : undefined }}
             >
                 {isLoading ? (
                     <Loader />
@@ -484,7 +487,7 @@ export function Canvas({
                                 width: (pageDimensions?.width || 0) * finalScale,
                                 height: (pageDimensions?.height || 0) * finalScale,
                                 transform: `translate(${pan?.x || 0}px, ${pan?.y || 0}px)`,
-                                touchAction: ui.drawingMode || ui.shapeTool ? 'none' : undefined,
+                                touchAction: ui.drawingMode || drawToolActive ? 'none' : undefined,
                             }}
                         >
                             {/* Page.background — color first, then image — mirrors
@@ -568,7 +571,7 @@ export function Canvas({
                                     />
                                 )}
 
-                                {shapeDraft && ui.shapeTool && (
+                                {shapeDraft && drawToolActive && (
                                     <div
                                         data-shape-draft="true"
                                         className="absolute pointer-events-none"
@@ -579,11 +582,15 @@ export function Canvas({
                                             height: shapeDraft.height,
                                         }}
                                     >
-                                        <ShapeDraftPreview
-                                            kind={ui.shapeTool}
-                                            width={shapeDraft.width}
-                                            height={shapeDraft.height}
-                                        />
+                                        {ui.shapeTool ? (
+                                            <ShapeDraftPreview
+                                                kind={ui.shapeTool}
+                                                width={shapeDraft.width}
+                                                height={shapeDraft.height}
+                                            />
+                                        ) : (
+                                            <div className="h-full w-full rounded-md border-2 border-dashed border-primary bg-primary/5" />
+                                        )}
                                     </div>
                                 )}
                             </div>

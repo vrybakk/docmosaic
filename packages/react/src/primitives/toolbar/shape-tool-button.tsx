@@ -44,7 +44,7 @@ export function ShapeToolButton({
     activeClassName,
 }: ShapeToolButtonProps = {}) {
     const { ui, readOnly } = useEditor();
-    const { shapeTool, setShapeTool, setDrawingMode } = ui;
+    const { shapeTool, setShapeTool, setDrawingMode, setFrameTool } = ui;
     // Remember the last-picked kind so toggling the tool back on re-arms the
     // same primitive even after it has been disarmed (where `shapeTool` is null).
     const [lastKind, setLastKind] = useState<ShapeKind>('rect');
@@ -62,6 +62,7 @@ export function ShapeToolButton({
         } else {
             setShapeTool(activeKind);
             setDrawingMode(false);
+            setFrameTool(false);
         }
     };
 
@@ -70,6 +71,7 @@ export function ShapeToolButton({
         setLastKind(kind);
         setShapeTool(kind);
         setDrawingMode(false);
+        setFrameTool(false);
     };
 
     return (

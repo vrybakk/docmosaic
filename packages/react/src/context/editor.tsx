@@ -76,13 +76,14 @@ export interface AddSectionOptions {
      * Variant to create. Defaults to `'image'` so existing callers (the bundled
      * `AddImageButton`) keep producing image sections.
      */
-    type?: 'image' | 'text' | 'shape' | 'drawing';
+    type?: 'image' | 'text' | 'shape' | 'drawing' | 'frame';
     /** Picks the primitive when `type === 'shape'`. Ignored for other variants. */
     shape?: ShapeKind;
     /**
      * Explicit geometry in PDF points. When supplied, it overrides the factory's
-     * default position/size — used by the draw-to-size shape tool so the new
-     * section lands exactly where the user dragged, in a single history step.
+     * default position/size — used by the draw-to-size shape and frame tools so
+     * the new section lands exactly where the user dragged, in a single history
+     * step.
      */
     rect?: { x: number; y: number; width: number; height: number };
 }
@@ -262,6 +263,14 @@ export interface EditorUiState {
      */
     shapeTool: ShapeKind | null;
     setShapeTool: (shape: ShapeKind | null) => void;
+    /**
+     * Whether the container-frame draw-to-size tool is armed. While `true`, a
+     * pointer drag on the empty page rubber-bands a new {@link FrameSection}
+     * instead of marquee-selecting. Mutually exclusive with {@link drawingMode}
+     * and {@link shapeTool}.
+     */
+    frameTool: boolean;
+    setFrameTool: (on: boolean) => void;
     /** Active brush color used by the drawing canvas while drawing. */
     drawingColor: string;
     setDrawingColor: (color: string) => void;
@@ -726,6 +735,7 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
     const [estimatedSize, setEstimatedSize] = useState(0);
     const [drawingMode, setDrawingMode] = useState(false);
     const [shapeTool, setShapeTool] = useState<ShapeKind | null>(null);
+    const [frameTool, setFrameTool] = useState(false);
     const [drawingColor, setDrawingColor] = useState('#000000');
     const [drawingWeight, setDrawingWeight] = useState(3);
     const [activeSnapGuides, setActiveSnapGuides] = useState<SnapGuide[]>([]);
@@ -797,6 +807,8 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
             setDrawingMode,
             shapeTool,
             setShapeTool,
+            frameTool,
+            setFrameTool,
             drawingColor,
             setDrawingColor,
             drawingWeight,
@@ -818,6 +830,7 @@ export function useEditorUiState(formattedDate: string): EditorUiState {
             formattedDate,
             drawingMode,
             shapeTool,
+            frameTool,
             drawingColor,
             drawingWeight,
             activeSnapGuides,
