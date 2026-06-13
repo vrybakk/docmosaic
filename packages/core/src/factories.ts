@@ -94,12 +94,12 @@ export interface CreateSectionOptions {
  * PDF points (72 DPI) for storage so that section geometry matches the units
  * used by the PDF generator.
  *
- * The returned section is sized 200×200 points and carries the variant
- * defaults dictated by `type`:
+ * The returned section is sized 200×200 points (image/shape/drawing) and
+ * carries the variant defaults dictated by `type`:
  *
  * - `'image'` (default) — empty image slot (`imageUrl` left unset).
- * - `'text'` — empty `text` body, `fontSize: 16`, `color: 'rgb(0,0,0)'`,
- *   `align: 'left'`.
+ * - `'text'` — sized 280×100 (a wide field, not a square block), empty `text`
+ *   body, `fontSize: 16`, `color: 'rgb(0,0,0)'`, `align: 'left'`.
  * - `'shape'` — vector primitive picked via `opts.shape` (`'rect'`,
  *   `'circle'`, `'line'`). Defaults: `fill: 'transparent'`, `stroke: '#000'`,
  *   `strokeWidth: 1`, `opacity: 1`.
@@ -140,6 +140,11 @@ export function createSection(opts: CreateSectionOptions = {}): Section {
     if (type === 'text') {
         return {
             ...base,
+            // Text reads as a line, not a block: a wide, short field instead of
+            // the square image/shape default. `height` sits at the resize floor
+            // (MIN_SECTION_SIZE) so it never snaps larger on first drag.
+            width: 280,
+            height: 100,
             type: 'text',
             text: '',
             fontSize: 16,
