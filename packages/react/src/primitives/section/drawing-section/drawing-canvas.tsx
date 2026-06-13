@@ -3,6 +3,10 @@
 import type { DrawingSection, Stroke } from '@docmosaic/core';
 import { useCallback, useRef, useState } from 'react';
 import { useEditor } from '../../../context/editor';
+import { getStrokePath } from '../../../internal/freehand';
+
+/** Skip pointer samples closer than this (in PDF points) to bound stroke size. */
+const MIN_POINT_DISTANCE = 1.2;
 
 interface DrawingCanvasProps {
     section: DrawingSection;
@@ -69,7 +73,15 @@ export function DrawingCanvas({ section, finalScale }: DrawingCanvasProps) {
             if (!drawingMode || !isDrawingRef.current) return;
             const point = toLocalPoint(e);
             if (!point) return;
-            setCurrentPoints((prev) => [...prev, point]);
+            setCurrentPoints((prev) => {
+                const last = prev[prev.length - 1];
+                if (last) {
+                    const dx = point.x - last.x;
+                    const dy = point.y - last.y;
+                    if (dx * dx + dy * dy < MIN_POINT_DISTANCE * MIN_POINT_DISTANCE) return prev;
+                }
+                return [...prev, point];
+            });
         },
         [drawingMode, toLocalPoint],
     );
@@ -126,28 +138,23 @@ export function DrawingCanvas({ section, finalScale }: DrawingCanvasProps) {
             onPointerUp={handlePointerUp}
             onPointerCancel={handlePointerUp}
         >
-            {section.strokes.map((stroke, i) => (
-                <polyline
-                    key={i}
-                    fill="none"
-                    stroke={stroke.color}
-                    strokeWidth={stroke.weight}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    points={stroke.points.map((p) => `${p.x},${p.y}`).join(' ')}
-                />
-            ))}
-            {currentPoints.length > 1 && (
-                <polyline
-                    data-in-progress-stroke="true"
-                    fill="none"
-                    stroke={drawingColor}
-                    strokeWidth={drawingWeight}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    points={currentPoints.map((p) => `${p.x},${p.y}`).join(' ')}
-                />
-            )}
+            {section.strokes.map((stroke, i) => {
+                const d = getStrokePath(stroke.points, stroke.weight, true);
+                if (!d) return null;
+                return <path key={i} d={d} fill={stroke.color} stroke="none" />;
+            })}
+            {currentPoints.length > 0 &&
+                (() => {
+                    const d = getStrokePath(currentPoints, drawingWeight, false);
+                    return d ? (
+                        <path
+                            data-in-progress-stroke="true"
+                            d={d}
+                            fill={drawingColor}
+                            stroke="none"
+                        />
+                    ) : null;
+                })()}
         </svg>
     );
 }

@@ -196,20 +196,22 @@ export function Minimap({ className, maxSize = 72 }: MinimapProps = {}) {
                 className="relative bg-muted/40 border border-border rounded-sm overflow-hidden"
                 style={{ width: minimapWidth, height: minimapHeight }}
             >
-                {currentPageSections.map((s) => (
-                    <div
-                        key={s.id}
-                        data-minimap-section={s.type}
-                        className="absolute"
-                        style={{
-                            left: s.x * minimapScale,
-                            top: s.y * minimapScale,
-                            width: s.width * minimapScale,
-                            height: s.height * minimapScale,
-                            background: sectionFill(s.type),
-                        }}
-                    />
-                ))}
+                {currentPageSections
+                    .filter((s) => s.type !== 'drawing')
+                    .map((s) => (
+                        <div
+                            key={s.id}
+                            data-minimap-section={s.type}
+                            className="absolute"
+                            style={{
+                                left: s.x * minimapScale,
+                                top: s.y * minimapScale,
+                                width: s.width * minimapScale,
+                                height: s.height * minimapScale,
+                                background: sectionFill(s.type),
+                            }}
+                        />
+                    ))}
                 {/* Viewport rectangle — a subtle ring-accented box + grab
                     cursor so it's obvious what the rectangle controls. */}
                 <div

@@ -70,7 +70,7 @@ function setup() {
 }
 
 describe('DrawingCanvas', () => {
-    it('renders existing strokes as polylines', () => {
+    it('renders existing strokes as filled paths', () => {
         const seedSection = createSection({
             type: 'drawing',
             x: 0,
@@ -115,8 +115,9 @@ describe('DrawingCanvas', () => {
                 <Mount />
             </Editor.Root>,
         );
-        const polylines = container.querySelectorAll('polyline');
-        expect(polylines.length).toBeGreaterThanOrEqual(1);
+        const paths = container.querySelectorAll('path');
+        expect(paths.length).toBeGreaterThanOrEqual(1);
+        expect(paths[0].getAttribute('fill')).toBe('#000000');
     });
 
     it('accumulates pointer events into a stroke and dispatches ADD_STROKE on pointerup', () => {

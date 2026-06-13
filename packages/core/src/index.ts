@@ -44,6 +44,7 @@ export {
 } from './dimensions';
 
 // PDF helpers
+export { getStrokeOutline } from './freehand';
 export { estimatePDFSize } from './pdf/estimate';
 export type { GenerationOptions, GenerationProgress } from './pdf/generate';
 export { generatePDF } from './pdf/generate';

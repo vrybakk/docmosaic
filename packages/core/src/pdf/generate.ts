@@ -10,6 +10,7 @@
  */
 
 import { jsPDF } from 'jspdf';
+import { getStrokeOutline } from '../freehand';
 import { CUSTOM_PAGE_SIZES } from '../page-sizes';
 import type {
     DrawingSection,
@@ -448,26 +449,32 @@ function drawShapeSection(doc: jsPDF, section: ShapeSection): void {
 
 /**
  * Render a {@link DrawingSection} into the active jsPDF document. Each stroke
- * is drawn as a sequence of connected line segments via {@link jsPDF.line},
- * using the stroke's own color and weight. Stroke points are stored in
- * section-local PDF-point coords, so each point is offset by the section's
- * (x, y) to land in page space — that's what lets dragging a drawing section
- * carry its strokes with it.
+ * is drawn as a *filled* smooth outline polygon (via {@link getStrokeOutline},
+ * the same perfect-freehand engine the canvas uses) so the PDF matches the
+ * on-screen ink exactly — a fixed-width stroked polyline can't reproduce the
+ * variable width / tapered caps. Outline points are section-local, offset by
+ * the section's (x, y) to land in page space so dragging carries the ink.
  *
- * Strokes with fewer than two points are skipped (nothing to connect).
- * Errors are caught so a malformed drawing can't abort generation.
+ * Degenerate strokes (outline < 3 points) are skipped. Errors are caught so a
+ * malformed drawing can't abort generation.
  */
 function drawDrawingSection(doc: jsPDF, section: DrawingSection): void {
     try {
         for (const stroke of section.strokes) {
-            if (stroke.points.length < 2) continue;
-            doc.setDrawColor(stroke.color);
-            doc.setLineWidth(stroke.weight);
-            for (let i = 1; i < stroke.points.length; i++) {
-                const a = stroke.points[i - 1];
-                const b = stroke.points[i];
-                doc.line(section.x + a.x, section.y + a.y, section.x + b.x, section.y + b.y);
+            const outline = getStrokeOutline(stroke.points, stroke.weight, true);
+            if (outline.length < 3) continue;
+            doc.setFillColor(stroke.color);
+            const startX = section.x + outline[0][0];
+            const startY = section.y + outline[0][1];
+            const segments: [number, number][] = [];
+            for (let i = 1; i < outline.length; i++) {
+                segments.push([
+                    outline[i][0] - outline[i - 1][0],
+                    outline[i][1] - outline[i - 1][1],
+                ]);
             }
+            // Fill ('F') the closed outline polygon as relative line segments.
+            doc.lines(segments, startX, startY, [1, 1], 'F', true);
         }
     } catch (error) {
         console.error('Error adding drawing:', error);

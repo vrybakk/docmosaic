@@ -10,6 +10,7 @@
  * @packageDocumentation
  */
 
+import { getStrokeOutline } from '../freehand';
 import { CUSTOM_PAGE_SIZES } from '../page-sizes';
 import type {
     DrawingSection,
@@ -322,19 +323,20 @@ function drawShapeSection(ctx: AnyCtx, section: ShapeSection): void {
 
 function drawDrawingSection(ctx: AnyCtx, section: DrawingSection): void {
     for (const stroke of section.strokes) {
-        if (stroke.points.length < 2) continue;
+        // Fill the smooth perfect-freehand outline polygon (same engine as the
+        // canvas + PDF) so PNG stays visually equivalent. Points are
+        // section-local; offset by (section.x, section.y).
+        const outline = getStrokeOutline(stroke.points, stroke.weight, true);
+        if (outline.length < 3) continue;
         ctx.save();
-        ctx.strokeStyle = stroke.color;
-        ctx.lineWidth = stroke.weight;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        ctx.fillStyle = stroke.color;
         ctx.beginPath();
-        // Stroke points are section-local; offset by (section.x, section.y).
-        ctx.moveTo(section.x + stroke.points[0].x, section.y + stroke.points[0].y);
-        for (let i = 1; i < stroke.points.length; i++) {
-            ctx.lineTo(section.x + stroke.points[i].x, section.y + stroke.points[i].y);
+        ctx.moveTo(section.x + outline[0][0], section.y + outline[0][1]);
+        for (let i = 1; i < outline.length; i++) {
+            ctx.lineTo(section.x + outline[i][0], section.y + outline[i][1]);
         }
-        ctx.stroke();
+        ctx.closePath();
+        ctx.fill();
         ctx.restore();
     }
 }

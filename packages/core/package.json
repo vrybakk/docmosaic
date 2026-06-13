@@ -35,6 +35,7 @@
     },
     "dependencies": {
         "jspdf": "^2.5.2",
+        "perfect-freehand": "^1.2.2",
         "uuid": "^11.0.5"
     },
     "devDependencies": {

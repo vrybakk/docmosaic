@@ -1,131 +1,41 @@
 'use client';
 
 import type { DrawingSection as DrawingSectionData } from '@docmosaic/core';
-import { useEditor, useEditorSection } from '../../../context/editor';
-import { cn } from '../../../internal/utils';
-import { SectionResizeHandles } from '../hooks/section-resize-handles';
-import { useSectionDrag } from '../hooks/use-section-drag';
-import { useSectionResize } from '../hooks/use-section-resize';
+import { useEditorSection } from '../../../context/editor';
 import { DrawingCanvas } from './drawing-canvas';
 
 /**
- * Drawing-variant section view. Mirrors the image/text/shape variant shell —
- * selectable box with drag, resize, and floating actions — but the content
- * surface is a {@link DrawingCanvas} that captures pointer events while the
- * editor is in `drawingMode`.
+ * Drawing-variant section view — a bare, page-spanning ink layer rather than a
+ * boxed/resizable section. The {@link DrawingCanvas} captures smooth freehand
+ * strokes anywhere on the page while the pen is armed (`ui.drawingMode`) and
+ * renders the committed strokes.
  *
- * The drag/resize handlers are suppressed while `drawingMode` is active so
- * the drawing surface can own the pointer without fighting react-dnd or the
- * resize hook.
+ * The wrapper is `pointer-events-none` so it never blocks selecting the
+ * sections beneath it; the canvas flips its own pointer events on only while
+ * drawing. There is no selection box, drag, or resize — the drawing is a fixed
+ * full-page layer, managed through `Editor.LayerList` (visibility / lock).
  */
 export function DrawingSectionView() {
     const editor = useEditorSection();
-    const { ui } = useEditor();
     const section = editor.section as DrawingSectionData;
     const rawSection = editor.rawSection as DrawingSectionData;
-    const {
-        isSelected,
-        onClick,
-        onUpdate,
-        onDuplicate,
-        onDelete,
-        finalScale,
-        groupDrag,
-        readOnly,
-    } = editor;
-    const imageRef = { current: null } as React.RefObject<HTMLImageElement | null>;
-
-    const { isResizing, handleResizeStart } = useSectionResize({
-        section,
-        onUpdate,
-        imageRef,
-    });
-    const { bindDrag, isDragging } = useSectionDrag({
-        section,
-        onUpdate,
-        // While drawing mode is active, drag is suppressed so the canvas
-        // pointer handlers see the gesture. readOnly also suppresses drag.
-        isResizing: isResizing || ui.drawingMode || readOnly,
-        groupDrag,
-    });
-
-    const handleClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        // In drawing mode the canvas owns pointer events; surface clicks here
-        // shouldn't toggle selection.
-        if (ui.drawingMode && !readOnly) return;
-        onClick(e);
-    };
+    const { finalScale } = editor;
 
     return (
         <div
-            {...(ui.drawingMode || readOnly ? {} : bindDrag())}
             data-section="true"
             data-section-id={section.id}
             data-section-type="drawing"
-            className={cn(
-                'absolute p-1',
-                'border-2 border-dashed border-gray-300 hover:border-primary/50',
-                'rounded-lg overflow-visible group touch-none pointer-events-auto',
-                isSelected && 'border-solid border-primary shadow-lg',
-                isDragging && 'opacity-50 cursor-grabbing',
-                isResizing && 'pointer-events-none',
-            )}
+            className="absolute pointer-events-none"
             style={{
                 left: section.x,
                 top: section.y,
                 width: section.width,
                 height: section.height,
-                zIndex: (section.zIndex ?? 0) + (isSelected ? 1000 : 0),
-                cursor: readOnly
-                    ? 'default'
-                    : ui.drawingMode
-                      ? 'crosshair'
-                      : isDragging
-                        ? 'grabbing'
-                        : 'grab',
+                zIndex: section.zIndex ?? 0,
             }}
-            onClick={handleClick}
         >
-            {isSelected && !isResizing && !ui.drawingMode && !readOnly && (
-                <SectionResizeHandles onResizeStart={handleResizeStart} />
-            )}
-
-            {isSelected && (
-                <div className="absolute inset-0 border-2 border-primary border-dashed pointer-events-none z-5" />
-            )}
-
-            <div className="relative w-full h-full">
-                <DrawingCanvas section={rawSection} finalScale={finalScale} />
-            </div>
-
-            {/* Hidden action shortcuts — duplicate/delete remain reachable
-                through the keyboard layer like the other variants. Hidden in
-                readOnly mode since nothing should mutate. */}
-            {!readOnly && (
-                <>
-                    <button
-                        type="button"
-                        aria-label="duplicate"
-                        tabIndex={-1}
-                        className="sr-only"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onDuplicate(section);
-                        }}
-                    />
-                    <button
-                        type="button"
-                        aria-label="delete"
-                        tabIndex={-1}
-                        className="sr-only"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onDelete(section.id);
-                        }}
-                    />
-                </>
-            )}
+            <DrawingCanvas section={rawSection} finalScale={finalScale} />
         </div>
     );
 }
