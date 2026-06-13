@@ -11,7 +11,7 @@ import {
     Shapes,
     Type,
 } from 'lucide-react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { cn } from '../../internal/utils';
 
@@ -43,6 +43,8 @@ export interface LayerRowProps {
     /** Reorder callback fired when a row is dragged over another row's hover
      *  midpoint, mirroring the Pages primitive's behavior. */
     onMoveRow: (fromIndex: number, toIndex: number) => void;
+    /** Commit a new layer name (empty string clears it back to the derived label). */
+    onRename: (name: string) => void;
 }
 
 /**
@@ -68,6 +70,7 @@ function SectionSwatch({ section }: { section: Section }) {
             <img
                 src={section.imageUrl}
                 alt=""
+                title="Image preview"
                 className="h-6 w-6 rounded-sm object-cover border border-primary/15"
             />
         );
@@ -84,6 +87,7 @@ function SectionSwatch({ section }: { section: Section }) {
                     borderWidth: 1,
                     borderStyle: 'solid',
                 }}
+                title={`Fill ${bg === 'transparent' ? 'none' : bg} · stroke ${border}`}
                 aria-hidden
             />
         );
@@ -94,12 +98,19 @@ function SectionSwatch({ section }: { section: Section }) {
             <div
                 className="h-6 w-6 rounded-sm border border-primary/15"
                 style={{ background: ink, opacity: 0.7 }}
+                title={`Ink ${ink}`}
                 aria-hidden
             />
         );
     }
     // Image without source / text section — neutral placeholder.
-    return <div className="h-6 w-6 rounded-sm border border-primary/15 bg-primary/5" aria-hidden />;
+    return (
+        <div
+            className="h-6 w-6 rounded-sm border border-primary/15 bg-primary/5"
+            title="No color preview"
+            aria-hidden
+        />
+    );
 }
 
 /**
@@ -108,6 +119,7 @@ function SectionSwatch({ section }: { section: Section }) {
  * counter (matched by the caller passing `index`).
  */
 function getSectionLabel(section: Section, index: number): string {
+    if (section.name && section.name.trim()) return section.name;
     if (section.type === 'text') {
         const first = section.text.split('\n')[0]?.trim();
         if (first) return first.length > 28 ? `${first.slice(0, 28)}…` : first;
@@ -141,8 +153,21 @@ export function LayerRow({
     onToggleHidden,
     onToggleLocked,
     onMoveRow,
+    onRename,
 }: LayerRowProps) {
     const ref = useRef<HTMLDivElement>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [draft, setDraft] = useState('');
+
+    const beginRename = () => {
+        if (readOnly) return;
+        setDraft(section.name ?? '');
+        setIsEditing(true);
+    };
+    const commitRename = () => {
+        setIsEditing(false);
+        onRename(draft.trim());
+    };
 
     const [{ isDragging }, dragRef] = useDrag<LayerRowDragItem, unknown, { isDragging: boolean }>(
         () => ({
@@ -239,14 +264,39 @@ export function LayerRow({
             </div>
             <SectionTypeIcon section={section} />
             <SectionSwatch section={section} />
-            <span
-                className={cn(
-                    'flex-1 min-w-0 truncate text-foreground',
-                    isHidden && 'line-through text-foreground/60',
-                )}
-            >
-                {label}
-            </span>
+            {isEditing ? (
+                <input
+                    autoFocus
+                    value={draft}
+                    placeholder={label}
+                    onChange={(e) => setDraft(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                        e.stopPropagation();
+                        if (e.key === 'Enter') commitRename();
+                        else if (e.key === 'Escape') setIsEditing(false);
+                    }}
+                    onBlur={commitRename}
+                    className={cn(
+                        'flex-1 min-w-0 rounded-sm bg-background px-1 py-0 text-sm text-foreground',
+                        'outline-none ring-1 ring-ring',
+                    )}
+                />
+            ) : (
+                <span
+                    onDoubleClick={(e) => {
+                        e.stopPropagation();
+                        beginRename();
+                    }}
+                    title="Double-click to rename"
+                    className={cn(
+                        'flex-1 min-w-0 truncate text-foreground',
+                        isHidden && 'line-through text-foreground/60',
+                    )}
+                >
+                    {label}
+                </span>
+            )}
             {!readOnly && (
                 <>
                     <button

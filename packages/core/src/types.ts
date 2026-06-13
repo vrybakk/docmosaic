@@ -69,6 +69,16 @@ export interface SectionBase {
     height: number;
     page: number;
     /**
+     * Optional user-given layer name shown in `Editor.LayerList`. When unset,
+     * the list derives a label from the section type/content ("Rect 1", the
+     * first line of a text body, etc.).
+     *
+     * @remarks
+     * Optional + undefined-as-derived so documents authored before rename
+     * existed keep their computed labels until the user renames a layer.
+     */
+    name?: string;
+    /**
      * Render order. Higher values render on top. Ties resolved by array order.
      *
      * @remarks

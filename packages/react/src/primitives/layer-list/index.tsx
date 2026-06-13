@@ -169,6 +169,9 @@ export function LayerList({ className, title = 'Layers' }: LayerListProps = {}) 
                                 onToggleHidden={() => actions.toggleHidden(section.id)}
                                 onToggleLocked={() => actions.toggleLocked(section.id)}
                                 onMoveRow={handleMoveRow}
+                                onRename={(name) =>
+                                    actions.updateSection({ ...section, name: name || undefined })
+                                }
                             />
                         ))
                     )}
