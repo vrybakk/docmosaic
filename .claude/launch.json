@@ -4,7 +4,7 @@
         {
             "name": "Next.js dev server",
             "runtimeExecutable": "bun",
-            "runtimeArgs": ["dev"],
+            "runtimeArgs": ["run", "--filter", "@docmosaic/web", "dev"],
             "port": 4001
         },
         {
