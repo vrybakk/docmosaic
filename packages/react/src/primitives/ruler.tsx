@@ -1,7 +1,7 @@
 'use client';
 
 import { getPageDimensionsWithOrientation, ptToMm } from '@docmosaic/core';
-import { useMemo } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useEditor, useEditorCanvas } from '../context/editor';
 import { cn } from '../internal/utils';
 
@@ -84,6 +84,44 @@ export function Ruler({ className, unit: unitProp }: RulerProps = {}) {
         [state.pageSize, state.orientation],
     );
 
+    // The page is centered in the scroll container and shifts with zoom, pan,
+    // scroll, and sidebar collapse — none of which a fixed gutter or a single
+    // ResizeObserver reliably tracks. Sync the tick origin to the page's real
+    // position every frame, but only commit to state when it actually moves
+    // (>0.5px) so static frames don't re-render.
+    const rootRef = useRef<HTMLDivElement>(null);
+    const [origin, setOrigin] = useState({ x: RULER_THICKNESS, y: RULER_THICKNESS });
+
+    useLayoutEffect(() => {
+        let raf = 0;
+        let last = { x: Number.NaN, y: Number.NaN };
+        const measure = () => {
+            const root = rootRef.current;
+            const page = document.querySelector('[data-page-container="true"]');
+            if (root && page) {
+                const r = root.getBoundingClientRect();
+                const p = page.getBoundingClientRect();
+                const x = p.left - r.left;
+                const y = p.top - r.top;
+                if (
+                    !Number.isFinite(last.x) ||
+                    Math.abs(x - last.x) > 0.5 ||
+                    Math.abs(y - last.y) > 0.5
+                ) {
+                    last = { x, y };
+                    setOrigin({ x, y });
+                }
+            }
+        };
+        measure();
+        const loop = () => {
+            measure();
+            raf = requestAnimationFrame(loop);
+        };
+        raf = requestAnimationFrame(loop);
+        return () => cancelAnimationFrame(raf);
+    }, []);
+
     if (!pageDimensions) return null;
 
     const widthPx = pageDimensions.width * finalScale;
@@ -113,8 +151,12 @@ export function Ruler({ className, unit: unitProp }: RulerProps = {}) {
 
     return (
         <div
+            ref={rootRef}
             data-editor-ruler="true"
-            className={cn('pointer-events-none absolute inset-0 z-10', className)}
+            // Clip to the canvas viewport so ticks/labels for the off-screen
+            // part of the page (e.g. when zoomed in) never bleed over the
+            // inspector or top bar.
+            className={cn('pointer-events-none absolute inset-0 z-10 overflow-hidden', className)}
         >
             {/* Top ruler: horizontal band that mirrors the page's x extent.
                 Sits above the page area; the canvas gutter (RULER_THICKNESS)
@@ -127,7 +169,7 @@ export function Ruler({ className, unit: unitProp }: RulerProps = {}) {
                 <div
                     className="relative h-full"
                     style={{
-                        marginLeft: RULER_THICKNESS,
+                        marginLeft: origin.x,
                         width: widthPx,
                     }}
                 >
@@ -171,7 +213,7 @@ export function Ruler({ className, unit: unitProp }: RulerProps = {}) {
                 <div
                     className="relative w-full"
                     style={{
-                        marginTop: RULER_THICKNESS,
+                        marginTop: origin.y,
                         height: heightPx,
                     }}
                 >
