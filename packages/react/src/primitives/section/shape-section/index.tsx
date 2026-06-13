@@ -77,10 +77,6 @@ export function ShapeSectionView() {
                 <SectionResizeHandles onResizeStart={handleResizeStart} />
             )}
 
-            {isSelected && (
-                <div className="absolute inset-0 border-2 border-primary border-dashed pointer-events-none z-5" />
-            )}
-
             {!readOnly && (
                 <SectionShapeToolbar
                     section={section}
