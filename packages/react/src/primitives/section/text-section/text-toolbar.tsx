@@ -2,6 +2,7 @@
 
 import type { TextSection } from '@docmosaic/core';
 import { AlignCenter, AlignLeft, AlignRight, Bold, Italic, Minus, Plus } from 'lucide-react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { cn } from '../../../internal/utils';
 import { Button } from '../../../ui/button';
 
@@ -39,10 +40,39 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
         }
     };
 
+    // Float above the box by default (Figma's format bar), but flip below when
+    // the box sits near the top of the canvas and there's no room above —
+    // otherwise the bar would clip into the ruler / top chrome.
+    const toolbarRef = useRef<HTMLDivElement>(null);
+    const [placeBelow, setPlaceBelow] = useState(false);
+    useLayoutEffect(() => {
+        const measure = () => {
+            const el = toolbarRef.current;
+            if (!el) return;
+            // Measure the box (stable), not the toolbar (whose position is what
+            // we are deciding) — measuring the toolbar would oscillate.
+            const box = el.closest('[data-section="true"]');
+            const scroller = el.closest('.overflow-auto');
+            if (!box) return;
+            const boxTop = box.getBoundingClientRect().top;
+            const limit = scroller ? scroller.getBoundingClientRect().top : 0;
+            // ~52px ≈ toolbar height + gap. Flip below when there's no room above.
+            setPlaceBelow(boxTop - limit < 52);
+        };
+        measure();
+        window.addEventListener('resize', measure);
+        return () => window.removeEventListener('resize', measure);
+    }, [section.x, section.y, section.width, section.height, section.fontSize]);
+
     return (
         <div
+            ref={toolbarRef}
             className={cn(
-                'absolute right-2 top-2 z-50 flex items-center gap-1 rounded-lg border border-border bg-card p-1 text-card-foreground shadow-md',
+                // Left-aligned to the box and extending rightward, so a box at
+                // the left edge (the default position) never pushes the toolbar
+                // off-canvas. Sits above the box, or below when there's no room.
+                'absolute left-0 z-50 flex items-center gap-1 whitespace-nowrap rounded-lg border border-border bg-card p-1 text-card-foreground shadow-md',
+                placeBelow ? 'top-full mt-2' : 'bottom-full mb-2',
                 'pointer-events-none opacity-0 transition-opacity group-hover:opacity-100',
                 isSelected && 'opacity-100',
             )}
