@@ -285,36 +285,44 @@ export function reducer(state: State, action: Action): State {
             );
 
         case 'DUPLICATE_SECTION': {
-            const source = action.section;
             const newId = uuidv4();
+            // Duplicating a container frame also clones its children. Read the
+            // frame's geometry from `state` (raw points) rather than from
+            // `action.section` — the latter may carry the canvas-scaled coords a
+            // section view passes — so the cloned frame and its cloned children
+            // are offset in the *same* space and the copy keeps its internal
+            // layout.
+            if (action.section.type === 'frame') {
+                const rawFrame = state.sections.find((s) => s.id === action.section.id);
+                if (!rawFrame) return state;
+                const duplicatedFrame: Section = {
+                    ...rawFrame,
+                    id: newId,
+                    x: rawFrame.x + 20,
+                    y: rawFrame.y + 20,
+                };
+                const childClones: Section[] = state.sections
+                    .filter((s) => s.parentFrameId === rawFrame.id)
+                    .map((child) => ({
+                        ...child,
+                        id: uuidv4(),
+                        x: child.x + 20,
+                        y: child.y + 20,
+                        parentFrameId: newId,
+                    }));
+                return touch(
+                    { ...state, sections: [...state.sections, duplicatedFrame, ...childClones] },
+                    action.now,
+                );
+            }
+            const source = action.section;
             const duplicated: Section = {
                 ...source,
                 id: newId,
                 x: source.x + 20,
                 y: source.y + 20,
             };
-            // Duplicating a container frame also clones its children, re-pointing
-            // them at the new frame and shifting by the same offset so the copied
-            // group keeps its internal layout.
-            const childClones: Section[] =
-                source.type === 'frame'
-                    ? state.sections
-                          .filter((s) => s.parentFrameId === source.id)
-                          .map((child) => ({
-                              ...child,
-                              id: uuidv4(),
-                              x: child.x + 20,
-                              y: child.y + 20,
-                              parentFrameId: newId,
-                          }))
-                    : [];
-            return touch(
-                {
-                    ...state,
-                    sections: [...state.sections, duplicated, ...childClones],
-                },
-                action.now,
-            );
+            return touch({ ...state, sections: [...state.sections, duplicated] }, action.now);
         }
 
         case 'BRING_TO_FRONT': {

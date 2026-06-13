@@ -284,10 +284,45 @@ function buildControlledActions(
             onDocumentChange(
                 touch({
                     ...document,
-                    sections: document.sections.filter((s) => s.id !== sectionId),
+                    // Deleting a container frame fans out to its children —
+                    // mirrors the core reducer's DELETE_SECTION cascade.
+                    sections: document.sections.filter(
+                        (s) => s.id !== sectionId && s.parentFrameId !== sectionId,
+                    ),
                 }),
             ),
         duplicateSection: (section: Section) => {
+            // Duplicating a container frame also clones its children, re-pointed
+            // at the new frame — mirrors the core reducer. Read the frame's
+            // geometry from the document (raw points) so the clone keeps its
+            // internal layout regardless of any canvas-scaled coords on `section`.
+            if (section.type === 'frame') {
+                const rawFrame = document.sections.find((s) => s.id === section.id);
+                if (!rawFrame) return;
+                const newId = createSection({ x: 0, y: 0, page: rawFrame.page }).id;
+                const duplicatedFrame: Section = {
+                    ...rawFrame,
+                    id: newId,
+                    x: rawFrame.x + 20,
+                    y: rawFrame.y + 20,
+                };
+                const childClones: Section[] = document.sections
+                    .filter((s) => s.parentFrameId === rawFrame.id)
+                    .map((child) => ({
+                        ...child,
+                        id: createSection({ x: 0, y: 0, page: child.page }).id,
+                        x: child.x + 20,
+                        y: child.y + 20,
+                        parentFrameId: newId,
+                    }));
+                onDocumentChange(
+                    touch({
+                        ...document,
+                        sections: [...document.sections, duplicatedFrame, ...childClones],
+                    }),
+                );
+                return;
+            }
             const clone = createSection({ x: 0, y: 0, page: section.page });
             const duplicated: Section = {
                 ...section,
