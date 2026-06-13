@@ -161,11 +161,26 @@ export interface ImageSection extends SectionBase {
 export interface TextSection extends SectionBase {
     type: 'text';
     /**
-     * Raw text content. Text is auto-width: it is not word-wrapped, and the
-     * section box hugs the content. Line breaks render only on explicit `\n`;
-     * `width`/`height` are derived from the rendered text, not user-set.
+     * Raw text content. By default text is auto-width: it is not word-wrapped
+     * and the box hugs the content (line breaks only on explicit `\n`). Once
+     * the user drags a side handle, {@link fixedWidth} flips on and the text
+     * wraps to `width`. `height` is always derived from the rendered text.
      */
     text: string;
+    /**
+     * When `true`, `width` is user-set (via a side resize handle) and the text
+     * wraps to it; `height` auto-grows. When unset/`false`, the box is
+     * auto-width and hugs the content. Optional + undefined-as-auto-width keeps
+     * documents authored before resize existed rendering unchanged.
+     */
+    fixedWidth?: boolean;
+    /**
+     * When `true`, `height` is user-set (via a top/bottom/corner handle) so the
+     * box can be taller than its text. The box never shrinks below the content
+     * (text won't clip) and still grows if you type past the set height. When
+     * unset/`false`, `height` hugs the content.
+     */
+    fixedHeight?: boolean;
     /** CSS / PDF font family. Falls back to `helvetica` when unset. */
     fontFamily?: string;
     /** Font size in PDF points. */

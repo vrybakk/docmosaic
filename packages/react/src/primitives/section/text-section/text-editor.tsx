@@ -84,7 +84,9 @@ export function TextEditor({
             onBlur={onEditEnd}
             onDoubleClick={onEditStart}
             className={cn(
-                'w-full h-full outline-none whitespace-pre',
+                'w-full h-full outline-none',
+                // fixedWidth wraps to the box; auto-width grows rightward.
+                section.fixedWidth ? 'whitespace-pre-wrap break-words' : 'whitespace-pre',
                 isEditing ? 'cursor-text' : 'cursor-pointer pointer-events-auto',
             )}
             style={{

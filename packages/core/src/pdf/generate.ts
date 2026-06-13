@@ -311,11 +311,11 @@ function drawImageSection(doc: jsPDF, section: ImageSection): void {
  * @remarks
  * - Font family / weight / style are applied via `setFont`. Unknown fonts
  *   fall back to jspdf's `helvetica` family.
- * - Text is auto-width (Figma-style): it is **not** word-wrapped. Lines break
- *   only on explicit `\n`, so the rendered lines match the on-canvas content
- *   exactly and the section box hugs its text.
- * - Alignment uses jspdf's anchor model, anchored to the measured content
- *   width (the widest line) rather than a stored box width: `left` anchors at
+ * - Default (auto-width, Figma-style): text is **not** word-wrapped; lines
+ *   break only on explicit `\n` and the box hugs its text. When
+ *   `section.fixedWidth` is set, the text wraps to `section.width` instead.
+ * - Alignment uses jspdf's anchor model, anchored to the box width when fixed,
+ *   else to the measured content width (the widest line): `left` anchors at
  *   `x`, `center` at the content midline, `right` at the content's trailing
  *   edge.
  *
@@ -332,18 +332,23 @@ function drawTextSection(doc: jsPDF, section: TextSection): void {
             doc.setTextColor(section.color);
         }
 
-        // Auto-width: break on explicit newlines only (no word-wrap).
-        const lines = (section.text ?? '').split('\n');
+        // fixedWidth: wrap to the user-set box width. Auto-width (default):
+        // break on explicit newlines only (no word-wrap).
+        const lines = section.fixedWidth
+            ? doc.splitTextToSize(section.text ?? '', section.width)
+            : (section.text ?? '').split('\n');
 
         const align: 'left' | 'center' | 'right' = section.align ?? 'left';
-        // Anchor center/right to the widest measured line so alignment matches
-        // the auto-sized canvas box, not the (now content-derived) box width.
-        const maxLineWidth = lines.reduce((max, line) => Math.max(max, doc.getTextWidth(line)), 0);
+        // Anchor center/right to the box width when fixed, else to the widest
+        // measured line so it matches the auto-sized canvas box.
+        const anchorWidth = section.fixedWidth
+            ? section.width
+            : lines.reduce((max: number, line: string) => Math.max(max, doc.getTextWidth(line)), 0);
         const textX =
             align === 'center'
-                ? section.x + maxLineWidth / 2
+                ? section.x + anchorWidth / 2
                 : align === 'right'
-                  ? section.x + maxLineWidth
+                  ? section.x + anchorWidth
                   : section.x;
         // jspdf draws text from the baseline; offset by one line-height so the
         // first line lands inside the section box rather than above it.
