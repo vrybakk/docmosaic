@@ -40,7 +40,7 @@ export default function PdfHeroSection() {
                     START EDITING NOW
                 </CustomLink>
 
-                <div className="flex items-end gap-10 mt-8 -mb-20">
+                <div className="flex items-end justify-center gap-8 mt-10">
                     <div className="relative top-6 w-full p-4 shadow-[0px_0px_8px_0px_#00000026] rounded-[20px] max-w-[450px]">
                         <div className="w-full border-b pb-4 border-docmosaic-black/5 flex justify-between items-center">
                             <div className="flex gap-1.5 rounded-t-xl">
@@ -56,7 +56,7 @@ export default function PdfHeroSection() {
                             </div>
                         </div>
                         <div className="relative aspect-[450/272] w-full overflow-hidden rounded-lg shadow-[0px_2px_18px_rgba(56,29,42,0.12)]">
-                            <EditorCanvas variant="arrange" />
+                            <EditorCanvas variant="arrange" showLabels={false} />
                         </div>
                     </div>
                     <div className="relative max-md:hidden p-2 shadow-[0px_0px_8px_0px_#00000026] rounded-[20px] max-w-[180px]">
@@ -77,7 +77,7 @@ export default function PdfHeroSection() {
                 </div>
             </div>
 
-            <div className="relative -mt-16 md:-mt-24 -rotate-1 scale-[1.01] bg-white pb-6">
+            <div className="relative mt-12 -rotate-1 scale-[1.01] bg-white pb-6">
                 <div
                     className="relative z-0 flex overflow-hidden"
                     style={{ boxShadow: '0px 0px 4px 0px #00000040' }}

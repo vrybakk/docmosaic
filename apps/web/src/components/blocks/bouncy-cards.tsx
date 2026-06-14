@@ -77,7 +77,7 @@ export const BouncyCardsFeatures = () => {
                         key={index}
                         className={cn(
                             'col-span-12 md:col-span-4',
-                            Array.isArray(feature.title) && 'md:col-span-8 max-md:min-h-[480px]',
+                            Array.isArray(feature.title) && 'md:col-span-8',
                             feature.backgroundColor,
                         )}
                     >
@@ -118,13 +118,7 @@ export const BouncyCardsFeatures = () => {
                                 ))}
                             </div>
                         )}
-                        <div
-                            className={cn(
-                                'absolute bottom-0 left-4 right-4 top-36 translate-y-8 rounded-t-[16px] border border-b-0 border-docmosaic-black/10 bg-white shadow-[0px_-6px_24px_-12px_rgba(56,29,42,0.4)] transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg] overflow-hidden',
-                                Array.isArray(feature.title) &&
-                                    'max-md:!top-[300px] max-md:!bottom-4',
-                            )}
-                        >
+                        <div className="absolute bottom-0 left-4 right-4 top-36 hidden translate-y-8 overflow-hidden rounded-t-[16px] border border-b-0 border-docmosaic-black/10 bg-white shadow-[0px_-6px_24px_-12px_rgba(56,29,42,0.4)] transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg] md:block">
                             <EditorCanvas showLabels={false} />
                         </div>
                     </BounceCard>
