@@ -7,8 +7,8 @@ Thanks for your interest in DocMosaic. This file covers everything you need to d
 1. Clone the repo and install dependencies (Bun is required — see `packageManager` in `package.json`):
 
     ```bash
-    git clone https://github.com/vrybakk/doc-mosaic.git
-    cd doc-mosaic
+    git clone https://github.com/vrybakk/docmosaic.git
+    cd docmosaic
     bun install
     ```
 
@@ -86,7 +86,7 @@ Keep the subject under ~72 chars. One concern per commit; if a change touches th
 
 ## Reporting issues
 
-Bug reports and feature requests go to the [issue tracker](https://github.com/vrybakk/doc-mosaic/issues). For bugs, please include reproduction steps, the page size + orientation, and a screenshot of the editor state if relevant.
+Bug reports and feature requests go to the [issue tracker](https://github.com/vrybakk/docmosaic/issues). For bugs, please include reproduction steps, the page size + orientation, and a screenshot of the editor state if relevant.
 
 ## License
 

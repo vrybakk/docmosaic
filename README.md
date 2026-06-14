@@ -95,4 +95,4 @@ MIT — see [LICENSE](LICENSE).
 
 -   [Production](https://docmosaic.com)
 -   [Live demo](https://docmosaic.vercel.app)
--   [Issue tracker](https://github.com/vrybakk/doc-mosaic/issues)
+-   [Issue tracker](https://github.com/vrybakk/docmosaic/issues)
