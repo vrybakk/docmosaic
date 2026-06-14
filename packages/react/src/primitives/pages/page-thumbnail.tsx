@@ -8,9 +8,19 @@ import {
     type PageSize,
 } from '@docmosaic/core';
 import { Trash2 } from 'lucide-react';
+import { useRef } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
 import { useEditorConfig } from '../../context/editor-config';
 import { cn } from '../../internal/utils';
 import { Button } from '../../ui/button';
+
+/** react-dnd item-type for page thumbnails — shared by the drag source and
+ *  drop target so reorder stays touch-capable through the multi-backend. */
+export const PAGE_DRAG_TYPE = 'docmosaic/page-thumbnail';
+
+interface PageDragItem {
+    index: number;
+}
 
 interface PageThumbnailProps {
     /** The page data */
@@ -29,17 +39,12 @@ interface PageThumbnailProps {
     onSelect: () => void;
     /** Callback when the page is deleted */
     onDelete: () => void;
-    /** Drag and drop handlers */
-    dragHandlers: {
-        onDragStart: (e: React.DragEvent) => void;
-        onDragEnd: () => void;
-        onDragOver: (e: React.DragEvent) => void;
-    };
-    /** Visual indicators for drag and drop */
-    dropIndicators?: {
-        isDragOver: boolean;
-        dropPosition: 'top' | 'bottom' | null;
-    };
+    /**
+     * Reorder callback fired when this thumbnail is dragged past another's
+     * hover midpoint — mirrors the LayerList row pattern. Touch-capable via the
+     * editor's react-dnd multi-backend.
+     */
+    onMovePage: (fromIndex: number, toIndex: number) => void;
     /**
      * When `true`, the per-page delete button is hidden and the thumbnail
      * is not `draggable` (so it cannot be reordered). The thumbnail still
@@ -69,7 +74,7 @@ interface PageThumbnailProps {
  *   orientation={document.orientation}
  *   onSelect={() => {}}
  *   onDelete={() => {}}
- *   dragHandlers={{ onDragStart: noop, onDragEnd: noop, onDragOver: noop }}
+ *   onMovePage={(from, to) => {}}
  * />
  * ```
  */
@@ -82,33 +87,58 @@ export function PageThumbnail({
     orientation,
     onSelect,
     onDelete,
-    dragHandlers,
-    dropIndicators,
+    onMovePage,
     readOnly = false,
 }: PageThumbnailProps) {
     const { imageRenderer: Image } = useEditorConfig();
     const pageDimensions = getPageDimensionsWithOrientation(pageSize, orientation);
     const scale = Math.min(220 / pageDimensions.width, 310 / pageDimensions.height);
 
+    const ref = useRef<HTMLDivElement>(null);
+
+    const [{ isDragging }, dragRef] = useDrag<PageDragItem, unknown, { isDragging: boolean }>(
+        () => ({
+            type: PAGE_DRAG_TYPE,
+            item: { index },
+            collect: (monitor) => ({ isDragging: monitor.isDragging() }),
+            canDrag: () => !readOnly,
+        }),
+        [index, readOnly],
+    );
+
+    const [, dropRef] = useDrop<PageDragItem, unknown, unknown>(
+        () => ({
+            accept: PAGE_DRAG_TYPE,
+            hover: (item, monitor) => {
+                if (readOnly || item.index === index) return;
+                const node = ref.current;
+                const offset = monitor.getClientOffset();
+                if (!node || !offset) return;
+                const rect = node.getBoundingClientRect();
+                const middleY = (rect.bottom - rect.top) / 2;
+                const hoverY = offset.y - rect.top;
+                // Only reorder once past the midpoint so rows don't oscillate.
+                if (item.index < index && hoverY < middleY) return;
+                if (item.index > index && hoverY > middleY) return;
+                onMovePage(item.index, index);
+                item.index = index;
+            },
+        }),
+        [index, readOnly, onMovePage],
+    );
+
+    const attach = (node: HTMLDivElement | null) => {
+        ref.current = node;
+        dragRef(dropRef(node));
+    };
+
     return (
-        <div
-            className="relative group"
-            draggable={!readOnly}
-            onDragStart={dragHandlers.onDragStart}
-            onDragEnd={dragHandlers.onDragEnd}
-            onDragOver={dragHandlers.onDragOver}
-        >
+        <div ref={attach} className={cn('relative group', isDragging && 'opacity-50')}>
             <div
                 className={cn(
                     'w-full bg-white rounded-lg shadow cursor-pointer transition-all relative overflow-hidden',
                     isSelected && 'ring-2 ring-secondary',
                     !isSelected && 'hover:ring-2 hover:ring-accent',
-                    dropIndicators?.isDragOver &&
-                        dropIndicators.dropPosition === 'top' &&
-                        'border-t-4 border-secondary',
-                    dropIndicators?.isDragOver &&
-                        dropIndicators.dropPosition === 'bottom' &&
-                        'border-b-4 border-secondary',
                 )}
                 style={{
                     aspectRatio: `${pageDimensions.width} / ${pageDimensions.height}`,
