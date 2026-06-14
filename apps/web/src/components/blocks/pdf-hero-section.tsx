@@ -10,7 +10,7 @@ import { EditorCanvas } from './editor-canvas';
 export default function PdfHeroSection() {
     return (
         <section className="overflow-hidden bg-white">
-            <div className="relative flex flex-col items-center justify-center px-4 md:px-12 pb-10 pt-12 md:pt-20">
+            <div className="relative flex flex-col items-center justify-center px-4 md:px-12 pb-0 pt-12 md:pt-20">
                 {/* <div className="mb-1.5 rounded-full bg-zinc-600">
                     <div className="flex origin-top-left items-center rounded-full  bg-white p-0.5 text-sm transition-transform hover:-rotate-2 shadow-[0px_0px_4px_0px_#00000066]">
                         <span className="rounded-full bg-docmosaic-sage px-2 py-0.5 font-medium text-white">
@@ -40,8 +40,8 @@ export default function PdfHeroSection() {
                     START EDITING NOW
                 </CustomLink>
 
-                <div className="flex items-end justify-center gap-8 mt-6">
-                    <div className="relative top-6 w-full p-4 shadow-[0px_0px_8px_0px_#00000026] rounded-[20px] max-w-[450px]">
+                <div className="flex w-full items-end justify-center gap-8 mt-6">
+                    <div className="relative top-6 z-0 w-full p-4 shadow-[0px_0px_8px_0px_#00000026] rounded-[20px] max-w-[560px]">
                         <div className="w-full border-b pb-4 border-docmosaic-black/5 flex justify-between items-center">
                             <div className="flex gap-1.5 rounded-t-xl">
                                 <div className="h-3 w-3 rounded-full bg-red-500" />
@@ -59,7 +59,7 @@ export default function PdfHeroSection() {
                             <EditorCanvas variant="arrange" showLabels={false} />
                         </div>
                     </div>
-                    <div className="relative max-md:hidden p-2 shadow-[0px_0px_8px_0px_#00000026] rounded-[20px] max-w-[180px]">
+                    <div className="relative z-0 w-full max-md:hidden p-2 shadow-[0px_0px_8px_0px_#00000026] rounded-[20px] max-w-[220px]">
                         <div className="w-full border-b pb-2 border-docmosaic-black/5 flex justify-between items-center">
                             <div className="flex gap-1.5 rounded-t-xl">
                                 <div className="h-3 w-3 rounded-full bg-red-500" />
@@ -77,7 +77,7 @@ export default function PdfHeroSection() {
                 </div>
             </div>
 
-            <div className="relative mt-8 -rotate-1 scale-[1.01] bg-white pb-6">
+            <div className="relative z-10 -mt-[84px] -rotate-1 scale-[1.01] bg-white pb-6">
                 <div
                     className="relative z-0 flex overflow-hidden"
                     style={{ boxShadow: '0px 0px 4px 0px #00000040' }}
