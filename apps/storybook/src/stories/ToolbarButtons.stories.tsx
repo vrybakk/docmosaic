@@ -94,6 +94,22 @@ export const DrawButton: Story = {
     render: () => <Editor.DrawButton />,
 };
 
+/**
+ * `Editor.FrameToolButton` — arms the draw-to-size container-frame tool. While
+ * armed, dragging on an empty part of the page rubber-bands a new frame.
+ */
+export const FrameToolButton: Story = {
+    render: () => <Editor.FrameToolButton />,
+};
+
+/**
+ * `Editor.ImageFrameToolButton` — arms the placeholder/image-mask frame tool,
+ * with a dropdown to pick the slot shape (rect / circle / line).
+ */
+export const ImageFrameToolButton: Story = {
+    render: () => <Editor.ImageFrameToolButton />,
+};
+
 /** `Editor.FileSizeBadge` — projected file size of the current document. */
 export const FileSizeBadge: Story = {
     render: () => <Editor.FileSizeBadge />,

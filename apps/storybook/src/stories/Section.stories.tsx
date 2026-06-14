@@ -4,6 +4,8 @@ import { Editor } from '@docmosaic/react';
 import {
     documentWithCroppedImage,
     documentWithDrawingSection,
+    documentWithFrameSection,
+    documentWithMaskedImage,
     documentWithSections,
     documentWithShapeSection,
     documentWithTextSection,
@@ -290,6 +292,49 @@ export const ImageCropped: Story = {
 export const DrawingEmpty: Story = {
     render: () => (
         <Editor.Root defaultDocument={documentWithDrawingSection([])}>
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/**
+ * Container frame holding two child sections (`parentFrameId`). The frame's
+ * white fill + border render behind its children; moving/deleting the frame
+ * carries them along.
+ */
+export const FrameWithChildren: Story = {
+    render: () => (
+        <Editor.Root defaultDocument={documentWithFrameSection()}>
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Placeholder frame — an image clipped to a circle (`maskShape: 'circle'`). */
+export const ImageMaskCircle: Story = {
+    render: () => (
+        <Editor.Root defaultDocument={documentWithMaskedImage('circle')}>
+            <div style={{ height: '600px', display: 'flex' }}>
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+            </div>
+        </Editor.Root>
+    ),
+};
+
+/** Placeholder frame with a rectangular mask (`maskShape: 'rect'`). */
+export const ImageMaskRect: Story = {
+    render: () => (
+        <Editor.Root defaultDocument={documentWithMaskedImage('rect')}>
             <div style={{ height: '600px', display: 'flex' }}>
                 <Editor.Canvas>
                     <Editor.Section />

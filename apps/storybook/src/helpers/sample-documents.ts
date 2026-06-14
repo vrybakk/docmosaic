@@ -7,6 +7,7 @@ import { createDocument, createPage, createSection } from '@docmosaic/core';
 import type {
     Document,
     DrawingSection,
+    FrameSection,
     ImageSection,
     ShapeKind,
     ShapeSection,
@@ -182,5 +183,61 @@ export function documentWithCroppedImage(): Document {
                 crop: { x: 60, y: 40, width: 200, height: 160 },
             },
         ],
+    };
+}
+
+/**
+ * Document with a container {@link FrameSection} that owns two child sections
+ * (linked by `parentFrameId`). Exercises the frame render + flat-parenting model.
+ */
+export function documentWithFrameSection(): Document {
+    const base = createDocument();
+    const frame = createSection({ type: 'frame', x: 40, y: 40, page: 1 }) as FrameSection;
+    const frameBox: FrameSection = {
+        ...frame,
+        width: 320,
+        height: 220,
+        fill: '#ffffff',
+        stroke: '#e5e5e5',
+    };
+    const child = createSection({ x: 0, y: 0, page: 1 }) as ImageSection;
+    const caption = createSection({ type: 'text', x: 0, y: 0, page: 1 }) as TextSection;
+    return {
+        ...base,
+        sections: [
+            frameBox,
+            {
+                ...child,
+                parentFrameId: frameBox.id,
+                imageUrl: PLACEHOLDER_PNG,
+                x: 60,
+                y: 70,
+                width: 130,
+                height: 100,
+            },
+            {
+                ...caption,
+                parentFrameId: frameBox.id,
+                text: 'Inside the frame',
+                x: 60,
+                y: 190,
+                width: 220,
+                height: 40,
+                fontSize: 18,
+            },
+        ],
+    };
+}
+
+/**
+ * Document with a single placeholder (image-mask) frame on page 1 — an
+ * `ImageSection` whose `maskShape` clips the image to a shape.
+ */
+export function documentWithMaskedImage(maskShape: ShapeKind = 'circle'): Document {
+    const base = createDocument();
+    const section = createSection({ x: 80, y: 80, page: 1 }) as ImageSection;
+    return {
+        ...base,
+        sections: [{ ...section, imageUrl: PLACEHOLDER_PNG, width: 200, height: 200, maskShape }],
     };
 }
