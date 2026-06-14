@@ -1,0 +1,28 @@
+---
+title: Editor.ImageFrameToolButton
+description: Toolbar toggle that arms the draw-to-size placeholder (image-mask) frame tool, with a shape picker.
+---
+
+Toolbar toggle that arms the draw-to-size **placeholder-frame** tool — a Canva-style shaped image slot. While armed, dragging on the page rubber-bands a new image section whose image is clipped to the chosen `maskShape` (`rect` / `circle` / `line`); the adjacent dropdown switches the shape. Drop or upload an image to fill the slot. Mutually exclusive with the frame, shape, and drawing tools.
+
+<StorybookEmbed id="editor-image-frame-tool-button--default" />
+
+## Usage
+
+```tsx
+import { Editor } from '@docmosaic/react';
+
+<Editor.Root>
+    <Editor.ImageFrameToolButton />
+</Editor.Root>;
+```
+
+## API Reference
+
+<PropTable name="ImageFrameToolButton" />
+
+## Related
+
+-   [Frames](/docs/concepts/frames) — placeholder vs. container frames
+-   [Editor.FrameToolButton](/docs/primitives/frame-tool-button) — container frames
+-   [Root](/docs/primitives/root) — the orchestrator

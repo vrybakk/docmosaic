@@ -5,19 +5,17 @@ description: Release history for @docmosaic/react and @docmosaic/core.
 
 The packages follow [semver](https://semver.org/). Breaking changes ship in majors; new primitives ship in minors; bug fixes ship in patches.
 
-## Unreleased — Frames
+## 2.0.0 · core 1.1.0
 
-Additive in both packages; existing documents and APIs are unchanged.
+Ships two things together: the breaking `@docmosaic/react` token migration (major) and the additive **Frames** feature (minor in both packages).
+
+**Frames (additive, both packages — existing documents and APIs are unchanged):**
 
 -   **Container frames** — a new `FrameSection` (`type: 'frame'`) box that owns child sections. `@docmosaic/react` gains `Editor.FrameToolButton` (draw-to-size), drag-to-adopt, move-with-children, and a delete/duplicate cascade. Frames draw behind their children.
 -   **Placeholder frames** — `ImageSection.maskShape` (`'rect' | 'circle' | 'line'`) clips an image to a shape; `Editor.ImageFrameToolButton` draws Canva-style shaped image slots.
--   **`@docmosaic/core`** — new `FrameSection` type, optional `SectionBase.parentFrameId` / `ImageSection.maskShape`, and the helpers `resolveFrameParent` + `orderSectionsForRender` (the shared back-to-front render sort).
+-   **`@docmosaic/core` (1.1.0)** — new `FrameSection` type, optional `SectionBase.parentFrameId` / `ImageSection.maskShape`, and the helpers `resolveFrameParent` + `orderSectionsForRender` (the shared back-to-front render sort).
 
-## 2.0.0
-
-`@docmosaic/react` only — `@docmosaic/core` is unchanged.
-
-Removes the legacy `editor-*` Tailwind color classes from the primitives and deletes the `--editor-color-*` CSS aliases from both bundled themes. Everything now reads the shadcn-aligned semantic surface directly (`bg-editor-accent` → `bg-primary`, `var(--editor-color-success)` → `var(--accent)`). The structural tokens (`rounded-editor-section`, `shadow-editor-section`, `--editor-radius-section`, `--editor-shadow-section`) are kept. One accepted visual change under the `minimal-light` theme: the page-thumbnail hover ring shifts from green-600 to the theme accent. See the [v2.0 migration guide](/docs/migration/v2) for the full class/variable mapping and codemods.
+**Breaking token migration (`@docmosaic/react`):** removes the legacy `editor-*` Tailwind color classes from the primitives and deletes the `--editor-color-*` CSS aliases from both bundled themes. Everything now reads the shadcn-aligned semantic surface directly (`bg-editor-accent` → `bg-primary`, `var(--editor-color-success)` → `var(--accent)`). The structural tokens (`rounded-editor-section`, `shadow-editor-section`, `--editor-radius-section`, `--editor-shadow-section`) are kept. One accepted visual change under the `minimal-light` theme: the page-thumbnail hover ring shifts from green-600 to the theme accent. See the [v2.0 migration guide](/docs/migration/v2) for the full class/variable mapping and codemods.
 
 ## 1.0.0
 

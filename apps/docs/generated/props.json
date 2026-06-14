@@ -362,7 +362,7 @@
             "type": "number | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Maximum size for the minimap thumbnail (CSS pixels). The thumbnail preserves the page aspect ratio so the actual dimensions are at most `maxSize` on the longer axis. Defaults to `200`."
+            "description": "Maximum size for the minimap thumbnail (CSS pixels). The thumbnail preserves the page aspect ratio so the actual dimensions are at most `maxSize` on the longer axis. Defaults to `72` — a small peripheral tile rather than a large preview."
         }
     ],
     "Zoom": [
@@ -446,6 +446,13 @@
             "required": true,
             "defaultValue": null,
             "description": "Reorder callback fired when a row is dragged over another row's hover midpoint, mirroring the Pages primitive's behavior."
+        },
+        {
+            "name": "onRename",
+            "type": "(name: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Commit a new layer name (empty string clears it back to the derived label)."
         }
     ],
     "LayerRow": [
@@ -504,6 +511,13 @@
             "required": true,
             "defaultValue": null,
             "description": "Reorder callback fired when a row is dragged over another row's hover midpoint, mirroring the Pages primitive's behavior."
+        },
+        {
+            "name": "onRename",
+            "type": "(name: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Commit a new layer name (empty string clears it back to the derived label)."
         }
     ],
     "SectionShapeToolbar": [
@@ -538,6 +552,29 @@
             "description": ""
         }
     ],
+    "SectionFrameToolbar": [
+        {
+            "name": "section",
+            "type": "FrameSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onUpdate",
+            "type": "(next: Partial<FrameSection>) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
     "TextEditor": [
         {
             "name": "section",
@@ -552,6 +589,13 @@
             "required": true,
             "defaultValue": null,
             "description": ""
+        },
+        {
+            "name": "scale",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Canvas display scale (pageScale * zoom). The stored font size is in points; multiply by this so the rendered text tracks the scaled box."
         },
         {
             "name": "onTextChange",
@@ -674,6 +718,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Group drag hook (Phase 16). When provided and `groupDrag.size > 1`, the section's individual `onUpdate` is bypassed in favour of `groupDrag.onMove(dx, dy)` so the whole selection translates together. Coordinates are in canvas display pixels (matching the input movement), so the receiver converts to PDF points itself."
+        },
+        {
+            "name": "onDragEnd",
+            "type": "(() => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Fired once when a drag gesture ends (pointer up). Used for frame adoption: the section view recomputes whether the dropped section now sits inside a container frame. No-op while resizing or read-only."
         }
     ],
     "useImageUpload": [
@@ -1003,6 +1054,359 @@
             "required": false,
             "defaultValue": null,
             "description": "Override the displayed label. Defaults to \"Add Rectangle/Circle/Line\"."
+        },
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "FrameToolButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle (tool-off) icon-only variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the active (tool-armed) icon-only variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while the tool is armed."
+        }
+    ],
+    "PreviewButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'white'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "PrintButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'cream'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "ImageFrameToolButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle (not-armed) variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the armed variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the toggle button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the toggle button while the tool is armed."
+        }
+    ],
+    "DownloadButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only pair — a download glyph plus a tiny menu chevron — instead of the wide labeled \"Download PDF\" split button. Used in the app-shell top bar's monochrome icon cluster."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'sage'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto each icon-only button."
+        }
+    ],
+    "ShapeToolButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle (not-armed) variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the armed (drawing) variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the toggle button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the toggle button while the tool is armed."
+        }
+    ],
+    "AddImageButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "SelectToolButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle icon-only variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the active (selection-mode) icon-only variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while selection mode is active."
+        }
+    ],
+    "RedoButton": [
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the button variant. Defaults to `'white'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the button."
+        }
+    ],
+    "AddTextButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "UndoButton": [
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the button variant. Defaults to `'white'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the button."
+        }
+    ],
+    "DrawButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle (not-drawing) icon-only variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the active (drawing) icon-only variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while drawing is active."
         }
     ],
     "PropertiesPanel": [
@@ -1173,6 +1577,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Force the canvas into read-only mode regardless of the root's `readOnly` flag. Defaults to `false`. The effective read-only state is `root.readOnly || canvas.readOnly` — either one is enough to suppress drag, resize, drop, file upload, and section-toolbar buttons. Set automatically by Editor.StaticCanvas."
+        },
+        {
+            "name": "showControls",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the built-in top-right `CanvasControls` zoom strip. Defaults to `true`. Set `false` when the surrounding layout supplies its own zoom widget (e.g. the app-shell mounts a single bottom-center `Editor.Zoom`) so there is exactly one zoom control on the canvas."
         }
     ],
     "StaticCanvas": [
@@ -1182,6 +1593,36 @@
             "required": false,
             "defaultValue": null,
             "description": "Two kinds of children are supported: 1. **Section template** — a single non-overlay child rendered once per section. Pass `<Editor.Section />` (or a custom section component that consumes useEditorSection) to control how each section is rendered. Defaults to the bundled `<Section />` when omitted. 2. **Canvas overlays** — primitives that opt in via the `__editorCanvasOverlay` marker (e.g. Editor.Zoom). These are rendered once, anchored to the canvas viewport, and have access to useEditorCanvas via context. Any number can be supplied alongside the section template."
+        },
+        {
+            "name": "showControls",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the built-in top-right `CanvasControls` zoom strip. Defaults to `true`. Set `false` when the surrounding layout supplies its own zoom widget (e.g. the app-shell mounts a single bottom-center `Editor.Zoom`) so there is exactly one zoom control on the canvas."
+        }
+    ],
+    "ShapeDraftPreview": [
+        {
+            "name": "kind",
+            "type": "enum",
+            "required": true,
+            "defaultValue": null,
+            "description": "Which primitive the armed shape tool will create."
+        },
+        {
+            "name": "width",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Draft box size in display pixels (used only for the SVG viewBox aspect)."
+        },
+        {
+            "name": "height",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
         }
     ],
     "useCanvasZoom": [
@@ -1290,6 +1731,22 @@
             "required": false,
             "defaultValue": null,
             "description": "When true, expands the trigger to fill its container (mobile sheet)."
+        }
+    ],
+    "DocumentName": [
+        {
+            "name": "asTitle",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Hide the trailing pencil affordance and tighten the input so the name reads as a plain title. Used by the app-shell top bar, where the name sits between a menu glyph and a chevron rather than in a labeled field. Defaults to `false`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the input."
         }
     ],
     "OrientationSelect": [
@@ -1407,6 +1864,55 @@
     ],
     "Root": [
         {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra nodes mounted **after** the default app-shell — custom dialogs, an extra toaster, analytics bridges, etc. The shell renders the full editor on its own, so children are purely additive overlays. Omit for the canonical `<Editor.Root />` usage."
+        },
+        {
+            "name": "themeToggle",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Theme-toggle slot rendered in the top-bar right group. The package never imports `next-themes`; the host app injects a ready-made toggle node here. Renders nothing when omitted."
+        },
+        {
+            "name": "showLeftRail",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the left rail (tool palette + Pages + Layers). Defaults to `true`."
+        },
+        {
+            "name": "showToolPalette",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the tool palette inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showPages",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the \"Pages\" section inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showLayers",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the \"Layers\" section inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showInspector",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the right inspector panel. Defaults to `true`."
+        },
+        {
             "name": "pdf",
             "type": "Partial<EditorPdfBackend> | undefined",
             "required": false,
@@ -1507,6 +2013,147 @@
             "description": "When `true`, the swatches and custom-color trigger become non-interactive and visually dim. The current `value` still shows so the swatch remains a label for the actively-selected color."
         }
     ],
+    "EditorShell": [
+        {
+            "name": "themeToggle",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Host-injected theme toggle node rendered in the top-bar right group."
+        },
+        {
+            "name": "showLeftRail",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the left rail (tool palette + Pages + Layers). Defaults to `true`."
+        },
+        {
+            "name": "showToolPalette",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the tool palette inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showPages",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the \"Pages\" section inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showLayers",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the \"Layers\" section inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showInspector",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the right inspector panel. Defaults to `true`."
+        },
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra nodes rendered after the shell — custom dialogs, toasters, or other overlays passed through `Editor.Root`'s `children`."
+        }
+    ],
+    "LeftRail": [
+        {
+            "name": "showToolPalette",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Render the add/draw tool palette above the panels. Defaults to `true`."
+        },
+        {
+            "name": "showPages",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Render the collapsible \"Pages\" section. Defaults to `true`."
+        },
+        {
+            "name": "showLayers",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Render the collapsible \"Layers\" section. Defaults to `true`."
+        }
+    ],
+    "CollapsibleSection": [
+        {
+            "name": "label",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": "Small uppercase muted label shown in the section header."
+        },
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "Section body, revealed while expanded."
+        },
+        {
+            "name": "defaultOpen",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Start expanded. Defaults to `true`."
+        },
+        {
+            "name": "bodyClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes for the body wrapper."
+        }
+    ],
+    "TopBar": [
+        {
+            "name": "themeToggle",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Host-injected theme toggle node. The package never imports `next-themes`; the app passes a ready-made toggle in. Renders nothing when omitted."
+        },
+        {
+            "name": "onToggleLeftRail",
+            "type": "(() => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Toggle the left rail's collapsed state. Omit to hide the toggle."
+        },
+        {
+            "name": "leftRailCollapsed",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the left rail is currently collapsed (drives the toggle label)."
+        },
+        {
+            "name": "onToggleInspector",
+            "type": "(() => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Toggle the inspector's collapsed state. Omit to hide the toggle."
+        },
+        {
+            "name": "inspectorCollapsed",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the inspector is currently collapsed."
+        }
+    ],
     "Guides": [
         {
             "name": "className",
@@ -1514,6 +2161,15 @@
             "required": false,
             "defaultValue": null,
             "description": "Optional extra className applied to the overlay container."
+        }
+    ],
+    "Pages": [
+        {
+            "name": "bare",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Compact rail mode: render only the thumbnail strip plus a single \"Add page\" affordance — no internal \"Pages\" header, \"Last modified\" footer, or \"Add Image\" button. Used inside the app-shell left rail, where those concerns live elsewhere. Defaults to `false` (standalone sidebar)."
         }
     ],
     "PageThumbnail": [

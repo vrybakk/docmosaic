@@ -1,0 +1,60 @@
+---
+title: Frames & image slots
+description: Group elements with container frames and drop photos into Canva-style shaped image slots.
+tags: [frames, layout]
+---
+
+DocMosaic ships two "frame" tools. `Editor.FrameToolButton` draws a **container frame** — a box that owns whatever you drop inside it, so the group moves, duplicates, and deletes as one unit and the frame's fill/border sits behind its children. `Editor.ImageFrameToolButton` draws a **placeholder frame** — a shaped image slot (rectangle, circle, or line) you fill by dropping a photo, the same pattern Canva uses for layouts.
+
+Use container frames to build cards, panels, and repeatable layout blocks; use placeholder frames for avatars, badges, and shaped photo grids.
+
+## Code
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+export default function FramesEditor() {
+    return (
+        <Editor.Root>
+            <Editor.Properties />
+            <Editor.Toolbar>
+                <Editor.UndoButton />
+                <Editor.RedoButton />
+                <Editor.AddImageButton />
+                <Editor.AddTextButton />
+                <Editor.FrameToolButton />
+                <Editor.ImageFrameToolButton />
+                <Editor.DownloadButton />
+            </Editor.Toolbar>
+            <Editor.Pages />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
+}
+```
+
+Arm `Editor.FrameToolButton` and drag to place a frame, then drop images or text inside it — each becomes a child (`parentFrameId`). Drag the frame and its contents follow; delete it and they go too. Give the frame a fill or border from its floating toolbar and it renders behind its children.
+
+Arm `Editor.ImageFrameToolButton`, pick a shape from its dropdown, and drag to place a slot. Drop a photo in and it's clipped to the shape — swap it any time.
+
+<Callout type="info">
+    Both features are additive and optional. A frame with a transparent fill and border is a pure
+    grouping box that leaves no trace in the exported PDF; an image without a `maskShape` renders
+    exactly as a normal image. See the [Frames concept](/docs/concepts/frames) for the model.
+</Callout>
+
+## Try it
+
+<StorybookEmbed id="editor-toolbar-buttons--frame-tool-button" />
+
+## Related
+
+-   [Frames](/docs/concepts/frames) — container vs. placeholder frames
+-   [Editor.FrameToolButton](/docs/primitives/frame-tool-button)
+-   [Editor.ImageFrameToolButton](/docs/primitives/image-frame-tool-button)

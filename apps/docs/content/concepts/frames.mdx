@@ -1,0 +1,80 @@
+---
+title: Frames
+description: Container frames that group sections, and placeholder (image-mask) frames that clip an image to a shape.
+---
+
+"Frame" covers two distinct, additive features that share a name. Both are optional — documents authored before frames existed load and render unchanged.
+
+-   **Container frames** group other sections into a movable unit with an optional background.
+-   **Placeholder frames** are shaped image slots — an image clipped to a rectangle, circle, or line.
+
+Pages are unchanged by either: a frame lives _on_ a page, and each page still exports to exactly one PDF page.
+
+## Container frames
+
+A container frame is a `FrameSection` (`type: 'frame'`) — a box that **owns** other sections. It draws an optional `fill`, `stroke`, and `radius`, and everything dropped inside it becomes a child.
+
+```ts
+import type { FrameSection } from '@docmosaic/core';
+
+const frame: FrameSection = {
+    id: 'card',
+    type: 'frame',
+    x: 40,
+    y: 40,
+    width: 300,
+    height: 200,
+    page: 1,
+    zIndex: 0,
+    fill: '#ffffff', // 'transparent' (default) → invisible grouping box
+    stroke: '#e5e5e5', // 'transparent' (default) → no border
+    radius: 8, // corner radius in points; default 0
+};
+```
+
+### Parenting is flat
+
+Children are **not** nested under the frame. They stay in the same flat `Document.sections` array and link back to their frame by a single `parentFrameId` field. This keeps the tree flat (the [document-model](/docs/concepts/document-model) design choice) while still letting a frame behave as a unit:
+
+-   **Adopt on drop** — dragging a section so its center lands inside a frame stamps `parentFrameId`; dragging it back out clears it. The pure rule is `resolveFrameParent(section, sections)` from `@docmosaic/core`.
+-   **Move with children** — dragging the frame translates every child with it.
+-   **Cascade** — deleting a frame deletes its children; duplicating a frame clones its children, re-pointed at the new frame.
+
+### Frames render behind their children
+
+A container frame is a backdrop, so it must paint **behind** the sections it holds. Render order is `zIndex` ascending, then **frames before non-frames** at equal `zIndex`, then array order — the shared `orderSectionsForRender` helper that the canvas, the PDF generator, and the PNG generator all use. A filled or bordered frame therefore never covers its contents, regardless of the order sections were added. See [Layers](/docs/concepts/layers).
+
+### The tool
+
+`Editor.FrameToolButton` arms a draw-to-size tool: while armed, dragging on an empty part of the page rubber-bands a new frame at that size. Press `Escape` or pick the Select tool to disarm. It is mutually exclusive with the shape, image-frame, and drawing tools.
+
+## Placeholder frames
+
+A placeholder frame is an `ImageSection` with a `maskShape`:
+
+```ts
+import type { ImageSection } from '@docmosaic/core';
+
+const slot: ImageSection = {
+    id: 'avatar',
+    type: 'image',
+    x: 40,
+    y: 40,
+    width: 120,
+    height: 120,
+    page: 1,
+    zIndex: 0,
+    maskShape: 'circle', // 'rect' | 'circle' | 'line'
+    // imageUrl is filled in when the user drops/uploads an image
+};
+```
+
+When `maskShape` is set the image is clipped to the shape on render — a `circle` clips to the inscribed ellipse in both the PDF and PNG pipelines. An empty slot (no `imageUrl`) shows the upload placeholder; drop or pick an image to fill it, and swap it any time. The mask composes with the existing non-destructive [crop](/docs/concepts/document-model). Without `maskShape`, an image takes the unchanged, byte-stable draw path.
+
+`Editor.ImageFrameToolButton` arms the matching draw-to-size tool, with a dropdown to pick the slot shape.
+
+## See also
+
+-   [Document model](/docs/concepts/document-model) — where `parentFrameId` and `maskShape` live
+-   [Layers](/docs/concepts/layers) — the shared render order and `orderSectionsForRender`
+-   [Editor.FrameToolButton](/docs/primitives/frame-tool-button) · [Editor.ImageFrameToolButton](/docs/primitives/image-frame-tool-button)
