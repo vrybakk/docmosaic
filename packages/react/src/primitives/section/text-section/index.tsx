@@ -140,7 +140,9 @@ export function TextSectionView() {
                 actions.updateSection({ ...rawSection, text });
                 return;
             }
-            const height = rawSection.fixedHeight ? Math.max(m.height, rawSection.height) : m.height;
+            const height = rawSection.fixedHeight
+                ? Math.max(m.height, rawSection.height)
+                : m.height;
             actions.updateSection({ ...rawSection, text, width: m.width, height });
         },
         [actions, rawSection, measureRaw],

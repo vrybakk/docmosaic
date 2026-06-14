@@ -71,7 +71,10 @@ export function TopBar({
                         onClick={onToggleLeftRail}
                         aria-label={leftRailCollapsed ? 'Show left sidebar' : 'Hide left sidebar'}
                         title={leftRailCollapsed ? 'Show left sidebar' : 'Hide left sidebar'}
-                        className={cn(ACTION_BUTTON_CLASS, 'inline-flex items-center justify-center')}
+                        className={cn(
+                            ACTION_BUTTON_CLASS,
+                            'inline-flex items-center justify-center',
+                        )}
                     >
                         <PanelLeft className="h-4 w-4" />
                     </button>

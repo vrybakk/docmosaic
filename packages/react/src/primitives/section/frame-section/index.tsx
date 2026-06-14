@@ -19,8 +19,16 @@ import { SectionFrameToolbar } from './section-frame-toolbar';
 export function FrameSectionView() {
     const editor = useEditorSection();
     const section = editor.section as FrameSectionData;
-    const { isSelected, onClick, onUpdate, onDuplicate, onDelete, groupDrag, finalScale, readOnly } =
-        editor;
+    const {
+        isSelected,
+        onClick,
+        onUpdate,
+        onDuplicate,
+        onDelete,
+        groupDrag,
+        finalScale,
+        readOnly,
+    } = editor;
     const { state, actions } = useEditor();
     const frameId = editor.rawSection.id;
     // No image element for a frame; provide a stable empty ref so the resize

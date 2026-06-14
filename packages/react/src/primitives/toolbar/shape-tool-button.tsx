@@ -54,7 +54,9 @@ export function ShapeToolButton({
     const armed = shapeTool !== null;
     const activeKind = shapeTool ?? lastKind;
     const { Icon, label } = KINDS.find((k) => k.value === activeKind) ?? KINDS[0];
-    const toggleLabel = armed ? `Stop drawing ${label.toLowerCase()}` : `Draw ${label.toLowerCase()}`;
+    const toggleLabel = armed
+        ? `Stop drawing ${label.toLowerCase()}`
+        : `Draw ${label.toLowerCase()}`;
 
     const toggle = () => {
         if (armed) {

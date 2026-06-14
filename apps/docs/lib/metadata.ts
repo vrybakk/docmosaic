@@ -104,7 +104,9 @@ export function createMetadata(input: CreateMetadataInput = {}): Metadata {
             siteName: siteConfig.docsName,
             locale: 'en_US',
             type,
-            images: [{ url: image.url, width: image.width, height: image.height, alt: resolvedTitle }],
+            images: [
+                { url: image.url, width: image.width, height: image.height, alt: resolvedTitle },
+            ],
         },
         twitter: {
             card: 'summary_large_image',

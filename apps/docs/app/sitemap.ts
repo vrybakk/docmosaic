@@ -12,8 +12,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: page.url === '/docs/get-started/introduction' ? 0.9 : 0.7,
     }));
 
-    return [
-        { url: siteConfig.url, lastModified, changeFrequency: 'weekly', priority: 1 },
-        ...docs,
-    ];
+    return [{ url: siteConfig.url, lastModified, changeFrequency: 'weekly', priority: 1 }, ...docs];
 }

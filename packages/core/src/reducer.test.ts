@@ -252,7 +252,11 @@ describe('reducer', () => {
             sections: [frame, childA, childB, loose] as Section[],
         });
 
-        const next = reducer(state, { type: 'DELETE_SECTION', sectionId: 'frame-1', now: FIXED_NOW });
+        const next = reducer(state, {
+            type: 'DELETE_SECTION',
+            sectionId: 'frame-1',
+            now: FIXED_NOW,
+        });
 
         expect(next.sections.map((s) => s.id)).toEqual(['loose']);
     });

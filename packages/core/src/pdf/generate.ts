@@ -292,7 +292,9 @@ function drawImageSection(doc: jsPDF, section: ImageSection): void {
     if (circleMask) {
         const cx = section.x + section.width / 2;
         const cy = section.y + section.height / 2;
-        doc.ellipse(cx, cy, section.width / 2, section.height / 2).clip().discardPath();
+        doc.ellipse(cx, cy, section.width / 2, section.height / 2)
+            .clip()
+            .discardPath();
     } else {
         doc.rect(section.x, section.y, section.width, section.height).clip().discardPath();
     }

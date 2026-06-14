@@ -37,7 +37,8 @@ function setup() {
         ...utils,
         get: () => editor,
         clickFrame: () => clickLabel((l) => l === 'Frame' || l === 'Cancel Frame'),
-        clickImageFrame: () => clickLabel((l) => l.startsWith('Image frame') || l === 'Cancel image frame'),
+        clickImageFrame: () =>
+            clickLabel((l) => l.startsWith('Image frame') || l === 'Cancel image frame'),
         clickSelect: () => clickLabel((l) => l === 'Select'),
         clickShape: () => clickLabel((l) => /^Draw /.test(l) && !l.includes('frame')),
     };

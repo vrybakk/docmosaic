@@ -25,7 +25,8 @@ import type { EditorShellProps } from './index';
 import { TopBar } from './top-bar';
 
 /** Finger-friendly tool button — 40px, ghost at rest, accent-filled when armed. */
-const TOOL = 'h-10 w-10 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground';
+const TOOL =
+    'h-10 w-10 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground';
 const TOOL_ACTIVE =
     'h-10 w-10 shrink-0 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary hover:text-secondary-foreground';
 

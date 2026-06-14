@@ -39,7 +39,13 @@ export function ShapeDraftPreview({ kind, width, height }: ShapeDraftPreviewProp
             aria-hidden="true"
         >
             {kind === 'rect' && (
-                <rect x={1} y={1} width={Math.max(0, w - 2)} height={Math.max(0, h - 2)} {...common} />
+                <rect
+                    x={1}
+                    y={1}
+                    width={Math.max(0, w - 2)}
+                    height={Math.max(0, h - 2)}
+                    {...common}
+                />
             )}
             {kind === 'circle' && (
                 <ellipse

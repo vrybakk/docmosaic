@@ -8,7 +8,15 @@ type Tweak = { page?: number; zIndex?: number; width?: number; height?: number }
 
 /** A 200×200 frame anchored at (x, y) on `page`. */
 function frame(id: string, x: number, y: number, extra: Tweak = {}): Section {
-    return { ...createSection({ type: 'frame', page: 1 }), id, x, y, width: 200, height: 200, ...extra };
+    return {
+        ...createSection({ type: 'frame', page: 1 }),
+        id,
+        x,
+        y,
+        width: 200,
+        height: 200,
+        ...extra,
+    };
 }
 
 /** A 40×40 box at (x, y) whose center is what containment is tested against. */
