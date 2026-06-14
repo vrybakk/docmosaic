@@ -1,5 +1,10 @@
 # DocMosaic
 
+[![@docmosaic/react on npm](https://img.shields.io/npm/v/@docmosaic/react?label=%40docmosaic%2Freact)](https://www.npmjs.com/package/@docmosaic/react)
+[![@docmosaic/core on npm](https://img.shields.io/npm/v/@docmosaic/core?label=%40docmosaic%2Fcore)](https://www.npmjs.com/package/@docmosaic/core)
+[![License: MIT](https://img.shields.io/npm/l/@docmosaic/react)](LICENSE)
+[![CI](https://github.com/vrybakk/docmosaic/actions/workflows/ci.yml/badge.svg)](https://github.com/vrybakk/docmosaic/actions/workflows/ci.yml)
+
 DocMosaic is an open-source, fully client-side PDF builder. Users drop images into rectangular sections on a virtual page; the whole document model lives in React state and renders to a PDF in the browser via `jspdf`. No backend, no uploads — privacy is a product promise, not a side effect.
 
 This repository is the monorepo. It contains the reusable libraries plus the reference Next.js app that runs at [docmosaic.com](https://docmosaic.com).
