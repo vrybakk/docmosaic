@@ -33,7 +33,7 @@ interface UseSectionResizeArgs {
 interface UseSectionResizeResult {
     isResizing: boolean;
     activeHandle: ResizeHandle | null;
-    handleResizeStart: (e: React.MouseEvent, handle: ResizeHandle) => void;
+    handleResizeStart: (e: React.PointerEvent, handle: ResizeHandle) => void;
     handleResizeToProportion: () => void;
 }
 
@@ -165,7 +165,10 @@ export function useSectionResize({
         }
     }, [section, onUpdate, imageRef]);
 
-    const handleResizeStart = (e: React.MouseEvent, handle: ResizeHandle) => {
+    const handleResizeStart = (e: React.PointerEvent, handle: ResizeHandle) => {
+        // Only react to the primary pointer (left mouse / first finger); ignore
+        // secondary touches so a second finger doesn't restart the resize.
+        if (!e.isPrimary) return;
         e.preventDefault();
         e.stopPropagation();
 
@@ -187,7 +190,7 @@ export function useSectionResize({
         };
         resizeStart.current = startData;
 
-        const handleMouseMove = (ev: MouseEvent) => {
+        const handlePointerMove = (ev: PointerEvent) => {
             ev.preventDefault();
             ev.stopPropagation();
 
@@ -204,20 +207,28 @@ export function useSectionResize({
             });
         };
 
-        const handleMouseUp = (ev: MouseEvent) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-
+        const cleanup = () => {
             setIsResizing(false);
             setActiveHandle(null);
             resizeStart.current = null;
 
-            window.removeEventListener('mousemove', handleMouseMove, { capture: true });
-            window.removeEventListener('mouseup', handleMouseUp, { capture: true });
+            window.removeEventListener('pointermove', handlePointerMove, { capture: true });
+            window.removeEventListener('pointerup', handlePointerEnd, { capture: true });
+            window.removeEventListener('pointercancel', handlePointerEnd, { capture: true });
         };
 
-        window.addEventListener('mousemove', handleMouseMove, { capture: true });
-        window.addEventListener('mouseup', handleMouseUp, { capture: true });
+        const handlePointerEnd = (ev: PointerEvent) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            cleanup();
+        };
+
+        // Pointer events unify mouse, touch, and pen — resize now works by
+        // finger. `pointercancel` covers OS gesture interrupts so the drag
+        // state never orphans on touch.
+        window.addEventListener('pointermove', handlePointerMove, { capture: true });
+        window.addEventListener('pointerup', handlePointerEnd, { capture: true });
+        window.addEventListener('pointercancel', handlePointerEnd, { capture: true });
     };
 
     return { isResizing, activeHandle, handleResizeStart, handleResizeToProportion };

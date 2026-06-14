@@ -120,7 +120,7 @@ export function SectionCropOverlay({
                 onPointerDown={onStartMove}
                 className={cn(
                     'absolute border-2 border-primary',
-                    'cursor-move pointer-events-auto',
+                    'cursor-move pointer-events-auto touch-none',
                 )}
                 style={{
                     left: cropX,
@@ -156,7 +156,7 @@ export function SectionCropOverlay({
                         key={handle}
                         data-crop-handle={handle}
                         onPointerDown={(e) => onStartResize(e, handle)}
-                        className="absolute w-3 h-3 bg-white border-2 border-primary rounded-sm pointer-events-auto"
+                        className="absolute w-3 h-3 bg-white border-2 border-primary rounded-sm pointer-events-auto touch-none"
                         style={{ ...style, cursor }}
                     />
                 ))}
