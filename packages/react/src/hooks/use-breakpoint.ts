@@ -28,6 +28,10 @@ export interface BreakpointState {
  * `mobile` < 640px ≤ `tablet` < 1024px ≤ `desktop`.
  */
 export function useBreakpoint(): BreakpointState {
+    // Always start at `desktop` so the server pass and the first client render
+    // agree (no hydration mismatch), then correct to the real breakpoint in the
+    // mount effect. On a phone that means one frame of the desktop shell before
+    // the mobile layout swaps in — an acceptable trade for SSR safety.
     const [breakpoint, setBreakpoint] = useState<Breakpoint>('desktop');
 
     useEffect(() => {

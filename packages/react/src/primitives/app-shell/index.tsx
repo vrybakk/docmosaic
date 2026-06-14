@@ -7,6 +7,7 @@ import {
     PanelResizeHandle,
     type ImperativePanelHandle,
 } from 'react-resizable-panels';
+import { useBreakpoint } from '../../hooks/use-breakpoint';
 import { cn } from '../../internal/utils';
 import { Canvas } from '../canvas';
 import { ContextMenu } from '../context-menu';
@@ -17,6 +18,7 @@ import { Toaster } from '../toaster';
 import { Zoom } from '../zoom';
 import { Inspector } from './inspector';
 import { LeftRail } from './left-rail';
+import { MobileEditorShell } from './mobile-shell';
 import { TopBar } from './top-bar';
 
 export interface EditorShellProps {
@@ -72,6 +74,7 @@ export function EditorShell({
     showInspector = true,
     children,
 }: EditorShellProps) {
+    const { isDesktop } = useBreakpoint();
     const leftPanelRef = useRef<ImperativePanelHandle>(null);
     const inspectorPanelRef = useRef<ImperativePanelHandle>(null);
     const [leftCollapsed, setLeftCollapsed] = useState(false);
@@ -82,6 +85,23 @@ export function EditorShell({
         if (panel.isCollapsed()) panel.expand();
         else panel.collapse();
     };
+
+    // Below the desktop breakpoint the resizable three-pane layout can't breathe;
+    // hand off to the touch-first mobile shell (full-bleed canvas, bottom tool
+    // bar, slide-up panel sheets). `showLeftRail` gates the rail-derived panels.
+    if (!isDesktop) {
+        return (
+            <MobileEditorShell
+                themeToggle={themeToggle}
+                showToolPalette={showLeftRail && showToolPalette}
+                showPages={showLeftRail && showPages}
+                showLayers={showLeftRail && showLayers}
+                showInspector={showInspector}
+            >
+                {children}
+            </MobileEditorShell>
+        );
+    }
 
     return (
         <div className="flex h-screen flex-col bg-background text-foreground">
