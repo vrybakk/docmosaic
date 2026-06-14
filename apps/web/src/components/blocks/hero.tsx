@@ -31,7 +31,10 @@ const Hero = () => {
             >
                 <span className="inline-flex items-center gap-1 rounded-full bg-docmosaic-purple px-2 py-0.5 text-docmosaic-cream">
                     <Sparkles className="h-3 w-3" />
-                    <Typography variant="extraSmall" className="!text-inherit font-semibold uppercase">
+                    <Typography
+                        variant="extraSmall"
+                        className="!text-inherit font-semibold uppercase"
+                    >
                         v2
                     </Typography>
                 </span>
@@ -61,8 +64,8 @@ const Hero = () => {
                     variant="paragraph"
                     className="mx-auto max-w-xl !text-base text-docmosaic-black/70"
                 >
-                    Drop in images, arrange them on a virtual page, and export a clean PDF - right in
-                    your browser.{' '}
+                    Drop in images, arrange them on a virtual page, and export a clean PDF - right
+                    in your browser.{' '}
                     <span className="font-medium text-docmosaic-black">
                         Fast, simple, DONE in seconds.
                     </span>

@@ -19,10 +19,22 @@ const handle = 'absolute h-2 w-2 rounded-full border border-white bg-docmosaic-o
 type CursorPath = { left: string[]; top: string[]; duration: number };
 
 const SCENE_CURSOR: Record<Exclude<CanvasScene, 'frames'>, CursorPath> = {
-    'id-scan': { left: ['24%', '64%', '30%', '24%'], top: ['30%', '44%', '60%', '30%'], duration: 6.5 },
-    report: { left: ['28%', '30%', '58%', '28%'], top: ['30%', '58%', '72%', '30%'], duration: 7.5 },
+    'id-scan': {
+        left: ['24%', '64%', '30%', '24%'],
+        top: ['30%', '44%', '60%', '30%'],
+        duration: 6.5,
+    },
+    report: {
+        left: ['28%', '30%', '58%', '28%'],
+        top: ['30%', '58%', '72%', '30%'],
+        duration: 7.5,
+    },
     gallery: { left: ['30%', '66%', '44%', '30%'], top: ['36%', '34%', '64%', '36%'], duration: 6 },
-    worksheet: { left: ['26%', '26%', '46%', '26%'], top: ['32%', '60%', '46%', '32%'], duration: 8 },
+    worksheet: {
+        left: ['26%', '26%', '46%', '26%'],
+        top: ['32%', '60%', '46%', '32%'],
+        duration: 8,
+    },
 };
 
 function Cursor({ path, delay = 0 }: { path: CursorPath; delay?: number }) {

@@ -42,7 +42,10 @@ const ForDevelopers = () => {
         >
             <span className="inline-flex items-center gap-2 rounded-full border border-docmosaic-sage/40 bg-docmosaic-sage/20 px-3 py-1.5">
                 <Code2 className="h-4 w-4 text-docmosaic-sage" />
-                <Typography variant="small" className="text-docmosaic-sage uppercase tracking-wider">
+                <Typography
+                    variant="small"
+                    className="text-docmosaic-sage uppercase tracking-wider"
+                >
                     For developers
                 </Typography>
             </span>
