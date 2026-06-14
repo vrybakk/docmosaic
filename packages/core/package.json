@@ -3,6 +3,27 @@
     "version": "1.0.0",
     "private": false,
     "type": "module",
+    "description": "Framework-agnostic document model, history, and browser-side PDF generation that powers the DocMosaic editor.",
+    "keywords": [
+        "pdf",
+        "jspdf",
+        "pdf-generation",
+        "document-model",
+        "reducer",
+        "typescript",
+        "framework-agnostic"
+    ],
+    "license": "MIT",
+    "author": "Vladyslav Rybak",
+    "homepage": "https://docmosaic.com",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vrybakk/docmosaic.git",
+        "directory": "packages/core"
+    },
+    "bugs": {
+        "url": "https://github.com/vrybakk/docmosaic/issues"
+    },
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -20,8 +41,12 @@
     },
     "sideEffects": false,
     "files": [
-        "dist"
+        "dist",
+        "LICENSE"
     ],
+    "publishConfig": {
+        "access": "public"
+    },
     "engines": {
         "node": ">=18.18.0"
     },

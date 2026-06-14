@@ -3,6 +3,27 @@
     "version": "1.0.0",
     "private": false,
     "type": "module",
+    "description": "Headless React primitives and hooks for building a fully client-side PDF editor — the DocMosaic editor toolkit.",
+    "keywords": [
+        "pdf",
+        "pdf-editor",
+        "react",
+        "drag-and-drop",
+        "document-builder",
+        "headless-ui",
+        "jspdf"
+    ],
+    "license": "MIT",
+    "author": "Vladyslav Rybak",
+    "homepage": "https://docmosaic.com",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vrybakk/docmosaic.git",
+        "directory": "packages/react"
+    },
+    "bugs": {
+        "url": "https://github.com/vrybakk/docmosaic/issues"
+    },
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -26,8 +47,12 @@
         "**/*.css"
     ],
     "files": [
-        "dist"
+        "dist",
+        "LICENSE"
     ],
+    "publishConfig": {
+        "access": "public"
+    },
     "engines": {
         "node": ">=18.18.0"
     },
