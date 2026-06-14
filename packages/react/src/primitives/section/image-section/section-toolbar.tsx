@@ -10,9 +10,8 @@ import {
     Maximize2,
     Trash2,
 } from 'lucide-react';
-import { useLayoutEffect, useRef, useState } from 'react';
-import { cn } from '../../../internal/utils';
 import { Button } from '../../../ui/button';
+import { floatingToolbarClass, useFloatingToolbar } from '../hooks/use-floating-toolbar';
 
 interface SectionToolbarProps {
     section: ImageSection;
@@ -38,39 +37,15 @@ export function SectionToolbar({
     onMoveForward,
     onMoveBackward,
 }: SectionToolbarProps) {
-    // Float above the image (Figma's format bar), flipping below when the box
-    // sits near the top of the canvas and there's no room above — mirrors the
-    // text and shape toolbars so every section variant behaves the same.
-    const toolbarRef = useRef<HTMLDivElement>(null);
-    const [placeBelow, setPlaceBelow] = useState(false);
-    useLayoutEffect(() => {
-        const measure = () => {
-            const el = toolbarRef.current;
-            if (!el) return;
-            const box = el.closest('[data-section="true"]');
-            const scroller = el.closest('.overflow-auto');
-            if (!box) return;
-            const boxTop = box.getBoundingClientRect().top;
-            const limit = scroller ? scroller.getBoundingClientRect().top : 0;
-            setPlaceBelow(boxTop - limit < 52);
-        };
-        measure();
-        window.addEventListener('resize', measure);
-        return () => window.removeEventListener('resize', measure);
-    }, [section.x, section.y, section.width, section.height]);
+    const { toolbarRef, placeBelow } = useFloatingToolbar([
+        section.x,
+        section.y,
+        section.width,
+        section.height,
+    ]);
 
     return (
-        <div
-            ref={toolbarRef}
-            className={cn(
-                // Left-aligned to the box, floating above it (or below when there's
-                // no room) so it never overlaps the image content.
-                'absolute left-0 z-50 flex items-center gap-1 whitespace-nowrap rounded-lg border border-border bg-card p-1 text-card-foreground shadow-md',
-                placeBelow ? 'top-full mt-2' : 'bottom-full mb-2',
-                'pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity',
-                isSelected && 'opacity-100',
-            )}
-        >
+        <div ref={toolbarRef} className={floatingToolbarClass(placeBelow, isSelected)}>
             {section.imageUrl && (
                 <Button
                     size="icon"
