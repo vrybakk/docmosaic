@@ -10,8 +10,19 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createDocument, createPage } from '../factories';
+import { createDocument, createPage, createSection } from '../factories';
+import type { ImageSection, Section } from '../types';
 import { generatePNGs } from './png';
+
+/**
+ * The stubbed 2D context, re-created per test in `beforeEach`. Hoisted to module
+ * scope so save/restore-balance assertions can read the spy call counts.
+ */
+let ctx: {
+    save: ReturnType<typeof vi.fn>;
+    restore: ReturnType<typeof vi.fn>;
+    [key: string]: unknown;
+};
 
 const PNG_SIGNATURE = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
@@ -29,7 +40,7 @@ const TINY_PNG_BYTES = Uint8Array.from([
 ]);
 
 beforeEach(() => {
-    const ctxStub = new Proxy(
+    ctx = new Proxy(
         {
             scale: vi.fn(),
             fillRect: vi.fn(),
@@ -65,7 +76,7 @@ beforeEach(() => {
                 return true;
             },
         },
-    );
+    ) as typeof ctx;
 
     // Stub OffscreenCanvas globally so the canvas factory hits the same path
     // regardless of test runtime.
@@ -77,7 +88,7 @@ beforeEach(() => {
             this.height = height;
         }
         getContext() {
-            return ctxStub;
+            return ctx;
         }
         async convertToBlob() {
             return new Blob([TINY_PNG_BYTES], { type: 'image/png' });
@@ -154,5 +165,42 @@ describe('generatePNGs', () => {
                 signal: controller.signal,
             }),
         ).rejects.toThrow(/cancelled/);
+    });
+
+    /** Build a single-page doc whose only section is the given image. */
+    function imageSection(extra: Partial<ImageSection>): ImageSection {
+        return {
+            ...(createSection({ type: 'image' }) as ImageSection),
+            imageUrl: 'data:image/png;base64,AAAA',
+            x: 10,
+            y: 10,
+            width: 100,
+            height: 100,
+            ...extra,
+        };
+    }
+
+    it('balances ctx.save/restore for a circle-masked image so the clip never leaks', async () => {
+        const doc = createDocument();
+        await generatePNGs([imageSection({ maskShape: 'circle' })] as Section[], {
+            pageSize: doc.pageSize,
+            orientation: doc.orientation,
+            pages: doc.pages,
+        });
+        // A circle mask pushes a clip; it must be popped, or every later section
+        // on the shared page canvas would be clipped to the ellipse.
+        expect(ctx.save.mock.calls.length).toBeGreaterThan(0);
+        expect(ctx.save.mock.calls.length).toBe(ctx.restore.mock.calls.length);
+    });
+
+    it('issues no save/restore for an unmasked image (legacy draw path untouched)', async () => {
+        const doc = createDocument();
+        await generatePNGs([imageSection({})] as Section[], {
+            pageSize: doc.pageSize,
+            orientation: doc.orientation,
+            pages: doc.pages,
+        });
+        expect(ctx.save).not.toHaveBeenCalled();
+        expect(ctx.restore).not.toHaveBeenCalled();
     });
 });

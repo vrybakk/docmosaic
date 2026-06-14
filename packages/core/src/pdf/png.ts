@@ -197,10 +197,13 @@ async function drawImageSection(ctx: AnyCtx, section: ImageSection): Promise<voi
     if (!section.imageUrl) return;
     const img = await loadImage(section.imageUrl);
     // Placeholder-frame circle mask: clip to the inscribed ellipse before
-    // drawing, mirroring the PDF generator.
+    // drawing, mirroring the PDF generator. Only save/restore when a mask is
+    // actually applied — the unmasked path must stay byte-identical to the
+    // legacy draw, and an unbalanced save() would leak the clip/state onto
+    // every section drawn later on this shared page canvas.
     const circleMask = section.maskShape === 'circle';
-    ctx.save();
     if (circleMask) {
+        ctx.save();
         ctx.beginPath();
         ctx.ellipse(
             section.x + section.width / 2,
@@ -226,6 +229,7 @@ async function drawImageSection(ctx: AnyCtx, section: ImageSection): Promise<voi
     } else {
         ctx.drawImage(img, section.x, section.y, section.width, section.height);
     }
+    if (circleMask) ctx.restore();
 }
 
 function imageWidth(img: HTMLImageElement | ImageBitmap): number {
