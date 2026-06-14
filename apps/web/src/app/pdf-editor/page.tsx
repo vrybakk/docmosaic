@@ -4,12 +4,16 @@ import { Suspense } from 'react';
 import { EditorMount } from './editor-mount';
 
 // Define viewport metadata
+// The editor implements its own pinch-zoom and pan on the canvas, so browser
+// page-zoom is disabled here to keep the two from fighting; `viewport-fit` lets
+// the canvas extend under device notches.
 export const viewport: Viewport = {
     themeColor: '#381D2A',
     width: 'device-width',
     initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover',
 };
 
 // Define metadata

@@ -460,7 +460,7 @@ export function Canvas({
         >
             <div
                 ref={containerRef}
-                className="flex-1 min-h-0 overflow-auto bg-muted p-6 relative"
+                className="flex-1 min-h-0 overflow-auto overscroll-contain bg-muted p-6 relative"
                 onClick={(e) => {
                     // In drawing mode the canvas owns pointer events for stroke
                     // capture — deselecting on click would feel out of place.
