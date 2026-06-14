@@ -3,11 +3,11 @@
 import type React from 'react';
 
 import DonateButton from '@/components/donate-button';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { CustomLink } from '@/components/ui/core/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     ArrowBigRight,
+    BookOpen,
     Bug,
     ChevronDown,
     Code,
@@ -15,6 +15,7 @@ import {
     LayoutList,
     Menu,
     MessageSquareText,
+    Sparkles,
     SquareDashedMousePointer,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -142,6 +143,40 @@ export default function Header() {
                                                             Features
                                                         </Typography>
                                                     </Link>
+                                                    <Link
+                                                        href="https://docs.docmosaic.com"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full documentation-click-trigger"
+                                                    >
+                                                        <BookOpen
+                                                            className="w-4 h-4 mr-2"
+                                                            strokeWidth={1}
+                                                        />
+                                                        <Typography
+                                                            variant="small"
+                                                            className="text-inherit"
+                                                        >
+                                                            Documentation
+                                                        </Typography>
+                                                    </Link>
+                                                    <Link
+                                                        href="https://docs.docmosaic.com/changelog"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full changelog-click-trigger"
+                                                    >
+                                                        <Sparkles
+                                                            className="w-4 h-4 mr-2"
+                                                            strokeWidth={1}
+                                                        />
+                                                        <Typography
+                                                            variant="small"
+                                                            className="text-inherit"
+                                                        >
+                                                            What&apos;s New
+                                                        </Typography>
+                                                    </Link>
                                                 </div>
                                             </div>
                                             <div className="mb-4">
@@ -237,6 +272,17 @@ export default function Header() {
                                 )}
                             </AnimatePresence>
                         </div>
+                        <Link
+                            href="https://docs.docmosaic.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group relative w-fit documentation-click-trigger text-docmosaic-purple/80 hover:text-docmosaic-purple transition-colors"
+                        >
+                            <Typography variant="h4" className="!text-inherit uppercase">
+                                Docs
+                            </Typography>
+                            <span className="absolute -bottom-1 -left-1 -right-1 h-[3px] origin-left scale-x-0 rounded-full bg-docmosaic-sage transition-transform duration-300 ease-out group-hover:scale-x-100" />
+                        </Link>
                         <CustomLink
                             href="/pdf-editor"
                             className="group web-app-access-trigger"
@@ -250,8 +296,6 @@ export default function Header() {
                         >
                             <span className="uppercase">Try DocMosaic</span>
                         </CustomLink>
-
-                        <ThemeToggle />
 
                         <div className="hidden md:flex relative">
                             <button
@@ -292,7 +336,6 @@ export default function Header() {
 
                     {/* Mobile Navigation */}
                     <div className="flex md:hidden items-center space-x-4">
-                        <ThemeToggle />
                         <div className="relative">
                             <button
                                 onClick={toggleLanguageMenu}
@@ -391,6 +434,46 @@ export default function Header() {
                                                             className="text-inherit"
                                                         >
                                                             Features
+                                                        </Typography>
+                                                    </Link>
+                                                    <Link
+                                                        href="https://docs.docmosaic.com"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={() =>
+                                                            setIsHowItWorksMenuOpen(false)
+                                                        }
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full documentation-click-trigger"
+                                                    >
+                                                        <BookOpen
+                                                            className="w-4 h-4 mr-2"
+                                                            strokeWidth={1}
+                                                        />
+                                                        <Typography
+                                                            variant="small"
+                                                            className="text-inherit"
+                                                        >
+                                                            Documentation
+                                                        </Typography>
+                                                    </Link>
+                                                    <Link
+                                                        href="https://docs.docmosaic.com/changelog"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={() =>
+                                                            setIsHowItWorksMenuOpen(false)
+                                                        }
+                                                        className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full changelog-click-trigger"
+                                                    >
+                                                        <Sparkles
+                                                            className="w-4 h-4 mr-2"
+                                                            strokeWidth={1}
+                                                        />
+                                                        <Typography
+                                                            variant="small"
+                                                            className="text-inherit"
+                                                        >
+                                                            What&apos;s New
                                                         </Typography>
                                                     </Link>
                                                 </div>
