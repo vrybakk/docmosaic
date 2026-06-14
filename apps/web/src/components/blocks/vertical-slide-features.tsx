@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import Typography from '../common/typography';
+import { EditorCanvas, type CanvasVariant } from './editor-canvas';
 
 const VerticalSlideFeatures = () => {
     const [selected, setSelected] = useState(0);
@@ -67,16 +68,9 @@ const VerticalSlideFeatures = () => {
                             className="absolute inset-0"
                         >
                             {selected === index && (
-                                <Image
-                                    src={tab.image}
-                                    alt={tab.title}
-                                    width={800}
-                                    height={800}
-                                    className="w-full h-full object-contain"
-                                    priority={index === 0}
-                                    loading={index === 0 ? 'eager' : 'lazy'}
-                                    sizes="(max-width: 768px) 100vw, 50vw"
-                                />
+                                <div className="h-full w-full p-2">
+                                    <EditorCanvas variant={tab.variant} />
+                                </div>
                             )}
                         </motion.div>
                     ))}
@@ -145,17 +139,17 @@ const Tab = ({ selected, title, setSelected, tabNum }: TabProps) => {
 
 export default VerticalSlideFeatures;
 
-const FEATURES = [
+const FEATURES: { title: string; variant: CanvasVariant }[] = [
     {
         title: 'Upload images',
-        image: '/showcases/upload.png',
+        variant: 'upload',
     },
     {
         title: 'Arrange',
-        image: '/showcases/arrange.png',
+        variant: 'arrange',
     },
     {
         title: 'Download',
-        image: '/showcases/download.png',
+        variant: 'download',
     },
 ];

@@ -3,10 +3,10 @@
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { ArrowBigRight } from 'lucide-react';
-import Image from 'next/image';
 import { ReactNode } from 'react';
 import Typography from '../common/typography';
 import { CustomLink } from '../ui/core/link';
+import { EditorCanvas } from './editor-canvas';
 
 const features = [
     {
@@ -15,7 +15,6 @@ const features = [
         description:
             'Perfect for <b>visa applications, ID & passport scans,</b> and <b>administrative paperwork</b>. Arrange multiple scanned documents into professional PDFs that meet official requirements.',
         backgroundColor: 'bg-gradient-to-br from-[#C4D6B0] to-[#67705C]',
-        image: '/showcases/officials.png',
     },
     {
         title: ['🏢 For Businesses & Admins', '💼 For Freelancers'],
@@ -28,7 +27,6 @@ const features = [
             'Assemble <b>portfolio samples, image-heavy proposals,</b> and <b>invoice layouts</b> visually. Perfect for client deliverables.',
         ],
         backgroundColor: 'bg-gradient-to-br from-[#FCDE9C] to-[#96845D]',
-        image: ['/showcases/business.png', '/showcases/business-sm.png'],
     },
     {
         title: ['🎯 For Marketers', '🎨 For Designers'],
@@ -38,7 +36,6 @@ const features = [
             'Place, resize, and align images easily to create <b>print-ready layouts.</b> Perfect for <b>visual portfolios</b> and <b>client presentations.</b>',
         ],
         backgroundColor: 'bg-gradient-to-br from-[#FFA552] to-[#996331]',
-        image: ['/showcases/designers.png', '/showcases/designers-sm.png'],
     },
     {
         title: '🎓 For Teachers & Students',
@@ -46,7 +43,6 @@ const features = [
         description:
             'Merge images into PDFs, annotate scanned <b>documents</b>, and reorder pages for <b>assignments</b> with ease.',
         backgroundColor: 'bg-gradient-to-br from-[#BA5624] to-[#542710] [&_*]:text-white',
-        image: '/showcases/teachers.png',
     },
 ];
 
@@ -124,43 +120,12 @@ export const BouncyCardsFeatures = () => {
                         )}
                         <div
                             className={cn(
-                                'absolute bottom-0 left-4 right-4 top-36 translate-y-8 rounded-t-[20px] transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg] overflow-hidden',
+                                'absolute bottom-0 left-4 right-4 top-36 translate-y-8 rounded-t-[16px] border border-b-0 border-docmosaic-black/10 bg-white shadow-[0px_-6px_24px_-12px_rgba(56,29,42,0.4)] transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg] overflow-hidden',
                                 Array.isArray(feature.title) &&
                                     'max-md:!top-[300px] max-md:!bottom-4',
                             )}
                         >
-                            <Image
-                                src={
-                                    Array.isArray(feature.image) ? feature.image[0] : feature.image
-                                }
-                                alt={
-                                    Array.isArray(feature.title) ? feature.title[0] : feature.title
-                                }
-                                className={cn(
-                                    'hidden md:block object-contain',
-                                    Array.isArray(feature.title) && 'max-md:!h-auto',
-                                )}
-                                width={800}
-                                height={800}
-                                loading="lazy"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                            <Image
-                                src={
-                                    Array.isArray(feature.image) ? feature.image[1] : feature.image
-                                }
-                                alt={
-                                    Array.isArray(feature.title) ? feature.title[0] : feature.title
-                                }
-                                className={cn(
-                                    'block md:hidden object-contain',
-                                    Array.isArray(feature.title) && 'max-md:!h-auto',
-                                )}
-                                width={800}
-                                height={800}
-                                loading="lazy"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
+                            <EditorCanvas showLabels={false} />
                         </div>
                     </BounceCard>
                 ))}

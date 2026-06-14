@@ -5,6 +5,7 @@ import { CustomLink } from '@/components/ui/core/link';
 import { motion } from 'framer-motion';
 import { ArrowBigRight, Lock } from 'lucide-react';
 import Image from 'next/image';
+import { EditorCanvas } from './editor-canvas';
 
 export default function PdfHeroSection() {
     return (
@@ -54,17 +55,8 @@ export default function PdfHeroSection() {
                                 </Typography>
                             </div>
                         </div>
-                        <div className="relative">
-                            <Image
-                                src="/showcases/desktop.png"
-                                alt="DocMosaic Desktop Interface"
-                                width={450}
-                                height={272}
-                                className="rounded-lg max-w-[450px] h-auto w-full"
-                                loading="lazy"
-                                quality={85}
-                                sizes="(max-width: 768px) 90vw, 450px"
-                            />
+                        <div className="relative aspect-[450/272] w-full overflow-hidden rounded-lg shadow-[0px_2px_18px_rgba(56,29,42,0.12)]">
+                            <EditorCanvas variant="arrange" />
                         </div>
                     </div>
                     <div className="relative max-md:hidden p-2 shadow-[0px_0px_8px_0px_#00000026] rounded-[20px] max-w-[180px]">
@@ -78,17 +70,8 @@ export default function PdfHeroSection() {
                                 <Image src="/logo.svg" alt="Logo" width={21} height={21} />
                             </div>
                         </div>
-                        <div className="relative">
-                            <Image
-                                src="/showcases/mobile.png"
-                                alt="DocMosaic Mobile Interface"
-                                width={180}
-                                height={299}
-                                className="rounded-lg max-w-[180px] h-auto w-full"
-                                loading="lazy"
-                                quality={85}
-                                sizes="(max-width: 768px) 0px, 180px"
-                            />
+                        <div className="relative aspect-[180/299] w-full overflow-hidden rounded-lg shadow-[0px_2px_18px_rgba(56,29,42,0.12)]">
+                            <EditorCanvas variant="arrange" showLabels={false} />
                         </div>
                     </div>
                 </div>
