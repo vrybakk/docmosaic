@@ -66,7 +66,7 @@ The Canvas wires every section to three gestures:
 -   **Resize** - drag the right, bottom, or bottom-right handle. The Canvas captures the start size and dispatches incremental `UPDATE_SECTION` calls.
 -   **Image upload** - drop a file onto a section (or click the empty-state). The reader produces a data URL, which becomes `section.imageUrl`.
 
-Drag-and-drop is powered by `react-dnd` with the HTML5 backend. `Editor.Root` mounts a single `<DndProvider>` for the whole tree - don't nest another.
+Drag-and-drop is powered by `react-dnd` with a multi-backend (HTML5 on desktop, auto-transitioning to touch on mobile). `Editor.Root` mounts a single `<DndProvider>` for the whole tree - don't nest another.
 
 ## Headless mode
 

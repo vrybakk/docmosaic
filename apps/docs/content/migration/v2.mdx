@@ -1,12 +1,12 @@
 ---
 title: Migrating to v2.0
-description: What changed in @docmosaic/react 2.0 - the editor-* token removal - and how to update consumer code.
+description: What changed in @docmosaic/react 2.0 - the editor-* token removal and the PageThumbnail reorder API - and how to update consumer code.
 index: true
 ---
 
 `@docmosaic/react` graduated from `1.0.0` to `2.0.0`. The release completes the token cleanup that [v1.0](/docs/migration/v1) started: the legacy `editor-*` Tailwind color classes and the `--editor-color-*` CSS aliases are now removed. Everything maps to the shadcn-aligned semantic surface (`--primary`, `--secondary`, `--accent`, `--background`, `--foreground`) the package already exposes.
 
-`@docmosaic/core` is **unchanged** in this release - no version bump, no API changes.
+v2.0 bundles three things: the breaking token migration below, the **responsive / touch editor**, and the additive **Frames** feature. The only consumer-facing breaking changes are the token removal and the [`Editor.PageThumbnail` reorder API](#editorpagethumbnail-reorder-api). `@docmosaic/core` ships a separate additive minor (`1.1.0`) - the Frames API - with nothing removed, so no core migration is needed.
 
 ## TL;DR
 
@@ -15,7 +15,7 @@ index: true
 -   The `editor.*` color block is removed from the consumer Tailwind config - semantic colors cover everything.
 -   **Action required if you reference `editor-*` classes or `--editor-color-*` variables in your own code** - rewrite them per the tables below.
 -   The structural tokens (`rounded-editor-section`, `shadow-editor-section`, `--editor-radius-section`, `--editor-shadow-section`) are **kept** - they're domain-specific and have no shadcn equivalent.
--   No type or runtime behavior changes. The PDF pipeline, document model, reducer, history, and primitive props are identical.
+-   **One breaking primitive-prop change:** `Editor.PageThumbnail` now takes `onMovePage` instead of `dragHandlers` / `dropIndicators` (see [below](#editorpagethumbnail-reorder-api)). The PDF pipeline, document model, reducer, and history are otherwise unchanged.
 
 ## Tailwind color classes
 
@@ -162,10 +162,30 @@ git ls-files '*.css' '*.tsx' '*.mdx' \
 
 `--editor-color-warning-soft` has no semantic equivalent - replace it by hand.
 
+## `Editor.PageThumbnail` reorder API
+
+The responsive editor rewired page reorder to react-dnd's multi-backend so it works on touch. As a result, `Editor.PageThumbnail` replaces its two reorder props with a single callback:
+
+| Removed          | Use instead                      |
+| ---------------- | -------------------------------- |
+| `dragHandlers`   | `onMovePage(fromIndex, toIndex)` |
+| `dropIndicators` | `onMovePage(fromIndex, toIndex)` |
+
+`onMovePage` fires while a thumbnail is dragged past another's midpoint - wire it to `actions.reorderPages`:
+
+```tsx
+<Editor.PageThumbnail
+    // ...page, index, isSelected, sections, pageSize, orientation, onSelect, onDelete
+    onMovePage={actions.reorderPages}
+/>
+```
+
+Only code that mounts `Editor.PageThumbnail` **directly** is affected. The bundled `Editor.Pages` wires `onMovePage` for you, so the default editor needs no change.
+
 ## `@docmosaic/core`
 
-Unchanged. No exported APIs were added or removed, and the version stays put. This is a `@docmosaic/react`-only release.
+Additive only - bumps to `1.1.0` with the new **Frames** API (`FrameSection`, the optional `SectionBase.parentFrameId` / `ImageSection.maskShape` fields, and the `resolveFrameParent` / `orderSectionsForRender` helpers). Nothing was removed or changed, so existing core code keeps working without edits.
 
 ## Questions?
 
-Open an issue on [GitHub](https://github.com/vladrybak/docmosaic/issues) if you hit anything not covered here.
+Open an issue on [GitHub](https://github.com/vrybakk/docmosaic/issues) if you hit anything not covered here.

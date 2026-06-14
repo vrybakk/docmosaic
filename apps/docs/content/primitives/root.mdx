@@ -3,7 +3,7 @@ title: Editor.Root
 description: The orchestrator. Owns the document state, the history timeline, and the DnD provider. Every other primitive reads from its context.
 ---
 
-`Editor.Root` is the entry point. It owns the document state (controlled or uncontrolled), mounts a single `<DndProvider backend={HTML5Backend}>` for the whole tree, and provides the editor + config contexts every other `Editor.*` primitive consumes.
+`Editor.Root` is the entry point. It owns the document state (controlled or uncontrolled), mounts a single react-dnd `MultiBackend` (HTML5 on desktop, auto-transitioning to touch) for the whole tree, and provides the editor + config contexts every other `Editor.*` primitive consumes.
 
 <StorybookEmbed id="editor-root--default" />
 

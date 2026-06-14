@@ -7,13 +7,20 @@ The packages follow [semver](https://semver.org/). Breaking changes ship in majo
 
 ## 2.0.0 · core 1.1.0
 
-Ships two things together: the breaking `@docmosaic/react` token migration (major) and the additive **Frames** feature (minor in both packages).
+Ships together: the breaking `@docmosaic/react` token migration (major), the **responsive / touch editor** (a major, with one breaking primitive-prop change), and the additive **Frames** feature (minor in both packages).
 
 **Frames (additive, both packages - existing documents and APIs are unchanged):**
 
 -   **Container frames** - a new `FrameSection` (`type: 'frame'`) box that owns child sections. `@docmosaic/react` gains `Editor.FrameToolButton` (draw-to-size), drag-to-adopt, move-with-children, and a delete/duplicate cascade. Frames draw behind their children.
 -   **Placeholder frames** - `ImageSection.maskShape` (`'rect' | 'circle' | 'line'`) clips an image to a shape; `Editor.ImageFrameToolButton` draws Canva-style shaped image slots.
 -   **`@docmosaic/core` (1.1.0)** - new `FrameSection` type, optional `SectionBase.parentFrameId` / `ImageSection.maskShape`, and the helpers `resolveFrameParent` + `orderSectionsForRender` (the shared back-to-front render sort).
+
+**Responsive / touch editor (`@docmosaic/react`):**
+
+-   Below 1024px the editor renders a touch-first shell - a compact top bar, a full-bleed canvas, a horizontally-scrollable tool strip, and Pages / Layers / Edit / Doc panels surfaced as slide-up bottom sheets. The page-size, orientation, preview, and print controls move into the "Doc" sheet. The desktop three-pane app-shell is unchanged.
+-   Canvas gains pinch-to-zoom and two-finger pan; section drag, resize, and crop use pointer events with finger-sized hit targets. Drag-and-drop runs through react-dnd's `MultiBackend` (HTML5 on desktop, auto-transitioning to touch), so layer and page reorder work by finger. Every touch path is gated on multi-pointer / `isPrimary`, so the desktop mouse experience is unchanged.
+-   Section floating toolbars clamp horizontally so they stay on-screen for sections near a narrow viewport's edge.
+-   **Breaking:** `Editor.PageThumbnail` replaces its `dragHandlers` / `dropIndicators` props with a single `onMovePage(fromIndex, toIndex)` callback. The bundled `Editor.Pages` is updated automatically - only code mounting `Editor.PageThumbnail` directly needs to migrate. See the [v2.0 migration guide](/docs/migration/v2).
 
 **Breaking token migration (`@docmosaic/react`):** removes the legacy `editor-*` Tailwind color classes from the primitives and deletes the `--editor-color-*` CSS aliases from both bundled themes. Everything now reads the shadcn-aligned semantic surface directly (`bg-editor-accent` → `bg-primary`, `var(--editor-color-success)` → `var(--accent)`). The structural tokens (`rounded-editor-section`, `shadow-editor-section`, `--editor-radius-section`, `--editor-shadow-section`) are kept. One accepted visual change under the `minimal-light` theme: the page-thumbnail hover ring shifts from green-600 to the theme accent. See the [v2.0 migration guide](/docs/migration/v2) for the full class/variable mapping and codemods.
 
