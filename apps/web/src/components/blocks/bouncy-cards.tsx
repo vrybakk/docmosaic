@@ -96,7 +96,7 @@ export const BouncyCardsFeatures = () => {
                                 />
                             </>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4 h-[300px] md:h-full">
+                            <div className="grid flex-shrink-0 grid-cols-1 md:grid-cols-2 md:gap-4">
                                 {feature.title.map((title, index) => (
                                     <div
                                         key={index}
@@ -122,7 +122,7 @@ export const BouncyCardsFeatures = () => {
                                 ))}
                             </div>
                         )}
-                        <div className="absolute bottom-0 left-4 right-4 top-36 hidden translate-y-8 overflow-hidden rounded-t-[16px] border border-b-0 border-docmosaic-black/10 bg-white shadow-[0px_-6px_24px_-12px_rgba(56,29,42,0.4)] transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg] md:block">
+                        <div className="relative mt-5 min-h-[150px] flex-1 overflow-hidden rounded-xl border border-docmosaic-black/10 bg-white shadow-[0px_10px_28px_-14px_rgba(56,29,42,0.4)] transition-transform duration-300 group-hover:scale-[1.015]">
                             <EditorCanvas
                                 scene={feature.scene as CanvasScene}
                                 showLabels={false}
@@ -139,8 +139,8 @@ export const BouncyCardsFeatures = () => {
 const BounceCard = ({ className, children }: { className: string; children: ReactNode }) => {
     return (
         <motion.div
-            whileHover={{ scale: 0.95, rotate: '-1deg' }}
-            className={`group relative min-h-[320px] cursor-pointer overflow-hidden rounded-[20px] p-5 shadow-[0px_0px_5px_0px_#0000004D] ${className}`}
+            whileHover={{ scale: 0.98 }}
+            className={`group relative flex min-h-[360px] cursor-pointer flex-col overflow-hidden rounded-[20px] p-5 shadow-[0px_0px_5px_0px_#0000004D] ${className}`}
         >
             {children}
         </motion.div>
