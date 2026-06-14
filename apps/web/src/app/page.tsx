@@ -1,4 +1,5 @@
 import { BouncyCardsFeatures } from '@/components/blocks/bouncy-cards';
+import ForDevelopers from '@/components/blocks/for-developers';
 import Hero from '@/components/blocks/hero';
 import PdfHeroSection from '@/components/blocks/pdf-hero-section';
 import ProductShowcase from '@/components/blocks/product-showcase';
@@ -36,6 +37,11 @@ export default function Home() {
 
                 <section className="container mx-auto px-4 py-10">
                     <VerticalSlideFeatures />
+                </section>
+
+                {/* For developers — the open-source headless library */}
+                <section className="container mx-auto px-4 py-10">
+                    <ForDevelopers />
                 </section>
 
                 <section className="container mx-auto px-4 py-10">

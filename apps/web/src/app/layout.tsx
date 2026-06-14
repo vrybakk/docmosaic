@@ -29,7 +29,7 @@ export const metadata = {
         template: '%s | DocMosaic',
     },
     description:
-        'Free and open source tool for creating structured PDF documents with arranged images. Create beautiful PDFs by arranging images like a mosaic. Perfect for ID documents, photo collections, and business documents.',
+        'Free, open-source visual PDF builder - arrange images, text, and shapes into clean PDFs right in your browser. Also a headless React library (@docmosaic/core + @docmosaic/react) to embed a PDF editor in your own app.',
     keywords: [
         'pdf creator',
         'document mosaic',
@@ -41,6 +41,11 @@ export const metadata = {
         'pdf editor',
         'photo collage maker',
         'document organizer',
+        'react pdf editor',
+        'headless pdf editor',
+        'pdf editor library',
+        'embed pdf editor',
+        'pdf sdk',
         'creador de pdf',
         'herramienta pdf gratuita',
         'створення pdf',
@@ -65,7 +70,7 @@ export const metadata = {
     openGraph: {
         title: 'DocMosaic - Visual PDF Creation Tool',
         description:
-            'Create beautiful PDFs by arranging images like a mosaic. Free and open source.',
+            'Create PDFs by arranging images in your browser - free and open source. Also a headless React library to embed a PDF editor in your app.',
         url: 'https://docmosaic.com',
         siteName: 'DocMosaic',
         locale: 'en_US',
@@ -95,7 +100,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'DocMosaic - Visual PDF Creation Tool',
         description:
-            'Create beautiful PDFs by arranging images like a mosaic. Free and open source.',
+            'Create PDFs by arranging images in your browser - free and open source. Also a headless React library to embed a PDF editor in your app.',
         creator: '@nerdstudio',
         images: ['/seo/twitter-card.png'],
     },
