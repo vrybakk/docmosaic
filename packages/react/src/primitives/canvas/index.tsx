@@ -93,7 +93,7 @@ export function Canvas({
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [isLoading, setIsLoading] = useState(true);
 
-    const { zoom, minZoom, maxZoom, zoomIn, zoomOut, reset, handleWheel } = useCanvasZoom({
+    const { zoom, minZoom, maxZoom, zoomIn, zoomOut, setZoom, reset, handleWheel } = useCanvasZoom({
         onZoomChange: trackEvent.zoom,
     });
 
@@ -215,7 +215,66 @@ export function Canvas({
     const shapeDraftMovedRef = useRef(false);
     const drawToolActive = ui.shapeTool !== null || ui.frameTool || ui.imageFrameTool !== null;
 
+    // Multi-touch pinch-zoom + two-finger pan. Tracked via the canvas's own
+    // pointer events and gated on pointer count, so a mouse (always one pointer)
+    // never enters this path — desktop behaviour is untouched. With a second
+    // finger down we record the start distance/zoom/scroll and drive zoom from
+    // the finger spread and pan from the midpoint movement.
+    const activePointers = useRef<Map<number, { x: number; y: number }>>(new Map());
+    const pinchRef = useRef<{
+        startDist: number;
+        startZoom: number;
+        startScrollLeft: number;
+        startScrollTop: number;
+        startMidX: number;
+        startMidY: number;
+    } | null>(null);
+
+    const twoPointers = () => {
+        const pts = [...activePointers.current.values()];
+        return pts.length >= 2 ? [pts[0], pts[1]] : null;
+    };
+
+    const beginPinch = () => {
+        const pair = twoPointers();
+        const container = containerRef.current;
+        if (!pair || !container) return;
+        const [a, b] = pair;
+        // Cancel any in-flight single-finger marquee / draw draft.
+        marqueeRef.current = null;
+        shapeDraftRef.current = null;
+        setMarquee(null);
+        setShapeDraft(null);
+        pinchRef.current = {
+            startDist: Math.hypot(a.x - b.x, a.y - b.y) || 1,
+            startZoom: zoom,
+            startScrollLeft: container.scrollLeft,
+            startScrollTop: container.scrollTop,
+            startMidX: (a.x + b.x) / 2,
+            startMidY: (a.y + b.y) / 2,
+        };
+    };
+
+    const updatePinch = () => {
+        const pair = twoPointers();
+        const container = containerRef.current;
+        const start = pinchRef.current;
+        if (!pair || !container || !start) return;
+        const [a, b] = pair;
+        const dist = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+        const midX = (a.x + b.x) / 2;
+        const midY = (a.y + b.y) / 2;
+        setZoom(start.startZoom * (dist / start.startDist));
+        container.scrollLeft = start.startScrollLeft - (midX - start.startMidX);
+        container.scrollTop = start.startScrollTop - (midY - start.startMidY);
+    };
+
     const handleCanvasPointerDown = (e: React.PointerEvent) => {
+        activePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (activePointers.current.size >= 2) {
+            beginPinch();
+            return;
+        }
         if (ui.drawingMode) return;
         // Only react when the press lands on the page surface (or canvas) —
         // not on an existing section / resize handle / control.
@@ -245,6 +304,13 @@ export function Canvas({
     };
 
     const handleCanvasPointerMove = (e: React.PointerEvent) => {
+        if (activePointers.current.has(e.pointerId)) {
+            activePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        }
+        if (pinchRef.current) {
+            updatePinch();
+            return;
+        }
         const draft = shapeDraftRef.current;
         if (draft) {
             const node = pageRef.current;
@@ -279,7 +345,15 @@ export function Canvas({
         setMarquee(next);
     };
 
-    const handleCanvasPointerUp = () => {
+    const handleCanvasPointerUp = (e: React.PointerEvent) => {
+        activePointers.current.delete(e.pointerId);
+        if (pinchRef.current) {
+            // A finger lifted during a pinch — end the gesture. No marquee/draft
+            // runs during a pinch, and the still-down finger won't start one
+            // (that only happens on pointerdown), so just clear and bail.
+            if (activePointers.current.size < 2) pinchRef.current = null;
+            return;
+        }
         const draft = shapeDraftRef.current;
         if (draft) {
             shapeDraftRef.current = null;
@@ -460,7 +534,7 @@ export function Canvas({
         >
             <div
                 ref={containerRef}
-                className="flex-1 min-h-0 overflow-auto overscroll-contain bg-muted p-6 relative"
+                className="flex-1 min-h-0 overflow-auto overscroll-contain touch-none bg-muted p-6 relative"
                 onClick={(e) => {
                     // In drawing mode the canvas owns pointer events for stroke
                     // capture — deselecting on click would feel out of place.

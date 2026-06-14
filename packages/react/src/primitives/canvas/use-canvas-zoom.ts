@@ -19,6 +19,8 @@ interface UseCanvasZoomResult {
     maxZoom: number;
     zoomIn: () => void;
     zoomOut: () => void;
+    /** Set an absolute zoom level, clamped to [min, max]. Used by pinch-zoom. */
+    setZoom: (next: number) => void;
     reset: () => void;
     /**
      * Apply a native wheel event with ctrl/meta (or trackpad pinch, which the
@@ -68,5 +70,5 @@ export function useCanvasZoom({
         [zoom, updateZoom],
     );
 
-    return { zoom, minZoom, maxZoom, zoomIn, zoomOut, reset, handleWheel };
+    return { zoom, minZoom, maxZoom, zoomIn, zoomOut, setZoom: updateZoom, reset, handleWheel };
 }
