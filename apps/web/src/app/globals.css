@@ -170,8 +170,13 @@ svg[data-lucide] {
     * {
         @apply border-border;
     }
+    /* Brand purple is the default body text across the (light-only) marketing
+       site; the editor's dark scope falls back to the semantic foreground. */
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-docmosaic-purple;
+    }
+    .dark body {
+        @apply text-foreground;
     }
 }
 
