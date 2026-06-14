@@ -73,4 +73,16 @@ describe('generatePDF — placeholder (image) frames', () => {
         const rect = await render([imageSection('rect')]);
         expect(rect).toBe(plain);
     });
+
+    it('a circle mask composes with a crop — distinct from mask-only and crop-only', async () => {
+        const crop = { x: 20, y: 20, width: 100, height: 100 };
+        const cropOnly = await render([{ ...imageSection(), crop }]);
+        const maskOnly = await render([imageSection('circle')]);
+        const both = await render([{ ...imageSection('circle'), crop }]);
+        // The combined branch (clip to ellipse, then draw the cropped/zoomed
+        // image) must differ from each effect alone, locking in that both the
+        // clip and the crop scale/offset are applied.
+        expect(both).not.toBe(cropOnly);
+        expect(both).not.toBe(maskOnly);
+    });
 });
