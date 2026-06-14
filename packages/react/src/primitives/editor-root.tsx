@@ -15,7 +15,8 @@ import {
 } from '@docmosaic/core';
 import { Children, type ReactNode, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { MultiBackend } from 'react-dnd-multi-backend';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import { EditorConfigProvider, defaultImageRenderer } from '../context/editor-config';
 import {
     EditorProvider,
@@ -820,7 +821,11 @@ export function Root(props: EditorRootProps) {
 
     return (
         <EditorConfigProvider value={{ imageRenderer: defaultImageRenderer }}>
-            <DndProvider backend={HTML5Backend}>
+            {/* MultiBackend: HTML5 drag-and-drop on desktop, automatically
+                transitioning to the touch backend on the first touch so layer
+                reorder + section drops work by finger. Desktop keeps the exact
+                HTML5Backend path. */}
+            <DndProvider backend={MultiBackend} options={HTML5toTouch}>
                 {isControlled ? (
                     <ControlledRoot
                         document={props.document!}
