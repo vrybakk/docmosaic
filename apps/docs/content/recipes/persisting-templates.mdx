@@ -34,6 +34,19 @@ return (
 );
 ```
 
+## Stable serialization with `exportTemplate` / `importTemplate`
+
+`@docmosaic/core` ships a dedicated serializer pair. `exportTemplate(doc)` emits JSON with **stable key ordering** - two equivalent documents produce identical bytes, which is handy for snapshot tests and version-control diffs - and ISO-encoded timestamps. `importTemplate(json)` parses it back, **validates** every required top-level field, and rehydrates the `createdAt` / `updatedAt` `Date`s (raw `JSON.parse` would leave them as strings).
+
+```ts
+import { exportTemplate, importTemplate, type DocumentTemplate } from '@docmosaic/core';
+
+const json = exportTemplate(doc); // stable, diff-friendly JSON string
+const restored: DocumentTemplate = importTemplate(json); // throws on a missing/invalid field
+```
+
+Prefer these over hand-rolled `JSON.stringify` / `JSON.parse` when you persist documents you'll diff, snapshot, or load from an untrusted source - `importTemplate` fails loudly with the name of the first missing field instead of handing you a half-formed document. `DocumentTemplate` is an alias for `Document`.
+
 ## Keep image blobs separate
 
 Replace embedded data URLs with object-store references before saving. On load, swap them back.

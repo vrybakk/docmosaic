@@ -3,6 +3,7 @@
     "pages": [
         "---Core---",
         "root",
+        "shell",
         "canvas",
         "section",
         "toolbar",
@@ -38,7 +39,9 @@
         "print-button",
         "redo-button",
         "ruler",
+        "select-tool-button",
         "selection-bounds",
+        "shape-tool-button",
         "snap-guides",
         "static-canvas",
         "template-gallery",
