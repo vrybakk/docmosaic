@@ -1,6 +1,6 @@
 ---
 title: Custom PDF backend
-description: Swap the bundled jspdf pipeline for your own renderer — or run generation in a Worker.
+description: Swap the bundled jspdf pipeline for your own renderer - or run generation in a Worker.
 ---
 
 `Editor.Root` accepts a `pdf` prop with two optional functions: `generate` and `estimate`. Anything omitted falls back to the bundled `@docmosaic/core` implementation.
@@ -14,7 +14,7 @@ description: Swap the bundled jspdf pipeline for your own renderer — or run ge
 
 ## Signatures
 
-The two functions are typed off the core exports — copy the signatures to stay compatible:
+The two functions are typed off the core exports - copy the signatures to stay compatible:
 
 ```ts
 import type { generatePDF, estimatePDFSize } from '@docmosaic/core';
@@ -28,9 +28,9 @@ const estimate: typeof estimatePDFSize = (sections, backgrounds) => {
 };
 ```
 
-`generate` must honor the third argument — `onProgress(value: number)` reports 0 → 1 to the bundled `GenerationProgress` overlay. `options.signal` is an `AbortSignal` you should respect at every awaitable step.
+`generate` must honor the third argument - `onProgress(value: number)` reports 0 → 1 to the bundled `GenerationProgress` overlay. `options.signal` is an `AbortSignal` you should respect at every awaitable step.
 
-## Full example — pdf-lib + Worker
+## Full example - pdf-lib + Worker
 
 ```tsx
 import type { generatePDF as GenerateFn } from '@docmosaic/core';
@@ -60,7 +60,7 @@ const generate: GenerateFn = async (sections, options, onProgress) => {
 
 ## Estimation
 
-`estimatePDFSize` is called frequently (every time the document changes) so it must be cheap. If your custom backend can't produce a fast estimate, leave `estimate` undefined — `Editor.FileSizeBadge` will fall back to the bundled heuristic.
+`estimatePDFSize` is called frequently (every time the document changes) so it must be cheap. If your custom backend can't produce a fast estimate, leave `estimate` undefined - `Editor.FileSizeBadge` will fall back to the bundled heuristic.
 
 ## See also
 

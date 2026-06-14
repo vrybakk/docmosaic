@@ -8,10 +8,10 @@ import { ExamplesGrid } from './examples-grid';
 /**
  * Register custom MDX components alongside Fumadocs defaults.
  *
- * - `PropTable` — renders auto-generated prop tables from `_props.json`.
- * - `CopyPageButton` — copies the rendered MDX source to the clipboard.
- * - `StorybookEmbed` — iframe to a Storybook story (live primitive preview).
- * - `ExamplesGrid` — card grid for the /examples landing page.
+ * - `PropTable` - renders auto-generated prop tables from `_props.json`.
+ * - `CopyPageButton` - copies the rendered MDX source to the clipboard.
+ * - `StorybookEmbed` - iframe to a Storybook story (live primitive preview).
+ * - `ExamplesGrid` - card grid for the /examples landing page.
  */
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
     return {

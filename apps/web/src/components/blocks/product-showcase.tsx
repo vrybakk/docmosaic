@@ -18,7 +18,7 @@ const tools = [MousePointer2, ImageIcon, Type, Square, FrameIcon];
 
 /**
  * Landing-page showcase: the editor chrome (top bar + tool rail) wrapped around
- * the shared {@link EditorCanvas}. Built from DOM/CSS — no screenshot — so it
+ * the shared {@link EditorCanvas}. Built from DOM/CSS - no screenshot - so it
  * tracks the current design and frames the v2 feature (container + image frames).
  */
 const ProductShowcase = () => {

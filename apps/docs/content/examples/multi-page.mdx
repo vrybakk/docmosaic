@@ -4,7 +4,7 @@ description: Pages sidebar plus drag-to-reorder. The reducer handles page math; 
 tags: [pages, reorder]
 ---
 
-Real documents are rarely one page. `Editor.Pages` is the left rail — a thumbnail per page, click to switch, drag the handle to reorder, "+" to add, "×" to delete. The reducer rewrites every section's `page` reference when pages move, so you never have to touch the math.
+Real documents are rarely one page. `Editor.Pages` is the left rail - a thumbnail per page, click to switch, drag the handle to reorder, "+" to add, "×" to delete. The reducer rewrites every section's `page` reference when pages move, so you never have to touch the math.
 
 ## Code
 
@@ -40,11 +40,11 @@ export default function MultiPageEditor() {
 }
 ```
 
-The sidebar lives flush-left because `Editor.Root` arranges children — `Pages` is always placed to the left of `Canvas` regardless of source order, so you don't need a wrapping layout.
+The sidebar lives flush-left because `Editor.Root` arranges children - `Pages` is always placed to the left of `Canvas` regardless of source order, so you don't need a wrapping layout.
 
 <Callout type="info">
     Drop the add-page button for fixed-format documents (like single-page invoices) by passing
-    the `hideAddPage` prop to `Editor.Pages`. The user can still reorder existing pages — just not
+    the `hideAddPage` prop to `Editor.Pages`. The user can still reorder existing pages - just not
     add or remove them.
 </Callout>
 
@@ -62,6 +62,6 @@ For dashboards or in-form embeds, switch the rail to horizontal:
 
 ## Related
 
--   [Editor.Pages](/docs/primitives/pages) — full primitive reference
--   [Editor.PageThumbnail](/docs/primitives/page-thumbnail) — render thumbs in your own layout
--   [Document model](/docs/concepts/document-model) — how pages and sections relate
+-   [Editor.Pages](/docs/primitives/pages) - full primitive reference
+-   [Editor.PageThumbnail](/docs/primitives/page-thumbnail) - render thumbs in your own layout
+-   [Document model](/docs/concepts/document-model) - how pages and sections relate

@@ -4,7 +4,7 @@ description: A4 portrait with print + download buttons. The canonical DocMosaic 
 tags: [pdf, print, starter]
 ---
 
-This is the shell DocMosaic.com itself runs — A4 portrait page, a toolbar with Add Image / Print / Download, the page rail on the left, the preview dialog ready to open. Use it as the baseline whenever you want a print-grade editor without thinking about composition.
+This is the shell DocMosaic.com itself runs - A4 portrait page, a toolbar with Add Image / Print / Download, the page rail on the left, the preview dialog ready to open. Use it as the baseline whenever you want a print-grade editor without thinking about composition.
 
 ## Code
 
@@ -45,7 +45,7 @@ export default function PrintAndPdfEditor() {
 }
 ```
 
-`Editor.DownloadButton` produces a real PDF via the bundled `jspdf` pipeline. `Editor.PrintButton` opens the OS print dialog with the canvas rasterised — useful when users want paper instead of a file. `Editor.FileSizeBadge` shows a live size estimate so users know what they're about to download.
+`Editor.DownloadButton` produces a real PDF via the bundled `jspdf` pipeline. `Editor.PrintButton` opens the OS print dialog with the canvas rasterised - useful when users want paper instead of a file. `Editor.FileSizeBadge` shows a live size estimate so users know what they're about to download.
 
 <Callout type="info">
     All geometry is stored in **PDF points (72 DPI)**, not CSS pixels. The download is
@@ -59,7 +59,7 @@ export default function PrintAndPdfEditor() {
 
 ## Related
 
--   [Editor.DownloadButton](/docs/primitives/download-button) — the PDF export
--   [Editor.PrintButton](/docs/primitives/print-button) — OS print dialog
--   [Editor.Preview](/docs/primitives/preview) — full-document preview
--   [Custom PDF backend](/docs/examples/custom-pdf-backend) — swap jsPDF for something else
+-   [Editor.DownloadButton](/docs/primitives/download-button) - the PDF export
+-   [Editor.PrintButton](/docs/primitives/print-button) - OS print dialog
+-   [Editor.Preview](/docs/primitives/preview) - full-document preview
+-   [Custom PDF backend](/docs/examples/custom-pdf-backend) - swap jsPDF for something else

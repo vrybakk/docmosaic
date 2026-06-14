@@ -6,7 +6,7 @@
  *
  * Usage:  bun run scripts/generate-prop-tables.ts
  *
- * The script is best-effort — primitives without explicit `*Props` types or
+ * The script is best-effort - primitives without explicit `*Props` types or
  * whose component-display-names don't round-trip through docgen are skipped
  * silently. Hand-write a prop table for those by passing `rows` to
  * `<PropTable />`.
@@ -39,7 +39,7 @@ const BLOCK_TAG =
  * Reduce a raw JSDoc comment to a concise, table-friendly summary: everything
  * up to the first block tag (`@example`, `@param`, …), with `{@link X}` inline
  * tags resolved to their target/label and whitespace collapsed. Full code
- * examples stay in the prose docs and the source JSDoc — a prop-table cell only
+ * examples stay in the prose docs and the source JSDoc - a prop-table cell only
  * needs the summary. Inline `` `code` `` markers are preserved for the renderer.
  */
 function cleanDescription(raw: string): string {

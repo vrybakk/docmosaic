@@ -58,7 +58,7 @@ const StackedCards = () => {
         <section className="bg-white py-12 md:py-24 lg:pl-8 lg:mr-[calc(50%-50vw)] grid items-center grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 overflow-hidden">
             <div className="md:p-4">
                 <Typography variant="h2" tag="h2">
-                    Works on Desktop & Mobile – Edit{' '}
+                    Works on Desktop & Mobile - Edit{' '}
                     <span className="text-docmosaic-sage">PDFs</span> Anywhere!
                 </Typography>
                 <Typography className="my-4">

@@ -1,20 +1,20 @@
 ---
 title: Migrating to v2.0
-description: What changed in @docmosaic/react 2.0 — the editor-* token removal — and how to update consumer code.
+description: What changed in @docmosaic/react 2.0 - the editor-* token removal - and how to update consumer code.
 index: true
 ---
 
 `@docmosaic/react` graduated from `1.0.0` to `2.0.0`. The release completes the token cleanup that [v1.0](/docs/migration/v1) started: the legacy `editor-*` Tailwind color classes and the `--editor-color-*` CSS aliases are now removed. Everything maps to the shadcn-aligned semantic surface (`--primary`, `--secondary`, `--accent`, `--background`, `--foreground`) the package already exposes.
 
-`@docmosaic/core` is **unchanged** in this release — no version bump, no API changes.
+`@docmosaic/core` is **unchanged** in this release - no version bump, no API changes.
 
 ## TL;DR
 
--   The `editor-*` Tailwind color classes inside the primitives are gone — they now use the semantic shadcn classes (`bg-editor-accent` → `bg-primary`, and so on).
+-   The `editor-*` Tailwind color classes inside the primitives are gone - they now use the semantic shadcn classes (`bg-editor-accent` → `bg-primary`, and so on).
 -   The `--editor-color-*` CSS aliases are deleted from both bundled themes. Use the semantic `var(--primary)` surface directly.
--   The `editor.*` color block is removed from the consumer Tailwind config — semantic colors cover everything.
--   **Action required if you reference `editor-*` classes or `--editor-color-*` variables in your own code** — rewrite them per the tables below.
--   The structural tokens (`rounded-editor-section`, `shadow-editor-section`, `--editor-radius-section`, `--editor-shadow-section`) are **kept** — they're domain-specific and have no shadcn equivalent.
+-   The `editor.*` color block is removed from the consumer Tailwind config - semantic colors cover everything.
+-   **Action required if you reference `editor-*` classes or `--editor-color-*` variables in your own code** - rewrite them per the tables below.
+-   The structural tokens (`rounded-editor-section`, `shadow-editor-section`, `--editor-radius-section`, `--editor-shadow-section`) are **kept** - they're domain-specific and have no shadcn equivalent.
 -   No type or runtime behavior changes. The PDF pipeline, document model, reducer, history, and primitive props are identical.
 
 ## Tailwind color classes
@@ -29,7 +29,7 @@ Every `editor-*` color class the primitives used is replaced by its semantic sha
 | `*-editor-surface`     | `*-background` | `bg-`, `text-`, `border-`                          |
 | `*-editor-text`        | `*-foreground` | `text-`                                            |
 
-`editor-warning` and `editor-warning-soft` had no usages in the primitives, so there's nothing to migrate for them. If you used them yourself, `editor-warning` → `destructive` and `editor-warning-soft` has no semantic equivalent (it was the caramel `#FFA552`) — define your own token.
+`editor-warning` and `editor-warning-soft` had no usages in the primitives, so there's nothing to migrate for them. If you used them yourself, `editor-warning` → `destructive` and `editor-warning-soft` has no semantic equivalent (it was the caramel `#FFA552`) - define your own token.
 
 A few cases are worth calling out so a blind find-and-replace doesn't bite:
 
@@ -39,7 +39,7 @@ A few cases are worth calling out so a blind find-and-replace doesn't bite:
 
 ## `--editor-color-*` CSS aliases
 
-The `--editor-color-*` aliases that v1.0 kept for back-compat are now **deleted** from `docmosaic.css` and `minimal-light.css`. Reference the semantic surface directly — `var(--primary)` instead of `var(--editor-color-accent)`:
+The `--editor-color-*` aliases that v1.0 kept for back-compat are now **deleted** from `docmosaic.css` and `minimal-light.css`. Reference the semantic surface directly - `var(--primary)` instead of `var(--editor-color-accent)`:
 
 | Removed alias                 | Use instead                                  |
 | ----------------------------- | -------------------------------------------- |
@@ -47,13 +47,13 @@ The `--editor-color-*` aliases that v1.0 kept for back-compat are now **deleted*
 | `--editor-color-accent-soft`  | `--secondary`                                |
 | `--editor-color-success`      | `--accent`                                   |
 | `--editor-color-warning`      | `--destructive`                              |
-| `--editor-color-warning-soft` | (no semantic equivalent — caramel `#FFA552`) |
+| `--editor-color-warning-soft` | (no semantic equivalent - caramel `#FFA552`) |
 | `--editor-color-surface`      | `--background`                               |
 | `--editor-color-text`         | `--foreground`                               |
 
-The structural tokens `--editor-radius-section` and `--editor-shadow-section` are untouched — they're still the source for `rounded-editor-section` and `shadow-editor-section`.
+The structural tokens `--editor-radius-section` and `--editor-shadow-section` are untouched - they're still the source for `rounded-editor-section` and `shadow-editor-section`.
 
-## Tailwind config — remove the `editor.*` color block
+## Tailwind config - remove the `editor.*` color block
 
 The `editor.*` color block in your Tailwind config existed only to wire the removed `editor-*` classes to the `--editor-color-*` variables. With both gone, delete the block. The structural `borderRadius`/`boxShadow` entries stay.
 
@@ -119,15 +119,15 @@ The package ships its tokens as **space-separated RGB triplets** (`56 29 42`, no
   }
 ```
 
-**Why this is one change, not two.** The config format and the variable values must flip together. If the config switches to `rgb(var(--primary))` while the CSS still holds HSL components like `0 0% 9%`, every shadcn component renders `rgb(0 0% 9%)` — invalid CSS — and colors break across your app. The reverse breaks the same way. Land the config and the CSS in the **same** commit.
+**Why this is one change, not two.** The config format and the variable values must flip together. If the config switches to `rgb(var(--primary))` while the CSS still holds HSL components like `0 0% 9%`, every shadcn component renders `rgb(0 0% 9%)` - invalid CSS - and colors break across your app. The reverse breaks the same way. Land the config and the CSS in the **same** commit.
 
-If you already store your tokens as RGB triplets and use `rgb(var(--token) / <alpha-value>)` — the default for apps scaffolded against this surface — there's nothing to do here.
+If you already store your tokens as RGB triplets and use `rgb(var(--token) / <alpha-value>)` - the default for apps scaffolded against this surface - there's nothing to do here.
 
 ## Accepted visual change (minimal-light only)
 
 One intended visual delta ships with this release, and **only under the `minimal-light` theme**: the page-thumbnail hover ring changes from green-600 (`22 163 74`) to the theme accent, zinc-100 (`244 244 245`). This is because `ring-editor-success` mapped to a literal green in `minimal-light`, and `editor-success` now resolves to `--accent`, which is zinc-100 there.
 
-Under the default `docmosaic` theme there is **no** visual change — `--editor-color-success` already aliased `--accent` (sage), so the ring color is identical before and after.
+Under the default `docmosaic` theme there is **no** visual change - `--editor-color-success` already aliased `--accent` (sage), so the ring color is identical before and after.
 
 ## Codemods
 
@@ -143,7 +143,7 @@ git ls-files '*.ts' '*.tsx' '*.css' '*.mdx' \
     -e 's/text-editor-text\b/text-foreground/g'
 ```
 
-(Drop the empty `''` after `-i` on Linux — that's the BSD-`sed` form macOS uses.)
+(Drop the empty `''` after `-i` on Linux - that's the BSD-`sed` form macOS uses.)
 
 After running it, hand-check the three cases the codemod can't reason about: alpha-bearing focus rings (`/20` variants), the native `accent-editor-accent` utility, and any `text-editor-text` sitting on a colored fill. See [Tailwind color classes](#tailwind-color-classes) above.
 
@@ -160,7 +160,7 @@ git ls-files '*.css' '*.tsx' '*.mdx' \
     -e 's/--editor-color-text\b/--foreground/g'
 ```
 
-`--editor-color-warning-soft` has no semantic equivalent — replace it by hand.
+`--editor-color-warning-soft` has no semantic equivalent - replace it by hand.
 
 ## `@docmosaic/core`
 

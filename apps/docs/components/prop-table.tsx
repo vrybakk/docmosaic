@@ -26,7 +26,7 @@ function renderInline(text: string): ReactNode[] {
  * real `<ul>`.
  */
 function Description({ text }: { text: string }) {
-    if (!text) return <span className="text-fd-muted-foreground">—</span>;
+    if (!text) return <span className="text-fd-muted-foreground">-</span>;
 
     const parts = text.split(/\s+-\s+/);
     if (parts.length > 1) {
@@ -101,7 +101,7 @@ export function PropTable({ name, rows }: PropTableProps) {
                                 {row.type}
                             </td>
                             <td className="px-4 py-3 font-mono text-xs text-fd-muted-foreground">
-                                {row.defaultValue ?? '—'}
+                                {row.defaultValue ?? '-'}
                             </td>
                             <td className="px-4 py-3 text-fd-foreground">
                                 <Description text={row.description} />

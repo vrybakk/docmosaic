@@ -36,7 +36,7 @@ const Hero = () => {
                     </Typography>
                 </span>
                 <Typography variant="small" className="text-docmosaic-purple">
-                    New — Frames are here
+                    New - Frames are here
                 </Typography>
                 <ArrowRight className="h-4 w-4 text-docmosaic-orange transition-transform group-hover:translate-x-0.5" />
             </motion.a>
@@ -53,7 +53,7 @@ const Hero = () => {
                     className="mx-auto max-w-3xl !text-[2rem] !leading-[1.12] sm:!text-[2.75rem] lg:!text-[3.25rem]"
                 >
                     <span className="text-docmosaic-caramel">PDF</span> Editing Shouldn&apos;t Be
-                    This <span className="text-docmosaic-orange">Hard</span> — So We{' '}
+                    This <span className="text-docmosaic-orange">Hard</span> - So We{' '}
                     <span className="text-docmosaic-caramel">Fixed It</span>
                 </Typography>
 
@@ -61,7 +61,7 @@ const Hero = () => {
                     variant="paragraph"
                     className="mx-auto max-w-xl !text-base text-docmosaic-black/70"
                 >
-                    Drop in images, arrange them on a virtual page, and export a clean PDF — right in
+                    Drop in images, arrange them on a virtual page, and export a clean PDF - right in
                     your browser.{' '}
                     <span className="font-medium text-docmosaic-black">
                         Fast, simple, DONE in seconds.

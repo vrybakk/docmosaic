@@ -1,24 +1,24 @@
 ---
 title: Introduction
-description: DocMosaic is a headless PDF editor for the web — compound React primitives on top of a framework-agnostic core. Open source. Open code.
+description: DocMosaic is a headless PDF editor for the web - compound React primitives on top of a framework-agnostic core. Open source. Open code.
 ---
 
-DocMosaic is a fully client-side PDF builder. Users drop images, text, shapes, drawings, and frames into sections on a virtual page — including container frames that group elements and Canva-style shaped image slots; the entire document model lives in React state and is rendered to a PDF in the browser via `jspdf`. **No backend, no uploads** — privacy is a product promise, not a side effect.
+DocMosaic is a fully client-side PDF builder. Users drop images, text, shapes, drawings, and frames into sections on a virtual page - including container frames that group elements and Canva-style shaped image slots; the entire document model lives in React state and is rendered to a PDF in the browser via `jspdf`. **No backend, no uploads** - privacy is a product promise, not a side effect.
 
 The library splits into two packages:
 
--   **`@docmosaic/core`** — framework-agnostic document model, reducer + history timeline, page-size math, and the `jspdf` generation pipeline. No React.
--   **`@docmosaic/react`** — compound `<Editor.*>` primitives plus a headless `useDocumentState` hook. Sits on top of `@docmosaic/core` as a peer.
+-   **`@docmosaic/core`** - framework-agnostic document model, reducer + history timeline, page-size math, and the `jspdf` generation pipeline. No React.
+-   **`@docmosaic/react`** - compound `<Editor.*>` primitives plus a headless `useDocumentState` hook. Sits on top of `@docmosaic/core` as a peer.
 
 ## Two ways to consume
 
-**Default shell.** Drop in `<Editor.Root>` and let the primitives lay themselves out — toolbar, page list, canvas, preview. You get the full editor with zero config.
+**Default shell.** Drop in `<Editor.Root>` and let the primitives lay themselves out - toolbar, page list, canvas, preview. You get the full editor with zero config.
 
 **Compose your own UI.** Use `useDocumentState` for the headless state machine and render whatever UI you want. Wire individual `Editor.*` primitives into your design system without touching the default shell.
 
 ## What's next
 
--   [Installation](/docs/get-started/installation) — get the packages into your project
--   [Quick start](/docs/get-started/quick-start) — minimal copy-paste editor in 30 seconds
--   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) — how state ownership works
--   [Designer](/docs/concepts/designer) — the mental model behind the primitives
+-   [Installation](/docs/get-started/installation) - get the packages into your project
+-   [Quick start](/docs/get-started/quick-start) - minimal copy-paste editor in 30 seconds
+-   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) - how state ownership works
+-   [Designer](/docs/concepts/designer) - the mental model behind the primitives

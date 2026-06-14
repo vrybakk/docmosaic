@@ -23,7 +23,7 @@ interface Document {
 Two design choices to call out:
 
 -   **Sections are flat**, not nested under pages. Each `Section` carries a `pageIndex` field. This keeps reordering and cross-page moves cheap (no array surgery to lift a section out of one tree into another) and makes the reducer's update logic a single map over one array.
--   **Document-level `pageSize` and `orientation`**. All pages in a document share the same paper size — the editor is built for documents, not arbitrary multi-format canvases. If you need per-page sizes, fork the reducer; it's pure.
+-   **Document-level `pageSize` and `orientation`**. All pages in a document share the same paper size - the editor is built for documents, not arbitrary multi-format canvases. If you need per-page sizes, fork the reducer; it's pure.
 
 ## Page
 
@@ -36,9 +36,9 @@ interface Page {
 }
 ```
 
-`Page` is intentionally thin — it's a slot, not a container. The expensive content (sections) is keyed off `pageIndex`, so a page can be moved or deleted without rewriting every section underneath it.
+`Page` is intentionally thin - it's a slot, not a container. The expensive content (sections) is keyed off `pageIndex`, so a page can be moved or deleted without rewriting every section underneath it.
 
-`background` and `guides` are both optional. Documents migrated from earlier versions render identically — the renderer treats `undefined` as "no override."
+`background` and `guides` are both optional. Documents migrated from earlier versions render identically - the renderer treats `undefined` as "no override."
 
 ## Section
 
@@ -61,17 +61,17 @@ interface Section {
 
 The type-specific payload differs:
 
--   **`image`** — `imageUrl`, `fit: 'cover' | 'contain' | 'stretch' | 'crop'`, optional crop rectangle, and optional `maskShape: 'rect' | 'circle' | 'line'` (a placeholder/image-mask frame).
--   **`text`** — `content`, `fontSize`, `fontFamily`, `color`, `align`.
--   **`shape`** — `shape: 'rect' | 'ellipse' | 'line'`, `fill`, `stroke`, `strokeWidth`.
--   **`drawing`** — an array of stroke paths in points.
--   **`frame`** — a container box: optional `fill`, `stroke`, `strokeWidth`, `radius`. Other sections become its children.
+-   **`image`** - `imageUrl`, `fit: 'cover' | 'contain' | 'stretch' | 'crop'`, optional crop rectangle, and optional `maskShape: 'rect' | 'circle' | 'line'` (a placeholder/image-mask frame).
+-   **`text`** - `content`, `fontSize`, `fontFamily`, `color`, `align`.
+-   **`shape`** - `shape: 'rect' | 'ellipse' | 'line'`, `fill`, `stroke`, `strokeWidth`.
+-   **`drawing`** - an array of stroke paths in points.
+-   **`frame`** - a container box: optional `fill`, `stroke`, `strokeWidth`, `radius`. Other sections become its children.
 
-The reducer doesn't care about the payload — it routes updates through `updateSection(id, patch)`. Per-type behavior lives in the canvas primitives and the PDF generator.
+The reducer doesn't care about the payload - it routes updates through `updateSection(id, patch)`. Per-type behavior lives in the canvas primitives and the PDF generator.
 
 ## Container frames
 
-A `FrameSection` (`type: 'frame'`) is a box that **owns** other sections. Children stay in the same flat `sections` array — they're linked to their frame only by a `parentFrameId` back-pointer, never nested. This keeps the tree flat (the design choice above) while still letting a frame move, duplicate, or delete as a unit:
+A `FrameSection` (`type: 'frame'`) is a box that **owns** other sections. Children stay in the same flat `sections` array - they're linked to their frame only by a `parentFrameId` back-pointer, never nested. This keeps the tree flat (the design choice above) while still letting a frame move, duplicate, or delete as a unit:
 
 -   Dragging a section so its center lands inside a frame stamps `parentFrameId`; dragging it out clears it.
 -   Moving a frame translates its children with it; deleting or duplicating a frame cascades to them.
@@ -88,11 +88,11 @@ Every `x/y/width/height` is in **PDF points**. Always. The canvas applies `final
 There is exactly one way to mutate the document: dispatch through the reducer. Two surfaces wrap it:
 
 ```ts
-// 1. The headless hook — owns history internally.
+// 1. The headless hook - owns history internally.
 const { document, actions } = useDocumentState();
 actions.addSection({ pageIndex: 0, type: 'image' });
 
-// 2. Editor.Root — same hook, mounted under context.
+// 2. Editor.Root - same hook, mounted under context.
 <Editor.Root>
     {/* primitives call useEditor().actions */}
 </Editor.Root>
@@ -102,7 +102,7 @@ Both paths funnel through `reducer` + `withHistory` from `@docmosaic/core`. If y
 
 ## Serialization
 
-`Document` is plain JSON. Send it over the wire, persist it to localStorage, embed it in a Postgres `jsonb` column — the model is intentionally serialization-friendly.
+`Document` is plain JSON. Send it over the wire, persist it to localStorage, embed it in a Postgres `jsonb` column - the model is intentionally serialization-friendly.
 
 ```ts
 const json = JSON.stringify(document);
@@ -113,6 +113,6 @@ The only thing to watch for: `imageUrl` is stored as a data URL by default. Docu
 
 ## See also
 
--   [Designer](/docs/concepts/designer) — the mental model behind the UI
--   [History](/docs/concepts/history) — undo/redo and the timeline
--   [Unit system](/docs/concepts/unit-system) — why geometry is stored in points
+-   [Designer](/docs/concepts/designer) - the mental model behind the UI
+-   [History](/docs/concepts/history) - undo/redo and the timeline
+-   [Unit system](/docs/concepts/unit-system) - why geometry is stored in points

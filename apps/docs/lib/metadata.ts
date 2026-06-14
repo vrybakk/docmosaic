@@ -13,7 +13,7 @@ export const siteConfig = {
     storybookUrl: 'https://storybook.docmosaic.com',
     githubUrl: 'https://github.com/vrybakk/docmosaic',
     description:
-        'Headless PDF editor for the web. A framework-agnostic core plus compound React primitives for building PDFs entirely client-side — open source, no backend, no uploads.',
+        'Headless PDF editor for the web. A framework-agnostic core plus compound React primitives for building PDFs entirely client-side - open source, no backend, no uploads.',
     ogImage: '/seo/og-image.png',
     twitter: '@nerdstudio',
     gaId: 'G-9GLFL0DT7W',
@@ -42,7 +42,7 @@ export const siteConfig = {
  * they point at the deployed sites. Override the ports with `NEXT_PUBLIC_*` if
  * your local setup differs.
  *
- * Canonical/OpenGraph URLs are deliberately NOT affected — those always use the
+ * Canonical/OpenGraph URLs are deliberately NOT affected - those always use the
  * production origin so SEO stays correct in preview and local builds.
  */
 const isDev = process.env.NODE_ENV === 'development';

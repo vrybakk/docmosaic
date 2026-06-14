@@ -4,7 +4,7 @@ description: Override --primary and --secondary tokens for a third-party brand.
 tags: [theming, css, branding]
 ---
 
-DocMosaic reads every accent colour from CSS custom properties — the same `--primary`, `--secondary`, `--accent`, `--destructive` shape every shadcn app already uses. Rebrand the editor by overriding the variables; there's no JavaScript theme provider to wire.
+DocMosaic reads every accent colour from CSS custom properties - the same `--primary`, `--secondary`, `--accent`, `--destructive` shape every shadcn app already uses. Rebrand the editor by overriding the variables; there's no JavaScript theme provider to wire.
 
 The fastest path: change `--primary` and let everything else inherit. The exhaustive path: override the whole semantic surface.
 
@@ -43,10 +43,10 @@ export default function BrandedEditor() {
 }
 ```
 
-Every button, focus ring, selected-section border, and toolbar accent now reflects indigo. The structural tokens (`--radius`, `--editor-radius-section`, `--editor-shadow-section`) are untouched — you only changed the accent.
+Every button, focus ring, selected-section border, and toolbar accent now reflects indigo. The structural tokens (`--radius`, `--editor-radius-section`, `--editor-shadow-section`) are untouched - you only changed the accent.
 
 <Callout type="info">
-    Color tokens are stored as **space-separated RGB triplets** (`56 29 42`) so they compose with the modern `rgb(R G B / <alpha-value>)` syntax. Don't write hex values — they won't work with the editor's alpha-aware components.
+    Color tokens are stored as **space-separated RGB triplets** (`56 29 42`) so they compose with the modern `rgb(R G B / <alpha-value>)` syntax. Don't write hex values - they won't work with the editor's alpha-aware components.
 </Callout>
 
 ## Full custom palette
@@ -54,7 +54,7 @@ Every button, focus ring, selected-section border, and toolbar accent now reflec
 For an exhaustive override, ship `base.css` only and supply every semantic token:
 
 ```tsx
-// Don't import the bundled brand theme — start from the structural base.
+// Don't import the bundled brand theme - start from the structural base.
 import '@docmosaic/react/styles/base.css';
 import './my-theme.css';
 ```
@@ -85,5 +85,5 @@ import './my-theme.css';
 
 ## Related
 
--   [Theming](/docs/theming) — full token surface
--   [Dark mode recipe](/docs/recipes/dark-mode) — the bundled `.dark` scope
+-   [Theming](/docs/theming) - full token surface
+-   [Dark mode recipe](/docs/recipes/dark-mode) - the bundled `.dark` scope

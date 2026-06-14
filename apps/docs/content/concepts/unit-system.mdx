@@ -1,9 +1,9 @@
 ---
 title: Unit system
-description: Geometry is stored in PDF points. Conversions live at the edges — uploads (px → pt), display (pt → CSS px), export (pt → PDF).
+description: Geometry is stored in PDF points. Conversions live at the edges - uploads (px → pt), display (pt → CSS px), export (pt → PDF).
 ---
 
-Every coordinate, width, and height inside the document model is stored in **PDF points** (1pt = 1/72 inch). Everything else — millimeters in paper-size labels, CSS pixels in the on-screen canvas, image dimensions from a file upload — is a conversion happening at the boundary. Picking one canonical unit keeps the reducer pure and the PDF output byte-stable.
+Every coordinate, width, and height inside the document model is stored in **PDF points** (1pt = 1/72 inch). Everything else - millimeters in paper-size labels, CSS pixels in the on-screen canvas, image dimensions from a file upload - is a conversion happening at the boundary. Picking one canonical unit keeps the reducer pure and the PDF output byte-stable.
 
 ## Mental model
 
@@ -11,11 +11,11 @@ Every coordinate, width, and height inside the document model is stored in **PDF
 | ---------------------------------- | ------------------- | ----------------------------------------------------------------------------- |
 | `Section.x/y/width/height`         | **points (72 DPI)** | Matches jsPDF's native coordinate system 1-to-1.                              |
 | `PageSize` definitions             | points              | Lets `getPageDimensionsWithOrientation` feed jsPDF without a conversion step. |
-| Paper-size labels (`A4`, `LETTER`) | millimeters         | Human-readable ("A4 = 210×297mm") — the canonical international spec.         |
+| Paper-size labels (`A4`, `LETTER`) | millimeters         | Human-readable ("A4 = 210×297mm") - the canonical international spec.         |
 | Canvas display                     | CSS pixels (96 DPI) | What the browser draws. Always scaled at render time.                         |
 | Image uploads                      | CSS pixels (96 DPI) | What the browser gives you (`naturalWidth/Height`).                           |
 
-The reducer never converts. Conversions live at the edges — file upload (px → pt), display (pt → CSS px), export (pt → PDF, no-op).
+The reducer never converts. Conversions live at the edges - file upload (px → pt), display (pt → CSS px), export (pt → PDF, no-op).
 
 ## Why points
 
@@ -29,7 +29,7 @@ When humans want millimeters (the page-size dropdown reads "A4 (210×297mm)") or
 
 ## Conversion API
 
-All helpers live in `@docmosaic/core` and are pure functions — no side effects, no DOM access.
+All helpers live in `@docmosaic/core` and are pure functions - no side effects, no DOM access.
 
 ```ts
 import {
@@ -50,24 +50,24 @@ import {
 | `convertDimensions({ width, height }, from, to)` | Convert a `PageDimensions` pair between `'mm'`, `'in'`, `'px'`.     |
 | `getPageDimensions(pageSize, unit?)`             | Canonical (portrait) dimensions for a paper size in any unit.       |
 | `getPageDimensionsWithOrientation(size, orient)` | Returns `{ width, height }` in **points** with orientation applied. |
-| `formatDimensions(dims, unit)`                   | Human label — e.g. `"210×297mm"`.                                   |
+| `formatDimensions(dims, unit)`                   | Human label - e.g. `"210×297mm"`.                                   |
 
-`MeasurementUnit` is `'mm' | 'in' | 'px'`. Points are intentionally **not** in the union — they're the canonical storage unit, not a display unit.
+`MeasurementUnit` is `'mm' | 'in' | 'px'`. Points are intentionally **not** in the union - they're the canonical storage unit, not a display unit.
 
-## Example — getting points for the current page
+## Example - getting points for the current page
 
 ```ts
 import { getPageDimensionsWithOrientation } from '@docmosaic/core';
 
 const { width, height } = getPageDimensionsWithOrientation('A4', 'landscape');
-// => { width: 841.89, height: 595.28 } — points
+// => { width: 841.89, height: 595.28 } - points
 ```
 
 That's the same shape jsPDF expects. Pass it straight to the renderer.
 
 ## When you need to convert
 
-Three real boundaries — the rest is storage.
+Three real boundaries - the rest is storage.
 
 ### 1. File upload (px → pt)
 
@@ -87,7 +87,7 @@ finalScale = pageScale * zoom
 displayedPx = pointValue * finalScale
 ```
 
-You never write to `section.x` directly from a mouse event in CSS pixels — the canvas hook divides by `finalScale` first, so the reducer always sees points.
+You never write to `section.x` directly from a mouse event in CSS pixels - the canvas hook divides by `finalScale` first, so the reducer always sees points.
 
 ### 3. Export (pt → PDF)
 
@@ -95,10 +95,10 @@ This is a no-op. jsPDF is configured with `unit: 'pt'`, so the document's stored
 
 ## Tradeoffs
 
--   **No `'pt'` in `MeasurementUnit`.** Points are storage, not display. If a UI ever needs to show "12pt", convert via `ptToMm` then format — or build a `formatPoints` helper at the call site.
--   **`mmToPt`/`ptToMm` use the constant `2.83465`.** That's the rounded value of `72 / 25.4`. Errors are under `1e-5` over A0 dimensions — well below jsPDF's own precision.
+-   **No `'pt'` in `MeasurementUnit`.** Points are storage, not display. If a UI ever needs to show "12pt", convert via `ptToMm` then format - or build a `formatPoints` helper at the call site.
+-   **`mmToPt`/`ptToMm` use the constant `2.83465`.** That's the rounded value of `72 / 25.4`. Errors are under `1e-5` over A0 dimensions - well below jsPDF's own precision.
 
 ## See also
 
--   [Designer](/docs/concepts/designer) — how the canvas scales points into CSS pixels
--   [Guides and snap](/docs/concepts/guides-and-snap) — `Editor.Ruler` is the unit-aware primitive that surfaces points/mm/in directly on the canvas
+-   [Designer](/docs/concepts/designer) - how the canvas scales points into CSS pixels
+-   [Guides and snap](/docs/concepts/guides-and-snap) - `Editor.Ruler` is the unit-aware primitive that surfaces points/mm/in directly on the canvas

@@ -3,14 +3,14 @@ title: Next.js Server Component boundary
 description: Where to put the 'use client' directive so the Editor.* namespace dereferences cleanly.
 ---
 
-`@docmosaic/react` is client-only. In Next.js App Router, that's two minutes of wiring — but one detail trips people up.
+`@docmosaic/react` is client-only. In Next.js App Router, that's two minutes of wiring - but one detail trips people up.
 
 ## The problem
 
 A Server Component can't dereference the `Editor.*` namespace through a client-reference proxy. This breaks:
 
 ```tsx
-// app/editor/page.tsx — Server Component
+// app/editor/page.tsx - Server Component
 import { Editor } from '@docmosaic/react';
 
 export default function Page() {
@@ -26,7 +26,7 @@ You'll see a runtime error like "Cannot read properties of undefined (reading 'R
 Move the dereferencing into a client component. The simplest approach: one client file per editor route.
 
 ```tsx
-// app/editor/page.tsx — Server Component, fine
+// app/editor/page.tsx - Server Component, fine
 import { Suspense } from 'react';
 import { EditorMount } from './editor-mount';
 
@@ -40,7 +40,7 @@ export default function Page() {
 ```
 
 ```tsx
-// app/editor/editor-mount.tsx — Client component
+// app/editor/editor-mount.tsx - Client component
 'use client';
 
 import { Editor } from '@docmosaic/react';
@@ -72,7 +72,7 @@ The flat exports (`EditorRoot`, `EditorCanvas`, etc.) work from a Server Compone
 import { EditorRoot, EditorCanvas, EditorSection } from '@docmosaic/react';
 ```
 
-But you still need a `'use client'` boundary somewhere — the components themselves are client components. The boundary is just slightly higher in the tree.
+But you still need a `'use client'` boundary somewhere - the components themselves are client components. The boundary is just slightly higher in the tree.
 
 ## See also
 

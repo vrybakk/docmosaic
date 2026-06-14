@@ -362,7 +362,7 @@
             "type": "number | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Maximum size for the minimap thumbnail (CSS pixels). The thumbnail preserves the page aspect ratio so the actual dimensions are at most `maxSize` on the longer axis. Defaults to `72` — a small peripheral tile rather than a large preview."
+            "description": "Maximum size for the minimap thumbnail (CSS pixels). The thumbnail preserves the page aspect ratio so the actual dimensions are at most `maxSize` on the longer axis. Defaults to `72` - a small peripheral tile rather than a large preview."
         }
     ],
     "Zoom": [
@@ -855,7 +855,7 @@
             "type": "number",
             "required": true,
             "defaultValue": null,
-            "description": "Display scale (`finalScale`) — point values are multiplied by this to render in display pixels so the overlay aligns with the visible section box."
+            "description": "Display scale (`finalScale`) - point values are multiplied by this to render in display pixels so the overlay aligns with the visible section box."
         },
         {
             "name": "onStartMove",
@@ -991,7 +991,7 @@
             "type": "readonly TemplateGalleryItem[]",
             "required": true,
             "defaultValue": null,
-            "description": "Templates to render — order is preserved."
+            "description": "Templates to render - order is preserved."
         },
         {
             "name": "onTemplateSelected",
@@ -1014,7 +1014,7 @@
             "type": "Partial<EditorKeymap> | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Override the displayed keymap. Defaults to DEFAULT_KEYMAP. Pass the same partial map you handed to `Editor.Root` `keybindings` so the dialog reflects the actual active bindings. Anything omitted falls back to the default — the merge mirrors what the runtime layer does."
+            "description": "Override the displayed keymap. Defaults to DEFAULT_KEYMAP. Pass the same partial map you handed to `Editor.Root` `keybindings` so the dialog reflects the actual active bindings. Anything omitted falls back to the default - the merge mirrors what the runtime layer does."
         },
         {
             "name": "open",
@@ -1037,7 +1037,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Optional children. When provided, the toolbar renders the inverse default layout and shows whatever children the caller passes. When omitted, falls back to the bundled default layout — the same arrangement the editor has always shipped with."
+            "description": "Optional children. When provided, the toolbar renders the inverse default layout and shows whatever children the caller passes. When omitted, falls back to the bundled default layout - the same arrangement the editor has always shipped with."
         }
     ],
     "AddShapeButton": [
@@ -1203,7 +1203,7 @@
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Render a compact icon-only pair — a download glyph plus a tiny menu chevron — instead of the wide labeled \"Download PDF\" split button. Used in the app-shell top bar's monochrome icon cluster."
+            "description": "Render a compact icon-only pair - a download glyph plus a tiny menu chevron - instead of the wide labeled \"Download PDF\" split button. Used in the app-shell top bar's monochrome icon cluster."
         },
         {
             "name": "variant",
@@ -1415,7 +1415,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Optional children. When provided, the panel renders them as the body — useful for custom compositions that swap sub-sections or add their own fields. When omitted, the panel falls back to the bundled default arrangement: `LayoutSection`, type-specific section (Text / Shape), then `LayerSection`. An empty selection always renders the EmptyState regardless of children."
+            "description": "Optional children. When provided, the panel renders them as the body - useful for custom compositions that swap sub-sections or add their own fields. When omitted, the panel falls back to the bundled default arrangement: `LayoutSection`, type-specific section (Text / Shape), then `LayerSection`. An empty selection always renders the EmptyState regardless of children."
         },
         {
             "name": "className",
@@ -1569,14 +1569,14 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Two kinds of children are supported: 1. **Section template** — a single non-overlay child rendered once per section. Pass `<Editor.Section />` (or a custom section component that consumes useEditorSection) to control how each section is rendered. Defaults to the bundled `<Section />` when omitted. 2. **Canvas overlays** — primitives that opt in via the `__editorCanvasOverlay` marker (e.g. Editor.Zoom). These are rendered once, anchored to the canvas viewport, and have access to useEditorCanvas via context. Any number can be supplied alongside the section template."
+            "description": "Two kinds of children are supported: 1. **Section template** - a single non-overlay child rendered once per section. Pass `<Editor.Section />` (or a custom section component that consumes useEditorSection) to control how each section is rendered. Defaults to the bundled `<Section />` when omitted. 2. **Canvas overlays** - primitives that opt in via the `__editorCanvasOverlay` marker (e.g. Editor.Zoom). These are rendered once, anchored to the canvas viewport, and have access to useEditorCanvas via context. Any number can be supplied alongside the section template."
         },
         {
             "name": "readOnly",
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Force the canvas into read-only mode regardless of the root's `readOnly` flag. Defaults to `false`. The effective read-only state is `root.readOnly || canvas.readOnly` — either one is enough to suppress drag, resize, drop, file upload, and section-toolbar buttons. Set automatically by Editor.StaticCanvas."
+            "description": "Force the canvas into read-only mode regardless of the root's `readOnly` flag. Defaults to `false`. The effective read-only state is `root.readOnly || canvas.readOnly` - either one is enough to suppress drag, resize, drop, file upload, and section-toolbar buttons. Set automatically by Editor.StaticCanvas."
         },
         {
             "name": "showControls",
@@ -1592,7 +1592,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Two kinds of children are supported: 1. **Section template** — a single non-overlay child rendered once per section. Pass `<Editor.Section />` (or a custom section component that consumes useEditorSection) to control how each section is rendered. Defaults to the bundled `<Section />` when omitted. 2. **Canvas overlays** — primitives that opt in via the `__editorCanvasOverlay` marker (e.g. Editor.Zoom). These are rendered once, anchored to the canvas viewport, and have access to useEditorCanvas via context. Any number can be supplied alongside the section template."
+            "description": "Two kinds of children are supported: 1. **Section template** - a single non-overlay child rendered once per section. Pass `<Editor.Section />` (or a custom section component that consumes useEditorSection) to control how each section is rendered. Defaults to the bundled `<Section />` when omitted. 2. **Canvas overlays** - primitives that opt in via the `__editorCanvasOverlay` marker (e.g. Editor.Zoom). These are rendered once, anchored to the canvas viewport, and have access to useEditorCanvas via context. Any number can be supplied alongside the section template."
         },
         {
             "name": "showControls",
@@ -1801,7 +1801,7 @@
             "type": "number",
             "required": true,
             "defaultValue": null,
-            "description": "Active brush weight in PDF points (1–20)."
+            "description": "Active brush weight in PDF points (1-20)."
         },
         {
             "name": "onChange",
@@ -1868,7 +1868,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Extra nodes mounted **after** the default app-shell — custom dialogs, an extra toaster, analytics bridges, etc. The shell renders the full editor on its own, so children are purely additive overlays. Omit for the canonical `<Editor.Root />` usage."
+            "description": "Extra nodes mounted **after** the default app-shell - custom dialogs, an extra toaster, analytics bridges, etc. The shell renders the full editor on its own, so children are purely additive overlays. Omit for the canonical `<Editor.Root />` usage."
         },
         {
             "name": "themeToggle",
@@ -1924,7 +1924,7 @@
             "type": "false | Partial<EditorKeymap> | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Keyboard shortcuts. - Omit (default): the built-in keymap is active — `mod+z` undo, `mod+shift+z` / `mod+y` redo, `Delete` / `Backspace` removes the selected section, `Escape` deselects, and `Arrow` / `Shift+Arrow` nudge the selected section by 1pt / 10pt. - Pass a partial EditorKeymap to override individual bindings or register alternates (e.g. `{ redo: 'mod+r' }`). - Pass `false` to disable the layer entirely — no window listener is attached. Bindings are skipped while focus is inside an `<input>`, `<textarea>`, `<select>`, or anything `contenteditable`, so text fields like the document-name input remain typeable."
+            "description": "Keyboard shortcuts. - Omit (default): the built-in keymap is active - `mod+z` undo, `mod+shift+z` / `mod+y` redo, `Delete` / `Backspace` removes the selected section, `Escape` deselects, and `Arrow` / `Shift+Arrow` nudge the selected section by 1pt / 10pt. - Pass a partial EditorKeymap to override individual bindings or register alternates (e.g. `{ redo: 'mod+r' }`). - Pass `false` to disable the layer entirely - no window listener is attached. Bindings are skipped while focus is inside an `<input>`, `<textarea>`, `<select>`, or anything `contenteditable`, so text fields like the document-name input remain typeable."
         },
         {
             "name": "readOnly",
@@ -1945,7 +1945,7 @@
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Render `Editor.Minimap` anchored to the bottom-right of the canvas viewport — a thumbnail of the current page plus a viewport rectangle that pans the main canvas. Defaults to `false`."
+            "description": "Render `Editor.Minimap` anchored to the bottom-right of the canvas viewport - a thumbnail of the current page plus a viewport rectangle that pans the main canvas. Defaults to `false`."
         },
         {
             "name": "rulerUnit",
@@ -2061,7 +2061,7 @@
             "type": "ReactNode",
             "required": false,
             "defaultValue": null,
-            "description": "Extra nodes rendered after the shell — custom dialogs, toasters, or other overlays passed through `Editor.Root`'s `children`."
+            "description": "Extra nodes rendered after the shell - custom dialogs, toasters, or other overlays passed through `Editor.Root`'s `children`."
         }
     ],
     "LeftRail": [
@@ -2169,7 +2169,7 @@
             "type": "boolean | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Compact rail mode: render only the thumbnail strip plus a single \"Add page\" affordance — no internal \"Pages\" header, \"Last modified\" footer, or \"Add Image\" button. Used inside the app-shell left rail, where those concerns live elsewhere. Defaults to `false` (standalone sidebar)."
+            "description": "Compact rail mode: render only the thumbnail strip plus a single \"Add page\" affordance - no internal \"Pages\" header, \"Last modified\" footer, or \"Add Image\" button. Used inside the app-shell left rail, where those concerns live elsewhere. Defaults to `false` (standalone sidebar)."
         }
     ],
     "PageThumbnail": [
@@ -2264,7 +2264,7 @@
             "type": "Partial<EditorKeymap> | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Override the displayed shortcut chips. Defaults to DEFAULT_KEYMAP. Pass the same partial map you handed to `Editor.Root` `keybindings` so the inline shortcuts match the active runtime — the menu items themselves dispatch through useEditor actions regardless."
+            "description": "Override the displayed shortcut chips. Defaults to DEFAULT_KEYMAP. Pass the same partial map you handed to `Editor.Root` `keybindings` so the inline shortcuts match the active runtime - the menu items themselves dispatch through useEditor actions regardless."
         },
         {
             "name": "className",
@@ -2364,7 +2364,7 @@
             "type": "EditorKeybinding | undefined",
             "required": false,
             "defaultValue": null,
-            "description": "Toggle the Editor.KeybindingHelp dialog. Defaults to `mod+/` — the same chord used by Notion, GitHub, Slack, and most other web apps with a built-in keymap viewer. Read-only safe (the dialog is a passive viewer)."
+            "description": "Toggle the Editor.KeybindingHelp dialog. Defaults to `mod+/` - the same chord used by Notion, GitHub, Slack, and most other web apps with a built-in keymap viewer. Read-only safe (the dialog is a passive viewer)."
         }
     ],
     "useDocumentState": [

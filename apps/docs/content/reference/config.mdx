@@ -1,9 +1,9 @@
 ---
 title: EditorConfig
-description: The injection points — EditorConfigProvider, EditorPdfBackend, ImageRenderer.
+description: The injection points - EditorConfigProvider, EditorPdfBackend, ImageRenderer.
 ---
 
-`EditorConfigProvider` is the injection point for swap-in dependencies — the image renderer, the PDF backend overrides, and other host-app-specific wiring.
+`EditorConfigProvider` is the injection point for swap-in dependencies - the image renderer, the PDF backend overrides, and other host-app-specific wiring.
 
 ## `EditorConfigProvider`
 
@@ -39,7 +39,7 @@ type ImageRenderer = (props: {
 }) => React.ReactNode;
 ```
 
-The default renderer is a plain `<img>`. Swap it for `next/image` (or any image component) — see the [custom image renderer recipe](/docs/recipes/custom-image-renderer).
+The default renderer is a plain `<img>`. Swap it for `next/image` (or any image component) - see the [custom image renderer recipe](/docs/recipes/custom-image-renderer).
 
 ## `EditorPdfBackend`
 
@@ -50,7 +50,7 @@ interface EditorPdfBackend {
 }
 ```
 
-Both `generate` and `estimate` are optional on `Editor.Root pdf={...}` — anything omitted falls back to the bundled `@docmosaic/core` implementation. See the [custom PDF backend recipe](/docs/recipes/custom-pdf-backend).
+Both `generate` and `estimate` are optional on `Editor.Root pdf={...}` - anything omitted falls back to the bundled `@docmosaic/core` implementation. See the [custom PDF backend recipe](/docs/recipes/custom-pdf-backend).
 
 ## `AnalyticsTracker`
 

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export interface ExampleCard {
-    /** Slug of the example .mdx — used to build the link. */
+    /** Slug of the example .mdx - used to build the link. */
     slug: string;
     /** Card title (matches the page `title`). */
     title: string;
@@ -18,7 +18,7 @@ interface ExamplesGridProps {
 /**
  * Card grid for the /examples landing page. Each card links to its example
  * page. Uses Fumadocs' semantic tokens (`fd-*`) so it follows the active
- * theme — light or dark — without extra wiring.
+ * theme - light or dark - without extra wiring.
  */
 export function ExamplesGrid({ items }: ExamplesGridProps) {
     return (

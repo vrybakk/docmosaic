@@ -3,20 +3,20 @@ title: Theming
 description: The shadcn-aligned semantic token surface and the base / brand-theme split. Rebrand with a single variable, or ship your own theme on top of the shared structural base.
 ---
 
-`@docmosaic/react` reads every accent color, radius, and shadow from CSS custom properties — the same `--background`, `--foreground`, `--primary`, `--secondary`, `--muted`, `--accent`, `--destructive`, `--border`, `--input`, `--ring`, `--radius` every shadcn-based app already exposes. Rebrand the editor with the same variable an app uses for the rest of its UI.
+`@docmosaic/react` reads every accent color, radius, and shadow from CSS custom properties - the same `--background`, `--foreground`, `--primary`, `--secondary`, `--muted`, `--accent`, `--destructive`, `--border`, `--input`, `--ring`, `--radius` every shadcn-based app already exposes. Rebrand the editor with the same variable an app uses for the rest of its UI.
 
-No JavaScript-side theme provider, no runtime config — just CSS.
+No JavaScript-side theme provider, no runtime config - just CSS.
 
 ## Mental model
 
 The package ships its styles split into layers so you can swap colors without reinventing the structural defaults:
 
--   **`styles/base.css`** — brand-agnostic structural tokens (`--editor-radius-section`, `--editor-shadow-section`, `--radius`) and the cascade-layer order declaration.
--   **`styles/themes/docmosaic.css`** — the DocMosaic brand colors as shadcn semantic tokens, including the bundled `.dark` scope. **Default.**
--   **`styles/themes/minimal-light.css`** — shadcn-inspired neutral grays on a white surface.
--   **`styles.css`** — convenience bundle that imports `base` + the DocMosaic brand theme.
+-   **`styles/base.css`** - brand-agnostic structural tokens (`--editor-radius-section`, `--editor-shadow-section`, `--radius`) and the cascade-layer order declaration.
+-   **`styles/themes/docmosaic.css`** - the DocMosaic brand colors as shadcn semantic tokens, including the bundled `.dark` scope. **Default.**
+-   **`styles/themes/minimal-light.css`** - shadcn-inspired neutral grays on a white surface.
+-   **`styles.css`** - convenience bundle that imports `base` + the DocMosaic brand theme.
 
-All token values land in a `@layer docmosaic` cascade layer. `base.css` declares the layer order as `docmosaic, base, components, utilities` — so any consumer that already has a shadcn `:root { --background: ... }` block in `@layer base` (the default Tailwind `@tailwind base` layer) wins automatically.
+All token values land in a `@layer docmosaic` cascade layer. `base.css` declares the layer order as `docmosaic, base, components, utilities` - so any consumer that already has a shadcn `:root { --background: ... }` block in `@layer base` (the default Tailwind `@tailwind base` layer) wins automatically.
 
 You pick one of these layering patterns at import time:
 
@@ -30,7 +30,7 @@ You pick one of these layering patterns at import time:
                                   import '@docmosaic/react/styles/themes/minimal-light.css';
 ```
 
-For dark mode, import `styles.css` (or `themes/docmosaic.css`) and toggle the `.dark` class on `<html>` — the theme ships a `.dark` scope. See the [dark mode recipe](/docs/recipes/dark-mode).
+For dark mode, import `styles.css` (or `themes/docmosaic.css`) and toggle the `.dark` class on `<html>` - the theme ships a `.dark` scope. See the [dark mode recipe](/docs/recipes/dark-mode).
 
 ## Available themes
 
@@ -49,11 +49,11 @@ Color tokens are stored as **space-separated RGB triplets** so they compose with
 | -------------------------- | ---------------------------------------- | -------------------- |
 | `--background`             | Editor canvas surround                   | `255 255 255`        |
 | `--foreground`             | Default text on `--background`           | `56 29 42` (#381D2A) |
-| `--card`                   | Elevated surfaces — sidebars, inspector  | `255 255 255`        |
+| `--card`                   | Elevated surfaces - sidebars, inspector  | `255 255 255`        |
 | `--card-foreground`        | Text on `--card`                         | `56 29 42`           |
-| `--primary`                | Primary accent — buttons, active borders | `56 29 42`           |
+| `--primary`                | Primary accent - buttons, active borders | `56 29 42`           |
 | `--primary-foreground`     | Text/icons on `--primary`                | `252 222 156`        |
-| `--secondary`              | Soft accent — hover states, subtle fills | `252 222 156`        |
+| `--secondary`              | Soft accent - hover states, subtle fills | `252 222 156`        |
 | `--secondary-foreground`   | Text on `--secondary`                    | `56 29 42`           |
 | `--muted`                  | Placeholder / disabled background        | `244 244 245`        |
 | `--muted-foreground`       | Placeholder / disabled text              | `113 113 122`        |
@@ -89,7 +89,7 @@ Every button, focus ring, and selected section reflects the new accent without t
 
 ## Custom theme on shared base
 
-For a full custom theme — every accent, surface, and border — supply the whole semantic surface:
+For a full custom theme - every accent, surface, and border - supply the whole semantic surface:
 
 ```ts
 import '@docmosaic/react/styles/base.css';
@@ -150,5 +150,5 @@ See the [dark mode recipe](/docs/recipes/dark-mode) for a full walkthrough with 
 
 ## See also
 
--   [Designer](/docs/concepts/designer) — how primitives consume these tokens
--   [Dark mode recipe](/docs/recipes/dark-mode) — full setup
+-   [Designer](/docs/concepts/designer) - how primitives consume these tokens
+-   [Dark mode recipe](/docs/recipes/dark-mode) - full setup

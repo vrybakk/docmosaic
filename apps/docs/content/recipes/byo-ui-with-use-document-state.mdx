@@ -18,10 +18,10 @@ const { document, formattedDate, canUndo, canRedo, actions } = useDocumentState(
 
 It returns:
 
--   **`document`** — the current snapshot. Re-renders on every change.
--   **`formattedDate`** — `updatedAt` formatted for display.
--   **`canUndo` / `canRedo`** — booleans for button enabled states.
--   **`actions`** — a stable, referentially-equal object of dispatcher functions.
+-   **`document`** - the current snapshot. Re-renders on every change.
+-   **`formattedDate`** - `updatedAt` formatted for display.
+-   **`canUndo` / `canRedo`** - booleans for button enabled states.
+-   **`actions`** - a stable, referentially-equal object of dispatcher functions.
 
 ## A minimal custom editor
 
@@ -64,7 +64,7 @@ export function CustomEditor() {
 }
 ```
 
-That's the whole editor. No `<Editor.Root>`, no compound primitives — just the hook.
+That's the whole editor. No `<Editor.Root>`, no compound primitives - just the hook.
 
 ## Wiring compound primitives onto the hook
 
@@ -79,7 +79,7 @@ function HybridEditor() {
         <EditorProvider value={state}>
             {/* Your custom toolbar */}
             <MyCustomToolbar />
-            {/* Bundled primitives still work — same context */}
+            {/* Bundled primitives still work - same context */}
             <Editor.Canvas>
                 <Editor.Section />
             </Editor.Canvas>
@@ -90,6 +90,6 @@ function HybridEditor() {
 
 ## See also
 
--   [Designer concept](/docs/concepts/designer) — the mental model
+-   [Designer concept](/docs/concepts/designer) - the mental model
 -   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled)
 -   [Hooks reference](/docs/reference/hooks)

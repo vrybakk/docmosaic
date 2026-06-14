@@ -4,7 +4,7 @@
 
 /* Dog-food the published theme: structural defaults + DocMosaic brand colors
    for the `--editor-*` tokens come from @docmosaic/react. apps/web is a
-   consumer of its own published package — no duplicate values to drift from. */
+   consumer of its own published package - no duplicate values to drift from. */
 @import '@docmosaic/react/styles.css';
 
 :root {

@@ -1,9 +1,9 @@
 ---
 title: Editor.PropertiesPanel
-description: The contextual right-side panel. Reflects the selected section's fields — layout, text, shape, layer.
+description: The contextual right-side panel. Reflects the selected section's fields - layout, text, shape, layer.
 ---
 
-`Editor.PropertiesPanel` is the contextual inspector. It auto-discriminates based on the selected section's `type` and renders the matching field set — position + size for layout, font + color for text, fill + stroke for shape, hide / lock toggles for the layer tab.
+`Editor.PropertiesPanel` is the contextual inspector. It auto-discriminates based on the selected section's `type` and renders the matching field set - position + size for layout, font + color for text, fill + stroke for shape, hide / lock toggles for the layer tab.
 
 <StorybookEmbed id="editor-propertiespanel--default" />
 
@@ -15,7 +15,7 @@ description: The contextual right-side panel. Reflects the selected section's fi
 </Editor.Root>
 ```
 
-The panel reads from the editor context — drop it anywhere underneath `Editor.Root` and it lights up. With no section selected, the empty state suggests "Select a section to edit its properties."
+The panel reads from the editor context - drop it anywhere underneath `Editor.Root` and it lights up. With no section selected, the empty state suggests "Select a section to edit its properties."
 
 ## Composition
 
@@ -43,7 +43,7 @@ In `readOnly` mode the inputs render disabled and the layer-action buttons hide.
 </div>
 ```
 
-This is the canonical right-rail composition — outliner on top, contextual props underneath.
+This is the canonical right-rail composition - outliner on top, contextual props underneath.
 
 ## API Reference
 
@@ -51,5 +51,5 @@ This is the canonical right-rail composition — outliner on top, contextual pro
 
 ## Related
 
--   [LayerList](/docs/primitives/layer-list) — outliner that pairs with the panel
--   [Section](/docs/primitives/section) — the source of the selection
+-   [LayerList](/docs/primitives/layer-list) - outliner that pairs with the panel
+-   [Section](/docs/primitives/section) - the source of the selection

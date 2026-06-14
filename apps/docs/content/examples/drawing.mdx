@@ -1,12 +1,12 @@
 ---
 title: Drawing mode
-description: DrawButton + DrawingControls on a blank page — sketches alongside images.
+description: DrawButton + DrawingControls on a blank page - sketches alongside images.
 tags: [drawing, sections]
 ---
 
 DocMosaic ships a freehand drawing mode alongside image sections. `Editor.DrawButton` toggles a "drawing" section into existence; `Editor.DrawingControls` is the side panel with the colour picker and brush-weight slider. Strokes persist on the section, so undo/redo replays them and the PDF export rasterises them at the right DPI.
 
-Use this when users need to sign, annotate, or sketch — not when they need a full vector editor (DocMosaic isn't trying to be Excalidraw).
+Use this when users need to sign, annotate, or sketch - not when they need a full vector editor (DocMosaic isn't trying to be Excalidraw).
 
 ## Code
 
@@ -38,12 +38,12 @@ export default function DrawingEditor() {
 }
 ```
 
-Click `Editor.DrawButton` to drop a blank drawing section over the current page; the `Editor.DrawingControls` panel becomes interactive. Strokes are stored on the drawing `Section` — each one is a list of points with the active colour + weight at the time of drawing.
+Click `Editor.DrawButton` to drop a blank drawing section over the current page; the `Editor.DrawingControls` panel becomes interactive. Strokes are stored on the drawing `Section` - each one is a list of points with the active colour + weight at the time of drawing.
 
 <Callout type="info">
     Strokes survive the PDF round-trip. The bundled `generatePDF` rasterises drawing sections at the
     document's stored point geometry, so a signature drawn at 200pt × 60pt prints crisp at 200pt ×
-    60pt — no resampling.
+    60pt - no resampling.
 </Callout>
 
 ## Try it

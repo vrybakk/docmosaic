@@ -3,13 +3,13 @@ title: Layers
 description: Section.zIndex, the four reorder actions, the layer toolbar, and the Editor.LayerList outliner.
 ---
 
-Every `Section` carries a `zIndex`. When two sections overlap, the higher `zIndex` paints on top — both on the canvas and in the exported PDF. Four reducer actions plus four toolbar buttons let users reorder layers without manipulating arrays directly. Operations are scoped per page; sections on other pages never influence the result.
+Every `Section` carries a `zIndex`. When two sections overlap, the higher `zIndex` paints on top - both on the canvas and in the exported PDF. Four reducer actions plus four toolbar buttons let users reorder layers without manipulating arrays directly. Operations are scoped per page; sections on other pages never influence the result.
 
 ## Mental model
 
-`Section.zIndex` is just a number that defaults to `0`. Render order is `(zIndex asc, then frames before non-frames at equal zIndex, then array index asc)` — lower draws first, higher draws on top, and ties fall back to insertion order so legacy documents (everything at `0`) render exactly as before. The middle key keeps a container frame behind its children (so a filled or bordered frame never covers its contents). The canvas, the PDF generator, and the PNG generator all share one sort — the exported `orderSectionsForRender` helper from `@docmosaic/core` — so what users see is what they get on download.
+`Section.zIndex` is just a number that defaults to `0`. Render order is `(zIndex asc, then frames before non-frames at equal zIndex, then array index asc)` - lower draws first, higher draws on top, and ties fall back to insertion order so legacy documents (everything at `0`) render exactly as before. The middle key keeps a container frame behind its children (so a filled or bordered frame never covers its contents). The canvas, the PDF generator, and the PNG generator all share one sort - the exported `orderSectionsForRender` helper from `@docmosaic/core` - so what users see is what they get on download.
 
-There's no "current layer" mode and no separate layer state — `zIndex` is part of the section. Reordering is a pure mutation; undo/redo cover it like any other reducer action.
+There's no "current layer" mode and no separate layer state - `zIndex` is part of the section. Reordering is a pure mutation; undo/redo cover it like any other reducer action.
 
 ## The four actions
 
@@ -34,10 +34,10 @@ The matching dispatchable reducer actions (`BRING_TO_FRONT`, `SEND_TO_BACK`, `MO
 
 ## When you want layers
 
--   **Overlapping images** — a portrait on a card background, a logo over a photo.
--   **Watermarks / stamps** — a translucent "DRAFT" sitting above every content image.
--   **Annotated callouts** — an arrow image layered on top of a screenshot.
--   **Composite collages** — manually-ordered photo grids where the order matters.
+-   **Overlapping images** - a portrait on a card background, a logo over a photo.
+-   **Watermarks / stamps** - a translucent "DRAFT" sitting above every content image.
+-   **Annotated callouts** - an arrow image layered on top of a screenshot.
+-   **Composite collages** - manually-ordered photo grids where the order matters.
 
 If sections never overlap (a strict grid of disjoint rectangles), `zIndex` is invisible. The default of `0` everywhere just means "render in insertion order," which is the legacy behavior preserved by the array-index tiebreaker.
 
@@ -52,7 +52,7 @@ If sections never overlap (a strict grid of disjoint rectangles), `zIndex` is in
 | Move backward  | `ChevronDown`  | `actions.moveBackward(sectionId)` |
 | Send to back   | `ChevronsDown` | `actions.sendToBack(sectionId)`   |
 
-The toolbar appears on hover and stays visible while the section is selected. No additional wiring required — every layer action runs through the editor context so undo/redo, analytics, and the controlled-mode forward-pass all just work.
+The toolbar appears on hover and stays visible while the section is selected. No additional wiring required - every layer action runs through the editor context so undo/redo, analytics, and the controlled-mode forward-pass all just work.
 
 ## Building your own UI
 
@@ -98,7 +98,7 @@ import { Editor } from '@docmosaic/react';
 </Editor.Root>;
 ```
 
-The panel reads its data from the editor context — drop it anywhere underneath `Editor.Root` and it lights up.
+The panel reads its data from the editor context - drop it anywhere underneath `Editor.Root` and it lights up.
 
 ### Hide and lock
 
@@ -109,15 +109,15 @@ Each row has two toggles, mirroring Figma:
 | Eye    | `actions.toggleHidden(sectionId)` | Skips the section in the canvas and the PDF output.                                                  |
 | Lock   | `actions.toggleLocked(sectionId)` | Refuses selection, drag, and resize for the section. The properties panel still surfaces its fields. |
 
-Hidden and locked are independent — a section can be both. They live as `Section.hidden` and `Section.locked` on the core type so they survive document round-trips and undo/redo. Programmatic callers can also use `actions.setHidden(id, true)` / `actions.setLocked(id, true)` when they want to write an explicit value instead of toggling.
+Hidden and locked are independent - a section can be both. They live as `Section.hidden` and `Section.locked` on the core type so they survive document round-trips and undo/redo. Programmatic callers can also use `actions.setHidden(id, true)` / `actions.setLocked(id, true)` when they want to write an explicit value instead of toggling.
 
 The PDF generator filters out hidden sections before drawing, so a hidden layer leaves no trace in the exported file (the byte-diff gate covers this).
 
 ### Drag-to-reorder
 
-Grabbing the grip handle and dragging up/down past another row's midpoint reorders the layer stack — the panel reassigns `zIndex` to every section on the page in one atomic pass so the visible order matches the new list order. Reorder is suppressed in `readOnly` mode (along with the hide/lock toggles).
+Grabbing the grip handle and dragging up/down past another row's midpoint reorders the layer stack - the panel reassigns `zIndex` to every section on the page in one atomic pass so the visible order matches the new list order. Reorder is suppressed in `readOnly` mode (along with the hide/lock toggles).
 
 ## See also
 
--   [Designer](/docs/concepts/designer) — selection model the layer buttons key off of
--   [Keybindings](/docs/concepts/keybindings) — actions you might wire to keyboard shortcuts in the future
+-   [Designer](/docs/concepts/designer) - selection model the layer buttons key off of
+-   [Keybindings](/docs/concepts/keybindings) - actions you might wire to keyboard shortcuts in the future

@@ -9,7 +9,7 @@ import type React from 'react';
  * `.dark` class on `<html>`, which both Tailwind's `darkMode: ['class']` and
  * the `.dark` scope in `@docmosaic/react`'s shipped `docmosaic.css` consume.
  *
- * The marketing site is a light-only brand surface — its blocks hardcode the
+ * The marketing site is a light-only brand surface - its blocks hardcode the
  * warm DocMosaic palette and were never designed for a dark canvas. So every
  * route except the editor is pinned to light via `forcedTheme`; only
  * `/pdf-editor` honors the system preference and the in-editor theme toggle.

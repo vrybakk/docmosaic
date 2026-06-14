@@ -16,7 +16,7 @@ import { Editor, type TemplateGalleryItem } from '@docmosaic/react';
 import { createDocument, createPage, type Document } from '@docmosaic/core';
 import '@docmosaic/react/styles.css';
 
-// Static templates ship with the app — keep these checked in.
+// Static templates ship with the app - keep these checked in.
 const STATIC_TEMPLATES: ReadonlyArray<TemplateGalleryItem> = [
     {
         id: 'blank',
@@ -83,7 +83,7 @@ export default function TemplatesEditor() {
 }
 ```
 
-`onTemplateSelected` fires after the document swap. Use it for analytics, dialog close, or — like here — bumping the template id to the front of a recents list.
+`onTemplateSelected` fires after the document swap. Use it for analytics, dialog close, or - like here - bumping the template id to the front of a recents list.
 
 <Callout type="info">
     The swap goes through `actions.loadDocument`, which is captured by the history timeline in
@@ -96,6 +96,6 @@ export default function TemplatesEditor() {
 
 ## Related
 
--   [Editor.TemplateGallery](/docs/primitives/template-gallery) — props
--   [Persisting templates](/docs/recipes/persisting-templates) — JSON serialisation patterns
--   [Save to a database](/docs/examples/save-to-database) — beyond localStorage
+-   [Editor.TemplateGallery](/docs/primitives/template-gallery) - props
+-   [Persisting templates](/docs/recipes/persisting-templates) - JSON serialisation patterns
+-   [Save to a database](/docs/examples/save-to-database) - beyond localStorage

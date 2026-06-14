@@ -9,7 +9,7 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
     return (
         <script
             type="application/ld+json"
-            // Schema.org payload is fully static / author-controlled — no user input.
+            // Schema.org payload is fully static / author-controlled - no user input.
             dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
         />
     );
@@ -37,7 +37,7 @@ export const websiteSchema = {
     publisher: { '@id': `${siteConfig.url}/#organization` },
 };
 
-/** The product the docs describe — a free, open-source developer tool. */
+/** The product the docs describe - a free, open-source developer tool. */
 export const softwareApplicationSchema = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',

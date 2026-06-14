@@ -9,7 +9,7 @@ import './global.css';
 export const metadata: Metadata = {
     metadataBase: new URL(siteConfig.url),
     title: {
-        default: `${siteConfig.docsName} — Headless PDF editor for React`,
+        default: `${siteConfig.docsName} - Headless PDF editor for React`,
         template: `%s | ${siteConfig.docsName}`,
     },
     description: siteConfig.description,
@@ -26,14 +26,14 @@ export const metadata: Metadata = {
         locale: 'en_US',
         url: siteConfig.url,
         siteName: siteConfig.docsName,
-        title: `${siteConfig.docsName} — Headless PDF editor for React`,
+        title: `${siteConfig.docsName} - Headless PDF editor for React`,
         description: siteConfig.description,
         images: [
             {
                 url: siteConfig.ogImage,
                 width: 1080,
                 height: 700,
-                alt: `${siteConfig.docsName} — Headless PDF editor for React`,
+                alt: `${siteConfig.docsName} - Headless PDF editor for React`,
             },
         ],
     },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         site: siteConfig.twitter,
         creator: siteConfig.twitter,
-        title: `${siteConfig.docsName} — Headless PDF editor for React`,
+        title: `${siteConfig.docsName} - Headless PDF editor for React`,
         description: siteConfig.description,
         images: [siteConfig.ogImage],
     },

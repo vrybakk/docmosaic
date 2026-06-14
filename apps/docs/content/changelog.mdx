@@ -9,17 +9,17 @@ The packages follow [semver](https://semver.org/). Breaking changes ship in majo
 
 Ships two things together: the breaking `@docmosaic/react` token migration (major) and the additive **Frames** feature (minor in both packages).
 
-**Frames (additive, both packages — existing documents and APIs are unchanged):**
+**Frames (additive, both packages - existing documents and APIs are unchanged):**
 
--   **Container frames** — a new `FrameSection` (`type: 'frame'`) box that owns child sections. `@docmosaic/react` gains `Editor.FrameToolButton` (draw-to-size), drag-to-adopt, move-with-children, and a delete/duplicate cascade. Frames draw behind their children.
--   **Placeholder frames** — `ImageSection.maskShape` (`'rect' | 'circle' | 'line'`) clips an image to a shape; `Editor.ImageFrameToolButton` draws Canva-style shaped image slots.
--   **`@docmosaic/core` (1.1.0)** — new `FrameSection` type, optional `SectionBase.parentFrameId` / `ImageSection.maskShape`, and the helpers `resolveFrameParent` + `orderSectionsForRender` (the shared back-to-front render sort).
+-   **Container frames** - a new `FrameSection` (`type: 'frame'`) box that owns child sections. `@docmosaic/react` gains `Editor.FrameToolButton` (draw-to-size), drag-to-adopt, move-with-children, and a delete/duplicate cascade. Frames draw behind their children.
+-   **Placeholder frames** - `ImageSection.maskShape` (`'rect' | 'circle' | 'line'`) clips an image to a shape; `Editor.ImageFrameToolButton` draws Canva-style shaped image slots.
+-   **`@docmosaic/core` (1.1.0)** - new `FrameSection` type, optional `SectionBase.parentFrameId` / `ImageSection.maskShape`, and the helpers `resolveFrameParent` + `orderSectionsForRender` (the shared back-to-front render sort).
 
 **Breaking token migration (`@docmosaic/react`):** removes the legacy `editor-*` Tailwind color classes from the primitives and deletes the `--editor-color-*` CSS aliases from both bundled themes. Everything now reads the shadcn-aligned semantic surface directly (`bg-editor-accent` → `bg-primary`, `var(--editor-color-success)` → `var(--accent)`). The structural tokens (`rounded-editor-section`, `shadow-editor-section`, `--editor-radius-section`, `--editor-shadow-section`) are kept. One accepted visual change under the `minimal-light` theme: the page-thumbnail hover ring shifts from green-600 to the theme accent. See the [v2.0 migration guide](/docs/migration/v2) for the full class/variable mapping and codemods.
 
 ## 1.0.0
 
-First stable release. Removes the deprecated `Editor.*` aliases (`Inspector`, `PageBackgroundPicker`, `EstimatedSize`, `ProgressOverlay`, `AddSectionButton`, `PageList`, `PageThumb`) and the bundled `minimal-dark.css` theme — the brand theme's built-in `.dark` scope replaces it. See the [v1.0 migration guide](/docs/migration/v1) for renames and codemods.
+First stable release. Removes the deprecated `Editor.*` aliases (`Inspector`, `PageBackgroundPicker`, `EstimatedSize`, `ProgressOverlay`, `AddSectionButton`, `PageList`, `PageThumb`) and the bundled `minimal-dark.css` theme - the brand theme's built-in `.dark` scope replaces it. See the [v1.0 migration guide](/docs/migration/v1) for renames and codemods.
 
 ## 0.1.0
 
@@ -28,7 +28,7 @@ Initial public preview.
 -   Compound `Editor.*` namespace with ~40 primitives (Root, Canvas, Section, Toolbar, Properties, Preview, Pages, LayerList, Ruler, Guides, Minimap, KeybindingHelp, ContextMenu, Toaster, and more).
 -   Headless `useDocumentState` hook for BYO-UI consumers.
 -   Framework-agnostic `@docmosaic/core` with reducer + history.
--   Theming surface — shadcn-aligned semantic tokens, dark-mode scope, four bundled themes (DocMosaic, Minimal Light, Minimal Dark, plus the convenience bundle).
+-   Theming surface - shadcn-aligned semantic tokens, dark-mode scope, four bundled themes (DocMosaic, Minimal Light, Minimal Dark, plus the convenience bundle).
 -   Storybook with 100+ stories at [storybook.docmosaic.com](https://storybook.docmosaic.com).
 -   PDF byte-diff fixtures gating the generation pipeline (image, text, shapes, drawing, cropped).
 

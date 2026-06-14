@@ -4,7 +4,7 @@ description: Lock the editor for preview. Selection, zoom, and export still work
 tags: [read-only, viewer]
 ---
 
-`Editor.Root readOnly` flips the editor into viewer mode. Drag, drop, resize, file upload, and every mutating keybinding (`Delete`, `mod+z`, arrow nudge) are suppressed. Selection, zoom, preview, print, and PDF download stay live — read-only is about mutation, not navigation.
+`Editor.Root readOnly` flips the editor into viewer mode. Drag, drop, resize, file upload, and every mutating keybinding (`Delete`, `mod+z`, arrow nudge) are suppressed. Selection, zoom, preview, print, and PDF download stay live - read-only is about mutation, not navigation.
 
 Use it for embedding a finished contract for review, showing a "preview before commit" step, or rendering a snapshot beside an editable canvas in a compare view.
 
@@ -46,7 +46,7 @@ The toolbar's mutating buttons (`AddImageButton`, `AddTextButton`, `DrawButton`,
 
 <Callout type="info">
     For a side-by-side "current vs reference" view, mix an editable canvas with
-    `Editor.StaticCanvas` — same root, two surfaces, one frozen. See the [read-only
+    `Editor.StaticCanvas` - same root, two surfaces, one frozen. See the [read-only
     recipe](/docs/recipes/read-only) for the pattern.
 </Callout>
 
@@ -66,6 +66,6 @@ function CustomAddButton() {
 
 ## Related
 
--   [Read-only recipe](/docs/recipes/read-only) — full behaviour matrix
--   [Editor.StaticCanvas](/docs/primitives/static-canvas) — canvas-level read-only
--   [Editor.Root](/docs/primitives/root) — the `readOnly` prop reference
+-   [Read-only recipe](/docs/recipes/read-only) - full behaviour matrix
+-   [Editor.StaticCanvas](/docs/primitives/static-canvas) - canvas-level read-only
+-   [Editor.Root](/docs/primitives/root) - the `readOnly` prop reference

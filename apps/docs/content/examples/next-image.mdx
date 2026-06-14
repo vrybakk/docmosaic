@@ -4,7 +4,7 @@ description: Replace the default <img> with next/image via EditorConfigProvider 
 tags: [next.js, images, optimization]
 ---
 
-`Editor.Section` renders images with a plain `<img>` tag by default. In Next.js apps you almost always want `next/image` for automatic resizing, lazy loading, and blur placeholders. `EditorConfigProvider` is the injection point — pass an `imageRenderer` and every image section renders through it.
+`Editor.Section` renders images with a plain `<img>` tag by default. In Next.js apps you almost always want `next/image` for automatic resizing, lazy loading, and blur placeholders. `EditorConfigProvider` is the injection point - pass an `imageRenderer` and every image section renders through it.
 
 ## Code
 
@@ -54,12 +54,12 @@ The renderer signature matches a subset of `<img>` props plus `width` / `height`
 
 ## When this matters
 
--   **Marketing pages** with CDN-hosted reference images — `next/image` resizes them per breakpoint.
--   **Authenticated assets** — sign the URL before rendering by intercepting `src` in the renderer.
--   **Cloudinary / Imgix / Cloudflare Images** — use their loader and the editor doesn't have to know.
+-   **Marketing pages** with CDN-hosted reference images - `next/image` resizes them per breakpoint.
+-   **Authenticated assets** - sign the URL before rendering by intercepting `src` in the renderer.
+-   **Cloudinary / Imgix / Cloudflare Images** - use their loader and the editor doesn't have to know.
 
 ## Related
 
--   [Custom image renderer recipe](/docs/recipes/custom-image-renderer) — narrative version
--   [EditorConfig reference](/docs/reference/config) — the full config surface
--   [Editor.Section](/docs/primitives/section) — what calls the renderer
+-   [Custom image renderer recipe](/docs/recipes/custom-image-renderer) - narrative version
+-   [EditorConfig reference](/docs/reference/config) - the full config surface
+-   [Editor.Section](/docs/primitives/section) - what calls the renderer

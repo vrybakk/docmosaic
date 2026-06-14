@@ -1,6 +1,6 @@
 ---
 title: Hooks
-description: Every exported hook from @docmosaic/react — useEditor, useDocumentState, useEditorKeybindings, and more.
+description: Every exported hook from @docmosaic/react - useEditor, useDocumentState, useEditorKeybindings, and more.
 ---
 
 `@docmosaic/react` exports its context hooks publicly so you can build custom primitives without reaching into private internals.
@@ -20,10 +20,10 @@ const { document, formattedDate, canUndo, canRedo, actions } = useDocumentState(
 
 Returns:
 
--   **`document`** — the current snapshot. Re-renders on change.
--   **`formattedDate`** — `updatedAt` formatted as `"Jun 10, 2026"`.
--   **`canUndo` / `canRedo`** — booleans for button enabled states.
--   **`actions`** — referentially stable dispatcher object. See [Actions](/docs/reference/actions).
+-   **`document`** - the current snapshot. Re-renders on change.
+-   **`formattedDate`** - `updatedAt` formatted as `"Jun 10, 2026"`.
+-   **`canUndo` / `canRedo`** - booleans for button enabled states.
+-   **`actions`** - referentially stable dispatcher object. See [Actions](/docs/reference/actions).
 
 ## `useEditor`
 
@@ -35,11 +35,11 @@ import { useEditor } from '@docmosaic/react';
 const { document, ui, actions, canUndo, canRedo } = useEditor();
 ```
 
-`ui` carries the editor-local UI state (selection, zoom, current page, generation progress) — not part of the persisted document.
+`ui` carries the editor-local UI state (selection, zoom, current page, generation progress) - not part of the persisted document.
 
 ## `useEditorSection`
 
-Reads the section-scoped context — set up automatically inside `Editor.Section`'s render loop.
+Reads the section-scoped context - set up automatically inside `Editor.Section`'s render loop.
 
 ```ts
 const { section, isSelected, isDragging } = useEditorSection();
@@ -49,7 +49,7 @@ Use it to build custom section overlays or toolbars.
 
 ## `useEditorCanvas`
 
-Reads the canvas-scoped context — page dimensions, scale, zoom, viewport.
+Reads the canvas-scoped context - page dimensions, scale, zoom, viewport.
 
 ```ts
 const { finalScale, pageDimensions, viewportRect } = useEditorCanvas();

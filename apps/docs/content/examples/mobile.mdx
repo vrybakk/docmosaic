@@ -1,10 +1,10 @@
 ---
 title: Mobile support
-description: The current state of mobile DocMosaic — what works, what is planned for v1.1.
+description: The current state of mobile DocMosaic - what works, what is planned for v1.1.
 tags: [mobile, roadmap, limitations]
 ---
 
-DocMosaic v1.0 is a **desktop-first** editor. Most primitives render on mobile, but the interaction model — multi-handle resize, marquee selection, hover-driven floating toolbars, drag-from-page-rail — is calibrated for a mouse-and-keyboard environment. This page is honest about that gap and what's planned to close it.
+DocMosaic v1.0 is a **desktop-first** editor. Most primitives render on mobile, but the interaction model - multi-handle resize, marquee selection, hover-driven floating toolbars, drag-from-page-rail - is calibrated for a mouse-and-keyboard environment. This page is honest about that gap and what's planned to close it.
 
 If your product needs a great mobile experience today, **render in read-only mode on small viewports** and let users edit on desktop. The PDF output is identical.
 
@@ -32,7 +32,7 @@ If your product needs a great mobile experience today, **render in read-only mod
 
 <Callout type="warn">
     The biggest missing piece is touch-capable DnD. Wiring `react-dnd-touch-backend` is on the v1.1
-    roadmap — it'd unlock section drag, page reorder, and template-gallery interactions on touch in
+    roadmap - it'd unlock section drag, page reorder, and template-gallery interactions on touch in
     one go.
 </Callout>
 
@@ -70,7 +70,7 @@ export default function ResponsiveEditor({ document, isMobile }: ResponsiveEdito
 }
 ```
 
-`isMobile` would come from a media-query hook (or `useSyncExternalStore` against `matchMedia`). The same component works on both — only the `readOnly` flag flips.
+`isMobile` would come from a media-query hook (or `useSyncExternalStore` against `matchMedia`). The same component works on both - only the `readOnly` flag flips.
 
 ## Planned for v1.1
 
@@ -79,9 +79,9 @@ export default function ResponsiveEditor({ document, isMobile }: ResponsiveEdito
 -   Collapsible toolbar (overflow menu) for narrow viewports.
 -   Tap-to-select instead of hover-driven floating toolbar.
 
-If you're blocked on any of these, please open an issue on GitHub with the use case — it helps prioritise.
+If you're blocked on any of these, please open an issue on GitHub with the use case - it helps prioritise.
 
 ## Related
 
--   [Read-only viewer](/docs/examples/read-only) — the recommended mobile pattern today
--   [Editor.Root](/docs/primitives/root) — the `readOnly` prop reference
+-   [Read-only viewer](/docs/examples/read-only) - the recommended mobile pattern today
+-   [Editor.Root](/docs/primitives/root) - the `readOnly` prop reference

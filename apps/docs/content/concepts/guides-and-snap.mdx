@@ -1,9 +1,9 @@
 ---
 title: Guides and snap
-description: Editor.Ruler, Editor.Guides, and the snap engine share one source of truth — the same SNAP_THRESHOLD (5pt).
+description: Editor.Ruler, Editor.Guides, and the snap engine share one source of truth - the same SNAP_THRESHOLD (5pt).
 ---
 
-`Editor.Ruler`, `Editor.Guides`, and the snap engine share one source of truth — the same `SNAP_THRESHOLD` (5pt) controls both the multi-select group drag and ruler-dropped guide lines. Coordinates live in PDF points; the conversion to/from CSS pixels happens at the canvas boundary via `finalScale`.
+`Editor.Ruler`, `Editor.Guides`, and the snap engine share one source of truth - the same `SNAP_THRESHOLD` (5pt) controls both the multi-select group drag and ruler-dropped guide lines. Coordinates live in PDF points; the conversion to/from CSS pixels happens at the canvas boundary via `finalScale`.
 
 ## Layers
 
@@ -28,11 +28,11 @@ interface PageGuides {
 }
 ```
 
-`Page.guides` is optional — legacy documents have no guides, and the renderer treats `undefined` as "no guides". The PDF generator never reads the field; the byte-diff gate locks that contract: rendering a document with guides set must produce exactly the same bytes as the same document with guides omitted.
+`Page.guides` is optional - legacy documents have no guides, and the renderer treats `undefined` as "no guides". The PDF generator never reads the field; the byte-diff gate locks that contract: rendering a document with guides set must produce exactly the same bytes as the same document with guides omitted.
 
 ## Snap targets
 
-`computeSnapTargets` returns the same six page candidates it always has — `page-left`, `page-right`, `page-center`, `page-top`, `page-bottom`, `page-middle` — plus six per non-selected section, plus one per user-placed guide tagged `source: 'guide'`. The hook in `useEditorSection` passes `pagesRef.current[currentPage - 1]?.guides` through on every drag start so guides added during the same session immediately participate.
+`computeSnapTargets` returns the same six page candidates it always has - `page-left`, `page-right`, `page-center`, `page-top`, `page-bottom`, `page-middle` - plus six per non-selected section, plus one per user-placed guide tagged `source: 'guide'`. The hook in `useEditorSection` passes `pagesRef.current[currentPage - 1]?.guides` through on every drag start so guides added during the same session immediately participate.
 
 ```ts
 import { computeSnap, computeSnapTargets } from '@docmosaic/react';
@@ -41,7 +41,7 @@ const targets = computeSnapTargets(sections, selectedIds, pageDimensions, page.g
 const { dx, dy, matched } = computeSnap(bbox, proposedDx, proposedDy, targets);
 ```
 
-`matched` carries the targets the group's edges currently sit on — `Editor.SnapGuides` paints one accent-colored line per match.
+`matched` carries the targets the group's edges currently sit on - `Editor.SnapGuides` paints one accent-colored line per match.
 
 ## Reducer actions
 
@@ -65,8 +65,8 @@ reducer(next, {
 });
 ```
 
-The React layer wraps both through `actions.addGuide(pageIndex, axis, position)` and `actions.removeGuide(pageIndex, axis, position)` — available in both uncontrolled (history-aware, undo/redo intact) and controlled modes.
+The React layer wraps both through `actions.addGuide(pageIndex, axis, position)` and `actions.removeGuide(pageIndex, axis, position)` - available in both uncontrolled (history-aware, undo/redo intact) and controlled modes.
 
 ## See also
 
--   [Unit system](/docs/concepts/unit-system) — why guides are stored in PDF points alongside section geometry
+-   [Unit system](/docs/concepts/unit-system) - why guides are stored in PDF points alongside section geometry

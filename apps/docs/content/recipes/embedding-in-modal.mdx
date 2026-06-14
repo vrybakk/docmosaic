@@ -3,7 +3,7 @@ title: Embedding in a modal
 description: Drop the editor into a Radix Dialog (or any modal) without breaking drag-and-drop.
 ---
 
-The editor works inside a modal as long as one detail is right: don't re-mount the `<DndProvider>`. `Editor.Root` already mounts one — if your modal wraps the editor in another `react-dnd` provider, drags break silently.
+The editor works inside a modal as long as one detail is right: don't re-mount the `<DndProvider>`. `Editor.Root` already mounts one - if your modal wraps the editor in another `react-dnd` provider, drags break silently.
 
 ## The pattern
 
@@ -40,7 +40,7 @@ export function EditorModal() {
 ## Gotchas
 
 -   **Don't mount inside the trigger.** Mount the editor inside `<Dialog.Content>`. Mounting in the trigger renders the entire editor unconditionally and defeats the lazy-mount benefit.
--   **Use `inset-` for sizing.** The editor fills its container — give the dialog `inset-4` (or explicit `width` / `height`) so the canvas has room.
+-   **Use `inset-` for sizing.** The editor fills its container - give the dialog `inset-4` (or explicit `width` / `height`) so the canvas has room.
 -   **Re-mounting resets the document.** Closing and re-opening the dialog re-runs `Editor.Root`'s init. For draft persistence, lift state via controlled mode + a state container outside the dialog.
 
 ## With persistence
@@ -57,7 +57,7 @@ const [draft, setDraft] = useState<Document | null>(null);
 </Dialog.Root>;
 ```
 
-Now the draft survives close-and-reopen — perfect for "save draft" / "send" flows.
+Now the draft survives close-and-reopen - perfect for "save draft" / "send" flows.
 
 ## See also
 

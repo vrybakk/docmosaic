@@ -4,7 +4,7 @@ description: Skip Editor.Root entirely. Use useDocumentState to drive your own U
 tags: [headless, hook, advanced]
 ---
 
-`useDocumentState` exposes the headless half of DocMosaic — the reducer, the history timeline, the stable action surface. No `<DndProvider>`, no compound primitives, no opinions about your visual tree. Use it when you're building something the bundled shell doesn't fit: a custom report builder, a card composer, a minimal name-tag designer.
+`useDocumentState` exposes the headless half of DocMosaic - the reducer, the history timeline, the stable action surface. No `<DndProvider>`, no compound primitives, no opinions about your visual tree. Use it when you're building something the bundled shell doesn't fit: a custom report builder, a card composer, a minimal name-tag designer.
 
 You get the same correctness guarantees the full editor does (undo/redo, point-accurate geometry, valid PDF on export) without inheriting the shell.
 
@@ -57,7 +57,7 @@ export default function CustomEditor() {
 }
 ```
 
-No `Editor.Root`. The hook owns the timeline; your component renders whatever UI fits. `actions` is referentially stable — safe to pass to memoised buttons.
+No `Editor.Root`. The hook owns the timeline; your component renders whatever UI fits. `actions` is referentially stable - safe to pass to memoised buttons.
 
 <Callout type="info">
     Want to mix custom UI with a few bundled primitives? Wrap your tree in `EditorProvider` with the
@@ -67,6 +67,6 @@ No `Editor.Root`. The hook owns the timeline; your component renders whatever UI
 
 ## Related
 
--   [BYO-UI recipe](/docs/recipes/byo-ui-with-use-document-state) — hybrid composition
+-   [BYO-UI recipe](/docs/recipes/byo-ui-with-use-document-state) - hybrid composition
 -   [useDocumentState reference](/docs/reference/hooks)
--   [Designer concept](/docs/concepts/designer) — the mental model the hook is built on
+-   [Designer concept](/docs/concepts/designer) - the mental model the hook is built on

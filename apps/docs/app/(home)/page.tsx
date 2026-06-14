@@ -16,14 +16,14 @@ export default function HomePage() {
                     className="inline-flex w-fit items-center gap-2 rounded-full border border-fd-border bg-fd-card px-3 py-1 text-xs text-fd-muted-foreground transition-colors hover:bg-fd-accent"
                 >
                     <Sparkles className="size-3.5" />
-                    <span>v1.0 — see migration guide</span>
+                    <span>v1.0 - see migration guide</span>
                 </Link>
                 <h1 className="text-balance text-4xl font-semibold tracking-tight md:text-6xl">
                     The headless PDF editor for the web.
                 </h1>
                 <p className="text-balance text-lg text-fd-muted-foreground md:text-xl">
                     Open source. Open code. Compound React primitives on top of a framework-agnostic
-                    core — drop in the default shell or assemble your own UI.
+                    core - drop in the default shell or assemble your own UI.
                 </p>
                 <div className="mt-2 flex flex-wrap gap-3">
                     <Link
@@ -55,7 +55,7 @@ export default function HomePage() {
             <section className="grid gap-4 md:grid-cols-3">
                 <Feature
                     title="Compound primitives"
-                    body="A flat Editor.* namespace — Root, Canvas, Section, Toolbar, Properties — that snaps together with no prop drilling."
+                    body="A flat Editor.* namespace - Root, Canvas, Section, Toolbar, Properties - that snaps together with no prop drilling."
                 />
                 <Feature
                     title="Framework-agnostic core"
@@ -63,7 +63,7 @@ export default function HomePage() {
                 />
                 <Feature
                     title="Fully client-side"
-                    body="No backend, no uploads. The entire document model lives in React state — privacy is the default."
+                    body="No backend, no uploads. The entire document model lives in React state - privacy is the default."
                 />
             </section>
 

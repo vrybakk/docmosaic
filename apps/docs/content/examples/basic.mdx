@@ -1,6 +1,6 @@
 ---
 title: Basic editor
-description: The 30-line minimum. Editor.Root + Canvas + Section — every other primitive is optional.
+description: The 30-line minimum. Editor.Root + Canvas + Section - every other primitive is optional.
 tags: [starter, uncontrolled]
 ---
 
@@ -29,10 +29,10 @@ export default function BasicEditor() {
 }
 ```
 
-That's it — 12 lines including the imports. `Editor.Properties` is the document-name / page-size / orientation bar. `Editor.Toolbar` is the top action row (Add Image, Undo, Download, …). `Editor.Section` is the per-section primitive — `Editor.Canvas` renders one for every section in the document automatically.
+That's it - 12 lines including the imports. `Editor.Properties` is the document-name / page-size / orientation bar. `Editor.Toolbar` is the top action row (Add Image, Undo, Download, …). `Editor.Section` is the per-section primitive - `Editor.Canvas` renders one for every section in the document automatically.
 
 <Callout type="info">
-    `Editor.Root` mounts exactly one `<DndProvider>` for the whole tree. Don't wrap children in another `react-dnd` provider — drag-and-drop breaks silently.
+    `Editor.Root` mounts exactly one `<DndProvider>` for the whole tree. Don't wrap children in another `react-dnd` provider - drag-and-drop breaks silently.
 </Callout>
 
 ## Try it
@@ -43,7 +43,7 @@ The same composition runs as a Storybook story:
 
 ## Related
 
--   [Quick start](/docs/get-started/quick-start) — narrative walkthrough of the same shape
--   [Editor.Root](/docs/primitives/root) — the orchestrator
--   [Editor.Canvas](/docs/primitives/canvas) — the interactive workspace
--   [Editor.Section](/docs/primitives/section) — the per-section primitive
+-   [Quick start](/docs/get-started/quick-start) - narrative walkthrough of the same shape
+-   [Editor.Root](/docs/primitives/root) - the orchestrator
+-   [Editor.Canvas](/docs/primitives/canvas) - the interactive workspace
+-   [Editor.Section](/docs/primitives/section) - the per-section primitive

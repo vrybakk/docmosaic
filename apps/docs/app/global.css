@@ -6,7 +6,7 @@
 @source '../components';
 @source '../content';
 
-/* DocMosaic brand palette — keep in sync with apps/web design tokens. */
+/* DocMosaic brand palette - keep in sync with apps/web design tokens. */
 @theme {
     --color-docmosaic-cream: #f5e9d4;
     --color-docmosaic-caramel: #b88146;

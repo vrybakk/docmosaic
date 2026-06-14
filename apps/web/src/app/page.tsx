@@ -27,7 +27,7 @@ export default function Home() {
 
                 <section className="container mx-auto px-4 py-10">
                     <Typography variant="h2" tag="h2" className="text-center">
-                        Everything You <span className="text-docmosaic-orange">Need</span> — Nothing
+                        Everything You <span className="text-docmosaic-orange">Need</span> - Nothing
                         You Don’t
                     </Typography>
 

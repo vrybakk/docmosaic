@@ -33,9 +33,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 The key bits:
 
--   **`attribute="class"`** — `next-themes` adds the `dark` class to `<html>`, which the DocMosaic theme's `.dark` scope reads.
--   **`suppressHydrationWarning`** — required by `next-themes` to avoid the class-mismatch warning on first paint.
--   **`enableSystem`** — respects the user's OS preference by default.
+-   **`attribute="class"`** - `next-themes` adds the `dark` class to `<html>`, which the DocMosaic theme's `.dark` scope reads.
+-   **`suppressHydrationWarning`** - required by `next-themes` to avoid the class-mismatch warning on first paint.
+-   **`enableSystem`** - respects the user's OS preference by default.
 
 ## Toggle button
 
@@ -57,7 +57,7 @@ export function ThemeToggle() {
 
 ## Custom selector
 
-Prefer `prefers-color-scheme` or a `data-theme` attribute? Mirror the brand dark palette under your selector. The token names are identical to the `.dark` scope shipped by `themes/docmosaic.css` — copy them in.
+Prefer `prefers-color-scheme` or a `data-theme` attribute? Mirror the brand dark palette under your selector. The token names are identical to the `.dark` scope shipped by `themes/docmosaic.css` - copy them in.
 
 ```css
 @media (prefers-color-scheme: dark) {
@@ -73,4 +73,4 @@ No JS toggle needed. The editor reads the variables on every paint.
 
 ## See also
 
--   [Theming](/docs/theming) — the full token surface
+-   [Theming](/docs/theming) - the full token surface

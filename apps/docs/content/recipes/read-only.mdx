@@ -1,6 +1,6 @@
 ---
 title: Read-only viewer
-description: Render a fully-composed editor as a viewer. Users can select, zoom, preview, and download — but nothing about the document is mutable.
+description: Render a fully-composed editor as a viewer. Users can select, zoom, preview, and download - but nothing about the document is mutable.
 ---
 
 `Editor.Root readOnly` flips the editor into viewer mode. Every mutating interaction is suppressed; export, preview, and selection keep working.
@@ -12,7 +12,7 @@ description: Render a fully-composed editor as a viewer. Users can select, zoom,
 -   Pairing an editable canvas with a frozen reference canvas in a compare view.
 -   A "preview" before commit step inside a multi-step flow.
 
-## Basic — root-level `readOnly`
+## Basic - root-level `readOnly`
 
 ```tsx
 import { Editor } from '@docmosaic/react';
@@ -40,7 +40,7 @@ export function DocumentViewer({ document }: { document: Document }) {
 | Canvas drag / drop       | No-op. Section positions are frozen.                                          |
 | Section resize           | Handles never render. Resize hook never arms.                                 |
 | Section file upload      | Drop, drag-over, click-to-upload are no-ops. Crop overlay is suppressed.      |
-| Section floating toolbar | Hidden — duplicate / delete / layer buttons aren't rendered.                  |
+| Section floating toolbar | Hidden - duplicate / delete / layer buttons aren't rendered.                  |
 | Drawing mode             | Pointer captures ignored. The Draw button isn't rendered.                     |
 | Page list                | Add Image / Add Page buttons hidden. Per-page delete hidden. Reorder ignored. |
 | Properties bar           | Document name input, page size, orientation select are `disabled`.            |
@@ -51,9 +51,9 @@ export function DocumentViewer({ document }: { document: Document }) {
 | Keybindings              | Every mutating action (undo, redo, delete, nudge) is suppressed.              |
 |                          | `Escape` (deselect) still works.                                              |
 
-Selection (click, shift-click, marquee) keeps working — read-only is about mutation, not navigation.
+Selection (click, shift-click, marquee) keeps working - read-only is about mutation, not navigation.
 
-## Canvas-level — `Editor.StaticCanvas`
+## Canvas-level - `Editor.StaticCanvas`
 
 When the root is editable but a single canvas surface should refuse mutations, use `Editor.StaticCanvas`. The folding rule is `effectiveReadOnly = root.readOnly || canvas.readOnly`.
 
@@ -90,6 +90,6 @@ function CustomAddButton() {
 
 ## See also
 
--   [Designer](/docs/concepts/designer) — composition model and primitive layering
+-   [Designer](/docs/concepts/designer) - composition model and primitive layering
 -   [StaticCanvas](/docs/primitives/static-canvas)
--   [Keybindings](/docs/concepts/keybindings) — full default keymap
+-   [Keybindings](/docs/concepts/keybindings) - full default keymap
