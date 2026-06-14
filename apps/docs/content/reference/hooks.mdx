@@ -32,10 +32,10 @@ Reads the editor context provided by `Editor.Root`. Use it inside any compound c
 ```ts
 import { useEditor } from '@docmosaic/react';
 
-const { document, ui, actions, canUndo, canRedo } = useEditor();
+const { state, ui, actions, canUndo, canRedo } = useEditor();
 ```
 
-`ui` carries the editor-local UI state (selection, zoom, current page, generation progress) - not part of the persisted document.
+`state` is the current `Document` (note: it's `state` here, whereas `useDocumentState` returns it as `document`). `ui` carries the editor-local UI state (selection, zoom, current page, generation progress) - not part of the persisted document.
 
 ## `useEditorSection`
 

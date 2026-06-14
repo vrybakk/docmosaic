@@ -52,8 +52,8 @@ Use the headless hook and dispatch actions directly from your own button.
 import { useEditor } from '@docmosaic/react';
 
 function SaveButton() {
-    const { document } = useEditor();
-    return <button onClick={() => save(document)}>Save</button>;
+    const { state } = useEditor(); // `state` is the current Document
+    return <button onClick={() => save(state)}>Save</button>;
 }
 
 <Editor.Toolbar>

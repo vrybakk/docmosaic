@@ -3,7 +3,7 @@ title: Editor.Pages
 description: Left rail of page thumbnails. Add, delete, reorder pages via drag.
 ---
 
-`Editor.Pages` is the page-list rail. One thumbnail per page; click to switch the active page; drag handle to reorder; per-page "+" button to add, "×" to delete.
+`Editor.Pages` is the page-list rail. One thumbnail per page; click to switch the active page; drag a thumbnail to reorder (touch-capable via react-dnd); "Add Page" to add, "×" to delete.
 
 <StorybookEmbed id="editor-pages--default" />
 
@@ -25,27 +25,34 @@ description: Left rail of page thumbnails. Add, delete, reorder pages via drag.
 Mount `Editor.PageThumbnail` individually for a custom list:
 
 ```tsx
-const { document } = useEditor();
+const { state: document, actions } = useEditor();
 
 <div className="flex flex-col gap-2">
-    {document.pages.map((_, i) => (
-        <Editor.PageThumbnail key={i} pageIndex={i} />
+    {document.pages.map((page, i) => (
+        <Editor.PageThumbnail
+            key={page.id}
+            page={page}
+            index={i}
+            isSelected={document.currentPage === i + 1}
+            sections={document.sections}
+            pageSize={document.pageSize}
+            orientation={document.orientation}
+            onSelect={() => actions.changePage(i + 1)}
+            onDelete={() => actions.deletePage(i)}
+            onMovePage={actions.reorderPages}
+        />
     ))}
 </div>;
 ```
 
 ## Examples
 
-### Horizontal page rail
+### Compact rail (`bare`)
+
+`bare` renders just the thumbnail strip plus a single "add page" affordance - no internal header, "last modified" footer, or "Add Image" button. This is the mode the app-shell left rail uses.
 
 ```tsx
-<Editor.Pages orientation="horizontal" />
-```
-
-### Hide the add-page button (fixed-page documents)
-
-```tsx
-<Editor.Pages hideAddPage />
+<Editor.Pages bare />
 ```
 
 ## API Reference

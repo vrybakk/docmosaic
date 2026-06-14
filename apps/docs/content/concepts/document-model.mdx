@@ -14,15 +14,15 @@ interface Document {
     pageSize: PageSize; // 'A4' | 'LETTER' | ...
     orientation: PageOrientation; // 'portrait' | 'landscape'
     pages: Page[];
-    sections: Section[]; // flat, sections reference pages by index
-    createdAt: number;
-    updatedAt: number;
+    sections: Section[]; // flat across all pages; each section links to its page via a 1-based `page` number
+    createdAt: Date;
+    updatedAt: Date;
 }
 ```
 
 Two design choices to call out:
 
--   **Sections are flat**, not nested under pages. Each `Section` carries a `pageIndex` field. This keeps reordering and cross-page moves cheap (no array surgery to lift a section out of one tree into another) and makes the reducer's update logic a single map over one array.
+-   **Sections are flat**, not nested under pages. Each `Section` carries a 1-based `page` field. This keeps reordering and cross-page moves cheap (no array surgery to lift a section out of one tree into another) and makes the reducer's update logic a single map over one array.
 -   **Document-level `pageSize` and `orientation`**. All pages in a document share the same paper size - the editor is built for documents, not arbitrary multi-format canvases. If you need per-page sizes, fork the reducer; it's pure.
 
 ## Page
@@ -30,13 +30,13 @@ Two design choices to call out:
 ```ts
 interface Page {
     id: string;
-    name?: string;
-    background?: { color?: string; imageUrl?: string };
+    backgroundPDF: string | null;
+    background?: { color?: string; image?: string };
     guides?: PageGuides;
 }
 ```
 
-`Page` is intentionally thin - it's a slot, not a container. The expensive content (sections) is keyed off `pageIndex`, so a page can be moved or deleted without rewriting every section underneath it.
+`Page` is intentionally thin - it's a slot, not a container. The expensive content (sections) is keyed off the section's `page` number, so a page can be moved or deleted without rewriting every section underneath it.
 
 `background` and `guides` are both optional. Documents migrated from earlier versions render identically - the renderer treats `undefined` as "no override."
 
@@ -45,13 +45,13 @@ interface Page {
 ```ts
 interface Section {
     id: string;
-    pageIndex: number;
+    page: number; // 1-based page number
     type: 'image' | 'text' | 'shape' | 'drawing' | 'frame';
     x: number; // PDF points (72 DPI)
     y: number;
     width: number;
     height: number;
-    zIndex?: number; // default 0; see Layers
+    zIndex: number; // higher renders on top; see Layers
     hidden?: boolean; // skip on canvas + PDF
     locked?: boolean; // refuse selection/drag/resize
     parentFrameId?: string; // set when dropped inside a container frame
@@ -61,13 +61,13 @@ interface Section {
 
 The type-specific payload differs:
 
--   **`image`** - `imageUrl`, `fit: 'cover' | 'contain' | 'stretch' | 'crop'`, optional crop rectangle, and optional `maskShape: 'rect' | 'circle' | 'line'` (a placeholder/image-mask frame).
--   **`text`** - `content`, `fontSize`, `fontFamily`, `color`, `align`.
--   **`shape`** - `shape: 'rect' | 'ellipse' | 'line'`, `fill`, `stroke`, `strokeWidth`.
+-   **`image`** - `imageUrl`, an optional `crop` rectangle, and optional `maskShape: 'rect' | 'circle' | 'line'` (a placeholder/image-mask frame).
+-   **`text`** - `text`, `fontSize`, and optional `fontFamily`, `fontWeight`, `fontStyle`, `color`, `align`, `lineHeight`.
+-   **`shape`** - `shape: 'rect' | 'circle' | 'line'`, `fill`, `stroke`, `strokeWidth`, `opacity`.
 -   **`drawing`** - an array of stroke paths in points.
 -   **`frame`** - a container box: optional `fill`, `stroke`, `strokeWidth`, `radius`. Other sections become its children.
 
-The reducer doesn't care about the payload - it routes updates through `updateSection(id, patch)`. Per-type behavior lives in the canvas primitives and the PDF generator.
+The reducer doesn't care about the payload - it routes updates through `updateSection(section)` (you pass the whole updated `Section`). Per-type behavior lives in the canvas primitives and the PDF generator.
 
 ## Container frames
 
@@ -90,7 +90,7 @@ There is exactly one way to mutate the document: dispatch through the reducer. T
 ```ts
 // 1. The headless hook - owns history internally.
 const { document, actions } = useDocumentState();
-actions.addSection({ pageIndex: 0, type: 'image' });
+actions.addSection({ type: 'image' }); // appends to the current page
 
 // 2. Editor.Root - same hook, mounted under context.
 <Editor.Root>

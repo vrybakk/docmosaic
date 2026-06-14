@@ -20,8 +20,8 @@ description: Figma/Photoshop-style outliner - every section on the current page 
 The default `LayerList` renders one `LayerList.Row` per section. Mount rows individually for a custom outliner:
 
 ```tsx
-const { document, ui } = useEditor();
-const sections = document.sections.filter((s) => s.pageIndex === ui.currentPageIndex);
+const { state } = useEditor();
+const sections = state.sections.filter((s) => s.page === state.currentPage);
 
 <Editor.LayerList>
     {sections.map((s) => (

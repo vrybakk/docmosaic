@@ -41,7 +41,7 @@ export function CustomEditor() {
             <header className="flex items-center gap-2">
                 <input
                     value={document.name}
-                    onChange={(e) => actions.setDocumentName(e.target.value)}
+                    onChange={(e) => actions.updateName(e.target.value)}
                     className="border rounded px-2 py-1"
                 />
                 <button disabled={!canUndo} onClick={actions.undo}>
@@ -52,9 +52,7 @@ export function CustomEditor() {
                 </button>
             </header>
 
-            <button onClick={() => actions.addSection({ pageIndex: 0, type: 'image' })}>
-                Add image section
-            </button>
+            <button onClick={() => actions.addSection({ type: 'image' })}>Add image section</button>
 
             <p className="text-sm text-muted-foreground">
                 {document.sections.length} sections across {document.pages.length} pages

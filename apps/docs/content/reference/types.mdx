@@ -14,9 +14,13 @@ interface Document {
     pageSize: PageSize;
     orientation: PageOrientation;
     pages: Page[];
-    sections: Section[];
-    createdAt: number;
-    updatedAt: number;
+    sections: Section[]; // flat across all pages — the source of truth for rendering
+    backgroundPDF: string | null;
+    totalPages: number;
+    currentPage: number;
+    estimatedSize: number; // estimated output size in bytes
+    createdAt: Date;
+    updatedAt: Date;
 }
 ```
 
@@ -25,10 +29,11 @@ interface Document {
 ```ts
 interface Page {
     id: string;
-    name?: string;
+    sections: Section[];
+    backgroundPDF: string | null;
     background?: {
         color?: string;
-        imageUrl?: string;
+        image?: string; // data URL
     };
     guides?: PageGuides;
 }
@@ -44,50 +49,56 @@ interface PageGuides {
 ```ts
 type Section = ImageSection | TextSection | ShapeSection | DrawingSection | FrameSection;
 
-interface BaseSection {
+interface SectionBase {
     id: string;
-    pageIndex: number;
+    page: number; // 1-based page number this section lives on
     x: number;
     y: number;
     width: number;
     height: number;
-    zIndex?: number;
+    zIndex: number; // higher renders on top; ties resolved by array order
+    name?: string; // optional layer label; derived from content when unset
     hidden?: boolean;
     locked?: boolean;
     parentFrameId?: string; // set when dropped inside a container FrameSection
 }
 
-interface ImageSection extends BaseSection {
+interface ImageSection extends SectionBase {
     type: 'image';
-    imageUrl?: string;
-    fit?: 'cover' | 'contain' | 'stretch' | 'crop';
+    imageUrl?: string; // base64 data URL
     crop?: { x: number; y: number; width: number; height: number };
     maskShape?: 'rect' | 'circle' | 'line'; // placeholder frame - clips the image to a shape
 }
 
-interface TextSection extends BaseSection {
+interface TextSection extends SectionBase {
     type: 'text';
-    content: string;
+    text: string;
     fontSize: number;
-    fontFamily: string;
-    color: string;
-    align: 'left' | 'center' | 'right';
+    fontFamily?: string; // falls back to 'helvetica'
+    fontWeight?: 'normal' | 'bold';
+    fontStyle?: 'normal' | 'italic';
+    color?: string; // any CSS color; defaults to 'rgb(0,0,0)'
+    align?: 'left' | 'center' | 'right';
+    lineHeight?: number;
+    fixedWidth?: boolean; // text wraps to width after a side handle is dragged
+    fixedHeight?: boolean;
 }
 
-interface ShapeSection extends BaseSection {
+interface ShapeSection extends SectionBase {
     type: 'shape';
-    shape: 'rect' | 'ellipse' | 'line';
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
+    shape: 'rect' | 'circle' | 'line';
+    fill?: string; // CSS color or 'transparent' (default)
+    stroke?: string; // default '#000'
+    strokeWidth?: number; // default 1
+    opacity?: number; // 0–1, default 1
 }
 
-interface DrawingSection extends BaseSection {
+interface DrawingSection extends SectionBase {
     type: 'drawing';
-    strokes: Array<{ color: string; width: number; points: Array<{ x: number; y: number }> }>;
+    strokes: Array<{ color: string; weight: number; points: Array<{ x: number; y: number }> }>;
 }
 
-interface FrameSection extends BaseSection {
+interface FrameSection extends SectionBase {
     type: 'frame';
     fill?: string; // 'transparent' (default) draws a pure grouping box
     stroke?: string; // 'transparent' (default) → no border
@@ -112,12 +123,14 @@ type PageSize =
     | 'A3'
     | 'A4'
     | 'A5'
+    | 'B4'
+    | 'B5'
     | 'LETTER'
     | 'LEGAL'
     | 'TABLOID'
     | 'EXECUTIVE'
     | 'STATEMENT'
-    | string; // also accepts custom sizes registered via createPageSize
+    | 'FOLIO';
 
 type PageOrientation = 'portrait' | 'landscape';
 type MeasurementUnit = 'mm' | 'in' | 'px';

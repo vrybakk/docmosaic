@@ -7,16 +7,16 @@ description: The EditorActions surface - every dispatcher exposed by useEditor()
 
 ## Sections
 
-| Method                     | Effect                                                                                                                                                        |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `addSection(input)`        | Insert a new section. `input` carries `{ pageIndex, type, ... }`. `type` accepts `'frame'`; an image may pass `maskShape` for a placeholder/image-mask frame. |
-| `updateSection(id, patch)` | Merge `patch` into the section identified by `id`.                                                                                                            |
-| `deleteSection(id)`        | Remove the section. Deleting a container frame also removes its children (`parentFrameId`). Clears selection if it was selected.                              |
-| `duplicateSection(id)`     | Clone the section onto the same page with a small offset. Duplicating a container frame also clones its children, re-pointed at the new frame.                |
-| `setHidden(id, hidden)`    | Explicitly set the hidden flag.                                                                                                                               |
-| `toggleHidden(id)`         | Flip the hidden flag.                                                                                                                                         |
-| `setLocked(id, locked)`    | Explicitly set the locked flag.                                                                                                                               |
-| `toggleLocked(id)`         | Flip the locked flag.                                                                                                                                         |
+| Method                      | Effect                                                                                                                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `addSection(opts?)`         | Append a new section to the **current page** (there is no `pageIndex` option). `opts` carries `{ type, shape, maskShape, rect }`. `type` accepts `'frame'`; an image may pass `maskShape` for a placeholder/image-mask frame. Returns the created `Section`. |
+| `updateSection(section)`    | Replace the section sharing this `id` with the updated `Section` object.                                                                                                                                                                                     |
+| `deleteSection(id)`         | Remove the section. Deleting a container frame also removes its children (`parentFrameId`). Clears selection if it was selected.                                                                                                                             |
+| `duplicateSection(section)` | Clone the `Section` onto the same page with a small offset. Duplicating a container frame also clones its children, re-pointed at the new frame.                                                                                                             |
+| `setHidden(id, hidden)`     | Explicitly set the hidden flag.                                                                                                                                                                                                                              |
+| `toggleHidden(id)`          | Flip the hidden flag.                                                                                                                                                                                                                                        |
+| `setLocked(id, locked)`     | Explicitly set the locked flag.                                                                                                                                                                                                                              |
+| `toggleLocked(id)`          | Flip the locked flag.                                                                                                                                                                                                                                        |
 
 ## Layers
 
@@ -29,22 +29,22 @@ description: The EditorActions surface - every dispatcher exposed by useEditor()
 
 ## Pages
 
-| Method                                     | Effect                                                         |
-| ------------------------------------------ | -------------------------------------------------------------- |
-| `addPage()`                                | Append a new empty page.                                       |
-| `deletePage(pageIndex)`                    | Remove the page and every section on it.                       |
-| `reorderPages(from, to)`                   | Move a page within the list; rewrites `pageIndex` on sections. |
-| `setPageBackground(pageIndex, background)` | Update the page's background color or image.                   |
-| `addGuide(pageIndex, axis, position)`      | Add a vertical / horizontal guide line on the page.            |
-| `removeGuide(pageIndex, axis, position)`   | Remove the matching guide.                                     |
+| Method                                     | Effect                                                              |
+| ------------------------------------------ | ------------------------------------------------------------------- |
+| `addPage()`                                | Append a new empty page.                                            |
+| `deletePage(pageIndex)`                    | Remove the page and every section on it.                            |
+| `reorderPages(from, to)`                   | Move a page within the list; rewrites the `page` field on sections. |
+| `setPageBackground(pageIndex, background)` | Update the page's background color or image.                        |
+| `addGuide(pageIndex, axis, position)`      | Add a vertical / horizontal guide line on the page.                 |
+| `removeGuide(pageIndex, axis, position)`   | Remove the matching guide.                                          |
 
 ## Document properties
 
-| Method                        | Effect                            |
-| ----------------------------- | --------------------------------- |
-| `setDocumentName(name)`       | Update `Document.name`.           |
-| `setPageSize(size)`           | Switch the document's `pageSize`. |
-| `setOrientation(orientation)` | Switch portrait / landscape.      |
+| Method                           | Effect                            |
+| -------------------------------- | --------------------------------- |
+| `updateName(name)`               | Update `Document.name`.           |
+| `updatePageSize(size)`           | Switch the document's `pageSize`. |
+| `updateOrientation(orientation)` | Switch portrait / landscape.      |
 
 ## History
 
@@ -55,12 +55,14 @@ description: The EditorActions surface - every dispatcher exposed by useEditor()
 
 ## UI
 
-| Method                             | Effect                                  |
-| ---------------------------------- | --------------------------------------- |
-| `selectSection(id \| null)`        | Set / clear the current selection.      |
-| `setCurrentPage(pageIndex)`        | Switch the active page in the canvas.   |
-| `openPreview()` / `closePreview()` | Toggle the preview dialog.              |
-| `cancelGeneration()`               | Abort the in-flight PDF/PNG generation. |
+Selection, preview, and generation control live on the `ui` and `pdfApi` objects from `useEditor()`, not on `actions` — only `changePage` is an `actions` method.
+
+| Method                                   | Effect                                                        |
+| ---------------------------------------- | ------------------------------------------------------------- |
+| `changePage(pageNumber)`                 | Switch the active page in the canvas (1-based, on `actions`). |
+| `ui.setSelectedSectionId(id \| null)`    | Set / clear the current selection.                            |
+| `ui.openPreview()` / `ui.closePreview()` | Toggle the preview dialog.                                    |
+| `pdfApi.abort()`                         | Abort the in-flight PDF/PNG generation.                       |
 
 ## Stability
 
