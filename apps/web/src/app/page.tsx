@@ -1,6 +1,7 @@
 import { BouncyCardsFeatures } from '@/components/blocks/bouncy-cards';
 import Hero from '@/components/blocks/hero';
 import PdfHeroSection from '@/components/blocks/pdf-hero-section';
+import ProductShowcase from '@/components/blocks/product-showcase';
 import { SpringCards } from '@/components/blocks/spring-cards';
 import StackedCards from '@/components/blocks/stacked-cards';
 import VerticalSlideFeatures from '@/components/blocks/vertical-slide-features';
@@ -15,8 +16,13 @@ export default function Home() {
         <div className="min-h-screen flex flex-col">
             <main className="flex-grow pt-16">
                 {/* Hero Section */}
-                <section className="container mx-auto px-4 py-10">
+                <section className="container mx-auto px-4 pt-10 pb-4">
                     <Hero />
+                </section>
+
+                {/* Product showcase */}
+                <section className="container mx-auto px-4 pb-10">
+                    <ProductShowcase />
                 </section>
 
                 <section className="container mx-auto px-4 py-10">
