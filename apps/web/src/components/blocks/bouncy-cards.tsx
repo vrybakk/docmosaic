@@ -6,7 +6,7 @@ import { ArrowBigRight } from 'lucide-react';
 import { ReactNode } from 'react';
 import Typography from '../common/typography';
 import { CustomLink } from '../ui/core/link';
-import { EditorCanvas } from './editor-canvas';
+import { EditorCanvas, type CanvasScene } from './editor-canvas';
 
 const features = [
     {
@@ -15,6 +15,7 @@ const features = [
         description:
             'Perfect for <b>visa applications, ID & passport scans,</b> and <b>administrative paperwork</b>. Arrange multiple scanned documents into professional PDFs that meet official requirements.',
         backgroundColor: 'bg-gradient-to-br from-[#C4D6B0] to-[#67705C]',
+        scene: 'id-scan',
     },
     {
         title: ['🏢 For Businesses & Admins', '💼 For Freelancers'],
@@ -27,6 +28,7 @@ const features = [
             'Assemble <b>portfolio samples, image-heavy proposals,</b> and <b>invoice layouts</b> visually. Perfect for client deliverables.',
         ],
         backgroundColor: 'bg-gradient-to-br from-[#FCDE9C] to-[#96845D]',
+        scene: 'report',
     },
     {
         title: ['🎯 For Marketers', '🎨 For Designers'],
@@ -36,6 +38,7 @@ const features = [
             'Place, resize, and align images easily to create <b>print-ready layouts.</b> Perfect for <b>visual portfolios</b> and <b>client presentations.</b>',
         ],
         backgroundColor: 'bg-gradient-to-br from-[#FFA552] to-[#996331]',
+        scene: 'gallery',
     },
     {
         title: '🎓 For Teachers & Students',
@@ -43,6 +46,7 @@ const features = [
         description:
             'Merge images into PDFs, annotate scanned <b>documents</b>, and reorder pages for <b>assignments</b> with ease.',
         backgroundColor: 'bg-gradient-to-br from-[#BA5624] to-[#542710] [&_*]:text-white',
+        scene: 'worksheet',
     },
 ];
 
@@ -119,7 +123,11 @@ export const BouncyCardsFeatures = () => {
                             </div>
                         )}
                         <div className="absolute bottom-0 left-4 right-4 top-36 hidden translate-y-8 overflow-hidden rounded-t-[16px] border border-b-0 border-docmosaic-black/10 bg-white shadow-[0px_-6px_24px_-12px_rgba(56,29,42,0.4)] transition-transform duration-[250ms] group-hover:translate-y-6 group-hover:rotate-[2deg] md:block">
-                            <EditorCanvas showLabels={false} />
+                            <EditorCanvas
+                                scene={feature.scene as CanvasScene}
+                                showLabels={false}
+                                cursorDelay={index * 0.7}
+                            />
                         </div>
                     </BounceCard>
                 ))}

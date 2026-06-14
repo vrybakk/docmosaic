@@ -71,7 +71,7 @@ export default function PdfHeroSection() {
                             </div>
                         </div>
                         <div className="relative aspect-[180/299] w-full overflow-hidden rounded-lg shadow-[0px_2px_18px_rgba(56,29,42,0.12)]">
-                            <EditorCanvas variant="arrange" showLabels={false} />
+                            <EditorCanvas variant="arrange" showLabels={false} cursorDelay={1.6} />
                         </div>
                     </div>
                 </div>
