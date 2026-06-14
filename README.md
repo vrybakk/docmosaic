@@ -33,6 +33,7 @@ apps/web (Next.js 15)
 ## Features
 
 -   Drag-and-drop image arrangement on a virtual page
+-   Frames — container frames that group + move children, plus Canva-style shaped image-mask slots
 -   Multi-page documents with reorderable pages
 -   Per-page PDF backgrounds
 -   Live PDF size estimate

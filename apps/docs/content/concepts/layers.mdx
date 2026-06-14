@@ -7,7 +7,7 @@ Every `Section` carries a `zIndex`. When two sections overlap, the higher `zInde
 
 ## Mental model
 
-`Section.zIndex` is just a number that defaults to `0`. Render order is `(zIndex asc, array index asc)` — lower draws first, higher draws on top, and ties fall back to insertion order so legacy documents (everything at `0`) render exactly as before. The PDF generator and the canvas preview both follow that same order, so what users see is what they get on download.
+`Section.zIndex` is just a number that defaults to `0`. Render order is `(zIndex asc, then frames before non-frames at equal zIndex, then array index asc)` — lower draws first, higher draws on top, and ties fall back to insertion order so legacy documents (everything at `0`) render exactly as before. The middle key keeps a container frame behind its children (so a filled or bordered frame never covers its contents). The canvas, the PDF generator, and the PNG generator all share one sort — the exported `orderSectionsForRender` helper from `@docmosaic/core` — so what users see is what they get on download.
 
 There's no "current layer" mode and no separate layer state — `zIndex` is part of the section. Reordering is a pure mutation; undo/redo cover it like any other reducer action.
 

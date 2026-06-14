@@ -1,6 +1,6 @@
 ---
 title: Editor.Section
-description: One section on the canvas — image, text, shape, or drawing. Handles drag, resize, image upload, and the hover/selected toolbar.
+description: One section on the canvas — image, text, shape, drawing, or frame. Handles drag, resize, image upload, and the hover/selected toolbar.
 ---
 
 `Editor.Section` is the unit of content. Mount it once inside `Editor.Canvas`; the editor iterates every `Section` on the active page and renders one per entry.
@@ -34,7 +34,7 @@ All gestures are suppressed in `readOnly` mode.
 
 ### Custom renderer per section type
 
-The default `Editor.Section` ships with image / text / shape / drawing renderers. If you need a custom variant, render your own component inside the canvas and skip `Editor.Section`:
+The default `Editor.Section` ships with image / text / shape / drawing / frame renderers (an image with a `maskShape` renders as a shaped placeholder slot, and a `frame` draws behind its children). If you need a custom variant, render your own component inside the canvas and skip `Editor.Section`:
 
 ```tsx
 <Editor.Canvas>

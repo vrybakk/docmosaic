@@ -7,12 +7,12 @@ description: The EditorActions surface — every dispatcher exposed by useEditor
 
 ## Sections
 
-| Method                     | Effect                                                            |
-| -------------------------- | ----------------------------------------------------------------- |
-| `addSection(input)`        | Insert a new section. `input` carries `{ pageIndex, type, ... }`. |
-| `updateSection(id, patch)` | Merge `patch` into the section identified by `id`.                |
-| `deleteSection(id)`        | Remove the section. Clears selection if it was selected.          |
-| `duplicateSection(id)`     | Clone the section onto the same page with a small offset.         |
+| Method                     | Effect                                                                                              |
+| -------------------------- | --------------------------------------------------------------------------------------------------- |
+| `addSection(input)`        | Insert a new section. `input` carries `{ pageIndex, type, ... }`. `type` accepts `'frame'`; an image may pass `maskShape` for a placeholder/image-mask frame. |
+| `updateSection(id, patch)` | Merge `patch` into the section identified by `id`.                                                  |
+| `deleteSection(id)`        | Remove the section. Deleting a container frame also removes its children (`parentFrameId`). Clears selection if it was selected. |
+| `duplicateSection(id)`     | Clone the section onto the same page with a small offset. Duplicating a container frame also clones its children, re-pointed at the new frame. |
 | `setHidden(id, hidden)`    | Explicitly set the hidden flag.                                   |
 | `toggleHidden(id)`         | Flip the hidden flag.                                             |
 | `setLocked(id, locked)`    | Explicitly set the locked flag.                                   |

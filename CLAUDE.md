@@ -47,15 +47,16 @@ DocMosaic is a **fully client-side** PDF builder. Users drop images into rectang
 
 ### `@docmosaic/core` — document model + PDF generation
 
--   [packages/core/src/types.ts](packages/core/src/types.ts) — the single source of truth for `Document`, `Page`, `Section`, `PageSize`, `PageOrientation`, `MeasurementUnit`, `DragPosition`, `ResizeInfo`, `PDFGenerationOptions`. Used by both packages and `apps/web`.
--   [packages/core/src/reducer.ts](packages/core/src/reducer.ts) — the document reducer. All mutations flow through it.
+-   [packages/core/src/types.ts](packages/core/src/types.ts) — the single source of truth for `Document`, `Page`, `Section` (the `image`/`text`/`shape`/`drawing`/`frame` variants, incl. `FrameSection`, the optional `SectionBase.parentFrameId`, and `ImageSection.maskShape`), `PageSize`, `PageOrientation`, `MeasurementUnit`, `DragPosition`, `ResizeInfo`, `PDFGenerationOptions`. Used by both packages and `apps/web`.
+-   [packages/core/src/reducer.ts](packages/core/src/reducer.ts) — the document reducer. All mutations flow through it. `DELETE_SECTION` / `DUPLICATE_SECTION` cascade over a container frame's children (`parentFrameId`).
+-   [packages/core/src/frames.ts](packages/core/src/frames.ts) — container-frame helpers: `resolveFrameParent` (adopt-on-drop: which frame contains a section's center) and `orderSectionsForRender` (the **single source of render order** — `zIndex`, then frames behind non-frames at equal `zIndex`, then array order — shared by the canvas, PDF, and PNG so all three layer identically; load-bearing for the byte-diff guard).
 -   [packages/core/src/history.ts](packages/core/src/history.ts) — `withHistory` wraps the reducer with undo/redo via a snapshot timeline. If you add a new mutator, route it through `reducer` + `withHistory`, or the timeline will desync.
 -   [packages/core/src/page-sizes.ts](packages/core/src/page-sizes.ts) — `CUSTOM_PAGE_SIZES` (points/72 DPI) and orientation-aware dimensions. This file is the **single** source — there is no longer a duplicate in `apps/web`.
 -   [packages/core/src/factories.ts](packages/core/src/factories.ts) — `createDocument`, `createPage`, `createSection`. Sections persist geometry in **points**, not pixels.
 -   [packages/core/src/pdf/generate.ts](packages/core/src/pdf/generate.ts) (`generatePDF`) — the only path that produces a PDF. Flow:
     1. Optimize background PDFs and section images via `processImagesForPDF` ([packages/core/src/pdf/optimize-image.ts](packages/core/src/pdf/optimize-image.ts)) with progress reporting split 30%/70% across the "optimizing" stage.
     2. Create a `jsPDF` doc in **points (72 DPI)** using `CUSTOM_PAGE_SIZES[pageSize]`.
-    3. For each `Page`, draw background then per-page sections.
+    3. For each `Page`, draw background then per-page sections ordered via `orderSectionsForRender` (frames behind their children). A `FrameSection` draws its fill/border; an `ImageSection` with `maskShape` clips the image to an ellipse/rect before drawing.
 -   Cancellation: callers pass an `AbortSignal`; the signal is checked at every awaitable step in `generatePDF`. Throwing `Error('PDF generation cancelled')` is the expected control-flow path — preserve it if refactoring.
 -   [packages/core/src/pdf/estimate.ts](packages/core/src/pdf/estimate.ts) (`estimatePDFSize`) feeds the live "estimated size" pill in the toolbar.
 -   [packages/core/src/pdf/generate.test.ts](packages/core/src/pdf/generate.test.ts) — **byte-diff guard**. Generates a PDF from a fixed fixture and compares the bytes to a checked-in snapshot. Treat any change here as load-bearing: if the bytes shift, the cause is either intentional (update the snapshot deliberately) or a regression in the generation pipeline.
@@ -67,9 +68,9 @@ DocMosaic is a **fully client-side** PDF builder. Users drop images into rectang
 -   [packages/react/src/hooks/use-document-state.ts](packages/react/src/hooks/use-document-state.ts) — headless ("BYO-UI") state hook. Returns `{ document, formattedDate, canUndo, canRedo, actions }`. Built on top of `reducer` + `withHistory` from `@docmosaic/core`. Every mutator dispatches an action; the timeline lives inside the hook.
 -   [packages/react/src/context/editor.tsx](packages/react/src/context/editor.tsx) — the `EditorProvider` + `useEditor` etc. that compound primitives read from. If you add a new primitive, consume the context here rather than prop-drilling.
 -   [packages/react/src/context/editor-config.tsx](packages/react/src/context/editor-config.tsx) — `EditorConfigProvider` + `ImageRenderer` injection point. `apps/web` swaps in `next/image` here at mount time.
--   [packages/react/src/primitives/canvas/](packages/react/src/primitives/canvas) — interactive workspace, including `use-canvas-zoom` and `canvas-controls`.
--   [packages/react/src/primitives/image-section/](packages/react/src/primitives/image-section) — section drag/resize/upload primitives.
--   [packages/react/src/primitives/toolbar/](packages/react/src/primitives/toolbar) — toolbar buttons + estimated size + progress overlay.
+-   [packages/react/src/primitives/canvas/](packages/react/src/primitives/canvas) — interactive workspace, including `use-canvas-zoom`, `canvas-controls`, and the draw-to-size draft for the shape/frame/image-frame tools.
+-   [packages/react/src/primitives/section/](packages/react/src/primitives/section) — per-variant section views (`image-section`, `text-section`, `shape-section`, `drawing-section`, `frame-section`) plus shared `hooks/` (drag, resize, and `use-floating-toolbar` shared by every section toolbar). `frame-section/` holds `FrameSectionView` + its fill/border toolbar.
+-   [packages/react/src/primitives/toolbar/](packages/react/src/primitives/toolbar) — toolbar buttons (incl. `shape-tool-button`, `frame-tool-button`, `image-frame-tool-button`, `select-tool-button`) + estimated size + progress overlay.
 -   [packages/react/src/primitives/header/](packages/react/src/primitives/header) — top-bar primitives (`PageSizeSelect`, `OrientationSelect`, `DocumentName`).
 -   [packages/react/src/primitives/use-pdf-generation.ts](packages/react/src/primitives/use-pdf-generation.ts) — `usePdfGeneration` hook wrapping `generatePDF` with an `AbortController` for cancellation.
 -   [packages/react/src/internal/options.ts](packages/react/src/internal/options.ts) — `PAGE_SIZE_OPTIONS` + `ORIENTATION_OPTIONS` consumed by the header selects.

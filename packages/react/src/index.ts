@@ -81,6 +81,7 @@ import { Minimap } from './primitives/minimap';
  *   document-properties bar at the top.
  * - `Toolbar` (+ `UndoButton`, `RedoButton`, `PreviewButton`, `PrintButton`,
  *   `DownloadButton`, `AddImageButton`, `AddTextButton`, `AddShapeButton`,
+ *   `ShapeToolButton`, `FrameToolButton`, `ImageFrameToolButton`, `SelectToolButton`,
  *   `DrawButton`, `FileSizeBadge`, `GenerationProgress`).
  * - `DrawingControls` (+ `ColorPicker`, `BrushWeightSlider`) — drawing-mode
  *   side panel.
