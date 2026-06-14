@@ -35,7 +35,7 @@ export function SectionFrameToolbar({ section, isSelected, onUpdate }: SectionFr
         if (next !== strokeWidth) onUpdate({ strokeWidth: next });
     };
 
-    const { toolbarRef, placeBelow } = useFloatingToolbar([
+    const { toolbarRef, placeBelow, offsetX } = useFloatingToolbar([
         section.x,
         section.y,
         section.width,
@@ -43,7 +43,11 @@ export function SectionFrameToolbar({ section, isSelected, onUpdate }: SectionFr
     ]);
 
     return (
-        <div ref={toolbarRef} className={floatingToolbarClass(placeBelow, isSelected)}>
+        <div
+            ref={toolbarRef}
+            style={offsetX ? { transform: `translateX(${offsetX}px)` } : undefined}
+            className={floatingToolbarClass(placeBelow, isSelected)}
+        >
             <label
                 className="flex items-center gap-1 px-1 pointer-events-auto"
                 title="Fill color"

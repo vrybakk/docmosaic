@@ -14,6 +14,7 @@ import { cn } from '../../../internal/utils';
 export function useFloatingToolbar(deps: DependencyList = []) {
     const toolbarRef = useRef<HTMLDivElement>(null);
     const [placeBelow, setPlaceBelow] = useState(false);
+    const [offsetX, setOffsetX] = useState(0);
     useLayoutEffect(() => {
         const measure = () => {
             const el = toolbarRef.current;
@@ -23,17 +24,34 @@ export function useFloatingToolbar(deps: DependencyList = []) {
             const box = el.closest('[data-section="true"]');
             const scroller = el.closest('.overflow-auto');
             if (!box) return;
-            const boxTop = box.getBoundingClientRect().top;
-            const limit = scroller ? scroller.getBoundingClientRect().top : 0;
+            const boxRect = box.getBoundingClientRect();
+            const limitTop = scroller ? scroller.getBoundingClientRect().top : 0;
             // ~52px ≈ toolbar height + gap. Flip below when there's no room above.
-            setPlaceBelow(boxTop - limit < 52);
+            setPlaceBelow(boxRect.top - limitTop < 52);
+
+            // Horizontal clamp: the bar anchors to the box's left edge and runs
+            // rightward (`whitespace-nowrap`), so a box in the right half of a
+            // narrow canvas (mobile) pushes it off-screen. Shift it left just
+            // enough to stay inside the scroller — measuring width is stable
+            // (the transform we apply doesn't change the box we measure against).
+            const margin = 8;
+            const scrollerRect = scroller?.getBoundingClientRect();
+            const viewLeft = scrollerRect ? scrollerRect.left : 0;
+            const viewRight = scrollerRect ? scrollerRect.right : window.innerWidth;
+            const barWidth = el.getBoundingClientRect().width;
+            let next = 0;
+            const overflowRight = boxRect.left + barWidth - (viewRight - margin);
+            if (overflowRight > 0) next = -overflowRight;
+            // Never push the left edge past the viewport's left margin.
+            if (boxRect.left + next < viewLeft + margin) next = viewLeft + margin - boxRect.left;
+            setOffsetX(next);
         };
         measure();
         window.addEventListener('resize', measure);
         return () => window.removeEventListener('resize', measure);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, deps);
-    return { toolbarRef, placeBelow };
+    return { toolbarRef, placeBelow, offsetX };
 }
 
 /**

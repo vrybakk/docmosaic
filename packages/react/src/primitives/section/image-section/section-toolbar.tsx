@@ -37,7 +37,7 @@ export function SectionToolbar({
     onMoveForward,
     onMoveBackward,
 }: SectionToolbarProps) {
-    const { toolbarRef, placeBelow } = useFloatingToolbar([
+    const { toolbarRef, placeBelow, offsetX } = useFloatingToolbar([
         section.x,
         section.y,
         section.width,
@@ -45,7 +45,11 @@ export function SectionToolbar({
     ]);
 
     return (
-        <div ref={toolbarRef} className={floatingToolbarClass(placeBelow, isSelected)}>
+        <div
+            ref={toolbarRef}
+            style={offsetX ? { transform: `translateX(${offsetX}px)` } : undefined}
+            className={floatingToolbarClass(placeBelow, isSelected)}
+        >
             {section.imageUrl && (
                 <Button
                     size="icon"

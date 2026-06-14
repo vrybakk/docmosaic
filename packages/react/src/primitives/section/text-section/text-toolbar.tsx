@@ -42,7 +42,7 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
 
     // The text toolbar adds `fontSize` to the deps because it changes the box
     // height, which moves the box top the placement is measured against.
-    const { toolbarRef, placeBelow } = useFloatingToolbar([
+    const { toolbarRef, placeBelow, offsetX } = useFloatingToolbar([
         section.x,
         section.y,
         section.width,
@@ -51,7 +51,11 @@ export function TextToolbar({ section, isSelected, onUpdate }: TextToolbarProps)
     ]);
 
     return (
-        <div ref={toolbarRef} className={floatingToolbarClass(placeBelow, isSelected)}>
+        <div
+            ref={toolbarRef}
+            style={offsetX ? { transform: `translateX(${offsetX}px)` } : undefined}
+            className={floatingToolbarClass(placeBelow, isSelected)}
+        >
             <Button
                 size="icon"
                 variant="ghost"

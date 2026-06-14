@@ -49,7 +49,7 @@ export function SectionShapeToolbar({ section, isSelected, onUpdate }: SectionSh
         }
     };
 
-    const { toolbarRef, placeBelow } = useFloatingToolbar([
+    const { toolbarRef, placeBelow, offsetX } = useFloatingToolbar([
         section.x,
         section.y,
         section.width,
@@ -57,7 +57,11 @@ export function SectionShapeToolbar({ section, isSelected, onUpdate }: SectionSh
     ]);
 
     return (
-        <div ref={toolbarRef} className={floatingToolbarClass(placeBelow, isSelected)}>
+        <div
+            ref={toolbarRef}
+            style={offsetX ? { transform: `translateX(${offsetX}px)` } : undefined}
+            className={floatingToolbarClass(placeBelow, isSelected)}
+        >
             <div className="flex items-center gap-0.5 px-1 pointer-events-auto">
                 {SHAPE_KINDS.map(({ value, label, Icon }) => (
                     <Button
