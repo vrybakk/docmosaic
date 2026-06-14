@@ -46,7 +46,7 @@ interface Page {
 interface Section {
     id: string;
     pageIndex: number;
-    type: 'image' | 'text' | 'shape' | 'drawing';
+    type: 'image' | 'text' | 'shape' | 'drawing' | 'frame';
     x: number; // PDF points (72 DPI)
     y: number;
     width: number;
@@ -54,18 +54,30 @@ interface Section {
     zIndex?: number; // default 0; see Layers
     hidden?: boolean; // skip on canvas + PDF
     locked?: boolean; // refuse selection/drag/resize
+    parentFrameId?: string; // set when dropped inside a container frame
     // ...type-specific payload fields
 }
 ```
 
 The type-specific payload differs:
 
--   **`image`** — `imageUrl`, `fit: 'cover' | 'contain' | 'stretch' | 'crop'`, optional crop rectangle.
+-   **`image`** — `imageUrl`, `fit: 'cover' | 'contain' | 'stretch' | 'crop'`, optional crop rectangle, and optional `maskShape: 'rect' | 'circle' | 'line'` (a placeholder/image-mask frame).
 -   **`text`** — `content`, `fontSize`, `fontFamily`, `color`, `align`.
 -   **`shape`** — `shape: 'rect' | 'ellipse' | 'line'`, `fill`, `stroke`, `strokeWidth`.
 -   **`drawing`** — an array of stroke paths in points.
+-   **`frame`** — a container box: optional `fill`, `stroke`, `strokeWidth`, `radius`. Other sections become its children.
 
 The reducer doesn't care about the payload — it routes updates through `updateSection(id, patch)`. Per-type behavior lives in the canvas primitives and the PDF generator.
+
+## Container frames
+
+A `FrameSection` (`type: 'frame'`) is a box that **owns** other sections. Children stay in the same flat `sections` array — they're linked to their frame only by a `parentFrameId` back-pointer, never nested. This keeps the tree flat (the design choice above) while still letting a frame move, duplicate, or delete as a unit:
+
+-   Dragging a section so its center lands inside a frame stamps `parentFrameId`; dragging it out clears it.
+-   Moving a frame translates its children with it; deleting or duplicating a frame cascades to them.
+-   At render time a frame draws **behind** its children (see [Layers](/docs/concepts/layers)).
+
+See the [Frames concept](/docs/concepts/frames) for container vs. placeholder (image-mask) frames.
 
 ## Where geometry lives
 

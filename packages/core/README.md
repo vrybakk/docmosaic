@@ -68,7 +68,8 @@ The most common consumer is a UI layer:
 
 Every export is documented with JSDoc; the generated declarations land at `dist/index.d.ts` after `bun run build`. The package's public surface:
 
--   Types — `Document`, `Page`, `PageBackground`, `Section`, `ImageSection`, `ImageCrop`, `TextSection`, `ShapeSection`, `ShapeKind`, `DrawingSection`, `Stroke`, `Point`, `PageSize`, `PageOrientation`, `PageDimensions`, `MeasurementUnit`, `DragPosition`, `ResizeInfo`, `PDFGenerationOptions`. See [the Unit system concept doc](../../docs/concepts/unit-system.md) for why geometry is in points and how to convert.
+-   Types — `Document`, `Page`, `PageBackground`, `Section`, `ImageSection`, `ImageCrop`, `TextSection`, `ShapeSection`, `ShapeKind`, `DrawingSection`, `FrameSection`, `Stroke`, `Point`, `PageSize`, `PageOrientation`, `PageDimensions`, `MeasurementUnit`, `DragPosition`, `ResizeInfo`, `PDFGenerationOptions`. See [the Unit system concept doc](../../docs/concepts/unit-system.md) for why geometry is in points and how to convert.
+-   Container frames — `resolveFrameParent` (which frame, if any, contains a section), `orderSectionsForRender` (the shared back-to-front sort: zIndex, then frames behind their children, then array order). The new `FrameSection` type plus the optional `SectionBase.parentFrameId` and `ImageSection.maskShape` fields back the feature.
 -   Page-size data — `CUSTOM_PAGE_SIZES`, `PAGE_SIZE_LABELS`, `getPageDimensions`, `getPageDimensionsWithOrientation`.
 -   Dimension helpers — `convertDimensions`, `formatDimensions`, `mmToPt`, `ptToMm`.
 -   PDF — `generatePDF`, `estimatePDFSize`, `optimizeImageForPDF`, `processImagesForPDF`, types `GenerationOptions` / `GenerationProgress`.
@@ -99,6 +100,34 @@ const section: ImageSection = {
 ```
 
 Documents authored before this field existed still load — `crop` is optional, and omitting it takes the original byte-stable `addImage` path through jsPDF.
+
+## Frames
+
+Two additive, optional features share the "frame" name:
+
+-   **Container frames** — a `FrameSection` (`type: 'frame'`) is a box that owns other sections. A child carries the frame's id in `parentFrameId`; `resolveFrameParent(section, sections)` computes which frame (if any) contains a section's center, and the editor uses it to adopt sections on drop. A frame draws an optional `fill` / `stroke` / `radius` **behind** its children — `orderSectionsForRender` is the single sort (shared by the canvas, PDF, and PNG paths) that guarantees the back-to-front order: `zIndex`, then frames before non-frames at equal `zIndex`, then array order.
+-   **Placeholder frames** — an `ImageSection` with `maskShape: 'rect' | 'circle' | 'line'` is a shaped image slot; the image is clipped to the shape on render. Absent `maskShape`, the image takes the unchanged byte-stable path.
+
+```ts
+import { resolveFrameParent, orderSectionsForRender, type FrameSection } from '@docmosaic/core';
+
+const frame: FrameSection = {
+    id: 'card',
+    type: 'frame',
+    x: 40,
+    y: 40,
+    width: 300,
+    height: 200,
+    page: 1,
+    zIndex: 0,
+    fill: '#ffffff',
+    stroke: '#e5e5e5',
+};
+// `child.parentFrameId === frame.id` links a section to the frame.
+const drawOrder = orderSectionsForRender(doc.sections.filter((s) => s.page === 1));
+```
+
+Both fields are optional, so documents authored before frames existed load and render unchanged.
 
 ## Templates
 

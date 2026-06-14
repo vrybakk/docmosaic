@@ -42,7 +42,7 @@ interface PageGuides {
 ## Section
 
 ```ts
-type Section = ImageSection | TextSection | ShapeSection | DrawingSection;
+type Section = ImageSection | TextSection | ShapeSection | DrawingSection | FrameSection;
 
 interface BaseSection {
     id: string;
@@ -54,6 +54,7 @@ interface BaseSection {
     zIndex?: number;
     hidden?: boolean;
     locked?: boolean;
+    parentFrameId?: string; // set when dropped inside a container FrameSection
 }
 
 interface ImageSection extends BaseSection {
@@ -61,6 +62,7 @@ interface ImageSection extends BaseSection {
     imageUrl?: string;
     fit?: 'cover' | 'contain' | 'stretch' | 'crop';
     crop?: { x: number; y: number; width: number; height: number };
+    maskShape?: 'rect' | 'circle' | 'line'; // placeholder frame — clips the image to a shape
 }
 
 interface TextSection extends BaseSection {
@@ -84,7 +86,21 @@ interface DrawingSection extends BaseSection {
     type: 'drawing';
     strokes: Array<{ color: string; width: number; points: Array<{ x: number; y: number }> }>;
 }
+
+interface FrameSection extends BaseSection {
+    type: 'frame';
+    fill?: string; // 'transparent' (default) draws a pure grouping box
+    stroke?: string; // 'transparent' (default) → no border
+    strokeWidth?: number; // border width in points; default 1
+    radius?: number; // corner radius in points; default 0
+}
 ```
+
+A **container frame** (`FrameSection`) is a box that owns other sections: any
+section dropped inside it carries that frame's id in `parentFrameId`, and the
+frame draws behind its children. A **placeholder frame** is an `ImageSection`
+with `maskShape` set — a shaped image slot. See the
+[Frames concept](/docs/concepts/frames) for the full model.
 
 ## Page sizes
 
