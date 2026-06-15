@@ -11,8 +11,31 @@ import DonateButton from '@/components/donate-button';
 import Footer from '@/components/layout/footer';
 import { CustomLink } from '@/components/ui/core/link';
 import { Code, Github, MessageSquareText, Shield } from 'lucide-react';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-export default function Home() {
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    setRequestLocale(locale);
+    const t = await getTranslations('Home');
+
+    const transparencyFeatures = [
+        {
+            icon: Github,
+            title: t('transparency1Title'),
+            description: t('transparency1Desc'),
+        },
+        {
+            icon: Shield,
+            title: t('transparency2Title'),
+            description: t('transparency2Desc'),
+        },
+        {
+            icon: Code,
+            title: t('transparency3Title'),
+            description: t('transparency3Desc'),
+        },
+    ];
+
     return (
         <div className="min-h-screen flex flex-col">
             <main className="flex-grow pt-16">
@@ -28,8 +51,11 @@ export default function Home() {
 
                 <section className="container mx-auto px-4 py-10">
                     <Typography variant="h2" tag="h2" className="text-center">
-                        Everything You <span className="text-docmosaic-orange">Need</span> - Nothing
-                        You Don’t
+                        {t.rich('needHeading', {
+                            orange: (chunks) => (
+                                <span className="text-docmosaic-orange">{chunks}</span>
+                            ),
+                        })}
                     </Typography>
 
                     <SpringCards />
@@ -54,8 +80,11 @@ export default function Home() {
 
                 <section className="container mx-auto px-4 py-10">
                     <Typography variant="h2" tag="h2" className="mb-10">
-                        Built for Transparency &{' '}
-                        <span className="text-docmosaic-orange">Community</span>
+                        {t.rich('transparencyHeading', {
+                            orange: (chunks) => (
+                                <span className="text-docmosaic-orange">{chunks}</span>
+                            ),
+                        })}
                     </Typography>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {transparencyFeatures.map((feature, index) => (
@@ -75,23 +104,16 @@ export default function Home() {
                     <div className="flex flex-col md:flex-row justify-between items-center gap-10">
                         <div className="flex flex-col gap-3">
                             <Typography variant="h3" tag="h4">
-                                Support This Project
+                                {t('supportTitle')}
                             </Typography>
-                            <Typography>
-                                DocMosaic is free, open-source, and privacy-friendly. If you find it
-                                useful, consider supporting its development to keep it running fast
-                                and free for everyone.
-                            </Typography>
+                            <Typography>{t('supportDesc')}</Typography>
                             <DonateButton size="lg" />
                         </div>
                         <div className="flex flex-col gap-3 md:items-end md:text-right">
                             <Typography variant="h3" tag="h4">
-                                Help Us Improve
+                                {t('helpTitle')}
                             </Typography>
-                            <Typography>
-                                This tool is open-source & free to use. If you have ideas, feedback,
-                                or found a bug, let us know!
-                            </Typography>
+                            <Typography>{t('helpDesc')}</Typography>
                             <div className="flex flex-col md:flex-row gap-4">
                                 <CustomLink
                                     variant="sage"
@@ -101,7 +123,7 @@ export default function Home() {
                                     className="your-input-click-trigger"
                                     icon={<MessageSquareText className="w-4 h-4" />}
                                 >
-                                    YOUR INPUT
+                                    {t('yourInput')}
                                 </CustomLink>
                                 <CustomLink
                                     variant="cream"
@@ -111,7 +133,7 @@ export default function Home() {
                                     className="report-issues-click-trigger"
                                     icon={<Github className="w-4 h-4" />}
                                 >
-                                    Report on GitHub
+                                    {t('reportGithub')}
                                 </CustomLink>
                             </div>
                         </div>
@@ -126,21 +148,3 @@ export default function Home() {
         </div>
     );
 }
-
-const transparencyFeatures = [
-    {
-        icon: Github,
-        title: '100% Open Source',
-        description: 'Anyone can audit the code. Security through transparency.',
-    },
-    {
-        icon: Shield,
-        title: 'Files Stay Private',
-        description: 'Everything stays on your computer. Only anonymous usage statistics.',
-    },
-    {
-        icon: Code,
-        title: 'Self-Hostable',
-        description: 'Use our hosted version or run it yourself.',
-    },
-];

@@ -2,29 +2,12 @@
 
 import { motion } from 'framer-motion';
 import { ArrowBigRight, Boxes, Code2, Cpu, Github, Lock, Package, Terminal } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import Typography from '../common/typography';
 import { CustomLink } from '../ui/core/link';
 
 const ease = [0.22, 1, 0.36, 1] as const;
-
-const points = [
-    {
-        icon: Boxes,
-        title: 'Compound primitives',
-        body: 'A flat Editor.* namespace that snaps together - no prop drilling.',
-    },
-    {
-        icon: Cpu,
-        title: 'Framework-agnostic core',
-        body: 'Document model, history, and the PDF pipeline. Bring your own UI.',
-    },
-    {
-        icon: Lock,
-        title: '100% client-side',
-        body: 'No backend, no uploads. State lives in React - privacy by default.',
-    },
-];
 
 /**
  * Marketing band that surfaces the developer story: DocMosaic is not only a
@@ -32,6 +15,26 @@ const points = [
  * positioning from docs.docmosaic.com.
  */
 const ForDevelopers = () => {
+    const t = useTranslations('ForDevelopers');
+
+    const points = [
+        {
+            icon: Boxes,
+            title: t('point1Title'),
+            body: t('point1Body'),
+        },
+        {
+            icon: Cpu,
+            title: t('point2Title'),
+            body: t('point2Body'),
+        },
+        {
+            icon: Lock,
+            title: t('point3Title'),
+            body: t('point3Body'),
+        },
+    ];
+
     return (
         <motion.div
             className="rounded-[20px] bg-docmosaic-purple p-8 text-docmosaic-cream md:p-12"
@@ -46,25 +49,28 @@ const ForDevelopers = () => {
                     variant="small"
                     className="text-docmosaic-sage uppercase tracking-wider"
                 >
-                    For developers
+                    {t('eyebrow')}
                 </Typography>
             </span>
 
             <Typography variant="h2" tag="h2" className="mt-4 max-w-2xl text-white">
-                Not just an editor - a{' '}
-                <span className="text-docmosaic-caramel">library you build with</span>
+                {t.rich('title', {
+                    caramel: (chunks) => <span className="text-docmosaic-caramel">{chunks}</span>,
+                })}
             </Typography>
 
             <Typography
                 variant="paragraph"
                 className="mt-3 max-w-2xl !text-base text-docmosaic-cream/75"
             >
-                DocMosaic is open source and headless: compound{' '}
-                <code className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-docmosaic-cream">
-                    &lt;Editor.*&gt;
-                </code>{' '}
-                React primitives on a framework-agnostic core. Drop in the full editor, or compose
-                your own UI.
+                {t.rich('description', {
+                    token: '<Editor.*>',
+                    code: (chunks) => (
+                        <code className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-docmosaic-cream">
+                            {chunks}
+                        </code>
+                    ),
+                })}
             </Typography>
 
             <div className="mt-6 flex max-w-xl items-center gap-3 rounded-lg border border-docmosaic-cream/15 bg-black/20 px-4 py-3">
@@ -96,7 +102,7 @@ const ForDevelopers = () => {
                     className="documentation-click-trigger"
                     icon={<ArrowBigRight size={18} />}
                 >
-                    Read the Docs
+                    {t('readDocs')}
                 </CustomLink>
                 <Link
                     href="https://github.com/vrybakk/docmosaic"

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import Typography from '../common/typography';
@@ -87,12 +88,14 @@ interface TabsProps {
 }
 
 const Tabs = ({ selected, setSelected }: TabsProps) => {
+    const t = useTranslations('VerticalFeatures');
     return (
         <div className="w-full shrink-0 overflow-scroll scrollbar-hide md:w-fit">
             <Typography variant="h2" tag="h3" className="mb-10">
-                Finally, a <span className="text-docmosaic-caramel">Tool</span>
-                <br />
-                That Just Works
+                {t.rich('title', {
+                    caramel: (chunks) => <span className="text-docmosaic-caramel">{chunks}</span>,
+                    br: () => <br />,
+                })}
             </Typography>
             {FEATURES.map((tab, index) => {
                 return (
@@ -100,7 +103,7 @@ const Tabs = ({ selected, setSelected }: TabsProps) => {
                         key={index}
                         setSelected={setSelected}
                         selected={selected === index}
-                        title={tab.title}
+                        title={t(tab.titleKey)}
                         tabNum={index}
                     />
                 );
@@ -139,17 +142,20 @@ const Tab = ({ selected, title, setSelected, tabNum }: TabProps) => {
 
 export default VerticalSlideFeatures;
 
-const FEATURES: { title: string; variant: CanvasVariant }[] = [
+const FEATURES: {
+    titleKey: 'uploadTitle' | 'arrangeTitle' | 'downloadTitle';
+    variant: CanvasVariant;
+}[] = [
     {
-        title: 'Upload images',
+        titleKey: 'uploadTitle',
         variant: 'upload',
     },
     {
-        title: 'Arrange',
+        titleKey: 'arrangeTitle',
         variant: 'arrange',
     },
     {
-        title: 'Download',
+        titleKey: 'downloadTitle',
         variant: 'download',
     },
 ];

@@ -1,0 +1,171 @@
+{
+    "Metadata": {
+        "title": "DocMosaic - Strumento gratuito e open source per creare PDF in modo visivo",
+        "description": "Creatore di PDF visivo, gratuito e open source: disponi immagini, testo e forme in PDF puliti direttamente nel browser. È anche una libreria React headless (@docmosaic/core + @docmosaic/react) per integrare un editor di PDF nella tua app.",
+        "ogTitle": "DocMosaic - Strumento per la creazione visiva di PDF",
+        "ogDescription": "Crea PDF disponendo immagini nel browser: gratis e open source. È anche una libreria React headless per integrare un editor di PDF nella tua app."
+    },
+    "Nav": {
+        "howItWorks": "COME FUNZIONA",
+        "docs": "Docs",
+        "tryDocmosaic": "Prova DocMosaic",
+        "product": "Prodotto",
+        "pdfWebEditor": "Editor PDF web",
+        "features": "Funzionalità",
+        "documentation": "Documentazione",
+        "whatsNew": "Novità",
+        "openSourceCommunity": "Open source e community",
+        "viewSource": "Vedi il codice",
+        "reportIssues": "Segnala problemi",
+        "contribute": "Contribuisci",
+        "supportFeedback": "Supporto e feedback",
+        "yourInput": "Il tuo contributo"
+    },
+    "PdfEditor": {
+        "title": "Editor di PDF: crea e modifica PDF online",
+        "description": "Crea, modifica e disponi immagini nei documenti PDF con il nostro editor visivo intuitivo. Perfetto per documenti d'identità, raccolte di foto e documenti aziendali.",
+        "ogTitle": "Editor di PDF - DocMosaic",
+        "ogDescription": "Crea e modifica PDF con il nostro editor visivo"
+    },
+    "Hero": {
+        "badge": "Novità - I frame sono arrivati",
+        "title": "Modificare i <caramel>PDF</caramel> non dovrebbe essere così <orange>difficile</orange> - così l'<caramel>abbiamo risolto</caramel>",
+        "subtitle": "Trascina le immagini, disponile su una pagina virtuale ed esporta un PDF pulito, direttamente nel browser. <strong>Veloce, semplice, FATTO in pochi secondi.</strong>",
+        "featureNoSignup": "Nessuna registrazione",
+        "featurePrivacy": "Privacy al primo posto",
+        "featureFree": "Sempre gratis",
+        "featureNoServer": "Nessun server",
+        "tryCta": "Provalo subito",
+        "docsCta": "Leggi la documentazione",
+        "privacyNote": "<strong>Privacy al primo posto:</strong> i tuoi file non lasciano mai il tuo dispositivo."
+    },
+    "Home": {
+        "needHeading": "Tutto ciò di cui hai <orange>bisogno</orange> - niente di superfluo",
+        "transparencyHeading": "Creato per la trasparenza e la <orange>community</orange>",
+        "transparency1Title": "100% open source",
+        "transparency1Desc": "Chiunque può controllare il codice. Sicurezza grazie alla trasparenza.",
+        "transparency2Title": "I tuoi file restano privati",
+        "transparency2Desc": "Tutto rimane sul tuo computer. Solo statistiche d'uso anonime.",
+        "transparency3Title": "Self-hostable",
+        "transparency3Desc": "Usa la nostra versione ospitata o eseguilo da solo.",
+        "supportTitle": "Sostieni questo progetto",
+        "supportDesc": "DocMosaic è gratuito, open source e rispettoso della privacy. Se lo trovi utile, valuta di sostenerne lo sviluppo per mantenerlo veloce e gratuito per tutti.",
+        "helpTitle": "Aiutaci a migliorare",
+        "helpDesc": "Questo strumento è open source e gratuito. Se hai idee, feedback o hai trovato un bug, faccelo sapere!",
+        "yourInput": "IL TUO CONTRIBUTO",
+        "reportGithub": "Segnala su GitHub"
+    },
+    "SpringCards": {
+        "noSignUpTitle": "Nessuna registrazione necessaria",
+        "noSignUpSubtitle": "Apri e inizia. Niente account, niente attese, niente complicazioni.",
+        "privateTitle": "100% privato",
+        "privateSubtitle": "Tutto rimane sul tuo dispositivo. Nessun caricamento, nessuna raccolta di dati personali.",
+        "fasterTitle": "Più veloce degli editor online",
+        "fasterSubtitle": "Niente attese per caricamenti o elaborazioni. Modifica all'istante.",
+        "freeTitle": "Completamente gratuito",
+        "freeSubtitle": "Niente costi nascosti, niente funzioni premium, nessun limite. Tutto incluso.",
+        "cta": "ANDIAMO",
+        "learnMore": "SCOPRI DI PIÙ"
+    },
+    "VerticalFeatures": {
+        "title": "Finalmente, uno <caramel>strumento</caramel><br></br>che funziona e basta",
+        "uploadTitle": "Carica immagini",
+        "arrangeTitle": "Disponi",
+        "downloadTitle": "Scarica"
+    },
+    "ForDevelopers": {
+        "eyebrow": "Per gli sviluppatori",
+        "title": "Non solo un editor - una <caramel>libreria con cui costruire</caramel>",
+        "description": "DocMosaic è open source e headless: primitive React composte <code>{token}</code> su un core agnostico rispetto al framework. Integra l'editor completo o componi la tua interfaccia.",
+        "point1Title": "Primitive composte",
+        "point1Body": "Un namespace Editor.* piatto che si incastra al volo - niente prop drilling.",
+        "point2Title": "Core agnostico rispetto al framework",
+        "point2Body": "Modello del documento, cronologia e pipeline PDF. Porta la tua interfaccia.",
+        "point3Title": "100% lato client",
+        "point3Body": "Nessun backend, nessun caricamento. Lo stato vive in React - privacy per impostazione predefinita.",
+        "readDocs": "Leggi la documentazione"
+    },
+    "StackedCards": {
+        "heading": "Funziona su desktop e mobile - modifica i <sage>PDF</sage> ovunque!",
+        "subheading": "Non serve un computer. Modifica i PDF direttamente dal telefono: trascina, disponi ed esporta in pochi secondi.",
+        "cards": {
+            "desktop": {
+                "title": "Esperienza desktop senza interruzioni",
+                "description": "Funzionalità completa su schermi più grandi con scorciatoie da tastiera.",
+                "buttonText": "PROVA Docmosaic"
+            },
+            "allDevices": {
+                "title": "Funziona su tutti i dispositivi",
+                "description": "Nessuna app necessaria. Apri il browser e inizia a modificare.",
+                "buttonText": "PROVA L'APP WEB"
+            },
+            "export": {
+                "title": "Esportazione istantanea ovunque",
+                "description": "Scarica i tuoi PDF all'istante, sia da telefono che da desktop.",
+                "buttonText": "PROVA Docmosaic"
+            }
+        }
+    },
+    "BouncyCards": {
+        "heading": "<cream>Soluzioni</cream> integrate per le attività di tutti i giorni",
+        "whoIsThisFor": "<strong>A chi è rivolto?</strong><br></br>Dai designer agli insegnanti, DocMosaic aiuta chiunque debba <strong>creare rapidamente documenti PDF professionali.</strong>",
+        "tryDocmosaic": "PROVA DOCMOSAIC",
+        "expatsTitle": "⚖️ Per expat e funzionari",
+        "expatsSubtitle": "Semplifica la gestione dei documenti",
+        "expatsDescription": "Perfetto per <b>domande di visto, scansioni di documenti d'identità e passaporti,</b> e <b>pratiche amministrative</b>. Disponi più documenti scansionati in PDF professionali che rispettano i requisiti ufficiali.",
+        "businessesTitle": "🏢 Per aziende e amministrazione",
+        "businessesSubtitle": "Crea facilmente documenti interni e per i clienti",
+        "businessesDescription": "Per aziende, team HR e professionisti che devono gestire i documenti rapidamente senza software costosi. Genera <b>contratti, report</b> e <b>documenti aziendali</b> senza sforzo.",
+        "freelancersTitle": "💼 Per freelance",
+        "freelancersSubtitle": "Crea report e deliverable con il tuo brand",
+        "freelancersDescription": "Assembla <b>campioni di portfolio, proposte ricche di immagini</b> e <b>layout di fatture</b> in modo visivo. Perfetto per i deliverable destinati ai clienti.",
+        "marketersTitle": "🎯 Per i marketer",
+        "marketersSubtitle": "Crea rapidamente PDF dall'aspetto professionale",
+        "marketersDescription": "Crea <b>mockup pubblicitari, report di campagne</b> e semplici elementi visivi in PDF senza passare ore su Canva o Adobe.",
+        "designersTitle": "🎨 Per i designer",
+        "designersSubtitle": "Disponi rapidamente PDF basati su immagini",
+        "designersDescription": "Posiziona, ridimensiona e allinea le immagini con facilità per creare <b>layout pronti per la stampa.</b> Perfetto per <b>portfolio visivi</b> e <b>presentazioni per i clienti.</b>",
+        "teachersTitle": "🎓 Per insegnanti e studenti",
+        "teachersSubtitle": "Annota e organizza i PDF per i progetti",
+        "teachersDescription": "Unisci le immagini in PDF, annota i <b>documenti</b> scansionati e riordina le pagine per i <b>compiti</b> con facilità."
+    },
+    "ProductShowcase": {
+        "downloadButton": "Scarica PDF"
+    },
+    "PdfHero": {
+        "title": "Gestisci i tuoi <caramel>PDF</caramel> con facilità",
+        "subtitle": "Nessuna registrazione. Nessuna raccolta di dati personali. Nessun limite. Apri e usa.",
+        "cta": "INIZIA A MODIFICARE ORA",
+        "marqueeTop1": "Organizza i PDF senza limiti",
+        "marqueeTop2": "Trascina, rilascia, fatto",
+        "marqueeTop3": "La magia dei PDF, senza il mal di testa",
+        "marqueeTop4": "Disponi, regola, esporta",
+        "marqueeTop5": "Riordina le pagine con facilità",
+        "marqueeBottom1": "Buone vibrazioni, file fantastici",
+        "marqueeBottom2": "Lo strumento per PDF che non sapevi ti servisse",
+        "marqueeBottom3": "Sistema i tuoi PDF in meno tempo",
+        "marqueeBottom4": "Flussi di lavoro fluidi, esportazioni pulite",
+        "marqueeBottom5": "Organizza i tuoi documenti in pochi minuti"
+    },
+    "EditorCanvas": {
+        "dropImages": "Trascina qui le immagini",
+        "pdfReady": "PDF pronto"
+    },
+    "Footer": {
+        "tagline": "Strumento gratuito e open source per creare documenti PDF strutturati con immagini disposte ordinatamente.",
+        "yourInput": "Il tuo contributo",
+        "productHeading": "Prodotto",
+        "pdfWebEditor": "Editor PDF web",
+        "features": "Funzionalità",
+        "openSourceHeading": "Open source e community",
+        "viewSource": "Vedi il codice sorgente",
+        "reportIssues": "Segnala problemi",
+        "contribute": "Contribuisci",
+        "resourcesHeading": "Risorse",
+        "documentation": "Documentazione",
+        "whatsNew": "Novità",
+        "npmPackage": "Pacchetto npm",
+        "copyright": "© {year} DocMosaic. Tutti i diritti riservati. | <privacy>Informativa sulla privacy</privacy>",
+        "createdBy": "creato da <link>nerd-stud.io</link> 🧡"
+    }
+}

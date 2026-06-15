@@ -2,32 +2,35 @@
 
 import { ArrowBigRight } from 'lucide-react';
 import { MotionConfig, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 import Typography from '../common/typography';
 
 export const SpringCards = () => {
+    const t = useTranslations('SpringCards');
+
     return (
         <section className="bg-white md:px-8 py-12 md:py-20">
             <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 sm:grid-cols-2">
                 <Card
-                    title="No Sign-Up Needed"
-                    subtitle="Just open & start. No accounts, no waiting, no hassle."
+                    title={t('noSignUpTitle')}
+                    subtitle={t('noSignUpSubtitle')}
                     className="bg-docmosaic-sage"
                 />
                 <Card
-                    title="100% Private"
-                    subtitle="Everything stays on your device. No uploads, no personal data collection."
+                    title={t('privateTitle')}
+                    subtitle={t('privateSubtitle')}
                     className="bg-docmosaic-cream sm:-translate-y-6"
                 />
                 <Card
-                    title="Faster than Online Editors"
-                    subtitle="No waiting for uploads or processing. Edit instantly."
+                    title={t('fasterTitle')}
+                    subtitle={t('fasterSubtitle')}
                     className="bg-docmosaic-caramel"
                 />
                 <Card
-                    title="Completely Free"
-                    subtitle="No hidden fees, no premium features, no limits. Everything included."
+                    title={t('freeTitle')}
+                    subtitle={t('freeSubtitle')}
                     className="[&_h3]:text-white [&_*]:text-white bg-docmosaic-orange sm:-translate-y-6"
                 />
             </div>
@@ -44,6 +47,8 @@ const Card = ({
     subtitle: string;
     className?: string;
 }) => {
+    const t = useTranslations('SpringCards');
+
     return (
         <MotionConfig
             transition={{
@@ -118,7 +123,7 @@ const Card = ({
                                     tag="span"
                                     className="!text-docmosaic-black"
                                 >
-                                    LET&apos;S GO
+                                    {t('cta')}
                                 </Typography>
                             </Link>
                         </div>
@@ -154,7 +159,7 @@ const Card = ({
                                     fill="black"
                                     className="fill-docmosaic-black text-2xl font-medium uppercase opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100"
                                 >
-                                    LEARN MORE • LEARN MORE • LEARN MORE • LEARN MORE •
+                                    {`${t('learnMore')} • ${t('learnMore')} • ${t('learnMore')} • ${t('learnMore')} •`}
                                 </textPath>
                             </text>
                         </motion.svg>
