@@ -1,0 +1,71 @@
+/*
+ * DocMosaic brand theme for @docmosaic/react.
+ *
+ * Exposes a shadcn-aligned semantic surface (`--background`, `--foreground`,
+ * `--primary`, `--secondary`, `--muted`, `--accent`, `--destructive`,
+ * `--border`, `--input`, `--ring`, `--radius`).
+ *
+ * Apply on top of `styles/base.css`, or import the bundled `styles.css` for
+ * both. Triplets are space-separated to support the modern
+ * `rgb(R G B / <alpha-value>)` syntax used by the editor's Tailwind utilities.
+ *
+ * Dark mode is opt-in via the `.dark` class on a parent (typically `<html>`).
+ * Pair with a runtime theme switcher such as `next-themes` (see consumer apps).
+ */
+
+@layer docmosaic {
+    :root {
+        /* Semantic surface (shadcn-aligned). */
+        --background: 255 255 255; /* white canvas surround */
+        --foreground: 56 29 42; /* docmosaic-purple text */
+        --card: 255 255 255; /* sidebars, inspector */
+        --card-foreground: 56 29 42;
+        --primary: 56 29 42; /* docmosaic-purple — accent */
+        --primary-foreground: 252 222 156; /* docmosaic-cream on purple */
+        --secondary: 252 222 156; /* docmosaic-cream — soft accent */
+        --secondary-foreground: 56 29 42;
+        --muted: 244 244 245; /* zinc-100 — placeholder / disabled */
+        --muted-foreground: 113 113 122; /* zinc-500 */
+        --accent: 196 214 176; /* docmosaic-sage — selection highlight */
+        --accent-foreground: 56 29 42;
+        --destructive: 186 86 36; /* docmosaic-orange — warning / errors */
+        --destructive-foreground: 255 255 255;
+        --border: 228 228 231; /* zinc-200 */
+        --input: 228 228 231;
+        --ring: 56 29 42; /* docmosaic-purple focus ring */
+        --radius: 0.5rem;
+
+        /* Structural tokens fall through to `base.css` defaults
+           (--editor-radius-section: 6px, --editor-shadow-section). */
+    }
+
+    /*
+     * Dark mode — brand-tinted dark, not pure shadcn neutral. Foreground stays
+     * cream (the brand's warm accent) so text on dark surfaces still reads as
+     * DocMosaic, not as a generic shadcn template. Contrast on key combos:
+     *   - foreground on background ≈ 14.4 : 1 (cream on near-black)
+     *   - primary on background     ≈ 14.4 : 1 (cream as primary accent)
+     *   - destructive on background ≈ 8.2  : 1 (red-400 on near-black)
+     * All comfortably above WCAG AA 4.5 : 1 for body text.
+     */
+    .dark {
+        --background: 13 8 11; /* very dark, brand-tinted near-black */
+        --foreground: 252 222 156; /* docmosaic-cream — warm on dark */
+        --card: 24 18 22; /* slightly lifted from background */
+        --card-foreground: 252 222 156;
+        --primary: 252 222 156; /* cream-as-accent on dark */
+        --primary-foreground: 56 29 42; /* docmosaic-purple on cream */
+        --secondary: 56 29 42; /* docmosaic-purple as soft surface */
+        --secondary-foreground: 252 222 156;
+        --muted: 39 39 42; /* zinc-800 */
+        --muted-foreground: 161 161 170; /* zinc-400 */
+        --accent: 134 175 153; /* docmosaic-sage, darker for dark surface */
+        --accent-foreground: 13 8 11;
+        --destructive: 248 113 113; /* red-400 — softer on dark */
+        --destructive-foreground: 255 255 255;
+        --border: 39 39 42;
+        --input: 39 39 42;
+        --ring: 252 222 156;
+        --radius: 0.5rem;
+    }
+}

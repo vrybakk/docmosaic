@@ -1,0 +1,32 @@
+---
+title: Editor.Shell
+description: The default resizable app-shell - a top bar over a three-pane workspace (rail · canvas · inspector) that goes touch-first on mobile.
+---
+
+`Editor.Shell` is the **default layout** `<Editor.Root />` renders when given no children: a top bar over a resizable three-pane workspace - the left rail (tool palette · Pages · Layers), the canvas, and the inspector. Below 1024px it hands off to a touch-first shell (full-bleed canvas plus slide-up bottom sheets). It is also exported as `EditorShell`.
+
+You rarely mount it directly - `Editor.Root` mounts it for you and forwards its display toggles. Reach for `Editor.Shell` only when you wire the editor contexts yourself.
+
+## Usage
+
+The default editor _is_ the shell - configure it through `Editor.Root`:
+
+```tsx
+import { Editor } from '@docmosaic/react';
+
+// Full editor (shell mounted automatically):
+<Editor.Root showRuler showMinimap />
+
+// Display toggles flow straight through to the shell:
+<Editor.Root showInspector={false} showLeftRail />;
+```
+
+## API Reference
+
+<PropTable name="EditorShell" />
+
+## Related
+
+-   [Editor.Root](/docs/primitives/root) - mounts the shell by default
+-   [Mobile & touch support](/docs/examples/mobile) - the responsive shell below 1024px
+-   [Editor.Canvas](/docs/primitives/canvas) - the workspace at the center of the shell

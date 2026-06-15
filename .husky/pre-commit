@@ -1,9 +1,17 @@
 echo "Running pre-commit checks..."
 
+# Auto-format staged files
+echo "Formatting staged files..."
+bunx lint-staged || exit 1
+
+# Verify no formatting drift remains (backstop)
+echo "Checking formatting..."
+bun run format:check || exit 1
+
 # Run TypeScript type checking
 echo "Running type check..."
-bun typecheck || exit 1
+bun run typecheck || exit 1
 
 # Run linting
 echo "Running lint..."
-bun lint || exit 1
+bun run lint || exit 1

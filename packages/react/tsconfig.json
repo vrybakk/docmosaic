@@ -1,0 +1,13 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "declaration": true,
+        "noEmit": false,
+        "incremental": false,
+        "jsx": "react-jsx",
+        "types": ["node"]
+    },
+    "include": ["src/**/*", "tsup.config.ts", "vitest.config.ts"],
+    "exclude": ["**/*.test.ts", "**/*.test.tsx", "dist", "node_modules"]
+}

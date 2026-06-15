@@ -1,0 +1,123 @@
+---
+title: Layers
+description: Section.zIndex, the four reorder actions, the layer toolbar, and the Editor.LayerList outliner.
+---
+
+Every `Section` carries a `zIndex`. When two sections overlap, the higher `zIndex` paints on top - both on the canvas and in the exported PDF. Four reducer actions plus four toolbar buttons let users reorder layers without manipulating arrays directly. Operations are scoped per page; sections on other pages never influence the result.
+
+## Mental model
+
+`Section.zIndex` is just a number that defaults to `0`. Render order is `(zIndex asc, then frames before non-frames at equal zIndex, then array index asc)` - lower draws first, higher draws on top, and ties fall back to insertion order so legacy documents (everything at `0`) render exactly as before. The middle key keeps a container frame behind its children (so a filled or bordered frame never covers its contents). The canvas, the PDF generator, and the PNG generator all share one sort - the exported `orderSectionsForRender` helper from `@docmosaic/core` - so what users see is what they get on download.
+
+There's no "current layer" mode and no separate layer state - `zIndex` is part of the section. Reordering is a pure mutation; undo/redo cover it like any other reducer action.
+
+## The four actions
+
+```ts
+import { useEditor } from '@docmosaic/react';
+
+const { actions } = useEditor();
+actions.bringToFront(sectionId); // zIndex = max(peers) + 1
+actions.sendToBack(sectionId); // zIndex = min(peers) - 1
+actions.moveForward(sectionId); // swap zIndex with next-higher peer
+actions.moveBackward(sectionId); // swap zIndex with next-lower peer
+```
+
+| Action         | What it does                                                                             |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| `bringToFront` | Section's `zIndex` becomes `max(zIndex) + 1` of same-page peers.                         |
+| `sendToBack`   | Section's `zIndex` becomes `min(zIndex) - 1` of same-page peers.                         |
+| `moveForward`  | Swap `zIndex` with the next-higher peer on the same page. No-op if already on top.       |
+| `moveBackward` | Swap `zIndex` with the next-lower peer on the same page. No-op if already at the bottom. |
+
+The matching dispatchable reducer actions (`BRING_TO_FRONT`, `SEND_TO_BACK`, `MOVE_FORWARD`, `MOVE_BACKWARD`) are exported from `@docmosaic/core` for callers driving the reducer directly.
+
+## When you want layers
+
+-   **Overlapping images** - a portrait on a card background, a logo over a photo.
+-   **Watermarks / stamps** - a translucent "DRAFT" sitting above every content image.
+-   **Annotated callouts** - an arrow image layered on top of a screenshot.
+-   **Composite collages** - manually-ordered photo grids where the order matters.
+
+If sections never overlap (a strict grid of disjoint rectangles), `zIndex` is invisible. The default of `0` everywhere just means "render in insertion order," which is the legacy behavior preserved by the array-index tiebreaker.
+
+## Toolbar UI
+
+`Editor.Section` exposes the four actions as icon buttons in the section's hover/selected toolbar, grouped with duplicate and delete:
+
+| Button         | Icon           | Action                            |
+| -------------- | -------------- | --------------------------------- |
+| Bring to front | `ChevronsUp`   | `actions.bringToFront(sectionId)` |
+| Move forward   | `ChevronUp`    | `actions.moveForward(sectionId)`  |
+| Move backward  | `ChevronDown`  | `actions.moveBackward(sectionId)` |
+| Send to back   | `ChevronsDown` | `actions.sendToBack(sectionId)`   |
+
+The toolbar appears on hover and stays visible while the section is selected. No additional wiring required - every layer action runs through the editor context so undo/redo, analytics, and the controlled-mode forward-pass all just work.
+
+## Building your own UI
+
+When you don't render `Editor.Section` directly, call the actions from your own toolbar:
+
+```tsx
+import { useEditor } from '@docmosaic/react';
+
+function LayerControls({ sectionId }: { sectionId: string }) {
+    const { actions } = useEditor();
+    return (
+        <div className="flex gap-1">
+            <button onClick={() => actions.bringToFront(sectionId)}>Top</button>
+            <button onClick={() => actions.moveForward(sectionId)}>Up</button>
+            <button onClick={() => actions.moveBackward(sectionId)}>Down</button>
+            <button onClick={() => actions.sendToBack(sectionId)}>Bottom</button>
+        </div>
+    );
+}
+```
+
+Same actions, your visual. The reducer doesn't care who calls it.
+
+## `Editor.LayerList`
+
+The dedicated outliner. `Editor.LayerList` renders every section on the current page in render order (top of stack first) with click-to-select, shift/meta-click to extend the selection, drag-to-reorder via the grip handle, and per-row toggles for hide and lock.
+
+```tsx
+import { Editor } from '@docmosaic/react';
+
+<Editor.Root>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.Pages />
+    <Editor.Canvas>
+        <Editor.Section />
+    </Editor.Canvas>
+    <div className="flex flex-col border-l">
+        <Editor.LayerList className="border-b" />
+        <Editor.PropertiesPanel />
+    </div>
+    <Editor.Preview />
+</Editor.Root>;
+```
+
+The panel reads its data from the editor context - drop it anywhere underneath `Editor.Root` and it lights up.
+
+### Hide and lock
+
+Each row has two toggles, mirroring Figma:
+
+| Toggle | Action                            | Effect                                                                                               |
+| ------ | --------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Eye    | `actions.toggleHidden(sectionId)` | Skips the section in the canvas and the PDF output.                                                  |
+| Lock   | `actions.toggleLocked(sectionId)` | Refuses selection, drag, and resize for the section. The properties panel still surfaces its fields. |
+
+Hidden and locked are independent - a section can be both. They live as `Section.hidden` and `Section.locked` on the core type so they survive document round-trips and undo/redo. Programmatic callers can also use `actions.setHidden(id, true)` / `actions.setLocked(id, true)` when they want to write an explicit value instead of toggling.
+
+The PDF generator filters out hidden sections before drawing, so a hidden layer leaves no trace in the exported file (the byte-diff gate covers this).
+
+### Drag-to-reorder
+
+Grabbing the grip handle and dragging up/down past another row's midpoint reorders the layer stack - the panel reassigns `zIndex` to every section on the page in one atomic pass so the visible order matches the new list order. Reorder is suppressed in `readOnly` mode (along with the hide/lock toggles).
+
+## See also
+
+-   [Designer](/docs/concepts/designer) - selection model the layer buttons key off of
+-   [Keybindings](/docs/concepts/keybindings) - actions you might wire to keyboard shortcuts in the future

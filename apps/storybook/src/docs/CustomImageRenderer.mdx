@@ -1,0 +1,48 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/Custom Image Renderer" />
+
+# Custom Image Renderer
+
+`@docmosaic/react` lets you replace the `<img>` element that
+`Editor.Section` uses by providing a custom `imageRenderer` through
+`EditorConfigProvider`.
+
+```tsx
+import { Editor, EditorConfigProvider, type ImageRenderer } from '@docmosaic/react';
+
+const Picture: ImageRenderer = ({ src, alt, onLoad, style }) => (
+    <picture>
+        <source srcSet={`${src}?fmt=avif`} type="image/avif" />
+        <source srcSet={`${src}?fmt=webp`} type="image/webp" />
+        <img src={src} alt={alt} onLoad={onLoad} style={style} />
+    </picture>
+);
+
+export function App() {
+    return (
+        <EditorConfigProvider value={{ imageRenderer: Picture }}>
+            <Editor.Root>
+                <Editor.Properties />
+                <Editor.Toolbar />
+                <Editor.Pages />
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+                <Editor.Preview />
+            </Editor.Root>
+        </EditorConfigProvider>
+    );
+}
+```
+
+## Use cases
+
+-   **Responsive images** — serve AVIF/WebP via `<picture>`.
+-   **Next.js `Image`** — keep the editor lightweight on the web by
+    delegating to the framework's optimized loader.
+-   **Lazy + low-quality placeholder** — render a blurred placeholder while
+    the full image streams in.
+
+The renderer receives everything `Editor.Section` would otherwise pass to
+the bare `<img>`: `src`, `alt`, `onLoad`, and `style`.

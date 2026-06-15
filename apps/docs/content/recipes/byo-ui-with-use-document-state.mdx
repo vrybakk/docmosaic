@@ -1,0 +1,93 @@
+---
+title: BYO-UI with useDocumentState
+description: Skip Editor.Root entirely and build your own UI on top of the headless state hook.
+---
+
+`useDocumentState` is the headless ("bring your own UI") hook. Same reducer, same history timeline, no compound primitives. Use it when you want full control over the visual surface.
+
+## The hook
+
+```ts
+import { useDocumentState } from '@docmosaic/react';
+import { createDocument } from '@docmosaic/core';
+
+const { document, formattedDate, canUndo, canRedo, actions } = useDocumentState({
+    initialDocument: createDocument(),
+});
+```
+
+It returns:
+
+-   **`document`** - the current snapshot. Re-renders on every change.
+-   **`formattedDate`** - `updatedAt` formatted for display.
+-   **`canUndo` / `canRedo`** - booleans for button enabled states.
+-   **`actions`** - a stable, referentially-equal object of dispatcher functions.
+
+## A minimal custom editor
+
+```tsx
+'use client';
+
+import { useDocumentState } from '@docmosaic/react';
+import { createDocument } from '@docmosaic/core';
+
+export function CustomEditor() {
+    const { document, canUndo, canRedo, actions } = useDocumentState({
+        initialDocument: createDocument(),
+    });
+
+    return (
+        <div className="flex flex-col gap-4 p-6">
+            <header className="flex items-center gap-2">
+                <input
+                    value={document.name}
+                    onChange={(e) => actions.updateName(e.target.value)}
+                    className="border rounded px-2 py-1"
+                />
+                <button disabled={!canUndo} onClick={actions.undo}>
+                    Undo
+                </button>
+                <button disabled={!canRedo} onClick={actions.redo}>
+                    Redo
+                </button>
+            </header>
+
+            <button onClick={() => actions.addSection({ type: 'image' })}>Add image section</button>
+
+            <p className="text-sm text-muted-foreground">
+                {document.sections.length} sections across {document.pages.length} pages
+            </p>
+        </div>
+    );
+}
+```
+
+That's the whole editor. No `<Editor.Root>`, no compound primitives - just the hook.
+
+## Wiring compound primitives onto the hook
+
+If you want to use some compound primitives but own the rest of the layout, wrap your tree in `EditorProvider` with the hook's state:
+
+```tsx
+import { EditorProvider, useDocumentState, Editor } from '@docmosaic/react';
+
+function HybridEditor() {
+    const state = useDocumentState();
+    return (
+        <EditorProvider value={state}>
+            {/* Your custom toolbar */}
+            <MyCustomToolbar />
+            {/* Bundled primitives still work - same context */}
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+        </EditorProvider>
+    );
+}
+```
+
+## See also
+
+-   [Designer concept](/docs/concepts/designer) - the mental model
+-   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled)
+-   [Hooks reference](/docs/reference/hooks)

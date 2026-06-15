@@ -1,0 +1,25 @@
+---
+title: Editor.ShapeToolButton
+description: Toolbar toggle that arms the draw-to-size shape tool (rectangle, circle, line).
+---
+
+Toolbar toggle that arms the **draw-to-size shape** tool. While armed, dragging on the page rubber-bands a new `ShapeSection`; a small caret picks the primitive (rectangle, circle, or line). Mutually exclusive with the frame, image-frame, and drawing tools, and it renders in its active variant while armed.
+
+## Usage
+
+```tsx
+import { Editor } from '@docmosaic/react';
+
+<Editor.Root>
+    <Editor.ShapeToolButton />
+</Editor.Root>;
+```
+
+## API Reference
+
+<PropTable name="ShapeToolButton" />
+
+## Related
+
+-   [Editor.SelectToolButton](/docs/primitives/select-tool-button) - return to select / move mode
+-   [Editor.FrameToolButton](/docs/primitives/frame-tool-button) - container frames

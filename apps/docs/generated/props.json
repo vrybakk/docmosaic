@@ -1,0 +1,2379 @@
+{
+    "SheetClose": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SheetContent": [
+        {
+            "name": "side",
+            "type": "enum",
+            "required": false,
+            "defaultValue": "right",
+            "description": ""
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SheetDescription": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SheetOverlay": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SheetTitle": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SheetTrigger": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "ScrollArea": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "ScrollBar": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "DialogClose": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "DialogContent": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "hideCloseButton",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "false",
+            "description": ""
+        }
+    ],
+    "DialogDescription": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "DialogOverlay": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "DialogTitle": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "DialogTrigger": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "Button": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "false",
+            "description": ""
+        },
+        {
+            "name": "icon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "size",
+            "type": "\"default\" | \"sm\" | \"lg\" | \"icon\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "Select": [
+        {
+            "name": "value",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "defaultValue",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onValueChange",
+            "type": "((value: string) => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SelectContent": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SelectGroup": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SelectItem": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SelectLabel": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SelectSeparator": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SelectTrigger": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SelectValue": [
+        {
+            "name": "asChild",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "EditorConfigProvider": [
+        {
+            "name": "value",
+            "type": "Partial<EditorConfig> | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "EditorProvider": [
+        {
+            "name": "value",
+            "type": "EditorContextValue",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "EditorSectionProvider": [
+        {
+            "name": "value",
+            "type": "EditorSectionContextValue",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "EditorCanvasProvider": [
+        {
+            "name": "value",
+            "type": "EditorCanvasContextValue",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "documentGenerated": [
+        {
+            "name": "totalPages",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "totalImages",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "averageImagesPerPage",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "format",
+            "type": "enum",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "orientation",
+            "type": "enum",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "fileSize",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "estimatedSize",
+            "type": "number | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "Minimap": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional extra className applied to the outer container."
+        },
+        {
+            "name": "maxSize",
+            "type": "number | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Maximum size for the minimap thumbnail (CSS pixels). The thumbnail preserves the page aspect ratio so the actual dimensions are at most `maxSize` on the longer axis. Defaults to `72` - a small peripheral tile rather than a large preview."
+        }
+    ],
+    "Zoom": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional extra className applied to the outer container."
+        }
+    ],
+    "LayerList": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "title",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional title rendered above the list. Pass an empty string to omit the header entirely (useful when the surrounding shell already labels the panel)."
+        }
+    ],
+    "LayerList.Row": [
+        {
+            "name": "section",
+            "type": "Section",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "index",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Display index in the visible (z-desc) list."
+        },
+        {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "readOnly",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": "When `true`, drag-reorder and the hide/lock toggles are suppressed."
+        },
+        {
+            "name": "onSelect",
+            "type": "(e: MouseEvent<Element, MouseEvent>) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onToggleHidden",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onToggleLocked",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onMoveRow",
+            "type": "(fromIndex: number, toIndex: number) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Reorder callback fired when a row is dragged over another row's hover midpoint, mirroring the Pages primitive's behavior."
+        },
+        {
+            "name": "onRename",
+            "type": "(name: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Commit a new layer name (empty string clears it back to the derived label)."
+        }
+    ],
+    "LayerRow": [
+        {
+            "name": "section",
+            "type": "Section",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "index",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Display index in the visible (z-desc) list."
+        },
+        {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "readOnly",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": "When `true`, drag-reorder and the hide/lock toggles are suppressed."
+        },
+        {
+            "name": "onSelect",
+            "type": "(e: MouseEvent<Element, MouseEvent>) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onToggleHidden",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onToggleLocked",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onMoveRow",
+            "type": "(fromIndex: number, toIndex: number) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Reorder callback fired when a row is dragged over another row's hover midpoint, mirroring the Pages primitive's behavior."
+        },
+        {
+            "name": "onRename",
+            "type": "(name: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Commit a new layer name (empty string clears it back to the derived label)."
+        }
+    ],
+    "SectionShapeToolbar": [
+        {
+            "name": "section",
+            "type": "ShapeSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onUpdate",
+            "type": "(next: Partial<ShapeSection>) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SectionShape": [
+        {
+            "name": "section",
+            "type": "ShapeSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SectionFrameToolbar": [
+        {
+            "name": "section",
+            "type": "FrameSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onUpdate",
+            "type": "(next: Partial<FrameSection>) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "TextEditor": [
+        {
+            "name": "section",
+            "type": "TextSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "isEditing",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "scale",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Canvas display scale (pageScale * zoom). The stored font size is in points; multiply by this so the rendered text tracks the scaled box."
+        },
+        {
+            "name": "onTextChange",
+            "type": "(text: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onEditStart",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onEditEnd",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "TextToolbar": [
+        {
+            "name": "section",
+            "type": "TextSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onUpdate",
+            "type": "(next: Partial<TextSection>) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "DrawingCanvas": [
+        {
+            "name": "section",
+            "type": "DrawingSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "finalScale",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Display scale applied by Canvas (pageScale * zoom)."
+        }
+    ],
+    "SectionResizeHandles": [
+        {
+            "name": "onResizeStart",
+            "type": "(e: MouseEvent<Element, MouseEvent>, handle: ResizeHandle) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "useSectionResize": [
+        {
+            "name": "section",
+            "type": "Section",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onUpdate",
+            "type": "(section: Section) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "imageRef",
+            "type": "RefObject<HTMLImageElement | null>",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "useSectionDrag": [
+        {
+            "name": "section",
+            "type": "Section",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onUpdate",
+            "type": "(section: Section) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "isResizing",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "groupDrag",
+            "type": "{ size: number; onStart: () => void; onMove: (dx: number, dy: number) => void; onEnd: () => void; } | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Group drag hook (Phase 16). When provided and `groupDrag.size > 1`, the section's individual `onUpdate` is bypassed in favour of `groupDrag.onMove(dx, dy)` so the whole selection translates together. Coordinates are in canvas display pixels (matching the input movement), so the receiver converts to PDF points itself."
+        },
+        {
+            "name": "onDragEnd",
+            "type": "(() => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Fired once when a drag gesture ends (pointer up). Used for frame adoption: the section view recomputes whether the dropped section now sits inside a container frame. No-op while resizing or read-only."
+        }
+    ],
+    "useImageUpload": [
+        {
+            "name": "section",
+            "type": "ImageSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onUpdate",
+            "type": "(section: Section) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onImageUpload",
+            "type": "(sectionId: string, imageUrl: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "useImageCrop": [
+        {
+            "name": "section",
+            "type": "ImageSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onUpdate",
+            "type": "(next: Section) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "scale",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Display scale: `finalScale` from useEditorSection. Pointer deltas arrive in display pixels; the hook divides by `scale` before applying them to the crop region (which lives in PDF points)."
+        }
+    ],
+    "SectionImage": [
+        {
+            "name": "section",
+            "type": "ImageSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "imageRef",
+            "type": "Ref<HTMLImageElement>",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "isDroppingFile",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onReplaceClick",
+            "type": "(e: MouseEvent<Element, MouseEvent>) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SectionUploadProgress": [
+        {
+            "name": "progress",
+            "type": "UploadProgressInfo",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SectionEmptyState": [
+        {
+            "name": "isDroppingFile",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onUploadClick",
+            "type": "(e: MouseEvent<Element, MouseEvent>) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SectionCropOverlay": [
+        {
+            "name": "sectionWidth",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Section width in PDF points (raw)."
+        },
+        {
+            "name": "sectionHeight",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Section height in PDF points (raw)."
+        },
+        {
+            "name": "crop",
+            "type": "ImageCrop",
+            "required": true,
+            "defaultValue": null,
+            "description": "Active crop draft (PDF points, section-relative)."
+        },
+        {
+            "name": "scale",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Display scale (`finalScale`) - point values are multiplied by this to render in display pixels so the overlay aligns with the visible section box."
+        },
+        {
+            "name": "onStartMove",
+            "type": "(e: PointerEvent<Element>) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onStartResize",
+            "type": "(e: PointerEvent<Element>, handle: CropHandle) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onConfirm",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onCancel",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SectionToolbar": [
+        {
+            "name": "section",
+            "type": "ImageSection",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onResizeToProportion",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onDuplicate",
+            "type": "(section: Section) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onDelete",
+            "type": "(sectionId: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onBringToFront",
+            "type": "(sectionId: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onSendToBack",
+            "type": "(sectionId: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onMoveForward",
+            "type": "(sectionId: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "onMoveBackward",
+            "type": "(sectionId: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "DrawingControls": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "Toaster": [
+        {
+            "name": "toastOptions",
+            "type": "DefaultToastOptions | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the default toast styling. Defaults to a theme-token-styled card matching `bg-card` / `text-card-foreground`. Anything you pass deep-merges into the bundled defaults, so consumers only need to set the fields they want to change."
+        }
+    ],
+    "Ruler": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional extra className applied to the outer container."
+        },
+        {
+            "name": "unit",
+            "type": "enum",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the display unit. Falls back to `display.rulerUnit` from the editor context (defaults to `'pt'`)."
+        }
+    ],
+    "TemplateGallery": [
+        {
+            "name": "templates",
+            "type": "readonly TemplateGalleryItem[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Templates to render - order is preserved."
+        },
+        {
+            "name": "onTemplateSelected",
+            "type": "((template: TemplateGalleryItem) => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Fired after the template has been applied via the editor's `UPDATE_DOCUMENT` action. Useful for analytics or closing a dialog."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional className wrapping the gallery grid."
+        }
+    ],
+    "KeybindingHelp": [
+        {
+            "name": "keymap",
+            "type": "Partial<EditorKeymap> | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the displayed keymap. Defaults to DEFAULT_KEYMAP. Pass the same partial map you handed to `Editor.Root` `keybindings` so the dialog reflects the actual active bindings. Anything omitted falls back to the default - the merge mirrors what the runtime layer does."
+        },
+        {
+            "name": "open",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Externally control the open state. When omitted, the dialog manages its own visibility and listens for the `showHelp` keybinding to toggle."
+        },
+        {
+            "name": "onOpenChange",
+            "type": "((open: boolean) => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called when the user requests open/close."
+        }
+    ],
+    "Toolbar": [
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional children. When provided, the toolbar renders the inverse default layout and shows whatever children the caller passes. When omitted, falls back to the bundled default layout - the same arrangement the editor has always shipped with."
+        }
+    ],
+    "AddShapeButton": [
+        {
+            "name": "shape",
+            "type": "enum",
+            "required": false,
+            "defaultValue": null,
+            "description": "Which shape primitive to insert. Defaults to `'rect'`."
+        },
+        {
+            "name": "label",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the displayed label. Defaults to \"Add Rectangle/Circle/Line\"."
+        },
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "FrameToolButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle (tool-off) icon-only variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the active (tool-armed) icon-only variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while the tool is armed."
+        }
+    ],
+    "PreviewButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'white'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "PrintButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'cream'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "ImageFrameToolButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle (not-armed) variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the armed variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the toggle button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the toggle button while the tool is armed."
+        }
+    ],
+    "DownloadButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only pair - a download glyph plus a tiny menu chevron - instead of the wide labeled \"Download PDF\" split button. Used in the app-shell top bar's monochrome icon cluster."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'sage'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto each icon-only button."
+        }
+    ],
+    "ShapeToolButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle (not-armed) variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the armed (drawing) variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the toggle button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the toggle button while the tool is armed."
+        }
+    ],
+    "AddImageButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "SelectToolButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle icon-only variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the active (selection-mode) icon-only variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while selection mode is active."
+        }
+    ],
+    "RedoButton": [
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the button variant. Defaults to `'white'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the button."
+        }
+    ],
+    "AddTextButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the icon-only button variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button."
+        }
+    ],
+    "UndoButton": [
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the button variant. Defaults to `'white'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the button."
+        }
+    ],
+    "DrawButton": [
+        {
+            "name": "iconOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render a compact icon-only square button with an accessible label."
+        },
+        {
+            "name": "variant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the idle (not-drawing) icon-only variant. Defaults to `'caramel'`."
+        },
+        {
+            "name": "activeVariant",
+            "type": "\"default\" | \"cream\" | \"sage\" | \"orange\" | \"caramel\" | \"white\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\" | null | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the active (drawing) icon-only variant. Defaults to `'orange'`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while idle."
+        },
+        {
+            "name": "activeClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the icon-only button while drawing is active."
+        }
+    ],
+    "PropertiesPanel": [
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional children. When provided, the panel renders them as the body - useful for custom compositions that swap sub-sections or add their own fields. When omitted, the panel falls back to the bundled default arrangement: `LayoutSection`, type-specific section (Text / Shape), then `LayerSection`. An empty selection always renders the EmptyState regardless of children."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "PropertiesPanel.Layout": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "PropertiesPanel.Layer": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "PropertiesPanel.Text": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "PropertiesPanel.Shape": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "PropertiesPanel.EmptyState": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "ShapeSectionProperties": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "EmptyState": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "LayerSection": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "TextSectionProperties": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "LayoutSection": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SectionShell": [
+        {
+            "name": "title",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "FieldLabel": [
+        {
+            "name": "htmlFor",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "PageBackground": [
+        {
+            "name": "pageIndex",
+            "type": "number | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Page to target. Defaults to the document's current page (1-based index, converted to 0-based internally to match the reducer action)."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "Canvas": [
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Two kinds of children are supported: 1. **Section template** - a single non-overlay child rendered once per section. Pass `<Editor.Section />` (or a custom section component that consumes useEditorSection) to control how each section is rendered. Defaults to the bundled `<Section />` when omitted. 2. **Canvas overlays** - primitives that opt in via the `__editorCanvasOverlay` marker (e.g. Editor.Zoom). These are rendered once, anchored to the canvas viewport, and have access to useEditorCanvas via context. Any number can be supplied alongside the section template."
+        },
+        {
+            "name": "readOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Force the canvas into read-only mode regardless of the root's `readOnly` flag. Defaults to `false`. The effective read-only state is `root.readOnly || canvas.readOnly` - either one is enough to suppress drag, resize, drop, file upload, and section-toolbar buttons. Set automatically by Editor.StaticCanvas."
+        },
+        {
+            "name": "showControls",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the built-in top-right `CanvasControls` zoom strip. Defaults to `true`. Set `false` when the surrounding layout supplies its own zoom widget (e.g. the app-shell mounts a single bottom-center `Editor.Zoom`) so there is exactly one zoom control on the canvas."
+        }
+    ],
+    "StaticCanvas": [
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Two kinds of children are supported: 1. **Section template** - a single non-overlay child rendered once per section. Pass `<Editor.Section />` (or a custom section component that consumes useEditorSection) to control how each section is rendered. Defaults to the bundled `<Section />` when omitted. 2. **Canvas overlays** - primitives that opt in via the `__editorCanvasOverlay` marker (e.g. Editor.Zoom). These are rendered once, anchored to the canvas viewport, and have access to useEditorCanvas via context. Any number can be supplied alongside the section template."
+        },
+        {
+            "name": "showControls",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the built-in top-right `CanvasControls` zoom strip. Defaults to `true`. Set `false` when the surrounding layout supplies its own zoom widget (e.g. the app-shell mounts a single bottom-center `Editor.Zoom`) so there is exactly one zoom control on the canvas."
+        }
+    ],
+    "ShapeDraftPreview": [
+        {
+            "name": "kind",
+            "type": "enum",
+            "required": true,
+            "defaultValue": null,
+            "description": "Which primitive the armed shape tool will create."
+        },
+        {
+            "name": "width",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Draft box size in display pixels (used only for the SVG viewBox aspect)."
+        },
+        {
+            "name": "height",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "useCanvasZoom": [
+        {
+            "name": "initialZoom",
+            "type": "number | undefined",
+            "required": false,
+            "defaultValue": "1",
+            "description": "Initial zoom level (defaults to 1)."
+        },
+        {
+            "name": "minZoom",
+            "type": "number | undefined",
+            "required": false,
+            "defaultValue": "0.5",
+            "description": "Minimum zoom level (defaults to 0.5)."
+        },
+        {
+            "name": "maxZoom",
+            "type": "number | undefined",
+            "required": false,
+            "defaultValue": "2",
+            "description": "Maximum zoom level (defaults to 2)."
+        },
+        {
+            "name": "step",
+            "type": "number | undefined",
+            "required": false,
+            "defaultValue": "0.1",
+            "description": "Step applied by zoom in/out buttons (defaults to 0.1)."
+        },
+        {
+            "name": "onZoomChange",
+            "type": "((zoom: number) => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional callback fired whenever zoom changes (e.g. for analytics)."
+        }
+    ],
+    "SnapGuides": [
+        {
+            "name": "guides",
+            "type": "SnapGuide[]",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "pageDimensions",
+            "type": "{ width: number; height: number; }",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "finalScale",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "SelectionBounds": [
+        {
+            "name": "sections",
+            "type": "readonly Section[]",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "selectedIds",
+            "type": "ReadonlySet<string>",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "finalScale",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "pageDimensions",
+            "type": "{ width: number; height: number; }",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "Properties": [
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional children. When provided, the properties bar renders an empty shell with the children inside. When omitted, falls back to the bundled default layout (document name + page size + orientation, plus a mobile settings sheet)."
+        }
+    ],
+    "PageSizeSelect": [
+        {
+            "name": "fullWidth",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "When true, expands the trigger to fill its container (mobile sheet)."
+        }
+    ],
+    "DocumentName": [
+        {
+            "name": "asTitle",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Hide the trailing pencil affordance and tighten the input so the name reads as a plain title. Used by the app-shell top bar, where the name sits between a menu glyph and a chevron rather than in a labeled field. Defaults to `false`."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes merged onto the input."
+        }
+    ],
+    "OrientationSelect": [
+        {
+            "name": "fullWidth",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "When true, expands the trigger to fill its container (mobile sheet)."
+        }
+    ],
+    "EditorLayout": [
+        {
+            "name": "header",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "toolbar",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "sidebar",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "canvas",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "preview",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "BrushWeightSlider": [
+        {
+            "name": "value",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "Active brush weight in PDF points (1-20)."
+        },
+        {
+            "name": "onChange",
+            "type": "(weight: number) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Fired when the user moves the slider."
+        },
+        {
+            "name": "min",
+            "type": "number | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional minimum weight. Defaults to `1`."
+        },
+        {
+            "name": "max",
+            "type": "number | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional maximum weight. Defaults to `20`."
+        },
+        {
+            "name": "previewColor",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional preview color used by the swatch. Defaults to current weight color."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        }
+    ],
+    "usePdfGeneration": [
+        {
+            "name": "document",
+            "type": "Document",
+            "required": true,
+            "defaultValue": null,
+            "description": "Current editor document. Read at call time of download/print."
+        },
+        {
+            "name": "onSizeKnown",
+            "type": "((bytes: number) => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called with the generated blob's size once download completes."
+        },
+        {
+            "name": "backend",
+            "type": "Partial<EditorPdfBackend> | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional PDF backend override. Defaults to `@docmosaic/core` exports. Use this to swap the bundled jsPDF path for a custom implementation."
+        }
+    ],
+    "Root": [
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra nodes mounted **after** the default app-shell - custom dialogs, an extra toaster, analytics bridges, etc. The shell renders the full editor on its own, so children are purely additive overlays. Omit for the canonical `<Editor.Root />` usage."
+        },
+        {
+            "name": "themeToggle",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Theme-toggle slot rendered in the top-bar right group. The package never imports `next-themes`; the host app injects a ready-made toggle node here. Renders nothing when omitted."
+        },
+        {
+            "name": "showLeftRail",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the left rail (tool palette + Pages + Layers). Defaults to `true`."
+        },
+        {
+            "name": "showToolPalette",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the tool palette inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showPages",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the \"Pages\" section inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showLayers",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the \"Layers\" section inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showInspector",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the right inspector panel. Defaults to `true`."
+        },
+        {
+            "name": "pdf",
+            "type": "Partial<EditorPdfBackend> | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Pluggable PDF backend. Either or both functions can be overridden. Anything omitted falls back to the bundled `@docmosaic/core` implementation (`generatePDF` / `estimatePDFSize`). Use this to swap the jsPDF path for a different renderer, run generation in a Worker, or mock it out in tests."
+        },
+        {
+            "name": "keybindings",
+            "type": "false | Partial<EditorKeymap> | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcuts. - Omit (default): the built-in keymap is active - `mod+z` undo, `mod+shift+z` / `mod+y` redo, `Delete` / `Backspace` removes the selected section, `Escape` deselects, and `Arrow` / `Shift+Arrow` nudge the selected section by 1pt / 10pt. - Pass a partial EditorKeymap to override individual bindings or register alternates (e.g. `{ redo: 'mod+r' }`). - Pass `false` to disable the layer entirely - no window listener is attached. Bindings are skipped while focus is inside an `<input>`, `<textarea>`, `<select>`, or anything `contenteditable`, so text fields like the document-name input remain typeable."
+        },
+        {
+            "name": "readOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render the editor in read-only / viewer mode. Defaults to `false`. When `true`: - Section drag, resize, drop, and file upload are suppressed. - Section floating toolbars (delete, duplicate, layer buttons) hide. - The properties bar (document name, page size, orientation) becomes read-only. - The page list hides Add Image / Add Page / per-page delete and ignores reorder gestures. - The `PropertiesPanel` renders its number/text inputs disabled and hides the Layer buttons. - The toolbar's `AddImageButton`, `AddTextButton`, `AddShapeButton`, `DrawButton`, `UndoButton`, and `RedoButton` hide themselves. - Keybindings skip every mutating action (`undo`, `redo`, `deleteSection`, `nudge*`); `deselect` (Esc) still works. - Drawing-mode pointer captures are ignored. What still works: - Selection (click, shift-click, marquee). - Zoom, pan, preview dialog, print, PDF/PNG download."
+        },
+        {
+            "name": "showRuler",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render `Editor.Ruler` along the top and left edges of the canvas viewport. Defaults to `false`. When `true`, the canvas reserves a 24px gutter on each axis so the rulers sit flush with the page edge without occluding section geometry."
+        },
+        {
+            "name": "showMinimap",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Render `Editor.Minimap` anchored to the bottom-right of the canvas viewport - a thumbnail of the current page plus a viewport rectangle that pans the main canvas. Defaults to `false`."
+        },
+        {
+            "name": "rulerUnit",
+            "type": "enum",
+            "required": false,
+            "defaultValue": null,
+            "description": "Unit used by `Editor.Ruler` tick labels. Defaults to `'pt'` so the tick values match the document's storage unit one-to-one. Set to `'mm'` or `'in'` to surface a human-facing measurement instead."
+        },
+        {
+            "name": "document",
+            "type": "Document | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled: caller owns the document."
+        },
+        {
+            "name": "onDocumentChange",
+            "type": "((next: Document) => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "defaultDocument",
+            "type": "Document | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Uncontrolled: optional seed for the internally-owned document."
+        }
+    ],
+    "ColorPicker": [
+        {
+            "name": "value",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": "Currently-selected color (CSS color string)."
+        },
+        {
+            "name": "onChange",
+            "type": "(color: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Fired when the user picks a swatch or commits a custom color."
+        },
+        {
+            "name": "presets",
+            "type": "readonly string[] | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional override for the swatch palette. Defaults to DEFAULT_COLOR_PRESETS (12 colors)."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": ""
+        },
+        {
+            "name": "disabled",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "When `true`, the swatches and custom-color trigger become non-interactive and visually dim. The current `value` still shows so the swatch remains a label for the actively-selected color."
+        }
+    ],
+    "EditorShell": [
+        {
+            "name": "themeToggle",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Host-injected theme toggle node rendered in the top-bar right group."
+        },
+        {
+            "name": "showLeftRail",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the left rail (tool palette + Pages + Layers). Defaults to `true`."
+        },
+        {
+            "name": "showToolPalette",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the tool palette inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showPages",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the \"Pages\" section inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showLayers",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the \"Layers\" section inside the left rail. Defaults to `true`."
+        },
+        {
+            "name": "showInspector",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Show the right inspector panel. Defaults to `true`."
+        },
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra nodes rendered after the shell - custom dialogs, toasters, or other overlays passed through `Editor.Root`'s `children`."
+        }
+    ],
+    "LeftRail": [
+        {
+            "name": "showToolPalette",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Render the add/draw tool palette above the panels. Defaults to `true`."
+        },
+        {
+            "name": "showPages",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Render the collapsible \"Pages\" section. Defaults to `true`."
+        },
+        {
+            "name": "showLayers",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Render the collapsible \"Layers\" section. Defaults to `true`."
+        }
+    ],
+    "CollapsibleSection": [
+        {
+            "name": "label",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": "Small uppercase muted label shown in the section header."
+        },
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "Section body, revealed while expanded."
+        },
+        {
+            "name": "defaultOpen",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Start expanded. Defaults to `true`."
+        },
+        {
+            "name": "bodyClassName",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Extra classes for the body wrapper."
+        }
+    ],
+    "TopBar": [
+        {
+            "name": "themeToggle",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Host-injected theme toggle node. The package never imports `next-themes`; the app passes a ready-made toggle in. Renders nothing when omitted."
+        },
+        {
+            "name": "onToggleLeftRail",
+            "type": "(() => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Toggle the left rail's collapsed state. Omit to hide the toggle."
+        },
+        {
+            "name": "leftRailCollapsed",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the left rail is currently collapsed (drives the toggle label)."
+        },
+        {
+            "name": "onToggleInspector",
+            "type": "(() => void) | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Toggle the inspector's collapsed state. Omit to hide the toggle."
+        },
+        {
+            "name": "inspectorCollapsed",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether the inspector is currently collapsed."
+        }
+    ],
+    "Guides": [
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional extra className applied to the overlay container."
+        }
+    ],
+    "Pages": [
+        {
+            "name": "bare",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Compact rail mode: render only the thumbnail strip plus a single \"Add page\" affordance - no internal \"Pages\" header, \"Last modified\" footer, or \"Add Image\" button. Used inside the app-shell left rail, where those concerns live elsewhere. Defaults to `false` (standalone sidebar)."
+        }
+    ],
+    "PageThumbnail": [
+        {
+            "name": "page",
+            "type": "Page",
+            "required": true,
+            "defaultValue": null,
+            "description": "The page data"
+        },
+        {
+            "name": "index",
+            "type": "number",
+            "required": true,
+            "defaultValue": null,
+            "description": "The page index"
+        },
+        {
+            "name": "isSelected",
+            "type": "boolean",
+            "required": true,
+            "defaultValue": null,
+            "description": "Whether this page is currently selected"
+        },
+        {
+            "name": "sections",
+            "type": "Section[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "The sections (images) on this page"
+        },
+        {
+            "name": "pageSize",
+            "type": "enum",
+            "required": true,
+            "defaultValue": null,
+            "description": "The page size (A4, etc.)"
+        },
+        {
+            "name": "orientation",
+            "type": "enum",
+            "required": true,
+            "defaultValue": null,
+            "description": "The page orientation"
+        },
+        {
+            "name": "onSelect",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Callback when the page is selected"
+        },
+        {
+            "name": "onDelete",
+            "type": "() => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Callback when the page is deleted"
+        },
+        {
+            "name": "dragHandlers",
+            "type": "{ onDragStart: (e: DragEvent<Element>) => void; onDragEnd: () => void; onDragOver: (e: DragEvent<Element>) => void; }",
+            "required": true,
+            "defaultValue": null,
+            "description": "Drag and drop handlers"
+        },
+        {
+            "name": "dropIndicators",
+            "type": "{ isDragOver: boolean; dropPosition: \"top\" | \"bottom\" | null; } | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Visual indicators for drag and drop"
+        },
+        {
+            "name": "readOnly",
+            "type": "boolean | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "When `true`, the per-page delete button is hidden and the thumbnail is not `draggable` (so it cannot be reordered). The thumbnail still stays selectable. Defaults to `false`."
+        }
+    ],
+    "ContextMenu": [
+        {
+            "name": "children",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "Children wrapped by the right-click trigger. Typically `Editor.Canvas` (or the page surface inside a custom shell)."
+        },
+        {
+            "name": "keymap",
+            "type": "Partial<EditorKeymap> | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Override the displayed shortcut chips. Defaults to DEFAULT_KEYMAP. Pass the same partial map you handed to `Editor.Root` `keybindings` so the inline shortcuts match the active runtime - the menu items themselves dispatch through useEditor actions regardless."
+        },
+        {
+            "name": "className",
+            "type": "string | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional class applied to the trigger wrapper."
+        }
+    ],
+    "useEditorKeybindings": [
+        {
+            "name": "undo",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Undo the last document change."
+        },
+        {
+            "name": "redo",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Redo a previously undone change."
+        },
+        {
+            "name": "deleteSection",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Delete the currently selected section (no-op if none selected)."
+        },
+        {
+            "name": "deselect",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Clear the current selection."
+        },
+        {
+            "name": "nudgeUp",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Nudge the selected section up by 1pt."
+        },
+        {
+            "name": "nudgeDown",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Nudge the selected section down by 1pt."
+        },
+        {
+            "name": "nudgeLeft",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Nudge the selected section left by 1pt."
+        },
+        {
+            "name": "nudgeRight",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Nudge the selected section right by 1pt."
+        },
+        {
+            "name": "nudgeUpLarge",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Nudge the selected section up by 10pt."
+        },
+        {
+            "name": "nudgeDownLarge",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Nudge the selected section down by 10pt."
+        },
+        {
+            "name": "nudgeLeftLarge",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Nudge the selected section left by 10pt."
+        },
+        {
+            "name": "nudgeRightLarge",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Nudge the selected section right by 10pt."
+        },
+        {
+            "name": "showHelp",
+            "type": "EditorKeybinding | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Toggle the Editor.KeybindingHelp dialog. Defaults to `mod+/` - the same chord used by Notion, GitHub, Slack, and most other web apps with a built-in keymap viewer. Read-only safe (the dialog is a passive viewer)."
+        }
+    ],
+    "useDocumentState": [
+        {
+            "name": "initialDocument",
+            "type": "Document | undefined",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional seed document. Only read once (initial mount); subsequent changes to this prop are ignored. Pass a new key on the parent to force a remount if you need to swap documents."
+        }
+    ]
+}

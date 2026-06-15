@@ -1,0 +1,77 @@
+---
+title: Mobile & touch support
+description: How the editor adapts to phones and tablets - the responsive shell and touch interactions.
+tags: [mobile, touch, responsive]
+---
+
+`@docmosaic/react` 2.0 ships a **responsive, touch-first** editor. Below the desktop breakpoint (1024px), `Editor.Root` automatically swaps its three-pane app-shell for a phone/tablet layout - no configuration needed. The same component is the full editor on desktop and a touch editor on mobile, and the PDF output is identical on every device.
+
+## The responsive shell
+
+Below 1024px the editor renders:
+
+-   A **compact top bar** - document name, undo / redo, download, and theme toggle. Page size, orientation, preview, and print move into a slide-up **"Doc"** sheet.
+-   A **full-bleed canvas** that fills the viewport.
+-   A horizontally-scrollable **tool strip** (select, image, text, shape, frame, image-frame, draw).
+-   **Pages / Layers / Edit / Doc** panels surfaced as slide-up bottom sheets instead of side rails.
+
+The desktop three-pane layout (left rail · canvas · inspector) is unchanged at 1024px and up.
+
+## Touch interactions
+
+| Surface                                | Touch behavior                                                           |
+| -------------------------------------- | ------------------------------------------------------------------------ |
+| Canvas pan / zoom                      | Two-finger pan and pinch-to-zoom.                                        |
+| Section drag                           | Drag a selected section with one finger.                                 |
+| Section resize / image crop            | Finger-sized hit targets (28px) over the 12px visual handles.            |
+| Layer + page reorder                   | Drag via react-dnd's `MultiBackend` (HTML5 on desktop, touch on mobile). |
+| Floating section toolbar               | Appears on tap-select and clamps horizontally to stay on-screen.         |
+| Add image / preview / download / print | Fire from touch; the PDF generator is the same code path as desktop.     |
+
+Every touch path is gated on multi-pointer / `isPrimary`, so the desktop mouse experience is unchanged.
+
+## Usage
+
+There is nothing to configure - the default editor is responsive:
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import '@docmosaic/react/styles.css';
+
+export default function MyEditor() {
+    return <Editor.Root />;
+}
+```
+
+`Editor.Root` reads the viewport internally and renders the desktop or mobile shell accordingly. Resize the window across 1024px to watch it switch.
+
+## View-only on small screens (optional)
+
+If your product only wants **viewing** on phones (no editing), pass `readOnly` below a breakpoint. Selection, zoom, preview, print, and download still work from touch; the tool strip and editing affordances hide.
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import { type Document } from '@docmosaic/core';
+import '@docmosaic/react/styles.css';
+
+export default function ResponsiveEditor({
+    document,
+    isMobile,
+}: {
+    document: Document;
+    isMobile: boolean;
+}) {
+    return <Editor.Root defaultDocument={document} readOnly={isMobile} />;
+}
+```
+
+`isMobile` would come from a media-query hook (or `useSyncExternalStore` against `matchMedia`).
+
+## Related
+
+-   [Editor.Root](/docs/primitives/root) - the responsive shell and the `readOnly` prop
+-   [Read-only viewer](/docs/examples/read-only) - the view-only pattern

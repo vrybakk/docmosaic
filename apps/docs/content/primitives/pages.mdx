@@ -1,0 +1,65 @@
+---
+title: Editor.Pages
+description: Left rail of page thumbnails. Add, delete, reorder pages via drag.
+---
+
+`Editor.Pages` is the page-list rail. One thumbnail per page; click to switch the active page; drag a thumbnail to reorder (touch-capable via react-dnd); "Add Page" to add, "×" to delete.
+
+<StorybookEmbed id="editor-pages--default" />
+
+## Usage
+
+```tsx
+<Editor.Root>
+    <Editor.Pages />
+    <Editor.Canvas>
+        <Editor.Section />
+    </Editor.Canvas>
+</Editor.Root>
+```
+
+`Editor.Root` arranges `Pages` to the left of `Canvas` regardless of source order - no manual layout needed.
+
+## Composition
+
+Mount `Editor.PageThumbnail` individually for a custom list:
+
+```tsx
+const { state: document, actions } = useEditor();
+
+<div className="flex flex-col gap-2">
+    {document.pages.map((page, i) => (
+        <Editor.PageThumbnail
+            key={page.id}
+            page={page}
+            index={i}
+            isSelected={document.currentPage === i + 1}
+            sections={document.sections}
+            pageSize={document.pageSize}
+            orientation={document.orientation}
+            onSelect={() => actions.changePage(i + 1)}
+            onDelete={() => actions.deletePage(i)}
+            onMovePage={actions.reorderPages}
+        />
+    ))}
+</div>;
+```
+
+## Examples
+
+### Compact rail (`bare`)
+
+`bare` renders just the thumbnail strip plus a single "add page" affordance - no internal header, "last modified" footer, or "Add Image" button. This is the mode the app-shell left rail uses.
+
+```tsx
+<Editor.Pages bare />
+```
+
+## API Reference
+
+<PropTable name="Pages" />
+
+## Related
+
+-   [PageThumbnail](/docs/primitives/page-thumbnail)
+-   [PageBackground](/docs/primitives/page-background)

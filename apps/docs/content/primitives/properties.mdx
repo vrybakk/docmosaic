@@ -1,0 +1,56 @@
+---
+title: Editor.Properties
+description: The document-properties bar at the top - name, page size, orientation. Three composable sub-primitives.
+---
+
+`Editor.Properties` is the document-properties bar. Document name, page size dropdown, orientation toggle - all wired to the editor context.
+
+<StorybookEmbed id="editor-properties--default" />
+
+## Usage
+
+```tsx
+<Editor.Root>
+    <Editor.Properties />
+</Editor.Root>
+```
+
+## Composition
+
+The default mount renders all three sub-primitives in a row. Use them individually for custom layouts:
+
+```tsx
+<Editor.Properties>
+    <Editor.DocumentName />
+    <Editor.PageSizeSelect />
+    <Editor.OrientationSelect />
+</Editor.Properties>
+```
+
+Each sub-primitive is also exported individually and can be dropped anywhere underneath `Editor.Root`.
+
+## Examples
+
+### Just the name
+
+```tsx
+<Editor.DocumentName />
+```
+
+### Custom page-size set
+
+`PageSizeSelect` accepts a `sizes` prop to filter the options surface. Useful when your product targets a specific format (e.g. US letter sizes only).
+
+```tsx
+<Editor.PageSizeSelect sizes={['LETTER', 'LEGAL', 'TABLOID']} />
+```
+
+## API Reference
+
+<PropTable name="Properties" />
+
+## Related
+
+-   [DocumentName](/docs/primitives/document-name)
+-   [PageSizeSelect](/docs/primitives/page-size-select)
+-   [OrientationSelect](/docs/primitives/orientation-select)

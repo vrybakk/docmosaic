@@ -1,0 +1,65 @@
+---
+title: Controlled state
+description: Lift document state out and own the source of truth - for sync, persistence, or collaboration.
+tags: [controlled, state]
+---
+
+Pass `document` + `onDocumentChange` to put your component above the document timeline. Every mutation comes back through `onDocumentChange(next)`, so you can persist, broadcast, transform, or just `console.log` it before letting the editor render.
+
+Use controlled mode when the document needs to be visible outside the editor - a sibling preview, a sync engine, a backend save loop, or a parent that needs to "lock" the editor between steps.
+
+## Code
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Editor } from '@docmosaic/react';
+import { createDocument, type Document } from '@docmosaic/core';
+import '@docmosaic/react/styles.css';
+
+export default function ControlledEditor() {
+    const [doc, setDoc] = useState<Document>(() => createDocument({ name: 'My doc' }));
+
+    return (
+        <div className="flex flex-col gap-4">
+            <header className="flex items-center justify-between p-3 border-b">
+                <span className="text-sm text-muted-foreground">
+                    {doc.sections.length} sections · {doc.pages.length} pages
+                </span>
+                <button type="button" onClick={() => setDoc(createDocument({ name: 'My doc' }))}>
+                    Reset
+                </button>
+            </header>
+
+            <Editor.Root document={doc} onDocumentChange={setDoc}>
+                <Editor.Properties />
+                <Editor.Toolbar />
+                <Editor.Pages />
+                <Editor.Canvas>
+                    <Editor.Section />
+                </Editor.Canvas>
+                <Editor.Preview />
+            </Editor.Root>
+        </div>
+    );
+}
+```
+
+The sibling header reads `doc.sections.length` directly. Every drag, drop, rename, or page reorder calls `setDoc(next)` and re-renders both the header and the editor.
+
+<Callout type="warn">
+    **Undo/redo are disabled in controlled mode.** The history timeline lives inside `Editor.Root`'s
+    uncontrolled mode - when you own the document, you also own the timeline. If you need undo/redo,
+    implement it on top of `useState`, `zustand`, or a CRDT in your own layer.
+</Callout>
+
+## Try it
+
+<StorybookEmbed id="editor-root--controlled" />
+
+## Related
+
+-   [Controlled vs uncontrolled](/docs/get-started/controlled-vs-uncontrolled) - the conceptual split
+-   [Save to a database](/docs/examples/save-to-database) - controlled mode + persistence
+-   [Editor.Root](/docs/primitives/root) - props for both modes

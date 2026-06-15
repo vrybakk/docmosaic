@@ -1,0 +1,67 @@
+---
+title: EditorConfig
+description: The injection points - EditorConfigProvider, EditorPdfBackend, ImageRenderer.
+---
+
+`EditorConfigProvider` is the injection point for swap-in dependencies - the image renderer, the PDF backend overrides, and other host-app-specific wiring.
+
+## `EditorConfigProvider`
+
+Wrap any subtree to provide overrides:
+
+```tsx
+import { EditorConfigProvider } from '@docmosaic/react';
+
+<Editor.Root>
+    <EditorConfigProvider
+        imageRenderer={MyImageRenderer}
+        pdfBackend={{ generate: myGenerate, estimate: myEstimate }}
+    >
+        {/* primitives underneath see the overrides */}
+    </EditorConfigProvider>
+</Editor.Root>;
+```
+
+`Editor.Root` mounts a default provider internally. Wrapping underneath layers your overrides on top.
+
+## `ImageRenderer`
+
+Function signature for the custom image component.
+
+```ts
+type ImageRenderer = (props: {
+    src: string;
+    alt?: string;
+    width?: number;
+    height?: number;
+    style?: CSSProperties;
+    className?: string;
+}) => React.ReactNode;
+```
+
+The default renderer is a plain `<img>`. Swap it for `next/image` (or any image component) - see the [custom image renderer recipe](/docs/recipes/custom-image-renderer).
+
+## `EditorPdfBackend`
+
+```ts
+interface EditorPdfBackend {
+    generate: typeof generatePDF;
+    estimate: typeof estimatePDFSize;
+}
+```
+
+Both `generate` and `estimate` are optional on `Editor.Root pdf={...}` - anything omitted falls back to the bundled `@docmosaic/core` implementation. See the [custom PDF backend recipe](/docs/recipes/custom-pdf-backend).
+
+## `AnalyticsTracker`
+
+```ts
+type AnalyticsTracker = (event: string, properties?: Record<string, unknown>) => void;
+```
+
+Inject via `setReactPackageTracker(tracker)` at the host-app boot. See the [analytics wiring recipe](/docs/recipes/analytics-wiring).
+
+## See also
+
+-   [Custom image renderer](/docs/recipes/custom-image-renderer)
+-   [Custom PDF backend](/docs/recipes/custom-pdf-backend)
+-   [Analytics wiring](/docs/recipes/analytics-wiring)

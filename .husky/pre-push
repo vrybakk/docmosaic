@@ -1,1 +1,2 @@
-bun run build
+turbo run build --filter='!@docmosaic/docs'
+bun run test:run

@@ -1,0 +1,69 @@
+---
+title: Editor.DownloadButton
+description: The PDF / PNG export trigger. Drives the bundled jspdf pipeline (or your custom backend) with an AbortController for cancellation.
+---
+
+`Editor.DownloadButton` is the export trigger. It calls `usePdfGeneration` under the hood - wrapping `generatePDF` from `@docmosaic/core` with an `AbortController` so the export can be cancelled mid-flight.
+
+<StorybookEmbed id="editor-downloadbutton--default" />
+
+## Usage
+
+```tsx
+<Editor.Toolbar>
+    <Editor.DownloadButton />
+</Editor.Toolbar>
+```
+
+The bundled `GenerationProgress` overlay shows progress 0 → 1 across the optimization (30%) and render (70%) stages.
+
+## Examples
+
+### Export PNG instead of PDF
+
+```tsx
+<Editor.DownloadButton format="png" />
+```
+
+### Custom filename
+
+```tsx
+<Editor.DownloadButton filename="invoice-2026-06.pdf" />
+```
+
+### Cancel mid-flight
+
+Wire your own button to dispatch `actions.cancelGeneration()`:
+
+```tsx
+import { useEditor } from '@docmosaic/react';
+
+function CancelButton() {
+    const { ui, actions } = useEditor();
+    if (!ui.isGenerating) return null;
+    return <button onClick={actions.cancelGeneration}>Cancel</button>;
+}
+```
+
+### Custom PDF backend
+
+Override the bundled pipeline at the root.
+
+```tsx
+<Editor.Root pdf={{ generate: myCustomGenerate, estimate: myCustomEstimate }}>
+    <Editor.DownloadButton />
+</Editor.Root>
+```
+
+See the [custom PDF backend recipe](/docs/recipes/custom-pdf-backend) for the full example.
+
+## API Reference
+
+<PropTable name="DownloadButton" />
+
+## Related
+
+-   [GenerationProgress](/docs/primitives/generation-progress)
+-   [FileSizeBadge](/docs/primitives/file-size-badge)
+-   [PrintButton](/docs/primitives/print-button)
+-   [usePdfGeneration hook](/docs/reference/hooks)

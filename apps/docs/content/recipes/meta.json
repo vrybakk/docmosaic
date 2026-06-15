@@ -1,0 +1,14 @@
+{
+    "title": "Recipes",
+    "pages": [
+        "custom-pdf-backend",
+        "custom-image-renderer",
+        "persisting-templates",
+        "byo-ui-with-use-document-state",
+        "embedding-in-modal",
+        "server-component-boundary",
+        "analytics-wiring",
+        "dark-mode",
+        "read-only"
+    ]
+}

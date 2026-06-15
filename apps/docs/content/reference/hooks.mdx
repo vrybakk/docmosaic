@@ -1,0 +1,94 @@
+---
+title: Hooks
+description: Every exported hook from @docmosaic/react - useEditor, useDocumentState, useEditorKeybindings, and more.
+---
+
+`@docmosaic/react` exports its context hooks publicly so you can build custom primitives without reaching into private internals.
+
+## `useDocumentState`
+
+The headless ("BYO-UI") state hook. Owns the reducer + history timeline internally.
+
+```ts
+import { useDocumentState } from '@docmosaic/react';
+import { createDocument } from '@docmosaic/core';
+
+const { document, formattedDate, canUndo, canRedo, actions } = useDocumentState({
+    initialDocument: createDocument(),
+});
+```
+
+Returns:
+
+-   **`document`** - the current snapshot. Re-renders on change.
+-   **`formattedDate`** - `updatedAt` formatted as `"Jun 10, 2026"`.
+-   **`canUndo` / `canRedo`** - booleans for button enabled states.
+-   **`actions`** - referentially stable dispatcher object. See [Actions](/docs/reference/actions).
+
+## `useEditor`
+
+Reads the editor context provided by `Editor.Root`. Use it inside any compound child to access state + actions.
+
+```ts
+import { useEditor } from '@docmosaic/react';
+
+const { state, ui, actions, canUndo, canRedo } = useEditor();
+```
+
+`state` is the current `Document` (note: it's `state` here, whereas `useDocumentState` returns it as `document`). `ui` carries the editor-local UI state (selection, zoom, current page, generation progress) - not part of the persisted document.
+
+## `useEditorSection`
+
+Reads the section-scoped context - set up automatically inside `Editor.Section`'s render loop.
+
+```ts
+const { section, isSelected, isDragging } = useEditorSection();
+```
+
+Use it to build custom section overlays or toolbars.
+
+## `useEditorCanvas`
+
+Reads the canvas-scoped context - page dimensions, scale, zoom, viewport.
+
+```ts
+const { finalScale, pageDimensions, viewportRect } = useEditorCanvas();
+```
+
+Use it to build custom canvas overlays (rulers, minimaps, etc.).
+
+## `useEditorKeybindings`
+
+Mounts the global keyboard listener. Called by `Editor.Root` automatically; export it for BYO-UI trees.
+
+```ts
+import { useEditorKeybindings, DEFAULT_KEYMAP } from '@docmosaic/react';
+
+useEditorKeybindings({ redo: 'mod+r' });
+```
+
+Pass `false` to skip mounting entirely. See [Keybindings](/docs/concepts/keybindings).
+
+## `useEditorZoom`
+
+Subscribes to the canvas zoom level and exposes setters.
+
+```ts
+const { zoom, setZoom, zoomIn, zoomOut, resetZoom } = useEditorZoom();
+```
+
+## `usePdfGeneration`
+
+Wraps the configured PDF backend (`generatePDF` from core, or your custom override) with an `AbortController` for cancellation.
+
+```ts
+const { generate, cancel, isGenerating, progress } = usePdfGeneration();
+```
+
+`Editor.DownloadButton` uses this internally. Call `generate({ format: 'pdf' })` from your own button if you don't want the bundled UI.
+
+## See also
+
+-   [Actions](/docs/reference/actions)
+-   [Types](/docs/reference/types)
+-   [EditorConfig](/docs/reference/config)

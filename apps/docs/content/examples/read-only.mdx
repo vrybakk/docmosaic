@@ -1,0 +1,71 @@
+---
+title: Read-only viewer
+description: Lock the editor for preview. Selection, zoom, and export still work.
+tags: [read-only, viewer]
+---
+
+`Editor.Root readOnly` flips the editor into viewer mode. Drag, drop, resize, file upload, and every mutating keybinding (`Delete`, `mod+z`, arrow nudge) are suppressed. Selection, zoom, preview, print, and PDF download stay live - read-only is about mutation, not navigation.
+
+Use it for embedding a finished contract for review, showing a "preview before commit" step, or rendering a snapshot beside an editable canvas in a compare view.
+
+## Code
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import { type Document } from '@docmosaic/core';
+import '@docmosaic/react/styles.css';
+
+interface DocumentViewerProps {
+    /** Pre-built snapshot to display. */
+    document: Document;
+}
+
+export default function DocumentViewer({ document }: DocumentViewerProps) {
+    return (
+        <Editor.Root defaultDocument={document} readOnly>
+            <Editor.Properties />
+            <Editor.Toolbar>
+                {/* Add/Undo/Redo buttons render `null` automatically in readOnly mode. */}
+                <Editor.PreviewButton />
+                <Editor.PrintButton />
+                <Editor.DownloadButton />
+            </Editor.Toolbar>
+            <Editor.Pages />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
+}
+```
+
+The toolbar's mutating buttons (`AddImageButton`, `AddTextButton`, `DrawButton`, `UndoButton`, `RedoButton`) hide themselves when the root is `readOnly`. You don't need to conditionally render them.
+
+<Callout type="info">
+    For a side-by-side "current vs reference" view, mix an editable canvas with
+    `Editor.StaticCanvas` - same root, two surfaces, one frozen. See the [read-only
+    recipe](/docs/recipes/read-only) for the pattern.
+</Callout>
+
+## Detecting read-only in custom primitives
+
+If you're writing your own toolbar button, read the flag from the editor context:
+
+```tsx
+import { useEditor } from '@docmosaic/react';
+
+function CustomAddButton() {
+    const { actions, readOnly } = useEditor();
+    if (readOnly) return null;
+    return <button onClick={() => actions.addSection()}>Add</button>;
+}
+```
+
+## Related
+
+-   [Read-only recipe](/docs/recipes/read-only) - full behaviour matrix
+-   [Editor.StaticCanvas](/docs/primitives/static-canvas) - canvas-level read-only
+-   [Editor.Root](/docs/primitives/root) - the `readOnly` prop reference

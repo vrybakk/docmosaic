@@ -1,0 +1,36 @@
+/*
+ * Minimal light theme — shadcn-inspired neutral grays on a white surface.
+ * Pair with @docmosaic/react/styles/base.css.
+ *
+ * Brand-agnostic alternative to docmosaic.css — same restrained palette, no
+ * brand colors. Exposes the shadcn-aligned semantic surface. For dark mode,
+ * import `styles.css` (or `themes/docmosaic.css`) and toggle the `.dark` class.
+ */
+
+@layer docmosaic {
+    :root {
+        /* Semantic surface (shadcn-aligned). */
+        --background: 255 255 255; /* white */
+        --foreground: 24 24 27; /* zinc-900 */
+        --card: 255 255 255;
+        --card-foreground: 24 24 27;
+        --primary: 9 9 11; /* zinc-950 — near-black accent */
+        --primary-foreground: 250 250 250; /* zinc-50 */
+        --secondary: 244 244 245; /* zinc-100 */
+        --secondary-foreground: 9 9 11;
+        --muted: 244 244 245;
+        --muted-foreground: 113 113 122; /* zinc-500 */
+        --accent: 244 244 245;
+        --accent-foreground: 9 9 11;
+        --destructive: 220 38 38; /* red-600 */
+        --destructive-foreground: 250 250 250;
+        --border: 228 228 231; /* zinc-200 */
+        --input: 228 228 231;
+        --ring: 9 9 11;
+        --radius: 0.5rem;
+
+        /* Tighter, more shadcn-y structural tokens. */
+        --editor-radius-section: 6px;
+        --editor-shadow-section: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+}

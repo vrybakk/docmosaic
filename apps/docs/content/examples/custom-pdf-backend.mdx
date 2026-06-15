@@ -1,0 +1,88 @@
+---
+title: Custom PDF backend
+description: Swap the bundled jsPDF pipeline for a mocked / Worker / pdf-lib renderer via Editor.Root's pdf prop.
+tags: [pdf, backend, advanced]
+---
+
+`Editor.Root` accepts a `pdf` prop with two optional functions - `generate` and `estimate`. Anything omitted falls back to the bundled `@docmosaic/core` implementation. That's the seam for swapping `jspdf` for `pdf-lib`, moving generation to a Worker, sending the document to your own backend, or - most usefully during development - mocking the whole thing out.
+
+This example wires a mocked backend so you can see the seam without standing up a renderer.
+
+## Code
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import type { generatePDF, estimatePDFSize } from '@docmosaic/core';
+import '@docmosaic/react/styles.css';
+
+// Mock generator - produces a tiny fake "PDF" blob so callers see a download.
+// Replace with pdf-lib, a Worker, or a server endpoint when you're ready.
+const mockGenerate: typeof generatePDF = async (sections, options, onProgress) => {
+    for (let i = 0; i <= 10; i++) {
+        if (options.signal?.aborted) throw new Error('PDF generation cancelled');
+        await new Promise((r) => setTimeout(r, 50));
+        onProgress?.(i / 10);
+    }
+    const text = `Mocked PDF - ${sections.length} sections\n`;
+    return new Blob([text], { type: 'application/pdf' });
+};
+
+// Cheap heuristic: 4 KB per section. The bundled estimator is ~50 lines of
+// jspdf-specific math; for a mock we just need *something* monotonic.
+const mockEstimate: typeof estimatePDFSize = (sections) => sections.length * 4096;
+
+export default function CustomPdfBackendEditor() {
+    return (
+        <Editor.Root pdf={{ generate: mockGenerate, estimate: mockEstimate }}>
+            <Editor.Properties />
+            <Editor.Toolbar />
+            <Editor.Pages />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+        </Editor.Root>
+    );
+}
+```
+
+`generate` must honor `options.signal` - users can cancel mid-export via the bundled progress overlay, and the editor expects an `AbortError`-shaped throw (`Error('PDF generation cancelled')`) when they do. `onProgress(0 → 1)` feeds the `Editor.GenerationProgress` overlay.
+
+<Callout type="warn">
+    `estimate` runs every time the document changes. Keep it cheap - the bundled badge re-evaluates
+    on every drag. If your renderer can't produce a fast estimate, omit `estimate` and the file-size
+    badge falls back to the bundled heuristic.
+</Callout>
+
+## Worker offload (sketch)
+
+For real renderers, the same pattern moves the work off the main thread:
+
+```tsx
+const generate: typeof generatePDF = async (sections, options, onProgress) => {
+    const worker = new Worker(new URL('./pdf-worker.ts', import.meta.url), { type: 'module' });
+    try {
+        return await new Promise<Blob>((resolve, reject) => {
+            worker.addEventListener('message', (e) => {
+                if (e.data.type === 'progress') onProgress?.(e.data.value);
+                if (e.data.type === 'done') resolve(e.data.blob);
+                if (e.data.type === 'error') reject(new Error(e.data.message));
+            });
+            worker.postMessage({ sections, options });
+            options.signal?.addEventListener('abort', () => {
+                worker.terminate();
+                reject(new Error('PDF generation cancelled'));
+            });
+        });
+    } finally {
+        worker.terminate();
+    }
+};
+```
+
+## Related
+
+-   [Custom PDF backend recipe](/docs/recipes/custom-pdf-backend) - narrative version
+-   [Editor.Root](/docs/primitives/root) - the `pdf` prop signature
+-   [usePdfGeneration hook](/docs/reference/hooks) - the underlying generation state

@@ -1,0 +1,25 @@
+---
+title: Editor.SelectToolButton
+description: Toolbar button that returns the editor to select / move mode, exiting any armed drawing tool.
+---
+
+Toolbar button that arms the **select** tool - the default pointer mode for clicking, moving, and resizing sections. Clicking it exits any armed shape, frame, image-frame, or drawing tool. It renders in its active variant while select mode is the current tool.
+
+## Usage
+
+```tsx
+import { Editor } from '@docmosaic/react';
+
+<Editor.Root>
+    <Editor.SelectToolButton />
+</Editor.Root>;
+```
+
+## API Reference
+
+<PropTable name="SelectToolButton" />
+
+## Related
+
+-   [Editor.ShapeToolButton](/docs/primitives/shape-tool-button) - the draw-to-size shape tool
+-   [Editor.Toolbar](/docs/primitives/toolbar) - the toolbar container

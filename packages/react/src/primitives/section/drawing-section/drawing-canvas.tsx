@@ -1,0 +1,160 @@
+'use client';
+
+import type { DrawingSection, Stroke } from '@docmosaic/core';
+import { useCallback, useRef, useState } from 'react';
+import { useEditor } from '../../../context/editor';
+import { getStrokePath } from '../../../internal/freehand';
+
+/** Skip pointer samples closer than this (in PDF points) to bound stroke size. */
+const MIN_POINT_DISTANCE = 1.2;
+
+interface DrawingCanvasProps {
+    section: DrawingSection;
+    /** Display scale applied by Canvas (pageScale * zoom). */
+    finalScale: number;
+}
+
+/**
+ * Pointer-driven SVG drawing surface for a {@link DrawingSection}. Renders
+ * every existing stroke and — while the editor is in `drawingMode` — captures
+ * pointer events to author a new one.
+ *
+ * The capture lives on a transparent `<svg>` overlay sized to the section
+ * box. Stroke points are stored in PDF-point space (the canvas conversion
+ * divides by `finalScale` on commit) so the persisted document stays unit-
+ * stable regardless of the viewport zoom.
+ *
+ * Strokes are committed on `pointerup` via the editor's `addStroke` action.
+ * Points captured during the gesture are stored in local state so the
+ * in-progress stroke renders smoothly without dispatching on every move.
+ */
+export function DrawingCanvas({ section, finalScale }: DrawingCanvasProps) {
+    const { actions, ui } = useEditor();
+    const { drawingMode, drawingColor, drawingWeight } = ui;
+    const svgRef = useRef<SVGSVGElement | null>(null);
+    const [currentPoints, setCurrentPoints] = useState<{ x: number; y: number }[]>([]);
+    const isDrawingRef = useRef(false);
+
+    const toLocalPoint = useCallback(
+        (e: React.PointerEvent) => {
+            const svg = svgRef.current;
+            if (!svg) return null;
+            const rect = svg.getBoundingClientRect();
+            // Convert client coords to section-local CSS-pixel coords, then to PDF
+            // points by dividing by finalScale.
+            const xCss = e.clientX - rect.left;
+            const yCss = e.clientY - rect.top;
+            return { x: xCss / finalScale, y: yCss / finalScale };
+        },
+        [finalScale],
+    );
+
+    const handlePointerDown = useCallback(
+        (e: React.PointerEvent) => {
+            if (!drawingMode) return;
+            e.stopPropagation();
+            const point = toLocalPoint(e);
+            if (!point) return;
+            isDrawingRef.current = true;
+            setCurrentPoints([point]);
+            // Some test environments (happy-dom) don't implement pointer
+            // capture; guard so a missing implementation can't abort the gesture.
+            try {
+                (e.target as Element).setPointerCapture?.(e.pointerId);
+            } catch {
+                // capture not supported — pointer events still bubble normally
+            }
+        },
+        [drawingMode, toLocalPoint],
+    );
+
+    const handlePointerMove = useCallback(
+        (e: React.PointerEvent) => {
+            if (!drawingMode || !isDrawingRef.current) return;
+            const point = toLocalPoint(e);
+            if (!point) return;
+            setCurrentPoints((prev) => {
+                const last = prev[prev.length - 1];
+                if (last) {
+                    const dx = point.x - last.x;
+                    const dy = point.y - last.y;
+                    if (dx * dx + dy * dy < MIN_POINT_DISTANCE * MIN_POINT_DISTANCE) return prev;
+                }
+                return [...prev, point];
+            });
+        },
+        [drawingMode, toLocalPoint],
+    );
+
+    const handlePointerUp = useCallback(
+        (e: React.PointerEvent) => {
+            if (!drawingMode || !isDrawingRef.current) return;
+            isDrawingRef.current = false;
+            // Persist points in section-local PDF-point coords. The SVG
+            // overlay rides along with the section, and the PDF/PNG
+            // renderers add (section.x, section.y) at draw time — so
+            // moving the section moves its strokes too.
+            if (currentPoints.length >= 2) {
+                const stroke: Stroke = {
+                    points: currentPoints,
+                    color: drawingColor,
+                    weight: drawingWeight,
+                };
+                actions.addStroke(section.id, stroke);
+            }
+            setCurrentPoints([]);
+            try {
+                (e.target as Element).releasePointerCapture(e.pointerId);
+            } catch {
+                // releasePointerCapture throws if capture was never set; safe to ignore.
+            }
+        },
+        [actions, currentPoints, drawingColor, drawingMode, drawingWeight, section.id],
+    );
+
+    // Width/height in section-local PDF points; we scale via the SVG viewport.
+    const widthPt = section.width;
+    const heightPt = section.height;
+
+    return (
+        <svg
+            ref={svgRef}
+            xmlns="http://www.w3.org/2000/svg"
+            data-drawing-canvas="true"
+            width="100%"
+            height="100%"
+            viewBox={`0 0 ${widthPt} ${heightPt}`}
+            preserveAspectRatio="none"
+            style={{
+                display: 'block',
+                cursor: drawingMode ? 'crosshair' : 'default',
+                // pointerEvents `auto` only while drawing so non-drawing
+                // clicks pass through to the section shell (drag, select).
+                pointerEvents: drawingMode ? 'auto' : 'none',
+                touchAction: drawingMode ? 'none' : 'auto',
+            }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+        >
+            {section.strokes.map((stroke, i) => {
+                const d = getStrokePath(stroke.points, stroke.weight, true);
+                if (!d) return null;
+                return <path key={i} d={d} fill={stroke.color} stroke="none" />;
+            })}
+            {currentPoints.length > 0 &&
+                (() => {
+                    const d = getStrokePath(currentPoints, drawingWeight, false);
+                    return d ? (
+                        <path
+                            data-in-progress-stroke="true"
+                            d={d}
+                            fill={drawingColor}
+                            stroke="none"
+                        />
+                    ) : null;
+                })()}
+        </svg>
+    );
+}

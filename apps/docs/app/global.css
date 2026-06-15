@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+@source '../node_modules/fumadocs-ui/dist/**/*.js';
+@source '../components';
+@source '../content';
+
+/* DocMosaic brand palette - keep in sync with apps/web design tokens. */
+@theme {
+    --color-docmosaic-cream: #f5e9d4;
+    --color-docmosaic-caramel: #b88146;
+    --color-docmosaic-orange: #d97a2c;
+    --color-docmosaic-purple: #5e3a87;
+    --color-docmosaic-sage: #607e60;
+    --color-docmosaic-white: #ffffff;
+    --color-docmosaic-black: #1a1a1a;
+}

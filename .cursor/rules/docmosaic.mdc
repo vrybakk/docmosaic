@@ -1,0 +1,17 @@
+---
+description: DocMosaic repo structure and conventions
+alwaysApply: true
+---
+
+The canonical guide for this repo is **[AGENTS.md](../../AGENTS.md)** — read it for full structure, commands, and architecture.
+
+Key rules:
+
+-   Bun is the package manager and runtime (not npm). Dev server: port 4001.
+-   Conventional Commits, bare types, subject only. Prettier: 4-space, single quotes, semicolons, 100-col.
+-   Section geometry is stored in **PDF points (72 DPI)**, never CSS pixels.
+-   Use the `docmosaic.*` Tailwind design tokens, not raw hex.
+-   Keep the PDF byte-diff guard green: `packages/core/src/pdf/generate.test.ts`.
+-   Two published packages — `@docmosaic/core`, `@docmosaic/react`. Add a changeset (`bun run changeset`) for package-affecting changes.
+
+@AGENTS.md

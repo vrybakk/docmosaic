@@ -1,0 +1,142 @@
+---
+title: Types
+description: The TypeScript surface - Document, Page, Section, PageSize, and supporting types.
+---
+
+The packages ship `.d.ts` for every public export. Two snippets cover most use cases - paste them into your project as a reminder of the public shape.
+
+## Document
+
+```ts
+interface Document {
+    id: string;
+    name: string;
+    pageSize: PageSize;
+    orientation: PageOrientation;
+    pages: Page[];
+    sections: Section[]; // flat across all pages — the source of truth for rendering
+    backgroundPDF: string | null;
+    totalPages: number;
+    currentPage: number;
+    estimatedSize: number; // estimated output size in bytes
+    createdAt: Date;
+    updatedAt: Date;
+}
+```
+
+## Page
+
+```ts
+interface Page {
+    id: string;
+    sections: Section[];
+    backgroundPDF: string | null;
+    background?: {
+        color?: string;
+        image?: string; // data URL
+    };
+    guides?: PageGuides;
+}
+
+interface PageGuides {
+    vertical: number[];
+    horizontal: number[];
+}
+```
+
+## Section
+
+```ts
+type Section = ImageSection | TextSection | ShapeSection | DrawingSection | FrameSection;
+
+interface SectionBase {
+    id: string;
+    page: number; // 1-based page number this section lives on
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    zIndex: number; // higher renders on top; ties resolved by array order
+    name?: string; // optional layer label; derived from content when unset
+    hidden?: boolean;
+    locked?: boolean;
+    parentFrameId?: string; // set when dropped inside a container FrameSection
+}
+
+interface ImageSection extends SectionBase {
+    type: 'image';
+    imageUrl?: string; // base64 data URL
+    crop?: { x: number; y: number; width: number; height: number };
+    maskShape?: 'rect' | 'circle' | 'line'; // placeholder frame - clips the image to a shape
+}
+
+interface TextSection extends SectionBase {
+    type: 'text';
+    text: string;
+    fontSize: number;
+    fontFamily?: string; // falls back to 'helvetica'
+    fontWeight?: 'normal' | 'bold';
+    fontStyle?: 'normal' | 'italic';
+    color?: string; // any CSS color; defaults to 'rgb(0,0,0)'
+    align?: 'left' | 'center' | 'right';
+    lineHeight?: number;
+    fixedWidth?: boolean; // text wraps to width after a side handle is dragged
+    fixedHeight?: boolean;
+}
+
+interface ShapeSection extends SectionBase {
+    type: 'shape';
+    shape: 'rect' | 'circle' | 'line';
+    fill?: string; // CSS color or 'transparent' (default)
+    stroke?: string; // default '#000'
+    strokeWidth?: number; // default 1
+    opacity?: number; // 0–1, default 1
+}
+
+interface DrawingSection extends SectionBase {
+    type: 'drawing';
+    strokes: Array<{ color: string; weight: number; points: Array<{ x: number; y: number }> }>;
+}
+
+interface FrameSection extends SectionBase {
+    type: 'frame';
+    fill?: string; // 'transparent' (default) draws a pure grouping box
+    stroke?: string; // 'transparent' (default) → no border
+    strokeWidth?: number; // border width in points; default 1
+    radius?: number; // corner radius in points; default 0
+}
+```
+
+A **container frame** (`FrameSection`) is a box that owns other sections: any
+section dropped inside it carries that frame's id in `parentFrameId`, and the
+frame draws behind its children. A **placeholder frame** is an `ImageSection`
+with `maskShape` set - a shaped image slot. See the
+[Frames concept](/docs/concepts/frames) for the full model.
+
+## Page sizes
+
+```ts
+type PageSize =
+    | 'A0'
+    | 'A1'
+    | 'A2'
+    | 'A3'
+    | 'A4'
+    | 'A5'
+    | 'B4'
+    | 'B5'
+    | 'LETTER'
+    | 'LEGAL'
+    | 'TABLOID'
+    | 'EXECUTIVE'
+    | 'STATEMENT'
+    | 'FOLIO';
+
+type PageOrientation = 'portrait' | 'landscape';
+type MeasurementUnit = 'mm' | 'in' | 'px';
+```
+
+## See also
+
+-   [Document model concept](/docs/concepts/document-model)
+-   [Unit system](/docs/concepts/unit-system)

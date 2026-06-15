@@ -1,0 +1,61 @@
+---
+title: Editor.Section
+description: One section on the canvas - image, text, shape, drawing, or frame. Handles drag, resize, image upload, and the hover/selected toolbar.
+---
+
+`Editor.Section` is the unit of content. Mount it once inside `Editor.Canvas`; the editor iterates every `Section` on the active page and renders one per entry.
+
+<StorybookEmbed id="editor-section--default" />
+
+## Usage
+
+```tsx
+<Editor.Canvas>
+    <Editor.Section />
+</Editor.Canvas>
+```
+
+That single mount renders every section on the current page. The component reads from context - no `sectionId` prop, no manual iteration.
+
+## What it does
+
+Per section, `Editor.Section` wires up:
+
+-   **Drag** - pointer down + move. Dispatches `UPDATE_SECTION` with new `(x, y)`.
+-   **Resize** - three handles (right, bottom, bottom-right). Dispatches incremental `UPDATE_SECTION` calls.
+-   **Image upload** - drop a file or click the empty state. The reader produces a data URL, which becomes `section.imageUrl`.
+-   **Selection** - click to select; click the canvas background to deselect.
+-   **Floating toolbar** - fit, duplicate, delete, layer-order buttons appear on hover and stay visible while selected.
+-   **Snap** - drag respects the snap engine (page margins, section edges, page guides).
+
+All gestures are suppressed in `readOnly` mode.
+
+## Examples
+
+### Custom renderer per section type
+
+The default `Editor.Section` ships with image / text / shape / drawing / frame renderers (an image with a `maskShape` renders as a shaped placeholder slot, and a `frame` draws behind its children). If you need a custom variant, render your own component inside the canvas and skip `Editor.Section`:
+
+```tsx
+<Editor.Canvas>
+    {sections.map((s) =>
+        s.type === 'custom' ? (
+            <MyCustomSection key={s.id} section={s} />
+        ) : (
+            <Editor.Section key={s.id} />
+        ),
+    )}
+</Editor.Canvas>
+```
+
+This is rarely needed - most extensions are better expressed as a new section type with an `ImageRenderer` override (see [custom image renderer](/docs/recipes/custom-image-renderer)).
+
+## API Reference
+
+<PropTable name="Section" />
+
+## Related
+
+-   [Canvas](/docs/primitives/canvas) - the parent surface
+-   [SelectionBounds](/docs/primitives/selection-bounds) - multi-select rectangle
+-   [Layers](/docs/concepts/layers) - z-index actions

@@ -1,0 +1,191 @@
+---
+title: Migrating to v2.0
+description: What changed in @docmosaic/react 2.0 - the editor-* token removal and the PageThumbnail reorder API - and how to update consumer code.
+index: true
+---
+
+`@docmosaic/react` graduated from `1.0.0` to `2.0.0`. The release completes the token cleanup that [v1.0](/docs/migration/v1) started: the legacy `editor-*` Tailwind color classes and the `--editor-color-*` CSS aliases are now removed. Everything maps to the shadcn-aligned semantic surface (`--primary`, `--secondary`, `--accent`, `--background`, `--foreground`) the package already exposes.
+
+v2.0 bundles three things: the breaking token migration below, the **responsive / touch editor**, and the additive **Frames** feature. The only consumer-facing breaking changes are the token removal and the [`Editor.PageThumbnail` reorder API](#editorpagethumbnail-reorder-api). `@docmosaic/core` ships a separate additive minor (`1.1.0`) - the Frames API - with nothing removed, so no core migration is needed.
+
+## TL;DR
+
+-   The `editor-*` Tailwind color classes inside the primitives are gone - they now use the semantic shadcn classes (`bg-editor-accent` → `bg-primary`, and so on).
+-   The `--editor-color-*` CSS aliases are deleted from both bundled themes. Use the semantic `var(--primary)` surface directly.
+-   The `editor.*` color block is removed from the consumer Tailwind config - semantic colors cover everything.
+-   **Action required if you reference `editor-*` classes or `--editor-color-*` variables in your own code** - rewrite them per the tables below.
+-   The structural tokens (`rounded-editor-section`, `shadow-editor-section`, `--editor-radius-section`, `--editor-shadow-section`) are **kept** - they're domain-specific and have no shadcn equivalent.
+-   **One breaking primitive-prop change:** `Editor.PageThumbnail` now takes `onMovePage` instead of `dragHandlers` / `dropIndicators` (see [below](#editorpagethumbnail-reorder-api)). The PDF pipeline, document model, reducer, and history are otherwise unchanged.
+
+## Tailwind color classes
+
+Every `editor-*` color class the primitives used is replaced by its semantic shadcn equivalent. If you styled your own components with these classes, rewrite them with the same prefix (`bg-`, `text-`, `border-`, `ring-`, `placeholder-`):
+
+| Removed class          | Use instead    | Variants affected                                  |
+| ---------------------- | -------------- | -------------------------------------------------- |
+| `*-editor-accent`      | `*-primary`    | `bg-`, `text-`, `border-`, `ring-`                 |
+| `*-editor-accent-soft` | `*-secondary`  | `bg-`, `text-`, `border-`, `ring-`, `placeholder-` |
+| `*-editor-success`     | `*-accent`     | `bg-`, `text-`, `border-`, `ring-`                 |
+| `*-editor-surface`     | `*-background` | `bg-`, `text-`, `border-`                          |
+| `*-editor-text`        | `*-foreground` | `text-`                                            |
+
+`editor-warning` and `editor-warning-soft` had no usages in the primitives, so there's nothing to migrate for them. If you used them yourself, `editor-warning` → `destructive` and `editor-warning-soft` has no semantic equivalent (it was the caramel `#FFA552`) - define your own token.
+
+A few cases are worth calling out so a blind find-and-replace doesn't bite:
+
+-   **Alpha-bearing focus rings keep their alpha.** A full-opacity `focus:ring-editor-accent` collapses to `focus:ring-ring`, but a soft/aliased ring keeps its color and alpha: `focus:ring-editor-accent-soft/20` → `focus:ring-secondary/20`, and `focus:ring-editor-accent/20` → `focus:ring-primary/20`.
+-   **`accent-editor-accent` is Tailwind's native `accent-color` utility** (on range inputs), not the `editor-success` token. It maps to `accent-primary`, not `accent-accent`.
+-   **Text on a colored surface uses the surface's `-foreground` token.** Most `text-editor-text` is plain text-on-background and maps literally to `text-foreground`. Only text sitting on a colored fill takes that fill's foreground (e.g. `text-primary-foreground`). Don't mechanically rewrite every `text-editor-text` to a single token.
+
+## `--editor-color-*` CSS aliases
+
+The `--editor-color-*` aliases that v1.0 kept for back-compat are now **deleted** from `docmosaic.css` and `minimal-light.css`. Reference the semantic surface directly - `var(--primary)` instead of `var(--editor-color-accent)`:
+
+| Removed alias                 | Use instead                                  |
+| ----------------------------- | -------------------------------------------- |
+| `--editor-color-accent`       | `--primary`                                  |
+| `--editor-color-accent-soft`  | `--secondary`                                |
+| `--editor-color-success`      | `--accent`                                   |
+| `--editor-color-warning`      | `--destructive`                              |
+| `--editor-color-warning-soft` | (no semantic equivalent - caramel `#FFA552`) |
+| `--editor-color-surface`      | `--background`                               |
+| `--editor-color-text`         | `--foreground`                               |
+
+The structural tokens `--editor-radius-section` and `--editor-shadow-section` are untouched - they're still the source for `rounded-editor-section` and `shadow-editor-section`.
+
+## Tailwind config - remove the `editor.*` color block
+
+The `editor.*` color block in your Tailwind config existed only to wire the removed `editor-*` classes to the `--editor-color-*` variables. With both gone, delete the block. The structural `borderRadius`/`boxShadow` entries stay.
+
+```diff
+  // tailwind.config.ts
+  theme: {
+      extend: {
+          colors: {
+              // ...semantic shadcn colors (primary, secondary, accent, …)
+-             editor: {
+-                 accent: 'rgb(var(--editor-color-accent) / <alpha-value>)',
+-                 'accent-soft': 'rgb(var(--editor-color-accent-soft) / <alpha-value>)',
+-                 success: 'rgb(var(--editor-color-success) / <alpha-value>)',
+-                 warning: 'rgb(var(--editor-color-warning) / <alpha-value>)',
+-                 'warning-soft': 'rgb(var(--editor-color-warning-soft) / <alpha-value>)',
+-                 surface: 'rgb(var(--editor-color-surface) / <alpha-value>)',
+-                 text: 'rgb(var(--editor-color-text) / <alpha-value>)',
+-             },
+          },
+          borderRadius: {
+              'editor-section': 'var(--editor-radius-section)', // kept
+          },
+          boxShadow: {
+              'editor-section': 'var(--editor-shadow-section)', // kept
+          },
+      },
+  },
+```
+
+## Make your semantic colors RGB-based
+
+The package ships its tokens as **space-separated RGB triplets** (`56 29 42`, not `0 0% 9%`) and the primitives consume them through `rgb(var(--token) / <alpha-value>)`. If your own Tailwind config still maps the semantic colors with `hsl(var(--token))`, switch the format and store the token values as RGB triplets:
+
+```diff
+  // tailwind.config.ts
+  colors: {
+-     background: 'hsl(var(--background))',
+-     foreground: 'hsl(var(--foreground))',
+-     primary: {
+-         DEFAULT: 'hsl(var(--primary))',
+-         foreground: 'hsl(var(--primary-foreground))',
+-     },
++     background: 'rgb(var(--background) / <alpha-value>)',
++     foreground: 'rgb(var(--foreground) / <alpha-value>)',
++     primary: {
++         DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
++         foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
++     },
+      // …repeat for secondary, muted, accent, destructive, border, input, ring, popover, card
+  },
+```
+
+```diff
+  /* globals.css */
+  :root {
+-     --background: 0 0% 100%;
+-     --foreground: 0 0% 9%;
+-     --primary: 0 0% 9%;
++     --background: 255 255 255;
++     --foreground: 23 23 23;
++     --primary: 23 23 23;
+      /* …convert every token from HSL components to an RGB triplet */
+  }
+```
+
+**Why this is one change, not two.** The config format and the variable values must flip together. If the config switches to `rgb(var(--primary))` while the CSS still holds HSL components like `0 0% 9%`, every shadcn component renders `rgb(0 0% 9%)` - invalid CSS - and colors break across your app. The reverse breaks the same way. Land the config and the CSS in the **same** commit.
+
+If you already store your tokens as RGB triplets and use `rgb(var(--token) / <alpha-value>)` - the default for apps scaffolded against this surface - there's nothing to do here.
+
+## Accepted visual change (minimal-light only)
+
+One intended visual delta ships with this release, and **only under the `minimal-light` theme**: the page-thumbnail hover ring changes from green-600 (`22 163 74`) to the theme accent, zinc-100 (`244 244 245`). This is because `ring-editor-success` mapped to a literal green in `minimal-light`, and `editor-success` now resolves to `--accent`, which is zinc-100 there.
+
+Under the default `docmosaic` theme there is **no** visual change - `--editor-color-success` already aliased `--accent` (sage), so the ring color is identical before and after.
+
+## Codemods
+
+If you used the `editor-*` classes in your own components, rewrite them with `sed`. The plain (full-opacity) classes:
+
+```sh
+git ls-files '*.ts' '*.tsx' '*.css' '*.mdx' \
+  | xargs sed -i '' \
+    -e 's/\([a-z]*-\)editor-accent-soft\b/\1secondary/g' \
+    -e 's/\([a-z]*-\)editor-accent\b/\1primary/g' \
+    -e 's/\([a-z]*-\)editor-success\b/\1accent/g' \
+    -e 's/\([a-z]*-\)editor-surface\b/\1background/g' \
+    -e 's/text-editor-text\b/text-foreground/g'
+```
+
+(Drop the empty `''` after `-i` on Linux - that's the BSD-`sed` form macOS uses.)
+
+After running it, hand-check the three cases the codemod can't reason about: alpha-bearing focus rings (`/20` variants), the native `accent-editor-accent` utility, and any `text-editor-text` sitting on a colored fill. See [Tailwind color classes](#tailwind-color-classes) above.
+
+Then swap the `--editor-color-*` variables in your own CSS:
+
+```sh
+git ls-files '*.css' '*.tsx' '*.mdx' \
+  | xargs sed -i '' \
+    -e 's/--editor-color-accent-soft\b/--secondary/g' \
+    -e 's/--editor-color-accent\b/--primary/g' \
+    -e 's/--editor-color-success\b/--accent/g' \
+    -e 's/--editor-color-warning\b/--destructive/g' \
+    -e 's/--editor-color-surface\b/--background/g' \
+    -e 's/--editor-color-text\b/--foreground/g'
+```
+
+`--editor-color-warning-soft` has no semantic equivalent - replace it by hand.
+
+## `Editor.PageThumbnail` reorder API
+
+The responsive editor rewired page reorder to react-dnd's multi-backend so it works on touch. As a result, `Editor.PageThumbnail` replaces its two reorder props with a single callback:
+
+| Removed          | Use instead                      |
+| ---------------- | -------------------------------- |
+| `dragHandlers`   | `onMovePage(fromIndex, toIndex)` |
+| `dropIndicators` | `onMovePage(fromIndex, toIndex)` |
+
+`onMovePage` fires while a thumbnail is dragged past another's midpoint - wire it to `actions.reorderPages`:
+
+```tsx
+<Editor.PageThumbnail
+    // ...page, index, isSelected, sections, pageSize, orientation, onSelect, onDelete
+    onMovePage={actions.reorderPages}
+/>
+```
+
+Only code that mounts `Editor.PageThumbnail` **directly** is affected. The bundled `Editor.Pages` wires `onMovePage` for you, so the default editor needs no change.
+
+## `@docmosaic/core`
+
+Additive only - bumps to `1.1.0` with the new **Frames** API (`FrameSection`, the optional `SectionBase.parentFrameId` / `ImageSection.maskShape` fields, and the `resolveFrameParent` / `orderSectionsForRender` helpers). Nothing was removed or changed, so existing core code keeps working without edits.
+
+## Questions?
+
+Open an issue on [GitHub](https://github.com/vrybakk/docmosaic/issues) if you hit anything not covered here.

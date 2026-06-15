@@ -1,0 +1,77 @@
+{
+    "name": "@docmosaic/core",
+    "version": "1.1.0",
+    "private": false,
+    "type": "module",
+    "description": "Framework-agnostic document model, history, and browser-side PDF generation that powers the DocMosaic editor.",
+    "keywords": [
+        "pdf",
+        "jspdf",
+        "pdf-generation",
+        "document-model",
+        "reducer",
+        "typescript",
+        "framework-agnostic"
+    ],
+    "license": "MIT",
+    "author": "Vladyslav Rybak",
+    "homepage": "https://docmosaic.com",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vrybakk/docmosaic.git",
+        "directory": "packages/core"
+    },
+    "bugs": {
+        "url": "https://github.com/vrybakk/docmosaic/issues"
+    },
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        }
+    },
+    "sideEffects": false,
+    "files": [
+        "dist",
+        "LICENSE"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "engines": {
+        "node": ">=18.18.0"
+    },
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint src --max-warnings=0",
+        "test": "vitest",
+        "test:run": "vitest run --passWithNoTests"
+    },
+    "dependencies": {
+        "jspdf": "^2.5.2",
+        "perfect-freehand": "^1.2.2",
+        "uuid": "^11.0.5"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.4",
+        "@types/node": "^20",
+        "@types/uuid": "^10.0.0",
+        "eslint": "^9.39.4",
+        "eslint-config-prettier": "^9.1.0",
+        "tsup": "^8.3.5",
+        "typescript": "^5.6.3",
+        "typescript-eslint": "^8.60.1",
+        "vitest": "^4.1.8"
+    }
+}

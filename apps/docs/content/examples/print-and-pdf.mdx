@@ -1,0 +1,65 @@
+---
+title: Print and PDF
+description: A4 portrait with print + download buttons. The canonical DocMosaic shell.
+tags: [pdf, print, starter]
+---
+
+This is the shell DocMosaic.com itself runs - A4 portrait page, a toolbar with Add Image / Print / Download, the page rail on the left, the preview dialog ready to open. Use it as the baseline whenever you want a print-grade editor without thinking about composition.
+
+## Code
+
+```tsx
+'use client';
+
+import { Editor } from '@docmosaic/react';
+import { createDocument } from '@docmosaic/core';
+import '@docmosaic/react/styles.css';
+
+const initialDocument = createDocument({
+    name: 'Untitled document',
+    pageSize: 'A4',
+    orientation: 'portrait',
+});
+
+export default function PrintAndPdfEditor() {
+    return (
+        <Editor.Root defaultDocument={initialDocument}>
+            <Editor.Properties />
+            <Editor.Toolbar>
+                <Editor.UndoButton />
+                <Editor.RedoButton />
+                <Editor.AddImageButton />
+                <Editor.FileSizeBadge />
+                <Editor.PreviewButton />
+                <Editor.PrintButton />
+                <Editor.DownloadButton />
+                <Editor.GenerationProgress />
+            </Editor.Toolbar>
+            <Editor.Pages />
+            <Editor.Canvas>
+                <Editor.Section />
+            </Editor.Canvas>
+            <Editor.Preview />
+        </Editor.Root>
+    );
+}
+```
+
+`Editor.DownloadButton` produces a real PDF via the bundled `jspdf` pipeline. `Editor.PrintButton` opens the OS print dialog with the canvas rasterised - useful when users want paper instead of a file. `Editor.FileSizeBadge` shows a live size estimate so users know what they're about to download.
+
+<Callout type="info">
+    All geometry is stored in **PDF points (72 DPI)**, not CSS pixels. The download is
+    byte-identical between dev and prod because the document model carries pre-converted
+    coordinates. See [Unit system](/docs/concepts/unit-system).
+</Callout>
+
+## Try it
+
+<StorybookEmbed id="editor-root--default" />
+
+## Related
+
+-   [Editor.DownloadButton](/docs/primitives/download-button) - the PDF export
+-   [Editor.PrintButton](/docs/primitives/print-button) - OS print dialog
+-   [Editor.Preview](/docs/primitives/preview) - full-document preview
+-   [Custom PDF backend](/docs/examples/custom-pdf-backend) - swap jsPDF for something else

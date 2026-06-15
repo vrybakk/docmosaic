@@ -1,0 +1,72 @@
+---
+title: Guides and snap
+description: Editor.Ruler, Editor.Guides, and the snap engine share one source of truth - the same SNAP_THRESHOLD (5pt).
+---
+
+`Editor.Ruler`, `Editor.Guides`, and the snap engine share one source of truth - the same `SNAP_THRESHOLD` (5pt) controls both the multi-select group drag and ruler-dropped guide lines. Coordinates live in PDF points; the conversion to/from CSS pixels happens at the canvas boundary via `finalScale`.
+
+## Layers
+
+| Layer               | Source of truth                            | Role                                                                 |
+| ------------------- | ------------------------------------------ | -------------------------------------------------------------------- |
+| `Editor.Ruler`      | `useEditorCanvas().finalScale` + page dims | Paints tick marks. Pure display surface, no document writes.         |
+| `Editor.Guides`     | `Page.guides` on the current page          | Drag from a ruler to drop a guide; click the × badge to remove.      |
+| `computeSnap*`      | `snap.ts` in `@docmosaic/react`            | Pure math. Mixes page margins + section edges + page guides.         |
+| `useEditorSection`  | group drag handlers                        | Calls `computeSnap` on every move and updates `ui.activeSnapGuides`. |
+| `Editor.SnapGuides` | `ui.activeSnapGuides`                      | Paints the matched alignment lines while a drag is live.             |
+
+Rulers and guides are opt-in: pass `showRuler` (and optionally `showMinimap`) on `Editor.Root`. The canvas reserves a 24px gutter on each axis when rulers are visible and auto-mounts `Editor.Ruler` + `Editor.Guides` inside the canvas overlay slot.
+
+## Storage shape
+
+```ts
+import type { PageGuides } from '@docmosaic/core';
+
+interface PageGuides {
+    vertical: number[]; // x positions in PDF points
+    horizontal: number[]; // y positions in PDF points
+}
+```
+
+`Page.guides` is optional - legacy documents have no guides, and the renderer treats `undefined` as "no guides". The PDF generator never reads the field; the byte-diff gate locks that contract: rendering a document with guides set must produce exactly the same bytes as the same document with guides omitted.
+
+## Snap targets
+
+`computeSnapTargets` returns the same six page candidates it always has - `page-left`, `page-right`, `page-center`, `page-top`, `page-bottom`, `page-middle` - plus six per non-selected section, plus one per user-placed guide tagged `source: 'guide'`. The hook in `useEditorSection` passes `pagesRef.current[currentPage - 1]?.guides` through on every drag start so guides added during the same session immediately participate.
+
+```ts
+import { computeSnap, computeSnapTargets } from '@docmosaic/react';
+
+const targets = computeSnapTargets(sections, selectedIds, pageDimensions, page.guides);
+const { dx, dy, matched } = computeSnap(bbox, proposedDx, proposedDy, targets);
+```
+
+`matched` carries the targets the group's edges currently sit on - `Editor.SnapGuides` paints one accent-colored line per match.
+
+## Reducer actions
+
+Two actions on the `@docmosaic/core` reducer write `Page.guides`. Both fail closed: out-of-range `pageIndex` returns the previous state untouched, and `ADD_GUIDE` skips exact duplicates so repeated drags onto the same value don't bloat the array.
+
+```ts
+import { reducer } from '@docmosaic/core';
+
+const next = reducer(state, {
+    type: 'ADD_GUIDE',
+    pageIndex: 0,
+    axis: 'vertical',
+    position: 120,
+});
+
+reducer(next, {
+    type: 'REMOVE_GUIDE',
+    pageIndex: 0,
+    axis: 'vertical',
+    position: 120,
+});
+```
+
+The React layer wraps both through `actions.addGuide(pageIndex, axis, position)` and `actions.removeGuide(pageIndex, axis, position)` - available in both uncontrolled (history-aware, undo/redo intact) and controlled modes.
+
+## See also
+
+-   [Unit system](/docs/concepts/unit-system) - why guides are stored in PDF points alongside section geometry

@@ -1,0 +1,66 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/Theming" />
+
+# Theming
+
+`@docmosaic/react` ships two stylesheet entry points:
+
+-   `@docmosaic/react/styles/base.css` — structural baseline. Brand-agnostic.
+-   `@docmosaic/react/styles/themes/docmosaic.css` — DocMosaic brand theme.
+-   `@docmosaic/react/styles.css` — both bundled (the default).
+
+Use the bundled stylesheet for the default look, or pair the base with
+your own theme for a custom brand.
+
+## Theme tokens
+
+The brand theme exposes the shadcn-aligned semantic surface on `:root`:
+
+```css
+:root {
+    --background: 255 255 255;
+    --foreground: 56 29 42;
+    --primary: 56 29 42; /* #381D2A */
+    --primary-foreground: 252 222 156;
+    --secondary: 252 222 156; /* #FCDE9C */
+    --secondary-foreground: 56 29 42;
+    --accent: 196 214 176; /* #C4D6B0 */
+    --accent-foreground: 56 29 42;
+    --destructive: 186 86 36; /* #BA5624 */
+    --destructive-foreground: 255 255 255;
+    --border: 228 228 231;
+    --ring: 56 29 42;
+}
+```
+
+Triplets are space-separated to support the modern
+`rgb(R G B / <alpha-value>)` syntax used by the Tailwind utilities the
+package ships with.
+
+## Writing your own theme
+
+```css
+@import '@docmosaic/react/styles/base.css';
+
+:root {
+    --background: 255 255 255;
+    --foreground: 17 24 39;
+    --primary: 17 24 39; /* slate-900 */
+    --primary-foreground: 250 250 250;
+    --secondary: 229 231 235;
+    --secondary-foreground: 17 24 39;
+    --accent: 16 185 129;
+    --accent-foreground: 255 255 255;
+    --destructive: 220 38 38;
+    --destructive-foreground: 250 250 250;
+    --border: 228 228 231;
+    --ring: 17 24 39;
+}
+```
+
+## Try it
+
+Use the **Theme switcher** in the Storybook toolbar to flip between the
+bundled `docmosaic` theme and the bare `minimal` theme used in this
+Storybook.

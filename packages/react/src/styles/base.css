@@ -1,0 +1,27 @@
+/*
+ * Structural baseline + semantic token surface for @docmosaic/react.
+ *
+ * This file declares the *shape* of the theming contract — the cascade-layer
+ * order, the structural defaults (section radius, section shadow), and a
+ * shadcn-aligned semantic surface (`--background`, `--foreground`, `--primary`,
+ * etc.) supplied by themes. No brand color *values* are defined here.
+ *
+ * The semantic tokens land in the `docmosaic` cascade layer so any consumer
+ * that defines the same token in `@layer base` (e.g. an app that has its own
+ * shadcn setup) wins automatically — no overrides, no `!important`, no
+ * source-order gotchas. Apps that don't redefine these get the bundled theme's
+ * values as defaults.
+ *
+ * Pair this file with one of `styles/themes/*.css` (or the bundled
+ * `styles.css`) to supply concrete values.
+ */
+
+@layer docmosaic, base, components, utilities;
+
+@layer docmosaic {
+    :root {
+        --editor-radius-section: 6px;
+        --editor-shadow-section: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --radius: 0.5rem;
+    }
+}

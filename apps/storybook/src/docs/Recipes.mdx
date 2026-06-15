@@ -1,0 +1,99 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/Recipes" />
+
+# Recipes
+
+Short, copy-pasteable compositions for the most common requests.
+
+## Controlled document
+
+Hold the document in your own state. Undo/redo is your responsibility in
+this mode.
+
+```tsx
+const [doc, setDoc] = useState(createDocument());
+
+<Editor.Root document={doc} onDocumentChange={setDoc}>
+    <Editor.Properties />
+    <Editor.Toolbar />
+    <Editor.Pages />
+    <Editor.Canvas>
+        <Editor.Section />
+    </Editor.Canvas>
+    <Editor.Preview />
+</Editor.Root>;
+```
+
+## Custom toolbar layout
+
+Pass children to `Editor.Toolbar` to replace its default arrangement.
+
+```tsx
+<Editor.Toolbar>
+    <div className="flex items-center justify-between w-full">
+        <Editor.AddImageButton />
+        <div className="flex items-center gap-2">
+            <Editor.UndoButton />
+            <Editor.RedoButton />
+        </div>
+        <Editor.DownloadButton />
+    </div>
+</Editor.Toolbar>
+```
+
+## Per-section template
+
+Pass a single child to `Editor.Canvas` to render every section with your
+own component. Use `useEditorSection` to read the section + handlers
+without prop-drilling.
+
+```tsx
+import { Editor, useEditorSection } from '@docmosaic/react';
+
+function MySection() {
+    const { section, isSelected, onClick } = useEditorSection();
+    return (
+        <div
+            onClick={onClick}
+            style={{
+                position: 'absolute',
+                left: section.x,
+                top: section.y,
+                width: section.width,
+                height: section.height,
+                outline: isSelected ? '2px solid rgb(var(--primary))' : 'none',
+            }}
+        />
+    );
+}
+
+<Editor.Canvas>
+    <MySection />
+</Editor.Canvas>;
+```
+
+## Disable shortcuts
+
+```tsx
+<Editor.Root keybindings={false}>...</Editor.Root>
+```
+
+## Add an alternate redo binding
+
+```tsx
+<Editor.Root keybindings={{ redo: 'mod+r' }}>...</Editor.Root>
+```
+
+## Headless ("BYO-UI") mode
+
+If you want to ship a completely custom UI but keep the reducer + history,
+use `useDocumentState` directly and skip `Editor.Root` entirely.
+
+```tsx
+import { useDocumentState } from '@docmosaic/react';
+
+const { document, actions, canUndo, canRedo } = useDocumentState();
+
+// Render whatever you want; call actions.addSection(), actions.undo(), …
+```

@@ -1,0 +1,62 @@
+---
+title: Editor.LayerList
+description: Figma/Photoshop-style outliner - every section on the current page with hide / lock toggles and drag-to-reorder.
+---
+
+`Editor.LayerList` is the dedicated outliner. Sections on the current page render in stack order (top of stack first). Click to select; shift/meta-click to extend; drag the grip handle to reorder.
+
+<StorybookEmbed id="editor-layerlist--default" />
+
+## Usage
+
+```tsx
+<Editor.Root>
+    <Editor.LayerList />
+</Editor.Root>
+```
+
+## Composition
+
+The default `LayerList` renders one `LayerList.Row` per section. Mount rows individually for a custom outliner:
+
+```tsx
+const { state } = useEditor();
+const sections = state.sections.filter((s) => s.page === state.currentPage);
+
+<Editor.LayerList>
+    {sections.map((s) => (
+        <Editor.LayerList.Row key={s.id} sectionId={s.id} />
+    ))}
+</Editor.LayerList>;
+```
+
+## Hide and lock
+
+Each row exposes two toggles, mirroring Figma:
+
+| Toggle | Action                            | Effect                                               |
+| ------ | --------------------------------- | ---------------------------------------------------- |
+| Eye    | `actions.toggleHidden(sectionId)` | Skips the section in the canvas and the PDF output.  |
+| Lock   | `actions.toggleLocked(sectionId)` | Refuses selection, drag, and resize for the section. |
+
+Hidden and locked are independent flags. The PDF generator filters out hidden sections before drawing (byte-diff gate confirms it).
+
+## Examples
+
+### Pair with the properties panel
+
+```tsx
+<div className="flex flex-col border-l">
+    <Editor.LayerList className="border-b" />
+    <Editor.PropertiesPanel />
+</div>
+```
+
+## API Reference
+
+<PropTable name="LayerList" />
+
+## Related
+
+-   [PropertiesPanel](/docs/primitives/properties-panel) - contextual editor for the selected layer
+-   [Layers concept](/docs/concepts/layers) - the underlying `zIndex` model

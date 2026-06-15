@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+    - name: 📚 Documentation
+      url: https://docs.docmosaic.com
+      about: Guides, primitives, and the API reference - check here before filing an issue.
+    - name: 🔒 Security vulnerability
+      url: https://github.com/vrybakk/docmosaic/security/advisories/new
+      about: Report security issues privately, not as a public issue. See SECURITY.md.

@@ -1,0 +1,11 @@
+/*
+ * Bundled DocMosaic look. Import this for the default theme, or import
+ * `./styles/base.css` + your own theme for a custom look.
+ *
+ * Equivalent to:
+ *   @import '@docmosaic/react/styles/base.css';
+ *   @import '@docmosaic/react/styles/themes/docmosaic.css';
+ */
+
+@import './styles/base.css';
+@import './styles/themes/docmosaic.css';

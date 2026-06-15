@@ -1,0 +1,28 @@
+---
+title: Editor.FrameToolButton
+description: Toolbar toggle that arms the draw-to-size container-frame tool.
+---
+
+Toolbar toggle that arms the draw-to-size **container-frame** tool. While armed, dragging on an empty part of the page rubber-bands a new `FrameSection`; other sections dropped inside it become its children. Mutually exclusive with the shape, image-frame, and drawing tools.
+
+<StorybookEmbed id="editor-frame-tool-button--default" />
+
+## Usage
+
+```tsx
+import { Editor } from '@docmosaic/react';
+
+<Editor.Root>
+    <Editor.FrameToolButton />
+</Editor.Root>;
+```
+
+## API Reference
+
+<PropTable name="FrameToolButton" />
+
+## Related
+
+-   [Frames](/docs/concepts/frames) - the container-frame model
+-   [Editor.ImageFrameToolButton](/docs/primitives/image-frame-tool-button) - shaped image slots
+-   [Root](/docs/primitives/root) - the orchestrator
