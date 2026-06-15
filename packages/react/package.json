@@ -1,6 +1,6 @@
 {
     "name": "@docmosaic/react",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "private": false,
     "type": "module",
     "description": "Headless React primitives and hooks for building a fully client-side PDF editor — the DocMosaic editor toolkit.",
