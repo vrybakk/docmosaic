@@ -83,7 +83,9 @@
         "point2Body": "Modelo de documento, histórico e o pipeline de PDF. Traga sua própria interface.",
         "point3Title": "100% no lado do cliente",
         "point3Body": "Sem backend e sem uploads. O estado vive no React: privacidade por padrão.",
-        "readDocs": "Ler a documentação"
+        "readDocs": "Ler a documentação",
+        "copyLabel": "Copiar",
+        "copiedLabel": "Copiado!"
     },
     "StackedCards": {
         "heading": "Funciona no desktop e no celular: edite <sage>PDFs</sage> em qualquer lugar!",

@@ -83,7 +83,9 @@
         "point2Body": "Modelo de documento, historial y la canalización de PDF. Pon tu propia interfaz.",
         "point3Title": "100 % del lado del cliente",
         "point3Body": "Sin backend ni subidas. El estado vive en React: privacidad por defecto.",
-        "readDocs": "Leer la documentación"
+        "readDocs": "Leer la documentación",
+        "copyLabel": "Copiar",
+        "copiedLabel": "¡Copiado!"
     },
     "StackedCards": {
         "heading": "Funciona en escritorio y móvil: edita <sage>PDFs</sage> en cualquier lugar.",

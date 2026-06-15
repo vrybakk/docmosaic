@@ -83,7 +83,9 @@
         "point2Body": "Model dokumentu, historia i potok PDF. Dodaj własny interfejs.",
         "point3Title": "100% po stronie klienta",
         "point3Body": "Bez backendu, bez przesyłania plików. Stan żyje w React - prywatność domyślnie.",
-        "readDocs": "Przeczytaj dokumentację"
+        "readDocs": "Przeczytaj dokumentację",
+        "copyLabel": "Kopiuj",
+        "copiedLabel": "Skopiowano!"
     },
     "StackedCards": {
         "heading": "Działa na komputerze i telefonie - edytuj <sage>PDF-y</sage> wszędzie!",
