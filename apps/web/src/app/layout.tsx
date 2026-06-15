@@ -1,7 +1,6 @@
 import Header from '@/components/layout/header';
 import { ThemeProvider } from '@/components/theme-provider';
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
-import { Analytics } from '@vercel/analytics/next';
 import { Viewport } from 'next';
 import { Montserrat } from 'next/font/google';
 import Script from 'next/script';
@@ -255,7 +254,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Header />
                     {children}
                 </ThemeProvider>
-                <Analytics />
                 <AnalyticsBridge />
             </body>
         </html>
