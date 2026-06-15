@@ -4,7 +4,9 @@ import type React from 'react';
 
 import DonateButton from '@/components/donate-button';
 import { CustomLink } from '@/components/ui/core/link';
+import { Link as LocaleLink, usePathname, useRouter } from '@/i18n/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useLocale, useTranslations } from 'next-intl';
 import {
     ArrowBigRight,
     BookOpen,
@@ -20,18 +22,17 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Typography from '../common/typography';
 
 export default function Header() {
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
     const [isHowItWorksMenuOpen, setIsHowItWorksMenuOpen] = useState(false);
-    const [currentLanguage, setCurrentLanguage] = useState('EN');
     const pathname = usePathname();
-    const isLandingPage = pathname === '/';
-
     const router = useRouter();
+    const locale = useLocale();
+    const t = useTranslations('Nav');
+    const isLandingPage = pathname === '/';
 
     // The /pdf-editor route is a full-screen editor with its own top bar; the
     // marketing header would double up the chrome, so it is omitted there.
@@ -39,10 +40,11 @@ export default function Header() {
         return null;
     }
 
-    const changeLanguage = (lang: string) => {
-        setCurrentLanguage(lang);
+    const localeLabels: Record<string, string> = { en: 'EN', es: 'ES', uk: 'UA' };
+
+    const changeLanguage = (nextLocale: string) => {
         setIsLanguageMenuOpen(false);
-        // todo: implement actual language change logic
+        router.replace(pathname, { locale: nextLocale });
     };
 
     const toggleLanguageMenu = () => {
@@ -66,10 +68,10 @@ export default function Header() {
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
             <div className="container mx-auto px-4 py-5">
                 <div className="flex items-center justify-between">
-                    <Link href="/" className="flex items-center space-x-2">
+                    <LocaleLink href="/" className="flex items-center space-x-2">
                         <Image src="/logo.svg" alt="DocMosaic Logo" width={32} height={32} />
                         <Typography variant="h3">DocMosaic</Typography>
-                    </Link>
+                    </LocaleLink>
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-6">
@@ -80,7 +82,7 @@ export default function Header() {
                         >
                             <button className="relative text-docmosaic-purple/80 hover:text-docmosaic-purple transition-colors">
                                 <Typography variant="h4" className="!text-inherit uppercase">
-                                    HOW IT WORKS
+                                    {t('howItWorks')}
                                 </Typography>
                                 <span
                                     style={{
@@ -107,10 +109,10 @@ export default function Header() {
                                                     variant="h4"
                                                     className="text-docmosaic-purple mb-3 uppercase"
                                                 >
-                                                    Product
+                                                    {t('product')}
                                                 </Typography>
                                                 <div className="space-y-2">
-                                                    <Link
+                                                    <LocaleLink
                                                         href="/pdf-editor"
                                                         className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full"
                                                     >
@@ -122,9 +124,9 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            PDF Web Editor
+                                                            {t('pdfWebEditor')}
                                                         </Typography>
-                                                    </Link>
+                                                    </LocaleLink>
                                                     <Link
                                                         href="#features"
                                                         onClick={(e) =>
@@ -140,7 +142,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            Features
+                                                            {t('features')}
                                                         </Typography>
                                                     </Link>
                                                     <Link
@@ -157,7 +159,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            Documentation
+                                                            {t('documentation')}
                                                         </Typography>
                                                     </Link>
                                                     <Link
@@ -174,7 +176,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            What&apos;s New
+                                                            {t('whatsNew')}
                                                         </Typography>
                                                     </Link>
                                                 </div>
@@ -184,7 +186,7 @@ export default function Header() {
                                                     variant="h4"
                                                     className="text-docmosaic-purple mb-3 uppercase"
                                                 >
-                                                    Open Source & Community
+                                                    {t('openSourceCommunity')}
                                                 </Typography>
                                                 <div className="space-y-2">
                                                     <Link
@@ -201,7 +203,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            View Source
+                                                            {t('viewSource')}
                                                         </Typography>
                                                     </Link>
                                                     <Link
@@ -218,7 +220,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            Report Issues
+                                                            {t('reportIssues')}
                                                         </Typography>
                                                     </Link>
                                                     <Link
@@ -235,7 +237,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            Contribute
+                                                            {t('contribute')}
                                                         </Typography>
                                                     </Link>
                                                 </div>
@@ -245,7 +247,7 @@ export default function Header() {
                                                     variant="h4"
                                                     className="text-docmosaic-purple mb-3 uppercase"
                                                 >
-                                                    Support & Feedback
+                                                    {t('supportFeedback')}
                                                 </Typography>
                                                 <div className="space-y-3">
                                                     <CustomLink
@@ -258,7 +260,7 @@ export default function Header() {
                                                             <MessageSquareText className="w-4 h-4" />
                                                         }
                                                     >
-                                                        Your Input
+                                                        {t('yourInput')}
                                                     </CustomLink>
                                                     <DonateButton
                                                         variant="coffee"
@@ -279,7 +281,7 @@ export default function Header() {
                             className="group relative w-fit documentation-click-trigger text-docmosaic-purple/80 hover:text-docmosaic-purple transition-colors"
                         >
                             <Typography variant="h4" className="!text-inherit uppercase">
-                                Docs
+                                {t('docs')}
                             </Typography>
                             <span className="absolute -bottom-1 -left-1 -right-1 h-[3px] origin-left scale-x-0 rounded-full bg-docmosaic-sage transition-transform duration-300 ease-out group-hover:scale-x-100" />
                         </Link>
@@ -294,7 +296,7 @@ export default function Header() {
                                 />
                             }
                         >
-                            <span className="uppercase">Try DocMosaic</span>
+                            <span className="uppercase">{t('tryDocmosaic')}</span>
                         </CustomLink>
 
                         <div className="hidden md:flex relative">
@@ -302,7 +304,7 @@ export default function Header() {
                                 onClick={toggleLanguageMenu}
                                 className="flex items-center text-docmosaic-purple/80 hover:text-docmosaic-purple transition-colors"
                             >
-                                {currentLanguage}
+                                {localeLabels[locale]}
                                 <ChevronDown
                                     className={`ml-1 w-4 h-4 transition-transform ${
                                         isLanguageMenuOpen ? 'rotate-180' : ''
@@ -312,19 +314,19 @@ export default function Header() {
                             {isLanguageMenuOpen && (
                                 <div className="absolute right-0 mt-2 min-w-24 bg-white rounded-md shadow-lg py-1 z-10">
                                     <button
-                                        onClick={() => changeLanguage('EN')}
+                                        onClick={() => changeLanguage('en')}
                                         className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
                                     >
                                         English
                                     </button>
                                     <button
-                                        onClick={() => changeLanguage('ES')}
+                                        onClick={() => changeLanguage('es')}
                                         className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
                                     >
                                         Español
                                     </button>
                                     <button
-                                        onClick={() => changeLanguage('UA')}
+                                        onClick={() => changeLanguage('uk')}
                                         className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
                                     >
                                         Українська
@@ -341,7 +343,7 @@ export default function Header() {
                                 onClick={toggleLanguageMenu}
                                 className="flex items-center text-docmosaic-purple/80 hover:text-docmosaic-purple transition-colors"
                             >
-                                {currentLanguage}
+                                {localeLabels[locale]}
                                 <ChevronDown
                                     className={`ml-1 w-4 h-4 transition-transform ${
                                         isLanguageMenuOpen ? 'rotate-180' : ''
@@ -351,19 +353,19 @@ export default function Header() {
                             {isLanguageMenuOpen && (
                                 <div className="absolute right-0 mt-2 min-w-24 bg-white rounded-md shadow-lg py-1 z-10">
                                     <button
-                                        onClick={() => changeLanguage('EN')}
+                                        onClick={() => changeLanguage('en')}
                                         className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
                                     >
                                         English
                                     </button>
                                     <button
-                                        onClick={() => changeLanguage('ES')}
+                                        onClick={() => changeLanguage('es')}
                                         className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
                                     >
                                         Español
                                     </button>
                                     <button
-                                        onClick={() => changeLanguage('UA')}
+                                        onClick={() => changeLanguage('uk')}
                                         className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
                                     >
                                         Українська
@@ -396,10 +398,10 @@ export default function Header() {
                                                     variant="h4"
                                                     className="text-docmosaic-purple mb-3 uppercase"
                                                 >
-                                                    Product
+                                                    {t('product')}
                                                 </Typography>
                                                 <div className="space-y-2">
-                                                    <Link
+                                                    <LocaleLink
                                                         href="/pdf-editor"
                                                         onClick={() =>
                                                             setIsHowItWorksMenuOpen(false)
@@ -414,9 +416,9 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            PDF Web Editor
+                                                            {t('pdfWebEditor')}
                                                         </Typography>
-                                                    </Link>
+                                                    </LocaleLink>
                                                     <Link
                                                         href="#features"
                                                         onClick={(e) => {
@@ -433,7 +435,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            Features
+                                                            {t('features')}
                                                         </Typography>
                                                     </Link>
                                                     <Link
@@ -453,7 +455,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            Documentation
+                                                            {t('documentation')}
                                                         </Typography>
                                                     </Link>
                                                     <Link
@@ -473,7 +475,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            What&apos;s New
+                                                            {t('whatsNew')}
                                                         </Typography>
                                                     </Link>
                                                 </div>
@@ -483,7 +485,7 @@ export default function Header() {
                                                     variant="h4"
                                                     className="text-docmosaic-purple mb-3 uppercase"
                                                 >
-                                                    Open Source & Community
+                                                    {t('openSourceCommunity')}
                                                 </Typography>
                                                 <div className="space-y-2">
                                                     <Link
@@ -503,7 +505,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            View Source
+                                                            {t('viewSource')}
                                                         </Typography>
                                                     </Link>
                                                     <Link
@@ -523,7 +525,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            Report Issues
+                                                            {t('reportIssues')}
                                                         </Typography>
                                                     </Link>
                                                     <Link
@@ -543,7 +545,7 @@ export default function Header() {
                                                             variant="small"
                                                             className="text-inherit"
                                                         >
-                                                            Contribute
+                                                            {t('contribute')}
                                                         </Typography>
                                                     </Link>
                                                 </div>
@@ -553,7 +555,7 @@ export default function Header() {
                                                     variant="h4"
                                                     className="text-docmosaic-purple mb-3 uppercase"
                                                 >
-                                                    Feedback
+                                                    {t('supportFeedback')}
                                                 </Typography>
                                                 <div className="space-y-3">
                                                     <CustomLink
@@ -569,7 +571,7 @@ export default function Header() {
                                                             setIsHowItWorksMenuOpen(false)
                                                         }
                                                     >
-                                                        Your Input
+                                                        {t('yourInput')}
                                                     </CustomLink>
                                                     <DonateButton
                                                         variant="coffee"

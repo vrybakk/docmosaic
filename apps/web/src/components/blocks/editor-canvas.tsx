@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Check, MousePointer2, UploadCloud } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Typography from '../common/typography';
 
 export type CanvasVariant = 'arrange' | 'upload' | 'download';
@@ -76,6 +77,7 @@ export function EditorCanvas({
     animateCursor?: boolean;
     cursorDelay?: number;
 }) {
+    const t = useTranslations('EditorCanvas');
     const dimmed = variant === 'upload';
 
     return (
@@ -150,7 +152,7 @@ export function EditorCanvas({
                             <div className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed border-docmosaic-sage bg-white/85 px-6 py-5">
                                 <UploadCloud className="h-7 w-7 text-docmosaic-orange" />
                                 <Typography variant="small" className="text-docmosaic-black/70">
-                                    Drop images here
+                                    {t('dropImages')}
                                 </Typography>
                             </div>
                         </div>
@@ -160,7 +162,7 @@ export function EditorCanvas({
                         <div className="absolute right-[8%] top-[8%] inline-flex items-center gap-1.5 rounded-full bg-docmosaic-sage px-3 py-1 shadow-sm">
                             <Check className="h-3.5 w-3.5 text-docmosaic-purple" />
                             <Typography variant="extraSmall" className="font-semibold uppercase">
-                                PDF ready
+                                {t('pdfReady')}
                             </Typography>
                         </div>
                     )}

@@ -1,7 +1,16 @@
-import { NextResponse, type NextRequest } from 'next/server';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
 
-export function middleware(request: NextRequest) {
-    const response = NextResponse.next();
+const handleI18nRouting = createMiddleware(routing);
+
+// Derive the request type from next-intl's middleware so the `next` version it
+// resolves (hoisted root) matches ours — avoids the monorepo dual-package type
+// clash that importing `NextRequest` from `next/server` directly would trigger.
+export function middleware(request: Parameters<typeof handleI18nRouting>[0]) {
+    // next-intl handles locale detection, redirects (`/` -> default locale) and
+    // rewrites first; we then decorate the resulting response with the same
+    // CORS / security / cache headers the site shipped before.
+    const response = handleI18nRouting(request);
 
     // CORS headers
     response.headers.set('Access-Control-Allow-Origin', '*');
@@ -27,10 +36,6 @@ export function middleware(request: NextRequest) {
     // Cache control
     if (request.nextUrl.pathname.startsWith('/api/')) {
         response.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    } else if (request.nextUrl.pathname.match(/\.(jpg|jpeg|gif|png|svg|ico|webp)$/i)) {
-        response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-    } else if (request.nextUrl.pathname.match(/\.(css|js)$/i)) {
-        response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
     } else {
         response.headers.set('Cache-Control', 'public, max-age=3600, must-revalidate');
     }
@@ -39,13 +44,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         */
-        '/((?!_next/static|_next/image|favicon.ico).*)',
-    ],
+    // Match all pathnames except API routes, Next internals and files with an
+    // extension (e.g. `/favicon.ico`, `/seo/og-image.png`). `/` is matched so
+    // the locale redirect runs on the landing page.
+    matcher: ['/((?!api|_next|_vercel|.*\\..*).*)', '/'],
 };

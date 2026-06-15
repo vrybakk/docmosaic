@@ -4,10 +4,13 @@ import Typography from '@/components/common/typography';
 import { CustomLink } from '@/components/ui/core/link';
 import { motion } from 'framer-motion';
 import { ArrowBigRight, Lock } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { EditorCanvas } from './editor-canvas';
 
 export default function PdfHeroSection() {
+    const t = useTranslations('PdfHero');
+
     return (
         <section className="overflow-hidden bg-white">
             <div className="relative flex flex-col items-center justify-center px-4 md:px-12 pb-0 pt-12 md:pt-20">
@@ -25,11 +28,15 @@ export default function PdfHeroSection() {
                     tag="h1"
                     className="mt-3 max-w-4xl text-center leading-[1.15]"
                 >
-                    Tame Your <span className="text-docmosaic-caramel">PDFs</span> with Ease
+                    {t.rich('title', {
+                        caramel: (chunks) => (
+                            <span className="text-docmosaic-caramel">{chunks}</span>
+                        ),
+                    })}
                 </Typography>
                 <p className="mx-auto my-4 max-w-3xl text-center text-base leading-relaxed md:my-6 md:text-xl md:leading-relaxed">
                     <Lock className="w-4 h-4 mr-2 inline-block" />
-                    No sign-up. No personal data collection. No limits. Just open & use.
+                    {t('subtitle')}
                 </p>
                 <CustomLink
                     variant={'gradient'}
@@ -37,7 +44,7 @@ export default function PdfHeroSection() {
                     className="rounded-lg p-3 uppercase transition-colors max-md:w-full web-app-access-trigger mb-8"
                     icon={<ArrowBigRight size={18} />}
                 >
-                    START EDITING NOW
+                    {t('cta')}
                 </CustomLink>
 
                 <div className="flex w-full items-end justify-center gap-8 mt-6">
@@ -220,22 +227,30 @@ const TextItem = ({ text, index }: { text: string; index: number }) => {
     );
 };
 
-const RunningTextTop = () => (
-    <>
-        <TextItem text="Organize PDFs without limits" index={0} />
-        <TextItem text="Drag, drop, done" index={1} />
-        <TextItem text="PDF magic, minus the headache" index={2} />
-        <TextItem text="Arrange, adjust, export" index={3} />
-        <TextItem text="Rearrange pages with ease" index={4} />
-    </>
-);
+const RunningTextTop = () => {
+    const t = useTranslations('PdfHero');
 
-const RunningTextBottom = () => (
-    <>
-        <TextItem text="Good vibes, great files" index={0} />
-        <TextItem text="The PDF tool you didn't know you needed" index={1} />
-        <TextItem text="Fix your PDFs in less time" index={2} />
-        <TextItem text="Smooth workflows, clean exports" index={3} />
-        <TextItem text="Arrange your documents in minutes" index={4} />
-    </>
-);
+    return (
+        <>
+            <TextItem text={t('marqueeTop1')} index={0} />
+            <TextItem text={t('marqueeTop2')} index={1} />
+            <TextItem text={t('marqueeTop3')} index={2} />
+            <TextItem text={t('marqueeTop4')} index={3} />
+            <TextItem text={t('marqueeTop5')} index={4} />
+        </>
+    );
+};
+
+const RunningTextBottom = () => {
+    const t = useTranslations('PdfHero');
+
+    return (
+        <>
+            <TextItem text={t('marqueeBottom1')} index={0} />
+            <TextItem text={t('marqueeBottom2')} index={1} />
+            <TextItem text={t('marqueeBottom3')} index={2} />
+            <TextItem text={t('marqueeBottom4')} index={3} />
+            <TextItem text={t('marqueeBottom5')} index={4} />
+        </>
+    );
+};

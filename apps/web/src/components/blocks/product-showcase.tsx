@@ -9,6 +9,7 @@ import {
     Square,
     Type,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Typography from '../common/typography';
 import { EditorCanvas } from './editor-canvas';
 
@@ -22,6 +23,8 @@ const tools = [MousePointer2, ImageIcon, Type, Square, FrameIcon];
  * tracks the current design and frames the v2 feature (container + image frames).
  */
 const ProductShowcase = () => {
+    const t = useTranslations('ProductShowcase');
+
     return (
         <motion.div
             className="mx-auto w-full max-w-4xl"
@@ -50,7 +53,7 @@ const ProductShowcase = () => {
                         <span className="inline-flex items-center gap-1.5 rounded-md bg-docmosaic-purple px-2.5 py-1 text-white">
                             <Download className="h-3 w-3" />
                             <Typography variant="extraSmall" className="!text-inherit uppercase">
-                                Download PDF
+                                {t('downloadButton')}
                             </Typography>
                         </span>
                     </div>

@@ -3,67 +3,66 @@
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { ArrowBigRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { ReactNode } from 'react';
 import Typography from '../common/typography';
 import { CustomLink } from '../ui/core/link';
 import { EditorCanvas, type CanvasScene } from './editor-canvas';
 
-const features = [
-    {
-        title: '⚖️ For Expats & Officials',
-        subtitle: 'Simplify Document Processing',
-        description:
-            'Perfect for <b>visa applications, ID & passport scans,</b> and <b>administrative paperwork</b>. Arrange multiple scanned documents into professional PDFs that meet official requirements.',
-        backgroundColor: 'bg-gradient-to-br from-[#C4D6B0] to-[#67705C]',
-        scene: 'id-scan',
-    },
-    {
-        title: ['🏢 For Businesses & Admins', '💼 For Freelancers'],
-        subtitle: [
-            'Easily Create Internal & Client Documents',
-            'Create Branded Reports & Deliverables',
-        ],
-        description: [
-            'For companies, HR teams, and professionals who need quick document handling without expensive software. Generate <b>contracts, reports,</b> and <b>business documents</b> effortlessly.',
-            'Assemble <b>portfolio samples, image-heavy proposals,</b> and <b>invoice layouts</b> visually. Perfect for client deliverables.',
-        ],
-        backgroundColor: 'bg-gradient-to-br from-[#FCDE9C] to-[#96845D]',
-        scene: 'report',
-    },
-    {
-        title: ['🎯 For Marketers', '🎨 For Designers'],
-        subtitle: ['Create Professional-Looking PDFs Fast', 'Quickly Arrange Image-Based PDFs'],
-        description: [
-            'Create <b>ad mockups, campaign reports,</b> and simple PDF-based visuals without spending hours in Canva or Adobe.',
-            'Place, resize, and align images easily to create <b>print-ready layouts.</b> Perfect for <b>visual portfolios</b> and <b>client presentations.</b>',
-        ],
-        backgroundColor: 'bg-gradient-to-br from-[#FFA552] to-[#996331]',
-        scene: 'gallery',
-    },
-    {
-        title: '🎓 For Teachers & Students',
-        subtitle: 'Annotate & Organize PDFs for Projects',
-        description:
-            'Merge images into PDFs, annotate scanned <b>documents</b>, and reorder pages for <b>assignments</b> with ease.',
-        backgroundColor: 'bg-gradient-to-br from-[#BA5624] to-[#542710] [&_*]:text-white',
-        scene: 'worksheet',
-    },
-];
-
 export const BouncyCardsFeatures = () => {
+    const t = useTranslations('BouncyCards');
+    // Descriptions carry <b> markup and render via dangerouslySetInnerHTML, so
+    // use t.markup (returns an HTML string) rather than t() / t.rich.
+    const descMarkup = (key: string) => t.markup(key, { b: (chunks) => `<b>${chunks}</b>` });
+
+    const features = [
+        {
+            title: t('expatsTitle'),
+            subtitle: t('expatsSubtitle'),
+            description: descMarkup('expatsDescription'),
+            backgroundColor: 'bg-gradient-to-br from-[#C4D6B0] to-[#67705C]',
+            scene: 'id-scan',
+        },
+        {
+            title: [t('businessesTitle'), t('freelancersTitle')],
+            subtitle: [t('businessesSubtitle'), t('freelancersSubtitle')],
+            description: [
+                descMarkup('businessesDescription'),
+                descMarkup('freelancersDescription'),
+            ],
+            backgroundColor: 'bg-gradient-to-br from-[#FCDE9C] to-[#96845D]',
+            scene: 'report',
+        },
+        {
+            title: [t('marketersTitle'), t('designersTitle')],
+            subtitle: [t('marketersSubtitle'), t('designersSubtitle')],
+            description: [descMarkup('marketersDescription'), descMarkup('designersDescription')],
+            backgroundColor: 'bg-gradient-to-br from-[#FFA552] to-[#996331]',
+            scene: 'gallery',
+        },
+        {
+            title: t('teachersTitle'),
+            subtitle: t('teachersSubtitle'),
+            description: descMarkup('teachersDescription'),
+            backgroundColor: 'bg-gradient-to-br from-[#BA5624] to-[#542710] [&_*]:text-white',
+            scene: 'worksheet',
+        },
+    ];
+
     return (
         <section className="mx-auto max-w-7xl md:px-4 py-4 md:py-12 text-slate-800">
             <div className="w-full mb-8 flex flex-col items-start justify-between gap-4 md:px-8">
                 <Typography variant="h2" tag="h2">
-                    Built-In <span className="text-docmosaic-cream">Solutions</span> for Everyday
-                    Tasks
+                    {t.rich('heading', {
+                        cream: (chunks) => <span className="text-docmosaic-cream">{chunks}</span>,
+                    })}
                 </Typography>
                 <div className="w-full flex flex-col md:flex-row md:items-center justify-between gap-2">
                     <Typography variant="small">
-                        <b>Who Is This For?</b>
-                        <br />
-                        From designers to teachers, DocMosaic helps anyone who needs to quickly{' '}
-                        <b>create professional PDF documents.</b>
+                        {t.rich('whoIsThisFor', {
+                            strong: (chunks) => <b>{chunks}</b>,
+                            br: () => <br />,
+                        })}
                     </Typography>
                     <CustomLink
                         href="/"
@@ -71,7 +70,7 @@ export const BouncyCardsFeatures = () => {
                         className="whitespace-nowrap web-app-access-trigger"
                         icon={<ArrowBigRight size={18} />}
                     >
-                        TRY DOCMOSAIC
+                        {t('tryDocmosaic')}
                     </CustomLink>
                 </div>
             </div>

@@ -17,8 +17,11 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function Footer() {
+    const t = useTranslations('Footer');
+
     return (
         <footer className="py-12">
             <div className="container mx-auto px-4">
@@ -31,8 +34,7 @@ export default function Footer() {
                             </Typography>
                         </Link>
                         <Typography variant="paragraph" className="text-docmosaic-black/70 mb-4">
-                            Free and open source tool for creating structured PDF documents with
-                            arranged images.
+                            {t('tagline')}
                         </Typography>
                         <div className="flex flex-wrap gap-4">
                             <DonateButton variant="coffee" size="sm" />
@@ -44,13 +46,13 @@ export default function Footer() {
                                 className="your-input-click-trigger"
                                 icon={<MessageSquareText className="w-4 h-4" />}
                             >
-                                Your Input
+                                {t('yourInput')}
                             </CustomLink>
                         </div>
                     </div>
                     <div>
                         <Typography variant="h4" className="text-docmosaic-purple mb-4 uppercase">
-                            Product
+                            {t('productHeading')}
                         </Typography>
                         <ul className="space-y-2">
                             <li>
@@ -63,7 +65,7 @@ export default function Footer() {
                                         strokeWidth={1}
                                     />
                                     <Typography variant="small" className="text-inherit">
-                                        PDF Web Editor
+                                        {t('pdfWebEditor')}
                                     </Typography>
                                 </Link>
                             </li>
@@ -85,7 +87,7 @@ export default function Footer() {
                                 >
                                     <LayoutList className="w-4 h-4 mr-2" strokeWidth={1} />
                                     <Typography variant="small" className="text-inherit">
-                                        Features
+                                        {t('features')}
                                     </Typography>
                                 </Link>
                             </li>
@@ -93,7 +95,7 @@ export default function Footer() {
                     </div>
                     <div>
                         <Typography variant="h4" className="text-docmosaic-purple mb-4 uppercase">
-                            Open Source & Community
+                            {t('openSourceHeading')}
                         </Typography>
                         <ul className="space-y-2">
                             <li>
@@ -105,7 +107,7 @@ export default function Footer() {
                                 >
                                     <Github className="w-4 h-4 mr-2" strokeWidth={1} />
                                     <Typography variant="small" className="text-inherit">
-                                        View Source
+                                        {t('viewSource')}
                                     </Typography>
                                 </Link>
                             </li>
@@ -118,7 +120,7 @@ export default function Footer() {
                                 >
                                     <Bug className="w-4 h-4 mr-2" strokeWidth={1} />
                                     <Typography variant="small" className="text-inherit">
-                                        Report Issues
+                                        {t('reportIssues')}
                                     </Typography>
                                 </Link>
                             </li>
@@ -131,7 +133,7 @@ export default function Footer() {
                                 >
                                     <Code className="w-4 h-4 mr-2" strokeWidth={1} />
                                     <Typography variant="small" className="text-inherit">
-                                        Contribute
+                                        {t('contribute')}
                                     </Typography>
                                 </Link>
                             </li>
@@ -139,7 +141,7 @@ export default function Footer() {
                     </div>
                     <div>
                         <Typography variant="h4" className="text-docmosaic-purple mb-4 uppercase">
-                            Resources
+                            {t('resourcesHeading')}
                         </Typography>
                         <ul className="space-y-2">
                             <li>
@@ -151,7 +153,7 @@ export default function Footer() {
                                 >
                                     <BookOpen className="w-4 h-4 mr-2" strokeWidth={1} />
                                     <Typography variant="small" className="text-inherit">
-                                        Documentation
+                                        {t('documentation')}
                                     </Typography>
                                 </Link>
                             </li>
@@ -164,7 +166,7 @@ export default function Footer() {
                                 >
                                     <Sparkles className="w-4 h-4 mr-2" strokeWidth={1} />
                                     <Typography variant="small" className="text-inherit">
-                                        What&apos;s New
+                                        {t('whatsNew')}
                                     </Typography>
                                 </Link>
                             </li>
@@ -177,7 +179,7 @@ export default function Footer() {
                                 >
                                     <Package className="w-4 h-4 mr-2" strokeWidth={1} />
                                     <Typography variant="small" className="text-inherit">
-                                        npm Package
+                                        {t('npmPackage')}
                                     </Typography>
                                 </Link>
                             </li>
@@ -187,26 +189,32 @@ export default function Footer() {
                 <div className="border-t border-gray-200 mt-8 pt-8">
                     <div className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-center gap-2 md:gap-4">
                         <Typography variant="small" className="text-docmosaic-black/60">
-                            © {new Date().getFullYear()} DocMosaic. All rights reserved. |{' '}
-                            <Link
-                                href="/legal/privacy"
-                                className="text-docmosaic-black/60 hover:text-docmosaic-black underline"
-                            >
-                                Privacy Policy
-                            </Link>
+                            {t.rich('copyright', {
+                                year: new Date().getFullYear(),
+                                privacy: (chunks) => (
+                                    <Link
+                                        href="/legal/privacy"
+                                        className="text-docmosaic-black/60 hover:text-docmosaic-black underline"
+                                    >
+                                        {chunks}
+                                    </Link>
+                                ),
+                            })}
                         </Typography>
                         <div className="flex flex-wrap items-center gap-4">
                             <Typography variant="small" className="text-docmosaic-black/60">
-                                created by{' '}
-                                <Link
-                                    href="https://nerd-stud.io"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-docmosaic-caramel hover:text-docmosaic-caramel/80 underline font-medium"
-                                >
-                                    nerd-stud.io
-                                </Link>{' '}
-                                🧡
+                                {t.rich('createdBy', {
+                                    link: (chunks) => (
+                                        <Link
+                                            href="https://nerd-stud.io"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-docmosaic-caramel hover:text-docmosaic-caramel/80 underline font-medium"
+                                        >
+                                            {chunks}
+                                        </Link>
+                                    ),
+                                })}
                             </Typography>
                         </div>
                     </div>

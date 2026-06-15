@@ -1,5 +1,7 @@
 import Loader from '@/components/ui/data-display/loader';
+import { routing, type Locale } from '@/i18n/routing';
 import { Metadata, Viewport } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
 import { EditorMount } from './editor-mount';
 
@@ -16,61 +18,86 @@ export const viewport: Viewport = {
     viewportFit: 'cover',
 };
 
-// Define metadata
-export const metadata: Metadata = {
-    title: 'PDF Editor - Create and Edit PDFs Online | DocMosaic',
-    description:
-        'Create, edit, and arrange images in PDF documents with our intuitive visual editor. Perfect for ID documents, photo collections, and business documents.',
-    applicationName: 'DocMosaic PDF Editor',
-    authors: [{ name: 'nerd-stud.io', url: 'https://nerd-stud.io' }],
-    generator: 'Next.js',
-    keywords: [
-        'pdf editor',
-        'image arrangement',
-        'document creation',
-        'online pdf tool',
-        'free pdf editor',
-        'document mosaic',
-        'visual pdf creator',
-    ],
-    referrer: 'origin-when-cross-origin',
-    creator: 'nerd-stud.io',
-    publisher: 'DocMosaic',
-    formatDetection: {
-        email: false,
-        address: false,
-        telephone: false,
-    },
-    category: 'productivity',
-    openGraph: {
-        title: 'PDF Editor - DocMosaic',
-        description: 'Create and edit PDFs with our visual editor',
-        url: 'https://docmosaic.com/pdf-editor',
-        siteName: 'DocMosaic',
-        images: [
-            {
-                url: '/pdf-editor-preview.png',
-                width: 1200,
-                height: 630,
-                alt: 'DocMosaic PDF Editor Interface',
-            },
-        ],
-        locale: 'en_US',
-        type: 'website',
-    },
-    twitter: {
-        card: 'summary_large_image',
-        title: 'PDF Editor - Create and Edit PDFs Online | DocMosaic',
-        description: 'Create and edit PDFs with our visual editor',
-        images: ['/pdf-editor-preview.png'],
-        creator: '@nerdstudio',
-    },
-    alternates: {
-        canonical: 'https://docmosaic.com/pdf-editor',
-    },
+const ogLocales: Record<Locale, string> = {
+    en: 'en_US',
+    es: 'es_ES',
+    uk: 'uk_UA',
 };
 
-export default function PDFEditorPage() {
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+    const { locale } = await params;
+    const t = await getTranslations({ locale: locale as Locale, namespace: 'PdfEditor' });
+    const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
+    const url = `https://docmosaic.com${prefix}/pdf-editor`;
+
+    return {
+        // The locale layout's title template appends " | DocMosaic".
+        title: t('title'),
+        description: t('description'),
+        applicationName: 'DocMosaic PDF Editor',
+        authors: [{ name: 'nerd-stud.io', url: 'https://nerd-stud.io' }],
+        generator: 'Next.js',
+        keywords: [
+            'pdf editor',
+            'image arrangement',
+            'document creation',
+            'online pdf tool',
+            'free pdf editor',
+            'document mosaic',
+            'visual pdf creator',
+        ],
+        referrer: 'origin-when-cross-origin',
+        creator: 'nerd-stud.io',
+        publisher: 'DocMosaic',
+        formatDetection: {
+            email: false,
+            address: false,
+            telephone: false,
+        },
+        category: 'productivity',
+        openGraph: {
+            title: t('ogTitle'),
+            description: t('ogDescription'),
+            url,
+            siteName: 'DocMosaic',
+            images: [
+                {
+                    url: '/pdf-editor-preview.png',
+                    width: 1200,
+                    height: 630,
+                    alt: 'DocMosaic PDF Editor Interface',
+                },
+            ],
+            locale: ogLocales[locale as Locale],
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: t('title'),
+            description: t('ogDescription'),
+            images: ['/pdf-editor-preview.png'],
+            creator: '@nerdstudio',
+        },
+        alternates: {
+            canonical: url,
+            languages: {
+                'en-US': '/pdf-editor',
+                'es-ES': '/es/pdf-editor',
+                'uk-UA': '/uk/pdf-editor',
+                'x-default': '/pdf-editor',
+            },
+        },
+    };
+}
+
+export default async function PDFEditorPage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    setRequestLocale(locale);
+
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'WebApplication',
@@ -120,7 +147,7 @@ export default function PDFEditorPage() {
             'online pdf tool',
             'free pdf editor',
         ],
-        inLanguage: 'en',
+        inLanguage: locale,
         isAccessibleForFree: true,
         license: 'https://opensource.org/licenses/MIT',
         mainEntityOfPage: {

@@ -12,12 +12,22 @@ import {
     Shield,
     Sparkles,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Typography from '../common/typography';
 import { CustomLink } from '../ui/core/link';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const Hero = () => {
+    const t = useTranslations('Hero');
+
+    const keyFeatures = [
+        { icon: FileKey2, text: t('featureNoSignup') },
+        { icon: Shield, text: t('featurePrivacy') },
+        { icon: HandCoins, text: t('featureFree') },
+        { icon: HardDrive, text: t('featureNoServer') },
+    ];
+
     return (
         <div className="relative flex flex-col items-center text-center pt-6 pb-12 md:pt-10 md:pb-16">
             <motion.a
@@ -39,7 +49,7 @@ const Hero = () => {
                     </Typography>
                 </span>
                 <Typography variant="small" className="text-docmosaic-purple">
-                    New - Frames are here
+                    {t('badge')}
                 </Typography>
                 <ArrowRight className="h-4 w-4 text-docmosaic-orange transition-transform group-hover:translate-x-0.5" />
             </motion.a>
@@ -55,20 +65,23 @@ const Hero = () => {
                     tag="h1"
                     className="mx-auto max-w-3xl !text-[2rem] !leading-[1.12] sm:!text-[2.75rem] lg:!text-[3.25rem]"
                 >
-                    <span className="text-docmosaic-caramel">PDF</span> Editing Shouldn&apos;t Be
-                    This <span className="text-docmosaic-orange">Hard</span> - So We{' '}
-                    <span className="text-docmosaic-caramel">Fixed It</span>
+                    {t.rich('title', {
+                        caramel: (chunks) => (
+                            <span className="text-docmosaic-caramel">{chunks}</span>
+                        ),
+                        orange: (chunks) => <span className="text-docmosaic-orange">{chunks}</span>,
+                    })}
                 </Typography>
 
                 <Typography
                     variant="paragraph"
                     className="mx-auto max-w-xl !text-base text-docmosaic-black/70"
                 >
-                    Drop in images, arrange them on a virtual page, and export a clean PDF - right
-                    in your browser.{' '}
-                    <span className="font-medium text-docmosaic-black">
-                        Fast, simple, DONE in seconds.
-                    </span>
+                    {t.rich('subtitle', {
+                        strong: (chunks) => (
+                            <span className="font-medium text-docmosaic-black">{chunks}</span>
+                        ),
+                    })}
                 </Typography>
 
                 <div className="flex flex-wrap justify-center gap-3">
@@ -96,7 +109,7 @@ const Hero = () => {
                                 />
                             }
                         >
-                            Try It Instantly
+                            {t('tryCta')}
                         </CustomLink>
                         <CustomLink
                             href="https://docs.docmosaic.com"
@@ -105,14 +118,15 @@ const Hero = () => {
                             className="documentation-click-trigger !border-docmosaic-purple/25 bg-white hover:bg-docmosaic-cream/40"
                             icon={<BookOpen size={18} />}
                         >
-                            Read the Docs
+                            {t('docsCta')}
                         </CustomLink>
                     </div>
                     <div className="flex items-center gap-2">
                         <Lock className="h-4 w-4" />
                         <Typography variant="small">
-                            <b className="font-semibold">Privacy-First:</b> Your files never leave
-                            your device.
+                            {t.rich('privacyNote', {
+                                strong: (chunks) => <b className="font-semibold">{chunks}</b>,
+                            })}
                         </Typography>
                     </div>
                 </div>
@@ -122,10 +136,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
-const keyFeatures = [
-    { icon: FileKey2, text: 'No Sign-Up' },
-    { icon: Shield, text: 'Privacy-First' },
-    { icon: HandCoins, text: 'Always Free' },
-    { icon: HardDrive, text: 'No Server' },
-];

@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { FileDown, Monitor, TabletSmartphone } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useState } from 'react';
 import Typography from '../common/typography';
 import { CustomLink } from '../ui/core/link';
@@ -16,59 +17,59 @@ interface Card {
     buttonClass: string;
 }
 
-const cards = [
-    // {
-    //     Icon: SquareMousePointer,
-    //     title: 'Touch-Optimized Interface',
-    //     description: 'Drag, resize, and arrange with natural touch gestures on any device.',
-    //     buttonText: 'TRY MOBILE APP',
-    //     buttonLink: '/',
-    //     buttonClass: 'mobile-app-access-trigger',
-    // },
-    {
-        Icon: Monitor,
-        title: 'Seamless Desktop Experience',
-        description: 'Full functionality on larger screens with keyboard shortcuts.',
-        buttonText: 'TRY Docmosaic',
-        buttonLink: '/pdf-editor',
-        buttonClass: 'web-app-access-trigger',
-    },
-    {
-        Icon: TabletSmartphone,
-        title: 'Works on All Devices',
-        description: 'No app needed. Just open in your browser and start editing.',
-        buttonText: 'TRY WEB APP',
-        buttonLink: '/pdf-editor',
-        buttonClass: 'web-app-access-trigger',
-    },
-    {
-        Icon: FileDown,
-        title: 'Instant Export Anywhere',
-        description: "Download your PDFs instantly, whether you're on phone or desktop.",
-        buttonText: 'TRY Docmosaic',
-        buttonLink: '/pdf-editor',
-        buttonClass: 'web-app-access-trigger',
-    },
-];
-
 const StackedCards = () => {
+    const t = useTranslations('StackedCards');
     const [selected, setSelected] = useState(0);
+
+    const cards = [
+        // {
+        //     Icon: SquareMousePointer,
+        //     title: 'Touch-Optimized Interface',
+        //     description: 'Drag, resize, and arrange with natural touch gestures on any device.',
+        //     buttonText: 'TRY MOBILE APP',
+        //     buttonLink: '/',
+        //     buttonClass: 'mobile-app-access-trigger',
+        // },
+        {
+            Icon: Monitor,
+            title: t('cards.desktop.title'),
+            description: t('cards.desktop.description'),
+            buttonText: t('cards.desktop.buttonText'),
+            buttonLink: '/pdf-editor',
+            buttonClass: 'web-app-access-trigger',
+        },
+        {
+            Icon: TabletSmartphone,
+            title: t('cards.allDevices.title'),
+            description: t('cards.allDevices.description'),
+            buttonText: t('cards.allDevices.buttonText'),
+            buttonLink: '/pdf-editor',
+            buttonClass: 'web-app-access-trigger',
+        },
+        {
+            Icon: FileDown,
+            title: t('cards.export.title'),
+            description: t('cards.export.description'),
+            buttonText: t('cards.export.buttonText'),
+            buttonLink: '/pdf-editor',
+            buttonClass: 'web-app-access-trigger',
+        },
+    ];
 
     return (
         <section className="bg-white py-12 md:py-24 lg:pl-8 lg:mr-[calc(50%-50vw)] grid items-center grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 overflow-hidden">
             <div className="md:p-4">
                 <Typography variant="h2" tag="h2">
-                    Works on Desktop & Mobile - Edit{' '}
-                    <span className="text-docmosaic-sage">PDFs</span> Anywhere!
+                    {t.rich('heading', {
+                        sage: (chunks) => <span className="text-docmosaic-sage">{chunks}</span>,
+                    })}
                 </Typography>
-                <Typography className="my-4">
-                    No need for a computer. Edit PDFs right from your phone - drag, arrange, and
-                    export in seconds.
-                </Typography>
+                <Typography className="my-4">{t('subheading')}</Typography>
                 <SelectBtns
                     numTracks={cards.length}
                     setSelected={setSelected}
                     selected={selected}
+                    cards={cards}
                 />
             </div>
             <Cards cards={cards} setSelected={setSelected} selected={selected} />
@@ -80,10 +81,12 @@ const SelectBtns = ({
     numTracks,
     setSelected,
     selected,
+    cards,
 }: {
     numTracks: number;
     setSelected: Dispatch<SetStateAction<number>>;
     selected: number;
+    cards: Card[];
 }) => {
     return (
         <div className="flex gap-1 mt-8">
@@ -158,6 +161,7 @@ const Card = ({
     description,
     buttonText,
     buttonLink,
+    buttonClass,
     position,
     selected,
     setSelected,
@@ -223,7 +227,7 @@ const Card = ({
                 <CustomLink
                     href={buttonLink}
                     variant={position % 2 ? 'sage' : 'white'}
-                    className={cn('w-full', cards[position].buttonClass)}
+                    className={cn('w-full', buttonClass)}
                 >
                     {buttonText}
                 </CustomLink>
