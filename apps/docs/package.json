@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "next dev -p 4002",
         "build": "next build",
-        "start": "next start -p 4002",
+        "start": "next start -p ${PORT:-4002}",
         "typecheck": "tsc --noEmit",
         "lint": "echo \"no-op (docs)\"",
         "test": "echo \"no tests (docs)\"",

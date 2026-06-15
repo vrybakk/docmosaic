@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "storybook dev -p 6006 --no-open",
         "build": "storybook build",
+        "serve": "serve storybook-static -l ${PORT:-6006}",
         "lint": "echo \"no-op (storybook)\"",
         "typecheck": "tsc --noEmit",
         "test": "echo \"no tests (storybook)\"",
@@ -17,7 +18,8 @@
         "react": "^19",
         "react-dnd": "^16.0.1",
         "react-dnd-html5-backend": "^16.0.1",
-        "react-dom": "^19"
+        "react-dom": "^19",
+        "serve": "^14.2.4"
     },
     "devDependencies": {
         "@storybook/addon-a11y": "^8.6.14",
