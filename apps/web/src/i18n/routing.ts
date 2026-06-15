@@ -1,9 +1,8 @@
 import { defineRouting } from 'next-intl/routing';
 
 export const routing = defineRouting({
-    // Locales the marketing site is translated into. `uk` matches the
-    // language switcher that already shipped in the header.
-    locales: ['en', 'es', 'uk'],
+    // Locales the marketing site is translated into.
+    locales: ['en', 'es', 'uk', 'de', 'fr', 'pt-BR', 'pl', 'it'],
 
     // Used when no locale matches (and the un-prefixed canonical locale).
     defaultLocale: 'en',

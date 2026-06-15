@@ -1,5 +1,6 @@
 import Loader from '@/components/ui/data-display/loader';
-import { routing, type Locale } from '@/i18n/routing';
+import { type Locale } from '@/i18n/routing';
+import { hreflangAlternates, localeUrl, ogLocale } from '@/i18n/seo';
 import { Metadata, Viewport } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
@@ -18,12 +19,6 @@ export const viewport: Viewport = {
     viewportFit: 'cover',
 };
 
-const ogLocales: Record<Locale, string> = {
-    en: 'en_US',
-    es: 'es_ES',
-    uk: 'uk_UA',
-};
-
 export async function generateMetadata({
     params,
 }: {
@@ -31,8 +26,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
     const { locale } = await params;
     const t = await getTranslations({ locale: locale as Locale, namespace: 'PdfEditor' });
-    const prefix = locale === routing.defaultLocale ? '' : `/${locale}`;
-    const url = `https://docmosaic.com${prefix}/pdf-editor`;
+    const url = localeUrl(locale as Locale, '/pdf-editor');
 
     return {
         // The locale layout's title template appends " | DocMosaic".
@@ -72,7 +66,7 @@ export async function generateMetadata({
                     alt: 'DocMosaic PDF Editor Interface',
                 },
             ],
-            locale: ogLocales[locale as Locale],
+            locale: ogLocale[locale as Locale],
             type: 'website',
         },
         twitter: {
@@ -84,12 +78,7 @@ export async function generateMetadata({
         },
         alternates: {
             canonical: url,
-            languages: {
-                'en-US': '/pdf-editor',
-                'es-ES': '/es/pdf-editor',
-                'uk-UA': '/uk/pdf-editor',
-                'x-default': '/pdf-editor',
-            },
+            languages: hreflangAlternates('/pdf-editor'),
         },
     };
 }

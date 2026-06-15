@@ -1,6 +1,7 @@
 import Header from '@/components/layout/header';
 import { ThemeProvider } from '@/components/theme-provider';
 import { routing, type Locale } from '@/i18n/routing';
+import { hreflangAlternates, localePath, localeUrl, ogLocale, SITE_URL } from '@/i18n/seo';
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import type { Metadata, Viewport } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
@@ -15,21 +16,6 @@ const montserrat = Montserrat({
     subsets: ['latin', 'cyrillic'],
     variable: '--font-montserrat',
 });
-
-// hreflang alternates — shared across locales so every page advertises all of
-// its translations. `as-needed` keeps the default locale (en) at the root.
-const languageAlternates = {
-    'en-US': '/',
-    'es-ES': '/es',
-    'uk-UA': '/uk',
-    'x-default': '/',
-};
-
-const ogLocales: Record<Locale, string> = {
-    en: 'en_US',
-    es: 'es_ES',
-    uk: 'uk_UA',
-};
 
 export const viewport: Viewport = {
     width: 'device-width',
@@ -51,10 +37,9 @@ type Props = {
 export async function generateMetadata({ params }: Omit<Props, 'children'>): Promise<Metadata> {
     const { locale } = await params;
     const t = await getTranslations({ locale: locale as Locale, namespace: 'Metadata' });
-    const canonical = locale === routing.defaultLocale ? '/' : `/${locale}`;
 
     return {
-        metadataBase: new URL('https://docmosaic.com'),
+        metadataBase: new URL(SITE_URL),
         title: {
             default: t('title'),
             template: '%s | DocMosaic',
@@ -90,15 +75,15 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
             telephone: false,
         },
         alternates: {
-            canonical,
-            languages: languageAlternates,
+            canonical: localePath(locale as Locale),
+            languages: hreflangAlternates(),
         },
         openGraph: {
             title: t('ogTitle'),
             description: t('ogDescription'),
-            url: 'https://docmosaic.com',
+            url: localeUrl(locale as Locale),
             siteName: 'DocMosaic',
-            locale: ogLocales[locale as Locale],
+            locale: ogLocale[locale as Locale],
             type: 'website',
             images: [
                 {
@@ -123,9 +108,10 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
         },
         twitter: {
             card: 'summary_large_image',
+            site: '@nerdstudio',
+            creator: '@nerdstudio',
             title: t('ogTitle'),
             description: t('ogDescription'),
-            creator: '@nerdstudio',
             images: ['/seo/twitter-card.png'],
         },
         robots: {
@@ -169,66 +155,16 @@ export default async function LocaleLayout({ children, params }: Props) {
                 <link rel="apple-touch-icon" href="/seo/apple-touch.png" />
                 <link rel="manifest" href="/manifest.json" />
 
-                {/* Primary OpenGraph image - this is what social platforms will use */}
-                <meta property="og:image" content="/seo/og-image.png" />
-                <meta property="og:image:width" content="1080" />
-                <meta property="og:image:height" content="700" />
-                <meta property="og:image:type" content="image/png" />
-                <meta property="og:image:alt" content="DocMosaic - Visual PDF Creation Tool" />
-
-                {/* Additional mobile and device specific meta tags */}
-                <meta name="theme-color" content="#381D2A" />
+                {/* Windows tile + date format detection — not covered by the
+                    Metadata API. Open Graph, Twitter, theme-color and the other
+                    format-detection hints are emitted (localized) by
+                    generateMetadata above, so they are intentionally not
+                    duplicated here. */}
                 <meta name="msapplication-TileColor" content="#381D2A" />
                 <meta name="msapplication-TileImage" content="/seo/manifest-192x192.png" />
                 <meta name="msapplication-config" content="/browserconfig.xml" />
-
-                {/* Additional social media meta tags for better sharing */}
-                <meta property="og:site_name" content="DocMosaic" />
-                <meta property="og:locale" content={ogLocales[locale]} />
-                <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://docmosaic.com" />
-
-                {/* Twitter additional meta tags */}
-                <meta name="twitter:site" content="@nerdstudio" />
-                <meta name="twitter:creator" content="@nerdstudio" />
-                <meta name="twitter:title" content="DocMosaic - Visual PDF Creation Tool" />
-                <meta
-                    name="twitter:description"
-                    content="Create beautiful PDFs by arranging images like a mosaic. Free and open source."
-                />
-
-                {/* Additional mobile and device specific meta tags */}
-                <meta name="format-detection" content="telephone=no" />
                 <meta name="format-detection" content="date=no" />
-                <meta name="format-detection" content="address=no" />
-                <meta name="format-detection" content="email=no" />
 
-                {/* Additional social media meta tags for better sharing */}
-                <meta
-                    property="og:image:secure_url"
-                    content="https://docmosaic.com/seo/og-image.png"
-                />
-                <meta
-                    property="og:image:secure_url"
-                    content="https://docmosaic.com/seo/linkedIn.png"
-                />
-                <meta
-                    property="og:image:secure_url"
-                    content="https://docmosaic.com/seo/instagram.png"
-                />
-
-                {/* Additional social media meta tags for better sharing */}
-                <meta property="og:image:alt" content="DocMosaic - Visual PDF Creation Tool" />
-                <meta
-                    property="og:image:alt"
-                    content="DocMosaic - Visual PDF Creation Tool (LinkedIn)"
-                />
-                <meta
-                    property="og:image:alt"
-                    content="DocMosaic - Visual PDF Creation Tool (Instagram)"
-                />
-
-                <meta property="og:image:type" content="image/png" />
                 <Script
                     id="schema-org"
                     type="application/ld+json"
@@ -237,6 +173,7 @@ export default async function LocaleLayout({ children, params }: Props) {
                             '@context': 'https://schema.org',
                             '@type': 'WebApplication',
                             name: 'DocMosaic',
+                            inLanguage: locale,
                             applicationCategory: 'UtilityApplication',
                             operatingSystem: 'Any',
                             offers: {

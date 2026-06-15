@@ -5,6 +5,7 @@ import type React from 'react';
 import DonateButton from '@/components/donate-button';
 import { CustomLink } from '@/components/ui/core/link';
 import { Link as LocaleLink, usePathname, useRouter } from '@/i18n/navigation';
+import { routing } from '@/i18n/routing';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocale, useTranslations } from 'next-intl';
 import {
@@ -40,7 +41,26 @@ export default function Header() {
         return null;
     }
 
-    const localeLabels: Record<string, string> = { en: 'EN', es: 'ES', uk: 'UA' };
+    const localeLabels: Record<string, string> = {
+        en: 'EN',
+        es: 'ES',
+        uk: 'UA',
+        de: 'DE',
+        fr: 'FR',
+        'pt-BR': 'PT',
+        pl: 'PL',
+        it: 'IT',
+    };
+    const localeNames: Record<string, string> = {
+        en: 'English',
+        es: 'Español',
+        uk: 'Українська',
+        de: 'Deutsch',
+        fr: 'Français',
+        'pt-BR': 'Português (BR)',
+        pl: 'Polski',
+        it: 'Italiano',
+    };
 
     const changeLanguage = (nextLocale: string) => {
         setIsLanguageMenuOpen(false);
@@ -313,24 +333,15 @@ export default function Header() {
                             </button>
                             {isLanguageMenuOpen && (
                                 <div className="absolute right-0 mt-2 min-w-24 bg-white rounded-md shadow-lg py-1 z-10">
-                                    <button
-                                        onClick={() => changeLanguage('en')}
-                                        className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
-                                    >
-                                        English
-                                    </button>
-                                    <button
-                                        onClick={() => changeLanguage('es')}
-                                        className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
-                                    >
-                                        Español
-                                    </button>
-                                    <button
-                                        onClick={() => changeLanguage('uk')}
-                                        className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
-                                    >
-                                        Українська
-                                    </button>
+                                    {routing.locales.map((loc) => (
+                                        <button
+                                            key={loc}
+                                            onClick={() => changeLanguage(loc)}
+                                            className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
+                                        >
+                                            {localeNames[loc]}
+                                        </button>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -352,24 +363,15 @@ export default function Header() {
                             </button>
                             {isLanguageMenuOpen && (
                                 <div className="absolute right-0 mt-2 min-w-24 bg-white rounded-md shadow-lg py-1 z-10">
-                                    <button
-                                        onClick={() => changeLanguage('en')}
-                                        className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
-                                    >
-                                        English
-                                    </button>
-                                    <button
-                                        onClick={() => changeLanguage('es')}
-                                        className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
-                                    >
-                                        Español
-                                    </button>
-                                    <button
-                                        onClick={() => changeLanguage('uk')}
-                                        className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
-                                    >
-                                        Українська
-                                    </button>
+                                    {routing.locales.map((loc) => (
+                                        <button
+                                            key={loc}
+                                            onClick={() => changeLanguage(loc)}
+                                            className="block w-full text-left px-4 py-2 text-sm text-docmosaic-purple/80 hover:bg-docmosaic-sage/10 hover:text-docmosaic-purple"
+                                        >
+                                            {localeNames[loc]}
+                                        </button>
+                                    ))}
                                 </div>
                             )}
                         </div>

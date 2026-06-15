@@ -1,3 +1,4 @@
+import { SITE_URL } from '@/i18n/seo';
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
@@ -7,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: ['/api/', '/private/'],
         },
-        sitemap: 'https://docmosaic.com/sitemap.xml',
+        sitemap: `${SITE_URL}/sitemap.xml`,
     };
 }

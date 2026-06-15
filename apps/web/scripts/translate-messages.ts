@@ -19,11 +19,16 @@ import { join } from 'node:path';
 
 // Keep in sync with `src/i18n/routing.ts`.
 const SOURCE_LOCALE = 'en';
-const TARGET_LOCALES = ['es', 'uk'];
+const TARGET_LOCALES = ['es', 'uk', 'de', 'fr', 'pt-BR', 'pl', 'it'];
 
 const LOCALE_NAMES: Record<string, string> = {
     es: 'Spanish (Spain, European)',
     uk: 'Ukrainian',
+    de: 'German (Germany)',
+    fr: 'French (France)',
+    'pt-BR': 'Portuguese (Brazil)',
+    pl: 'Polish (Poland)',
+    it: 'Italian (Italy)',
 };
 
 const MODEL = process.env.ANTHROPIC_MODEL ?? 'claude-haiku-4-5';
@@ -66,7 +71,8 @@ for (const locale of TARGET_LOCALES) {
         .trim();
 
     // Validate before writing so a malformed response never corrupts a catalog.
-    const parsed = JSON.parse(text);
+    // Normalize em/en dashes to plain hyphens (house style).
+    const parsed = JSON.parse(text.replaceAll('—', '-').replaceAll('–', '-'));
     writeFileSync(
         join(messagesDir, `${locale}.json`),
         `${JSON.stringify(parsed, null, 4)}\n`,
