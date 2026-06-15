@@ -5,8 +5,9 @@ import { siteConfig } from '@/lib/metadata';
 
 /**
  * Per-page OpenGraph image. The catch-all slug ends with the literal
- * `image.png`; the preceding segments identify the docs page. Pre-rendered at
- * build time for every page via {@link generateStaticParams}.
+ * `image.png`; the preceding segments identify the docs page. Rendered on
+ * demand and cached at the edge — rather than pre-rendering one image per page
+ * at build time — to keep docs builds fast and avoid OOM on the OG render step.
  */
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string[] }> }) {
     const { slug } = await params;
@@ -20,10 +21,4 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
         primaryColor: '#5b3a4d',
         primaryTextColor: '#fcde9c',
     });
-}
-
-export function generateStaticParams() {
-    return source.generateParams().map((params) => ({
-        slug: [...params.slug, 'image.png'],
-    }));
 }
