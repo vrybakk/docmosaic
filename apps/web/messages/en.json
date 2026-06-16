@@ -83,7 +83,9 @@
         "point2Body": "Document model, history, and the PDF pipeline. Bring your own UI.",
         "point3Title": "100% client-side",
         "point3Body": "No backend, no uploads. State lives in React - privacy by default.",
-        "readDocs": "Read the Docs"
+        "readDocs": "Read the Docs",
+        "copyLabel": "Copy",
+        "copiedLabel": "Copied!"
     },
     "StackedCards": {
         "heading": "Works on Desktop & Mobile - Edit <sage>PDFs</sage> Anywhere!",

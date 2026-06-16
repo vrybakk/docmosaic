@@ -83,7 +83,9 @@
         "point2Body": "Modèle de document, historique et pipeline PDF. Apportez votre propre interface.",
         "point3Title": "100 % côté client",
         "point3Body": "Pas de backend, pas de téléversements. L'état vit dans React - confidentialité par défaut.",
-        "readDocs": "Lire la documentation"
+        "readDocs": "Lire la documentation",
+        "copyLabel": "Copier",
+        "copiedLabel": "Copié !"
     },
     "StackedCards": {
         "heading": "Fonctionne sur ordinateur et mobile - modifiez vos <sage>PDF</sage> partout !",

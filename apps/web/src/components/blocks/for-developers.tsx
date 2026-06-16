@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowBigRight, Boxes, Code2, Cpu, Github, Lock, Package, Terminal } from 'lucide-react';
+import { ArrowBigRight, Boxes, Code2, Cpu, Github, Lock, Package } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { InstallCommand } from '../common/install-command';
 import Typography from '../common/typography';
 import { CustomLink } from '../ui/core/link';
 
@@ -73,12 +74,11 @@ const ForDevelopers = () => {
                 })}
             </Typography>
 
-            <div className="mt-6 flex max-w-xl items-center gap-3 rounded-lg border border-docmosaic-cream/15 bg-black/20 px-4 py-3">
-                <Terminal className="h-4 w-4 shrink-0 text-docmosaic-sage" />
-                <code className="overflow-x-auto font-mono text-sm text-docmosaic-cream">
-                    bun add @docmosaic/react @docmosaic/core
-                </code>
-            </div>
+            <InstallCommand
+                packages="@docmosaic/react @docmosaic/core"
+                copyLabel={t('copyLabel')}
+                copiedLabel={t('copiedLabel')}
+            />
 
             <div className="mt-8 grid gap-6 md:grid-cols-3">
                 {points.map((point) => (

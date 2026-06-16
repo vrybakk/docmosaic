@@ -83,7 +83,9 @@
         "point2Body": "Dokumentenmodell, Verlauf und die PDF-Pipeline. Bring deine eigene Oberfläche mit.",
         "point3Title": "100 % clientseitig",
         "point3Body": "Kein Backend, keine Uploads. Der Zustand lebt in React - Datenschutz von Haus aus.",
-        "readDocs": "Doku lesen"
+        "readDocs": "Doku lesen",
+        "copyLabel": "Kopieren",
+        "copiedLabel": "Kopiert!"
     },
     "StackedCards": {
         "heading": "Funktioniert auf Desktop & Mobil - bearbeite <sage>PDFs</sage> überall!",

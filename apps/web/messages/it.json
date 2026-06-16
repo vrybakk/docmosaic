@@ -83,7 +83,9 @@
         "point2Body": "Modello del documento, cronologia e pipeline PDF. Porta la tua interfaccia.",
         "point3Title": "100% lato client",
         "point3Body": "Nessun backend, nessun caricamento. Lo stato vive in React - privacy per impostazione predefinita.",
-        "readDocs": "Leggi la documentazione"
+        "readDocs": "Leggi la documentazione",
+        "copyLabel": "Copia",
+        "copiedLabel": "Copiato!"
     },
     "StackedCards": {
         "heading": "Funziona su desktop e mobile - modifica i <sage>PDF</sage> ovunque!",
