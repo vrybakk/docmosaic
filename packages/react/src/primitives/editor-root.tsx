@@ -63,6 +63,13 @@ export type EditorRootProps = {
      * here. Renders nothing when omitted.
      */
     themeToggle?: ReactNode;
+    /**
+     * Slot rendered at the far-left of the top bar (desktop and mobile), before
+     * the document name. The package stays route-agnostic; the host injects a
+     * ready-made node here — e.g. a "back to site" link. Renders nothing when
+     * omitted.
+     */
+    leadingSlot?: ReactNode;
     /** Render the left rail (tool palette + Pages + Layers). Defaults to `true`. */
     showLeftRail?: boolean;
     /** Render the tool palette inside the left rail. Defaults to `true`. */
@@ -809,6 +816,7 @@ export function Root(props: EditorRootProps) {
             ) : (
                 <EditorShell
                     themeToggle={props.themeToggle}
+                    leadingSlot={props.leadingSlot}
                     showLeftRail={props.showLeftRail !== false}
                     showToolPalette={props.showToolPalette !== false}
                     showPages={props.showPages !== false}

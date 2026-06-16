@@ -21,8 +21,6 @@ import { AddImageButton } from '../toolbar/add-image-button';
 import { AddTextButton } from '../toolbar/add-text-button';
 import { DownloadButton } from '../toolbar/download-button';
 import { DrawButton } from '../toolbar/draw-button';
-import { FrameToolButton } from '../toolbar/frame-tool-button';
-import { ImageFrameToolButton } from '../toolbar/image-frame-tool-button';
 import { PreviewButton } from '../toolbar/preview-button';
 import { PrintButton } from '../toolbar/print-button';
 import { RedoButton } from '../toolbar/redo-button';
@@ -49,10 +47,17 @@ type MobileSheet = 'pages' | 'layers' | 'properties' | 'document';
  * the most-used actions (undo / redo · download · theme); page size,
  * orientation, preview, and print move into the "Doc" sheet below.
  */
-function MobileTopBar({ themeToggle }: { themeToggle?: ReactNode }) {
+function MobileTopBar({
+    themeToggle,
+    leadingSlot,
+}: {
+    themeToggle?: ReactNode;
+    leadingSlot?: ReactNode;
+}) {
     return (
         <div className="flex h-12 shrink-0 items-center gap-1 border-b border-border bg-card px-2">
-            <div className="flex min-w-0 flex-1 items-center">
+            <div className="flex min-w-0 flex-1 items-center gap-1">
+                {leadingSlot}
                 <DocumentName asTitle />
             </div>
             <div
@@ -128,6 +133,7 @@ function DocumentSheet() {
  */
 export function MobileEditorShell({
     themeToggle,
+    leadingSlot,
     showToolPalette = true,
     showPages = true,
     showLayers = true,
@@ -140,7 +146,7 @@ export function MobileEditorShell({
 
     return (
         <div className="flex h-screen flex-col bg-background text-foreground">
-            <MobileTopBar themeToggle={themeToggle} />
+            <MobileTopBar themeToggle={themeToggle} leadingSlot={leadingSlot} />
 
             <div className="relative min-h-0 flex-1 bg-muted">
                 <ContextMenu className="flex h-full min-h-0">
@@ -167,20 +173,6 @@ export function MobileEditorShell({
                             <AddImageButton iconOnly variant="ghost" className={TOOL} />
                             <AddTextButton iconOnly variant="ghost" className={TOOL} />
                             <ShapeToolButton
-                                iconOnly
-                                variant="ghost"
-                                activeVariant="secondary"
-                                className={TOOL}
-                                activeClassName={TOOL_ACTIVE}
-                            />
-                            <FrameToolButton
-                                iconOnly
-                                variant="ghost"
-                                activeVariant="secondary"
-                                className={TOOL}
-                                activeClassName={TOOL_ACTIVE}
-                            />
-                            <ImageFrameToolButton
                                 iconOnly
                                 variant="ghost"
                                 activeVariant="secondary"

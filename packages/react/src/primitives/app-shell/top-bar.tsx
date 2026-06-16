@@ -32,6 +32,8 @@ interface TopBarProps {
      * the app passes a ready-made toggle in. Renders nothing when omitted.
      */
     themeToggle?: ReactNode;
+    /** Slot rendered at the far-left of the bar, before the document name. */
+    leadingSlot?: ReactNode;
     /** Toggle the left rail's collapsed state. Omit to hide the toggle. */
     onToggleLeftRail?: () => void;
     /** Whether the left rail is currently collapsed (drives the toggle label). */
@@ -57,6 +59,7 @@ interface TopBarProps {
  */
 export function TopBar({
     themeToggle,
+    leadingSlot,
     onToggleLeftRail,
     leftRailCollapsed,
     onToggleInspector,
@@ -65,6 +68,12 @@ export function TopBar({
     return (
         <div className="flex h-12 items-center justify-between border-b border-border bg-card px-3">
             <div className="flex min-w-0 items-center gap-1">
+                {leadingSlot ? (
+                    <>
+                        {leadingSlot}
+                        <Divider />
+                    </>
+                ) : null}
                 {onToggleLeftRail ? (
                     <button
                         type="button"
