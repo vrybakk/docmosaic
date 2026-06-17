@@ -96,31 +96,19 @@ svg[data-lucide] {
 
 @layer base {
     :root {
-        --background: 255 255 255;
-        --foreground: 10 10 10;
-        --card: 255 255 255;
-        --card-foreground: 10 10 10;
+        /* The shadcn-aligned semantic surface (--background, --foreground,
+           --primary, --secondary, --muted, --accent, --destructive, --border,
+           --input, --ring, --radius) is supplied by the dog-fooded
+           @docmosaic/react brand theme imported above. Redefining it here would
+           win via @layer base and clobber the brand palette, so only tokens the
+           theme does not provide live in this block. */
         --popover: 255 255 255;
         --popover-foreground: 10 10 10;
-        --primary: 23 23 23;
-        --primary-foreground: 250 250 250;
-        --secondary: 245 245 245;
-        --secondary-foreground: 23 23 23;
-        --muted: 245 245 245;
-        --muted-foreground: 115 115 115;
-        --accent: 245 245 245;
-        --accent-foreground: 23 23 23;
-        --destructive: 239 68 68;
-        --destructive-foreground: 250 250 250;
-        --border: 229 229 229;
-        --input: 229 229 229;
-        --ring: 10 10 10;
         --chart-1: 12 76% 61%;
         --chart-2: 173 58% 39%;
         --chart-3: 197 37% 24%;
         --chart-4: 43 74% 66%;
         --chart-5: 27 87% 67%;
-        --radius: 0.5rem;
         --sidebar-background: 0 0% 98%;
         --sidebar-foreground: 240 5.3% 26.1%;
         --sidebar-primary: 240 5.9% 10%;
@@ -131,25 +119,10 @@ svg[data-lucide] {
         --sidebar-ring: 217.2 91.2% 59.8%;
     }
     .dark {
-        --background: 10 10 10;
-        --foreground: 250 250 250;
-        --card: 10 10 10;
-        --card-foreground: 250 250 250;
+        /* Brand dark-mode semantics come from @docmosaic/react's theme; keep
+           only the tokens it doesn't define. */
         --popover: 10 10 10;
         --popover-foreground: 250 250 250;
-        --primary: 250 250 250;
-        --primary-foreground: 23 23 23;
-        --secondary: 38 38 38;
-        --secondary-foreground: 250 250 250;
-        --muted: 38 38 38;
-        --muted-foreground: 163 163 163;
-        --accent: 38 38 38;
-        --accent-foreground: 250 250 250;
-        --destructive: 127 29 29;
-        --destructive-foreground: 250 250 250;
-        --border: 38 38 38;
-        --input: 38 38 38;
-        --ring: 212 212 212;
         --chart-1: 220 70% 50%;
         --chart-2: 160 60% 45%;
         --chart-3: 30 80% 55%;

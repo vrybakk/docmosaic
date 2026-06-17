@@ -24,6 +24,11 @@ import { TopBar } from './top-bar';
 export interface EditorShellProps {
     /** Host-injected theme toggle node rendered in the top-bar right group. */
     themeToggle?: ReactNode;
+    /**
+     * Slot rendered at the far-left of the top bar (e.g. a back-to-site link),
+     * before the document name. Renders nothing when omitted.
+     */
+    leadingSlot?: ReactNode;
     /** Show the left rail (tool palette + Pages + Layers). Defaults to `true`. */
     showLeftRail?: boolean;
     /** Show the tool palette inside the left rail. Defaults to `true`. */
@@ -67,6 +72,7 @@ function ResizeHandle() {
  */
 export function EditorShell({
     themeToggle,
+    leadingSlot,
     showLeftRail = true,
     showToolPalette = true,
     showPages = true,
@@ -93,6 +99,7 @@ export function EditorShell({
         return (
             <MobileEditorShell
                 themeToggle={themeToggle}
+                leadingSlot={leadingSlot}
                 showToolPalette={showLeftRail && showToolPalette}
                 showPages={showLeftRail && showPages}
                 showLayers={showLeftRail && showLayers}
@@ -107,6 +114,7 @@ export function EditorShell({
         <div className="flex h-screen flex-col bg-background text-foreground">
             <TopBar
                 themeToggle={themeToggle}
+                leadingSlot={leadingSlot}
                 onToggleLeftRail={showLeftRail ? () => toggle(leftPanelRef.current) : undefined}
                 leftRailCollapsed={leftCollapsed}
                 onToggleInspector={
