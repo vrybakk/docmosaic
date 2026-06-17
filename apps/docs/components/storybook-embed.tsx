@@ -19,7 +19,10 @@ export function StorybookEmbed({
     height = 480,
     base = externalLinks.storybook,
 }: StorybookEmbedProps) {
-    const src = `${base}/iframe.html?id=${encodeURIComponent(id)}&viewMode=story`;
+    // `v` busts browsers that cached the old permanent (301) redirect from when
+    // Storybook was served with `cleanUrls` on (`iframe.html` -> `/iframe`, which
+    // now 404s). Bump it if that ever recurs.
+    const src = `${base}/iframe.html?id=${encodeURIComponent(id)}&viewMode=story&v=2`;
     return (
         <div className="my-6 overflow-hidden rounded-lg border border-fd-border bg-fd-card">
             <iframe
