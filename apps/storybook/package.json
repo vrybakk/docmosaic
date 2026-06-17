@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "storybook dev -p 6006 --no-open",
         "build": "storybook build",
-        "serve": "serve storybook-static -l ${PORT:-6006}",
+        "serve": "serve storybook-static -l ${PORT:-6006} -c ../serve.json",
         "lint": "echo \"no-op (storybook)\"",
         "typecheck": "tsc --noEmit",
         "test": "echo \"no tests (storybook)\"",
