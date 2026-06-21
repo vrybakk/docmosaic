@@ -183,7 +183,7 @@ export default function Header() {
                                                         </Typography>
                                                     </Link>
                                                     <Link
-                                                        href="https://docs.docmosaic.com/changelog"
+                                                        href="https://docs.docmosaic.com/docs/changelog"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black w-full changelog-click-trigger"
@@ -461,7 +461,7 @@ export default function Header() {
                                                         </Typography>
                                                     </Link>
                                                     <Link
-                                                        href="https://docs.docmosaic.com/changelog"
+                                                        href="https://docs.docmosaic.com/docs/changelog"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         onClick={() =>

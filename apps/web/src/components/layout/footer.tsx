@@ -159,7 +159,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link
-                                    href="https://docs.docmosaic.com/changelog"
+                                    href="https://docs.docmosaic.com/docs/changelog"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center text-docmosaic-black/70 hover:text-docmosaic-black changelog-click-trigger"
