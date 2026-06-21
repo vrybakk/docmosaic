@@ -31,7 +31,7 @@ const Hero = () => {
     return (
         <div className="relative flex flex-col items-center text-center pt-6 pb-12 md:pt-10 md:pb-16">
             <motion.a
-                href="https://docs.docmosaic.com/changelog"
+                href="https://docs.docmosaic.com/docs/changelog"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="changelog-click-trigger group mb-6 inline-flex items-center gap-2 rounded-full border border-docmosaic-sage bg-docmosaic-sage/25 py-1 pl-1.5 pr-3.5 transition-colors hover:bg-docmosaic-sage/40"
