@@ -2,6 +2,7 @@ import { source } from '@/lib/source';
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/page';
 import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/components/mdx';
+import { MarkdownActions } from '@/components/markdown-actions';
 import type { Metadata } from 'next';
 import { absoluteUrl, createMetadata, ogImageUrl, siteConfig } from '@/lib/metadata';
 import { JsonLd, articleSchema, breadcrumbSchema } from '@/components/structured-data';
@@ -22,6 +23,7 @@ export default async function Page(props: PageRouteProps) {
         <DocsPage toc={page.data.toc} full={page.data.full}>
             <DocsTitle>{page.data.title}</DocsTitle>
             <DocsDescription>{page.data.description}</DocsDescription>
+            <MarkdownActions slug={page.slugs.join('/')} />
             <JsonLd
                 data={articleSchema({
                     title: page.data.title,

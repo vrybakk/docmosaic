@@ -20,7 +20,9 @@ export async function GET(_req: Request, context: RouteContext) {
     if (text === null) notFound();
 
     return new Response(text, {
-        headers: { 'content-type': 'text/markdown; charset=utf-8' },
+        // Plain text so `/docs/<slug>.md` renders in the browser (the
+        // "View as Markdown" link) instead of triggering a download.
+        headers: { 'content-type': 'text/plain; charset=utf-8' },
     });
 }
 
