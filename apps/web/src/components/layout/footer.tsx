@@ -202,20 +202,22 @@ export default function Footer() {
                             })}
                         </Typography>
                         <div className="flex flex-wrap items-center gap-4">
-                            <Typography variant="small" className="text-docmosaic-black/60">
-                                {t.rich('createdBy', {
-                                    link: (chunks) => (
-                                        <Link
-                                            href="https://nerd-stud.io"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-docmosaic-caramel hover:text-docmosaic-caramel/80 underline font-medium"
-                                        >
-                                            {chunks}
-                                        </Link>
-                                    ),
-                                })}
-                            </Typography>
+                            <Link
+                                href="https://nerd-stud.io?utm_source=docmosaic&utm_medium=referral&utm_campaign=footer_badge"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-block"
+                                title="nerd-stud.io"
+                                aria-label="nerd-stud.io"
+                            >
+                                <Image
+                                    src="/nerd-white-badge.svg"
+                                    width={140}
+                                    height={30}
+                                    alt="nerd-stud.io"
+                                    className="h-[30px] w-auto"
+                                />
+                            </Link>
                         </div>
                     </div>
                     {/* <p className="text-xs text-center text-docmosaic-purple/50 mt-4">
