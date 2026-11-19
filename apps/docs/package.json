@@ -5,8 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "next dev -p 4002",
-        "build": "next build",
-        "start": "next start -p ${PORT:-4002}",
+        "build": "next build && cp -r public .next/standalone/apps/docs/ && cp -r .next/static .next/standalone/apps/docs/.next/",
+        "start": "PORT=${PORT:-4002} HOSTNAME=0.0.0.0 node .next/standalone/apps/docs/server.js",
         "typecheck": "tsc --noEmit",
         "lint": "echo \"no-op (docs)\"",
         "test": "echo \"no tests (docs)\"",
