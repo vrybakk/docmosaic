@@ -4,8 +4,8 @@
     "private": true,
     "scripts": {
         "dev": "next dev -p 4001",
-        "build": "next build",
-        "start": "next start",
+        "build": "next build && cp -r public .next/standalone/apps/web/ && cp -r .next/static .next/standalone/apps/web/.next/",
+        "start": "HOSTNAME=0.0.0.0 node .next/standalone/apps/web/server.js",
         "translate": "bun run scripts/translate-messages.ts",
         "lint": "next lint",
         "typecheck": "tsc --noEmit",
